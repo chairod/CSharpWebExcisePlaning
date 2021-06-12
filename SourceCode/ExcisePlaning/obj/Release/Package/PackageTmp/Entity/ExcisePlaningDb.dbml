@@ -1,0 +1,1394 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="ExcisePlaning" Class="ExcisePlaningDbDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=103.13.31.17;Initial Catalog=ExcisePlaning;User ID=sa;Min Pool Size=2" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="ExcisePlaningConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.T_CONFIGURATION" Member="T_CONFIGURATIONs">
+    <Type Name="T_CONFIGURATION">
+      <Column Name="CONFIG_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CONFIG_NAME" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="CONFIG_DESCRIPTION" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="CONFIG_CONST" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_CONFIGURATION_DETAIL" Member="T_CONFIGURATION_DETAILs">
+    <Type Name="T_CONFIGURATION_DETAIL">
+      <Column Name="CONFIG_DETAIL_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CONFIG_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ITEM_VALUE" Type="System.String" DbType="NVarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="ITEM_VALUE2" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="ITEM_VALUE3" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="ITEM_DESCRIPTION" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="EFFECTIVE_DATE" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="EXPIRE_DATE" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_GROUP_MENU" Member="T_GROUP_MENUs">
+    <Type Name="T_GROUP_MENU">
+      <Column Name="GROUP_ID" Type="System.Int16" DbType="SmallInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="GROUP_NAME" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="GROUP_DESCRIPTION" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="GROUP_ICON" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
+      <Column Name="SORT_INDEX" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_HOLIDAY_CONFIGURE" Member="T_HOLIDAY_CONFIGUREs">
+    <Type Name="T_HOLIDAY_CONFIGURE">
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="HOLIDAY_DATE" Type="System.DateTime" DbType="Date NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_HOLIDAY_HISTORY" Member="T_HOLIDAY_HISTORies">
+    <Type Name="T_HOLIDAY_HISTORY">
+      <Column Name="LOG_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="HOLIDAY_DATE" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_MENU" Member="T_MENUs">
+    <Type Name="T_MENU">
+      <Column Name="MENU_ID" Type="System.Int16" DbType="SmallInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="GROUP_ID" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="MENU_NAME" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="MENU_DESCRIPTION" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="MENU_CONST" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="MENU_ICON" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
+      <Column Name="SORT_INDEX" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ROUTE_METHOD" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Column Name="ROUTE_CONTROLLER" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_PERSONNEL_AUTHORIZE" Member="T_PERSONNEL_AUTHORIZEs">
+    <Type Name="T_PERSONNEL_AUTHORIZE">
+      <Column Name="PERSON_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ROLE_ID" Type="System.Int16" DbType="SmallInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_ROLE" Member="T_ROLEs">
+    <Type Name="T_ROLE">
+      <Column Name="ROLE_ID" Type="System.Int16" DbType="SmallInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ROLE_NAME" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="ROLE_CONST" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="ITEM_DESCRIPTION" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_CONFIGURATION" Member="V_GET_CONFIGURATIONs">
+    <Type Name="V_GET_CONFIGURATION">
+      <Column Name="CONFIG_DETAIL_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CONFIG_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CONFIG_NAME" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="CONFIG_CONST" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="ITEM_VALUE" Type="System.String" DbType="NVarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="ITEM_VALUE2" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="ITEM_VALUE3" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EFFECTIVE_DATE" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="EXPIRE_DATE" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ITEM_DESCRIPTION" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_CURR_CONFIGURATION_USING" Member="V_GET_CURR_CONFIGURATION_USINGs">
+    <Type Name="V_GET_CURR_CONFIGURATION_USING">
+      <Column Name="CONFIG_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CONFIG_CONST" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="CONFIG_DETAIL_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_GENKEY" Member="T_GENKEYs">
+    <Type Name="T_GENKEY">
+      <Column Name="KEY_CONST" Type="System.String" DbType="NVarChar(15) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="CURR_VAL" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PREFIX_VAL" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="MN" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ITEM_DESCRIPTION" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_MENU_AUTHORIZE" Member="T_MENU_AUTHORIZEs">
+    <Type Name="T_MENU_AUTHORIZE">
+      <Column Name="MENU_ID" Type="System.Int16" DbType="SmallInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ROLE_ID" Type="System.Int16" DbType="SmallInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="SORT_INDEX" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_POSITION" Member="T_POSITIONs">
+    <Type Name="T_POSITION">
+      <Column Name="POSITION_ID" Type="System.Int16" DbType="SmallInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="POSITION_CODE" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="POSITION_NAME" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="SORT_INDEX" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ITEM_DESCRIPTION" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_PERSONNEL_TYPE" Member="T_PERSONNEL_TYPEs">
+    <Type Name="T_PERSONNEL_TYPE">
+      <Column Name="PERSON_TYPE_ID" Type="System.Int16" DbType="SmallInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="LEAVE_OVERFLOW_ID" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="ITEM_TEXT" Type="System.String" DbType="NVarChar(180) NOT NULL" CanBeNull="false" />
+      <Column Name="ITEM_DESCRIPTION" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="OT_RATE" Type="System.Decimal" DbType="Decimal(7,2)" CanBeNull="true" />
+      <Column Name="OT_TYPE" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="SORT_INDEX" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_REQUEST_TEMPLATE_DEPARTMENT_AUTHORIZE" Member="T_BUDGET_REQUEST_TEMPLATE_DEPARTMENT_AUTHORIZEs">
+    <Type Name="T_BUDGET_REQUEST_TEMPLATE_DEPARTMENT_AUTHORIZE">
+      <Column Name="TEMPLATE_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_REQUEST_TEMPLATE_YR_AUTHORIZE" Member="T_BUDGET_REQUEST_TEMPLATE_YR_AUTHORIZEs">
+    <Type Name="T_BUDGET_REQUEST_TEMPLATE_YR_AUTHORIZE">
+      <Column Name="TEMPLATE_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_REQUEST_TEMPLATE" Member="T_BUDGET_REQUEST_TEMPLATEs">
+    <Type Name="T_BUDGET_REQUEST_TEMPLATE">
+      <Column Name="TEMPLATE_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TEMPLATE_NAME" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FOR_BUDGET" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FOR_OFF_BUDGET" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FOR_SOURCE_BUDGET_BEGIN" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FOR_SOURCE_BUDGET_ADJUNCT" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FOR_SOURCE_BUDGET_INBOUND" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CREATE_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="SHARED_DEP_TEMPLATE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="SHARED_YR_TEMPLATE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_EXPENSES_MASTER" Member="T_EXPENSES_MASTERs">
+    <Type Name="T_EXPENSES_MASTER">
+      <Column Name="EXPENSES_MASTER_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="EXPENSES_MASTER_NAME" Type="System.String" DbType="NVarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_EXPENSES_ITEM" Member="T_EXPENSES_ITEMs">
+    <Type Name="T_EXPENSES_ITEM">
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_NAME" Type="System.String" DbType="NVarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_EXPENSES_GLCODE" Member="T_EXPENSES_GLCODEs">
+    <Type Name="T_EXPENSES_GLCODE">
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="GLCODE" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="GL_TEXT" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_EXPENSES_GROUP" Member="T_EXPENSES_GROUPs">
+    <Type Name="T_EXPENSES_GROUP">
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="EXPENSES_MASTER_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_EXPENSES_GROUP_GOVERNMENT_REFER_CODE" Member="T_EXPENSES_GROUP_GOVERNMENT_REFER_CODEs">
+    <Type Name="T_EXPENSES_GROUP_GOVERNMENT_REFER_CODE">
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="GOVERNMENT_REFER_CODE" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_TYPE_GOVERNMENT_REFER_CODE" Member="T_BUDGET_TYPE_GOVERNMENT_REFER_CODEs">
+    <Type Name="T_BUDGET_TYPE_GOVERNMENT_REFER_CODE">
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="GOVERNMENT_REFER_CODE" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_SUB_DEPARTMENT" Member="T_SUB_DEPARTMENTs">
+    <Type Name="T_SUB_DEPARTMENT">
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SUB_DEP_NAME" Type="System.String" DbType="NVarChar(190) NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_CODE" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TELEPHONE_NO" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="ADDRESS" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_USER_FAVORITE_BUDGET_TEMPLATE" Member="T_USER_FAVORITE_BUDGET_TEMPLATEs">
+    <Type Name="T_USER_FAVORITE_BUDGET_TEMPLATE">
+      <Column Name="TEMPLATE_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PERSON_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_UNIT" Member="T_UNITs">
+    <Type Name="T_UNIT">
+      <Column Name="UNIT_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UNIT_TEXT" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="UNIT_SHARED" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_REQUEST_DETAIL" Member="T_BUDGET_REQUEST_DETAILs">
+    <Type Name="T_BUDGET_REQUEST_DETAIL">
+      <Column Name="REQ_ID" Type="System.String" DbType="NVarChar(11) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="SEQ_NO" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="TOTAL_REQUEST_BUDGET" Type="System.Decimal" DbType="Decimal(15,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ITEM_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_XML_DESCRIBE" Type="System.Xml.Linq.XElement" DbType="Xml NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="ALLOCATE_FLAG" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ALLOCATE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_ALLOCATE_EXPENSES_HISTORY" Member="T_BUDGET_ALLOCATE_EXPENSES_HISTORies">
+    <Type Name="T_BUDGET_ALLOCATE_EXPENSES_HISTORY">
+      <Column Name="SEQ_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="REQ_ID" Type="System.String" DbType="NVarChar(11) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="MN" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="DELETED_REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="ALLOCATE_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="BUDGET_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="SEQ_NO" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_ALLOCATE" Member="T_BUDGET_ALLOCATEs">
+    <Type Name="T_BUDGET_ALLOCATE">
+      <Column Name="ALLOCATE_ID" Type="System.String" DbType="NVarChar(11) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ALLOCATE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="NET_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="USE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMAIN_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="LATEST_ALLOCATE_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LATEST_ALLOCATE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LATEST_REPORT_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LATEST_REPORT_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LATEST_REQUEST_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LATEST_REQUEST_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_AREA" Member="T_AREAs">
+    <Type Name="T_AREA">
+      <Column Name="AREA_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="AREA_NAME" Type="System.String" DbType="NVarChar(190) NOT NULL" CanBeNull="false" />
+      <Column Name="AREA_CODE" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_OFF_BUDGET_SOURCE" Member="T_OFF_BUDGET_SOURCEs">
+    <Type Name="T_OFF_BUDGET_SOURCE">
+      <Column Name="OFF_BUDGET_SOURCE_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OFF_BUDGET_SOURCE_NAME" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_REQUEST_TEMPLATE_EXPENSES" Member="T_BUDGET_REQUEST_TEMPLATE_EXPENSEs">
+    <Type Name="T_BUDGET_REQUEST_TEMPLATE_EXPENSE">
+      <Column Name="TEMPLATE_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_BUDGET_TEMPLATE_INFORMATION" Member="V_GET_BUDGET_TEMPLATE_INFORMATIONs">
+    <Type Name="V_GET_BUDGET_TEMPLATE_INFORMATION">
+      <Column Name="TEMPLATE_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TEMPLATE_NAME" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FOR_BUDGET" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FOR_OFF_BUDGET" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FOR_SOURCE_BUDGET_BEGIN" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FOR_SOURCE_BUDGET_ADJUNCT" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FOR_SOURCE_BUDGET_INBOUND" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CREATE_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="SHARED_DEP_TEMPLATE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="SHARED_YR_TEMPLATE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PLAN_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="PRODUCE_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="ACTIVITY_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_ACTIVITY_CONFIGURE" Member="T_ACTIVITY_CONFIGUREs">
+    <Type Name="T_ACTIVITY_CONFIGURE">
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ACTIVITY_NAME" Type="System.String" DbType="NVarChar(250) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVITY_CODE" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_PLAN_CONFIGURE" Member="T_PLAN_CONFIGUREs">
+    <Type Name="T_PLAN_CONFIGURE">
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PLAN_NAME" Type="System.String" DbType="NVarChar(250) NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_CODE" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_PRODUCE_CONFIGURE" Member="T_PRODUCE_CONFIGUREs">
+    <Type Name="T_PRODUCE_CONFIGURE">
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PRODUCE_NAME" Type="System.String" DbType="NVarChar(250) NOT NULL" CanBeNull="false" />
+      <Column Name="PRODUCE_CODE" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_TYPE" Member="T_BUDGET_TYPEs">
+    <Type Name="T_BUDGET_TYPE">
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_PERSONNEL_INFORMATION" Member="V_GET_PERSONNEL_INFORMATIONs">
+    <Type Name="V_GET_PERSONNEL_INFORMATION">
+      <Column Name="PERSON_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PERSON_CODE" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="PREFIX_NAME" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="FIRST_NAME" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="LAST_NAME" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="SALARY" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="LEVEL_ID" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="LEVEL_NAME" Type="System.String" DbType="NVarChar(180)" CanBeNull="true" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SUB_DEP_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="POSITION_ID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="POSITION_NAME" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="PERSON_TYPE_ID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="PERSON_TYPE_NAME" Type="System.String" DbType="NVarChar(180)" CanBeNull="true" />
+      <Column Name="REGISTER_DATE" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="EMAIL_ADDR" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="SEX_TYPE" Type="System.Char" DbType="NChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="ACC_TYPE" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="LAST_LOGIN_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_RENT_HOUSE_RATE_CONFIGURE" Member="T_RENT_HOUSE_RATE_CONFIGUREs">
+    <Type Name="T_RENT_HOUSE_RATE_CONFIGURE">
+      <Column Name="RATE_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="LEVEL_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FROM_SALARY" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TO_SALARY" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+      <Column Name="RATE_AMOUNT" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_PERSONNEL_LEVEL" Member="T_PERSONNEL_LEVELs">
+    <Type Name="T_PERSONNEL_LEVEL">
+      <Column Name="LEVEL_ID" Type="System.Int16" DbType="SmallInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="LEVEL_NAME" Type="System.String" DbType="NVarChar(180) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_VEHICLE_TYPE" Member="T_VEHICLE_TYPEs">
+    <Type Name="T_VEHICLE_TYPE">
+      <Column Name="VEHICLE_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="VEHICLE_TYPE_NAME" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="COMPENSATION_PRICE" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_COMPENSATION_TYPE" Member="T_COMPENSATION_TYPEs">
+    <Type Name="T_COMPENSATION_TYPE">
+      <Column Name="COMPENSATION_TYPE_ID" Type="System.Int16" DbType="SmallInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="COMPENSATION_TYPE_NAME" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_PERSONNEL_LEVEL_COMPENSATION_RATE" Member="T_PERSONNEL_LEVEL_COMPENSATION_RATEs">
+    <Type Name="T_PERSONNEL_LEVEL_COMPENSATION_RATE">
+      <Column Name="COMPENSATION_TYPE_ID" Type="System.Int16" DbType="SmallInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="LEVEL_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="RATE_AMOUNT" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+      <Column Name="RATE_TYPE" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_PERSONNEL_LEVEL_COMPENSATION_RATE_INFOMATION" Member="V_GET_PERSONNEL_LEVEL_COMPENSATION_RATE_INFOMATIONs">
+    <Type Name="V_GET_PERSONNEL_LEVEL_COMPENSATION_RATE_INFOMATION">
+      <Column Name="COMPENSATION_TYPE_ID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="LEVEL_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="RATE_AMOUNT" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+      <Column Name="RATE_TYPE" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PERSONNEL_LEVEL_NAME" Type="System.String" DbType="NVarChar(180)" CanBeNull="true" />
+      <Column Name="COMPENSATION_TYPE_NAME" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="COMPENSATION_TYPE_CODE" Type="System.String" DbType="NVarChar(30) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_ASSET_DEPARTMENT_STOCK" Member="T_ASSET_DEPARTMENT_STOCKs">
+    <Type Name="T_ASSET_DEPARTMENT_STOCK">
+      <Column Name="ASSET_ID" Type="System.Int16" DbType="SmallInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PRICE_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="STANDARD_PRICE" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="NON_STANDARD_PRICE" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="STOCK_AMOUNT" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_ASSET" Member="T_ASSETs">
+    <Type Name="T_ASSET">
+      <Column Name="ASSET_ID" Type="System.Int16" DbType="SmallInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ASSET_NAME" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="ASSET_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_EXPENSES_GLCODE" Member="V_EXPENSES_GLCODEs">
+    <Type Name="V_EXPENSES_GLCODE">
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="GLCODE" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="GL_TEXT" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_EXPENSES_ITEM" Member="V_GET_EXPENSES_ITEMs">
+    <Type Name="V_GET_EXPENSES_ITEM">
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EXPENSES_NAME" Type="System.String" DbType="NVarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="FORM_TEMPLATE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_EXPENSES_INFORMATION" Member="V_GET_EXPENSES_INFORMATIONs">
+    <Type Name="V_GET_EXPENSES_INFORMATION">
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EXPENSES_NAME" Type="System.String" DbType="NVarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="FORM_TEMPLATE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_BUDGET_TYPE_GOVERNMENT_REFER_CODE" Member="V_GET_BUDGET_TYPE_GOVERNMENT_REFER_CODEs">
+    <Type Name="V_GET_BUDGET_TYPE_GOVERNMENT_REFER_CODE">
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="GOVERNMENT_REFER_CODE" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_EXPENSES_GROUP_GOVERNMENT_REFER_CODE" Member="V_GET_EXPENSES_GROUP_GOVERNMENT_REFER_CODEs">
+    <Type Name="V_GET_EXPENSES_GROUP_GOVERNMENT_REFER_CODE">
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="GOVERNMENT_REFER_CODE" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_DEPARTMENT" Member="T_DEPARTMENTs">
+    <Type Name="T_DEPARTMENT">
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="AREA_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DEP_AUTHORIZE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_NAME" Type="System.String" DbType="NVarChar(190) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_SHORT_NAME" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="DEP_CODE" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="WORKING_AREA" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="ADDRESS" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="SORT_INDEX" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_RENT_HOUSE_RATE_CONFIGURE" Member="V_GET_RENT_HOUSE_RATE_CONFIGUREs">
+    <Type Name="V_GET_RENT_HOUSE_RATE_CONFIGURE">
+      <Column Name="RATE_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="LEVEL_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FROM_SALARY" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TO_SALARY" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+      <Column Name="RATE_AMOUNT" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LEVEL_NAME" Type="System.String" DbType="NVarChar(180)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_MASTER" Member="T_BUDGET_MASTERs">
+    <Type Name="T_BUDGET_MASTER">
+      <Column Name="BUDGET_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="TEMPORARY_YR" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="BUDGET_FLAG" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="RELEASE_BUDGET" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="RELEASE_OFF_BUDGET" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTUAL_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="USE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="USE_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMAIN_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMAIN_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="LATEST_RECEIVE_BUDGET" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LATEST_RECEIVE_OFF_BUDGET" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_EXPENSES" Member="T_BUDGET_EXPENSEs">
+    <Type Name="T_BUDGET_EXPENSE">
+      <Column Name="SEQ_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="BUDGET_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTUAL_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="USE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="USE_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMAIN_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMAIN_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="LATEST_RECEIVE_BUDGET" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LATEST_USE_BUDGET" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_EXPENSES_RECEIVE" Member="T_BUDGET_EXPENSES_RECEIVEs">
+    <Type Name="T_BUDGET_EXPENSES_RECEIVE">
+      <Column Name="RECEIVE_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="MN" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BUDGET_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="TEMPORARY_YR" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="RECEIVE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="DELETE_REMARK_TEXT" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="RECEIVE_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_BUDGET_EXPENSES_RECEIVE_INFORMATION" Member="V_GET_BUDGET_EXPENSES_RECEIVE_INFORMATIONs">
+    <Type Name="V_GET_BUDGET_EXPENSES_RECEIVE_INFORMATION">
+      <Column Name="RECEIVE_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="MN" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BUDGET_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="TEMPORARY_YR" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="RECEIVE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="DELETE_REMARK_TEXT" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="RECEIVE_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PLAN_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="PRODUCE_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="ACTIVITY_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="RECEIVE_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_BUDGET_REQUEST_INFORMATION" Member="V_GET_BUDGET_REQUEST_INFORMATIONs">
+    <Type Name="V_GET_BUDGET_REQUEST_INFORMATION">
+      <Column Name="REQ_ID" Type="System.String" DbType="NVarChar(11) NOT NULL" CanBeNull="false" />
+      <Column Name="REFER_REQ_ID" Type="System.String" DbType="NVarChar(11)" CanBeNull="true" />
+      <Column Name="AREA_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="TEMPLATE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="REQ_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="BUDGET_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="TOTAL_REQUEST_BUDGET" Type="System.Decimal" DbType="Decimal(15,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REQ_COUNT" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="PROCESS_STATUS" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="SIGNOFF_FLAG" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="SIGNOFF_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="SIGNOFF_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="APPROVE_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="APPROVE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AREA_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="DEP_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="SUB_DEP_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="PLAN_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="PRODUCE_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="ACTIVITY_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="SIGNOFF_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+      <Column Name="CREATED_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+      <Column Name="DELETED_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+      <Column Name="APPROVE_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+      <Column Name="ALLOCATE_YR" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="ALLOCATE_MN" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="NET_ALLOCATE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(38,2)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_REQUEST_MASTER" Member="T_BUDGET_REQUEST_MASTERs">
+    <Type Name="T_BUDGET_REQUEST_MASTER">
+      <Column Name="REQ_ID" Type="System.String" DbType="NVarChar(11) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="REFER_REQ_ID" Type="System.String" DbType="NVarChar(11)" CanBeNull="true" />
+      <Column Name="AREA_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="TEMPLATE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="REQ_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="BUDGET_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="TOTAL_REQUEST_BUDGET" Type="System.Decimal" DbType="Decimal(15,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REQ_COUNT" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="PROCESS_STATUS" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="SIGNOFF_FLAG" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="SIGNOFF_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="SIGNOFF_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="APPROVE_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="APPROVE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_ALLOCATE_EXPENSES" Member="T_BUDGET_ALLOCATE_EXPENSEs">
+    <Type Name="T_BUDGET_ALLOCATE_EXPENSE">
+      <Column Name="SEQ_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ALLOCATE_ID" Type="System.String" DbType="NVarChar(11) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="NET_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="USE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMAIN_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REPORT_OCT" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_NOV" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_DEC" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_JAN" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_FEB" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_MAR" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_APR" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_MAY" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_JUN" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_JUL" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_AUG" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_SEP" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_DEPARTMENT_REQUEST_EXPENSES_BUDGET_AND_ALLOCATE_INFORMATION" Member="V_GET_DEPARTMENT_REQUEST_EXPENSES_BUDGET_AND_ALLOCATE_INFORMATIONs">
+    <Type Name="V_GET_DEPARTMENT_REQUEST_EXPENSES_BUDGET_AND_ALLOCATE_INFORMATION">
+      <Column Name="REQ_ID" Type="System.String" DbType="NVarChar(11) NOT NULL" CanBeNull="false" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="AREA_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AREA_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="REQ_COUNT" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="REQ_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="NET_REQUEST_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(15,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PROCESS_STATUS" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="SIGNOFF_FLAG" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PLAN_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="REQUEST_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(15,2) NOT NULL" CanBeNull="false" />
+      <Column Name="BUDGET_FLAG" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="TEMPORARY_YR" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="BALANCE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="BALANCE_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_ALLOCATE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_ALLOCATE_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_NET_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_USE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_REMAIN_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_BUDGET_REQUEST_DETAIL_INFORMATION" Member="V_GET_BUDGET_REQUEST_DETAIL_INFORMATIONs">
+    <Type Name="V_GET_BUDGET_REQUEST_DETAIL_INFORMATION">
+      <Column Name="REQ_ID" Type="System.String" DbType="NVarChar(11) NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SEQ_NO" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="TOTAL_REQUEST_BUDGET" Type="System.Decimal" DbType="Decimal(15,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ITEM_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_XML_DESCRIBE" Type="System.Xml.Linq.XElement" DbType="Xml" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="ALLOCATE_FLAG" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ALLOCATE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Column Name="EXPENSES_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="ALLOCATE_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+      <Column Name="ALLOCATE_HISTORY_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ALLOCATE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="ALLOCATE_SEQ_NO" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="ALLOCATE_BUDGET_TYPE" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_DEPARTMENT_REPORT_EXPENSES_INFORMATION" Member="V_GET_DEPARTMENT_REPORT_EXPENSES_INFORMATIONs">
+    <Type Name="V_GET_DEPARTMENT_REPORT_EXPENSES_INFORMATION">
+      <Column Name="DEP_ALLOCATE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_ALLOCATE_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_NET_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_USE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_REMAIN_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="LATEST_REPORT_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LATEST_REPORT_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LATEST_REPORT_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+      <Column Name="SEQ_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_ID" Type="System.String" DbType="NVarChar(11) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="NET_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="USE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMAIN_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REPORT_OCT" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_NOV" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_DEC" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_JAN" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_FEB" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_MAR" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_APR" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_MAY" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_JUN" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_JUL" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_AUG" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="REPORT_SEP" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DEP_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="SUB_DEP_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="PLAN_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="PRODUCE_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="ACTIVITY_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_REPORTED_USE_EXPENSES_HISTORY" Member="T_BUDGET_REPORTED_USE_EXPENSES_HISTORies">
+    <Type Name="T_BUDGET_REPORTED_USE_EXPENSES_HISTORY">
+      <Column Name="REPORT_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="MN" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="REPORT_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="DELETED_REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="REPORTED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="REPORTED_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_EXPENSES_GROUP_INFORMATION" Member="V_GET_EXPENSES_GROUP_INFORMATIONs">
+    <Type Name="V_GET_EXPENSES_GROUP_INFORMATION">
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="EXPENSES_MASTER_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EXPENSES_MASTER_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_POLICY" Member="T_POLICies">
+    <Type Name="T_POLICY">
+      <Column Name="POLICY_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="POLICY_NAME" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_MISSION" Member="T_MISSIONs">
+    <Type Name="T_MISSION">
+      <Column Name="MISSION_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="MISSION_NAME" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_VISION" Member="T_VISIONs">
+    <Type Name="T_VISION">
+      <Column Name="VISION_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="INDICATORS_NAME" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="TARGET_VALUE" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_POPULARITY" Member="T_POPULARITies">
+    <Type Name="T_POPULARITY">
+      <Column Name="POPULARITY_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="POPULARITY_NAME" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_TAX_TYPE_INCOME" Member="T_TAX_TYPE_INCOMEs">
+    <Type Name="T_TAX_TYPE_INCOME">
+      <Column Name="Tax_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TAX_TYPE_NAME" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="DOMESTIC_INCOME_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="IMPORT_INCOME_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="TOTAL_INCOME_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="INTERIOR_TAX_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="OTHER_DOMESTIC_INCOME_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="OTHER_IMPORT_INCOME_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_DEPARTMENT_REPORT_EXPENSES_HISTORY" Member="V_GET_DEPARTMENT_REPORT_EXPENSES_HISTORies">
+    <Type Name="V_GET_DEPARTMENT_REPORT_EXPENSES_HISTORY">
+      <Column Name="REPORT_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="MN" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="REPORT_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="DELETED_REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="REPORTED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="REPORTED_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DEP_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="SUB_DEP_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="PLAN_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="PRODUCE_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="ACTIVITY_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="REPORTED_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_BUDGET_RESERVE_INFORMATION" Member="V_GET_BUDGET_RESERVE_INFORMATIONs">
+    <Type Name="V_GET_BUDGET_RESERVE_INFORMATION">
+      <Column Name="RESERVE_ID" Type="System.String" DbType="NVarChar(12) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="RESERVE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="USE_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMAIN_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="REJECT_REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="RESERVE_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LATEST_WITHDRAWAL_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LATEST_WITHDRAWAL_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SUB_DEP_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="PLAN_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="PRODUCE_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="ACTIVITY_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="RESERVE_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+      <Column Name="LATEST_WITHDRAWAL_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_RESERVE" Member="T_BUDGET_RESERVEs">
+    <Type Name="T_BUDGET_RESERVE">
+      <Column Name="RESERVE_ID" Type="System.String" DbType="NVarChar(12) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="RESERVE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="USE_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMAIN_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="REJECT_REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="RESERVE_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LATEST_WITHDRAWAL_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LATEST_WITHDRAWAL_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_BUDGET_RESERVE_WITHDRAWAL" Member="T_BUDGET_RESERVE_WITHDRAWALs">
+    <Type Name="T_BUDGET_RESERVE_WITHDRAWAL">
+      <Column Name="SEQ_NO" Type="System.Int16" DbType="SmallInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="RESERVE_ID" Type="System.String" DbType="NVarChar(12) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="MN" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="WITHDRAWAL_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="WITHDRAWAL_CODE" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="REJECT_REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION" Member="V_GET_SUMMARY_BUDGET_RESERVE_INFORMATIONs">
+    <Type Name="V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION">
+      <Column Name="RESERVE_ID" Type="System.String" DbType="NVarChar(12) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="RESERVE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="USE_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMAIN_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2) NOT NULL" CanBeNull="false" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="REJECT_REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="RESERVE_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LATEST_WITHDRAWAL_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LATEST_WITHDRAWAL_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DELETED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DELETED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SUB_DEP_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="PLAN_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="PRODUCE_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="ACTIVITY_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="RESERVE_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+      <Column Name="SEQ_NO" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="WITHDRAWAL_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="WITHDRAWAL_CODE" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="WITHDRAWAL_REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="WITHDRAWAL_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="WITHDRAWAL_ACTIVE" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="WITHDRAWAL_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_PERSONNEL" Member="T_PERSONNELs">
+    <Type Name="T_PERSONNEL">
+      <Column Name="PERSON_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PERSON_TYPE_ID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="LEVEL_ID" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PERIOD_ID" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="PREFIX_NAME" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="PERSON_CODE" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="CARD_NUMBER" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="FIRST_NAME" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="LAST_NAME" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="POSITION_ID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="REGISTER_DATE" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="PROFILE_IMG" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="EMAIL_ADDR" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="PWD_HASH" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="OT_RATE" Type="System.Decimal" DbType="Decimal(7,2)" CanBeNull="true" />
+      <Column Name="OT_TYPE" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="SEX_TYPE" Type="System.Char" DbType="NChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="SALARY" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="ADDRESS" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="MOBILE_NO" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
+      <Column Name="ACC_TYPE" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="LAST_LOGIN_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LAST_ACTION_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ONE_TIME_TOKEN" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Function Name="dbo.proc_GetUserRoles" Method="proc_GetUserRoles">
+    <Parameter Name="p_person_id" Type="System.Int32" DbType="Int" />
+    <ElementType Name="proc_GetUserRolesResult">
+      <Column Name="ROLE_ID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ROLE_NAME" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="ROLE_CONST" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.proc_GetUserMenu" Method="proc_GetUserMenu">
+    <Parameter Name="p_person_id" Type="System.Int32" DbType="Int" />
+    <ElementType Name="proc_GetUserMenuResult">
+      <Column Name="GROUP_ICON" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
+      <Column Name="GROUP_NAME" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="MENU_ICON" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
+      <Column Name="MENU_NAME" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="MENU_DESCRIPTION" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="MENU_CONST" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="ROUTE_METHOD" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Column Name="ROUTE_CONTROLLER" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.fn_GetCurrentYear" Method="fn_GetCurrentYear" IsComposable="true">
+    <Parameter Name="p_test_date" Type="System.DateTime" DbType="DateTime" />
+    <Return Type="System.Int16" />
+  </Function>
+  <Function Name="dbo.proc_GetUsingAppConstByKey" Method="proc_GetUsingAppConstByKey">
+    <Parameter Name="p_config_const" Type="System.String" DbType="NVarChar(100)" />
+    <ElementType Name="proc_GetUsingAppConstByKeyResult">
+      <Column Name="CONFIG_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CONFIG_DETAIL_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ITEM_VALUE" Type="System.String" DbType="NVarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="ITEM_VALUE2" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="ITEM_VALUE3" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EFFECTIVE_DATE" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="EXPIRE_DATE" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.proc_GetExpensesAllocateBudgetFromGovernmentByYear" Method="proc_GetExpensesAllocateBudgetFromGovernmentByYear">
+    <Parameter Name="p_fiscal_year" Type="System.Int16" DbType="SmallInt" />
+    <ElementType Name="proc_GetExpensesAllocateBudgetFromGovernmentByYearResult">
+      <Column Name="BUDGET_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SEQ_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PLAN_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_GOVERNMENT_REFER_CODE" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_GOVERNMENT_REFER_CODE" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="ACTUAL_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="USE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="REMAIN_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="USE_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="REMAIN_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+      <Column Name="LATEST_RECEIVE_BUDGET" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LATEST_USE_BUDGET" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.proc_GetTrackingBudgetRequestStartYear" Method="proc_GetTrackingBudgetRequestStartYear">
+    <Parameter Name="p_fiscal_year" Type="System.Int16" DbType="SmallInt" />
+    <ElementType Name="proc_GetTrackingBudgetRequestStartYearResult">
+      <Column Name="REQ_ID" Type="System.String" DbType="NVarChar(30)" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="TEMPLATE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PROCESS_STATUS" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="AREA_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AREA_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="DEP_SORT_INDEX" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PLAN_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="TOTAL_REQUEST_BUDGET" Type="System.Decimal" DbType="Decimal(15,2)" CanBeNull="true" />
+      <Column Name="CREATED_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PROCESS_STATUS1" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="APPROVE_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+      <Column Name="APPROVE_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="NET_ALLOCATE_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(38,2)" CanBeNull="true" />
+      <Column Name="SIGNOFF_FLAG" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="SIGNOFF_NAME" Type="System.String" DbType="NVarChar(221)" CanBeNull="true" />
+      <Column Name="SIGNOFF_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.pro_GRAPH_ANNUAL_BUDGET" Method="pro_GRAPH_ANNUAL_BUDGET">
+    <Parameter Name="YR" Parameter="yR" Type="System.Int32" DbType="Int" />
+    <Parameter Name="PlanConfigId" Parameter="planConfigId" Type="System.Int32" DbType="Int" />
+    <Parameter Name="ProductID" Parameter="productID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="ActivityID" Parameter="activityID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="budgetID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="strategic" Type="System.Int32" DbType="Int" />
+    <ElementType Name="pro_GRAPH_ANNUAL_BUDGETResult">
+      <Column Name="label" Type="System.String" DbType="NVarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="value" Type="System.Decimal" DbType="Decimal(38,2)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+</Database>

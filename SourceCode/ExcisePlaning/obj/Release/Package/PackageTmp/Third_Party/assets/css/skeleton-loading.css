@@ -1,0 +1,25 @@
+﻿/**
+    Skeleton login loading (fadeIn/Out)
+*/
+.skeleton-login-loading {
+    width: 100%;
+    height: auto;
+    min-height: 493px;
+    z-index: 100;
+    background-repeat: no-repeat;
+    position: relative;
+    background-image: radial-gradient(circle 53px, #ccc 100%, transparent), linear-gradient(to left, #ccc 100%, #ccc 100%), linear-gradient(to left, #ccc 100%, #ccc 100%), linear-gradient(to left, #ccc 100%, #ccc 100%);
+    background-size: 106px 106px, 280px 45px, 280px 45px, 280px 45px;
+    background-position: top 10px left 50%, top 250px left 50%, top 300px left 50%, top 380px left 50%;
+    animation: skeleton-loading 1.2s infinite;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-image: radial-gradient(circle 53px, #ccc 100%, transparent), linear-gradient(to left, #ccc 100%, #ccc 100%), linear-gradient(to left, #ccc 100%, #ccc 100%), linear-gradient(to left, #ccc 100%, #ccc 100%);
+    }
+
+    100% {
+        background-image: radial-gradient(circle 53px, #ccc 95%, transparent), linear-gradient(to left, #d9d9d9 100%, #d9d9d9 100%), linear-gradient(to left, #d9d9d9 100%, #d9d9d9 100%), linear-gradient(to left, #d9d9d9 100%, #d9d9d9 100%);
+    }
+}

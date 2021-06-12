@@ -1,0 +1,134 @@
+﻿<md-dialog flex="99" flex-gt-sm="90">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>จัดสรรงบประมาณให้กับหน่วยงาน {{$settings.formView.DEP_NAME}}</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="row mb-2">
+                <div class="col-12 col-md-4">
+                    <input type="text" class="form-control" value="{{$settings.formView.rows[0].Expenses[0].YR|convertYearToBuddhist}}" readonly />
+                </div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control" value="{{$settings.formView.AREA_NAME}}" title="{{$settings.formView.AREA_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control" value="{{$settings.formView.DEP_NAME}}" title="{{$settings.formView.DEP_NAME}}" readonly /></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-12 col-md-4"><input type="text" class="form-control" value="ประเภทงบ: {{$settings.formView.BUDGET_TYPE==1?'เงินงบประมาณ':'เงินนอกงบประมาณ'}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control" value="ขอเพิ่มครั้งที่ {{$settings.formView.REQ_COUNT==null?'-':$settings.formView.REQ_COUNT}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control" value="คำขอ: {{$settings.formView.rows[0].Expenses[0].NET_REQUEST_BUDGET_AMOUNT|number:2}} บาท" title="คำขอ: {{$settings.formView.rows[0].Expenses[0].NET_REQUEST_BUDGET_AMOUNT|number:2}}" readonly /></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-12 col-md-4"><input type="text" class="form-control" value="{{$settings.formView.rows[0].Expenses[0].PLAN_NAME==null?'แผนงาน: -':$settings.formView.rows[0].Expenses[0].PLAN_NAME}}" title="{{$settings.formView.rows[0].Expenses[0].PLAN_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control" value="{{$settings.formView.rows[0].Expenses[0].PRODUCE_NAME==null?'ผลผลิต: -':$settings.formView.rows[0].Expenses[0].PRODUCE_NAME}}" title="{{$settings.formView.rows[0].Expenses[0].PRODUCE_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control" value="{{$settings.formView.rows[0].Expenses[0].ACTIVITY_NAME==null?'กิจกรรม: -':$settings.formView.rows[0].Expenses[0].ACTIVITY_NAME}}" title="{{$settings.formView.rows[0].Expenses[0].ACTIVITY_NAME}}" readonly /></div>
+            </div>
+            <div class="row border-bottom mb-2 pb-2">
+                <div class="col-12 col-md-4"><input type="text" class="form-control" value="{{$settings.formView.rows[0].Expenses[0].BUDGET_TYPE_NAME}}" title="{{$settings.formView.rows[0].Expenses[0].BUDGET_TYPE_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control" value="{{$settings.formView.rows[0].Expenses[0].EXPENSES_GROUP_NAME}}" title="{{$settings.formView.rows[0].Expenses[0].EXPENSES_GROUP_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4 mt-1 mt-md-0">
+                    <fw-validate-error-output error-messages="$settings.formErrors.AllocateBudgetTypeFlag.ErrorMessages" css-class="d-block"></fw-validate-error-output>
+                    <div>
+                        <label class="mr-1 f-w-900">จัดสรรจาก:</label>
+                        <md-checkbox ng-model="$settings.formData.AllocateBudgetTypeFlag" ng-true-value="1" ng-false-value="2">เงิน งปม.</md-checkbox>
+                        <md-checkbox ng-model="$settings.formData.AllocateBudgetTypeFlag" ng-true-value="2" ng-false-value="1">เงินนอก งปม.</md-checkbox>
+                    </div>
+                </div>
+            </div>
+
+
+            @*แสดงสถานะ งบประมาณพลางก่อน*@
+            <div class="position-relative">
+                <div class="position-absolute p-1 bg-danger shadow-sm"
+                     style="top:-40px;right:0px"
+                     ng-if="$settings.formView.rows[0].Expenses[0].BUDGET_FLAG==2">
+                    <span class="animated fadeIn f-w-900 f-12">
+                        พลางก่อนปี {{$settings.formView.rows[0].Expenses[0].TEMPORARY_YR|convertYearToBuddhist}}
+                    </span>
+                </div>
+            </div>
+
+            <fw-validate-error-output error-messages="$settings.formErrors.Expenses.ErrorMessages" css-class="d-block"></fw-validate-error-output>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+
+                    <tr ng-if="$settings.formView.rows.length == 0 && !$settings.isLoading">
+                        <th colspan="8" class="text-center text-danger">--- ไม่พบรายการค่าใช้จ่ายในคำขอ ---</th>
+                    </tr>
+
+
+                    @*รายการค่าใช้จ่ายในคำขอ*@
+                    <tr ng-repeat-start="row in $settings.formView.rows" ng-if="false"></tr>
+                    <tr class="bg-primary">
+                        <th rowspan="2" style="width:170px;min-width:170px;max-width:170px;" class="text-left align-middle">รายการค่าใช้จ่าย</th>
+                        <th rowspan="2" style="min-width:136px;max-width:136px;width:136px" class="text-right word-wrap align-middle">คงเหลือสุทธิ (บาท)</th>
+                        <th rowspan="2" style="min-width:136px;max-width:136px;width:136px" class="text-right align-middle">คำขอ (บาท)</th>
+                        <th colspan="2" class="text-center">จัดสรร (บาท)</th>
+                        <th colspan="3" class="text-center">ได้รับจัดสรร (บาท)</th>
+                    </tr>
+                    <tr class="bg-primary">
+                        <th style="min-width:136px;max-width:136px;width:136px" class="text-right">จัดสรรเพิ่ม</th>
+                        <th style="width:190px;min-width:190px;max-width:190px;" class="text-left">หมายเหตุ</th>
+                        <th style="min-width:136px;max-width:136px;width:136px" class="text-right">สะสม</th>
+                        <th style="min-width:136px;max-width:136px;width:136px" class="text-right">ใช้ไป</th>
+                        <th style="min-width:136px;max-width:136px;width:136px" class="text-right">คงเหลือ</th>
+                    </tr>
+                    <tr ng-repeat="expenses in row.Expenses">
+                        <td style="min-width:170px;" class="text-left word-wrap">{{expenses.EXPENSES_NAME}}</td>
+                        <td style="min-width:136px;max-width:136px;width:136px" class="text-right bg-light">
+                            <div ng-if="$settings.formData.AllocateBudgetTypeFlag==1"><span class="animated fadeIn">{{expenses.BALANCE_BUDGET_AMOUNT|number:2}}</span></div>
+                            <div ng-if="$settings.formData.AllocateBudgetTypeFlag==2"><span class="animated fadeIn">{{expenses.BALANCE_OFF_BUDGET_AMOUNT|number:2}}</span></div>
+                        </td>
+                        <td style="min-width:136px;max-width:136px;width:136px" class="text-right">{{expenses.REQUEST_BUDGET_AMOUNT|number:2}}</td>
+                        <td style="min-width:136px;max-width:136px;width:136px" class="text-right">
+                            <fw-input-number-mask ng-model="expenses.NewAllocateAmounts" css-class="text-right"
+                                                  ng-disabled="$settings.isLoading" placeholder="ระบุจำนวนเงิน (บาท)"
+                                                  min-value="0.00" max-value="9999999999.99"></fw-input-number-mask>
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$index].NewAllocateAmounts.ErrorMessages"></fw-validate-error-output>
+                        </td>
+                        <td style="width:190px;min-width:190px;max-width:190px;" class="text-left">
+                            <input type="text" class="form-control" ng-model="expenses.RemarkText" title="{{row.RemarkText}}" ng-disabled="$settings.isLoading" maxlength="120" placeholder="ไม่เกิน 120 ตัวอักษร" />
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$index].RemarkText.ErrorMessages"></fw-validate-error-output>
+                        </td>
+                        <td style="min-width:136px;max-width:136px;width:136px" class="text-right">{{expenses.DEP_NET_BUDGET_AMOUNT|number:2}}</td>
+                        <td style="min-width:136px;max-width:136px;width:136px" class="text-right">{{expenses.DEP_USE_BUDGET_AMOUNT|number:2}}</td>
+                        <td style="min-width:136px;max-width:136px;width:136px" class="text-right">{{expenses.DEP_REMAIN_BUDGET_AMOUNT|number:2}}</td>
+                    </tr>
+                    @*แสดงยอดรวม*@
+                    <tr class="bg-primary">
+                        <th class="text-right">รวมทั้งสิ้น</th>
+                        <th class="text-right">
+                            <div ng-if="$settings.formData.AllocateBudgetTypeFlag==1"><span class="animated fadeIn">{{row.Expenses|fwSimpleSummary:['BALANCE_BUDGET_AMOUNT']:2}}</span></div>
+                            <div ng-if="$settings.formData.AllocateBudgetTypeFlag==2"><span class="animated fadeIn">{{row.Expenses|fwSimpleSummary:['BALANCE_OFF_BUDGET_AMOUNT']:2}}</span></div>
+                        </th>
+                        <th class="text-right">{{row.Expenses|fwSimpleSummary:['REQUEST_BUDGET_AMOUNT']:2}}</th>
+                        <th class="text-right">{{row.Expenses|fwSimpleSummary:['NewAllocateAmounts']:2}}</th>
+                        <th>&nbsp;</th>
+                        <th class="text-right">{{row.Expenses|fwSimpleSummary:['DEP_NET_BUDGET_AMOUNT']:2}}</th>
+                        <th class="text-right">{{row.Expenses|fwSimpleSummary:['DEP_USE_BUDGET_AMOUNT']:2}}</th>
+                        <th class="text-right">{{row.Expenses|fwSimpleSummary:['DEP_REMAIN_BUDGET_AMOUNT']:2}}</th>
+                    </tr>
+                    <tr ng-repeat-end ng-if="false"></tr>
+
+                </table>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div class="text-danger animated fadeIn">
+            เลขที่คำขอ: <span class="ml-1">{{$settings.formView.REQ_ID}}</span>
+            <span class="ml-1">[{{$settings.formView.REQ_TYPE==1?'คำขอต้นปี':'คำขอเพิ่มเติม'}}]</span>
+        </div>
+        <span flex></span>
+        <fw-execute-button text="จัดสรรงบประมาณ" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           on-loading="$settings.isSaving"
+                           css-icon-class="icofont icofont-money-bag"
+                           ng-click="ok($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

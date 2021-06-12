@@ -1,0 +1,29 @@
+﻿<md-dialog flex="100" flex-gt-sm="45">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ข้อควรระวัง</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <p>การแก้ไขข้อมูลวันหยุดประจำปี จะมีผลกระทบต่อส่วนต่างๆของระบบดังต่อไปนี้</p>
+            <ol class="ml-1 mt-1">
+                <li>Module การขอ OT ซึ่งการขอ OT ในวันหยุดและวันทำงานปกติ จำนวนชั่วโมงทำงานสูงสุดที่นำมาคิด OT จะแตกต่างกัน</li>
+                <li>
+                    Module การขอลา ไม่สามารถลาตรงกับวันหยุดประจำปี หรือ เสาร์ - อาทิตย์ ได้
+                    <ul>
+                        <li>- กำหนดวันหยุดตรงกับวันลา ระบบจะยกเลิกการลาให้อัตโนมัติ</li>
+                        <li>- กำหนดวันหยุดตรงกับวันลา ที่อนุมัติแล้ว ระบบจะยกเลิกวันลาและคืนวันลาให้อัตโนมัติ</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

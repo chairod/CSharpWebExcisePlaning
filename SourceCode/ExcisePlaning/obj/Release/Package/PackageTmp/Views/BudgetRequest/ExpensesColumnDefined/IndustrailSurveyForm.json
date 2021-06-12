@@ -1,0 +1,12 @@
+{
+  "PersonName": null,
+  "PositionId": "empty",
+  "PositionName": null,
+  "PersonTypeId": "empty",
+  "PersonTypeName": null,
+  "AmountDays": 0,
+  "VehicleTypeId": "empty",
+  "VehicleTypeName": null,
+  "CompensationRatePrice": 0,
+  "TotalPrice": 0
+}

@@ -1,0 +1,116 @@
+﻿<md-dialog flex="97" flex-gt-sm="75">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>รอบ/กะงาน</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="row">
+                @*ฟอร์มการกำหนดค่ากะงาน*@
+                <div class="col-12 col-md-8 border-right">
+                    <div class="form-row">
+                        <div class="form-group col-12 col-md-3">
+                            <label class="require-field">รหัสกะงาน<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.PeriodCode.ErrorMessages"></fw-validate-error-output></label>
+                            <fw-input-mask model="$settings.formData.PeriodCode" mask="A999" disabled="$settings.isLoading"></fw-input-mask>
+                        </div>
+                        <div class="form-group col-12 col-md-3">
+                            <label class="require-field">ชื่อเรียกกะงาน<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.PeriodName.ErrorMessages"></fw-validate-error-output></label>
+                            <input type="text" class="form-control" ng-model="$settings.formData.PeriodName" ng-disabled="$settings.isLoading" />
+                        </div>
+                        <div class="form-group col-12 col-md-3">
+                            <label class="require-field">เวลามา<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.StartTime.ErrorMessages"></fw-validate-error-output></label>
+                            <fw-input-mask model="$settings.formData.StartTime"
+                                           mask="99:99" change="startTimeChanged()"
+                                           disabled="$settings.isLoading"></fw-input-mask>
+                        </div>
+                        <div class="form-group col-12 col-md-3">
+                            <label class="require-field">เวลากลับ<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.EndTime.ErrorMessages"></fw-validate-error-output></label>
+                            <fw-input-mask model="$settings.formData.EndTime"
+                                           mask="99:99" change="endTimeChanged()"
+                                           disabled="$settings.isLoading"></fw-input-mask>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12 col-md-3">
+                            <label class="require-field">เวลาเริ่มงานครึ่งเช้า<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.StartTimeFirstHalf.ErrorMessages"></fw-validate-error-output></label>
+                            <fw-input-mask model="$settings.formData.StartTimeFirstHalf" mask="99:99" disabled="$settings.isLoading||true"></fw-input-mask>
+                        </div>
+                        <div class="form-group col-12 col-md-3">
+                            <label class="require-field">เวลาออกงานครึ่งเช้า<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.EndTimeFirstHalf.ErrorMessages"></fw-validate-error-output></label>
+                            <fw-input-mask model="$settings.formData.EndTimeFirstHalf" mask="99:99" disabled="$settings.isLoading"></fw-input-mask>
+                        </div>
+                        <div class="form-group col-12 col-md-3">
+                            <label class="require-field">เวลาเริ่มงานครึ่งบ่าย<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.StartTimeSecondHalf.ErrorMessages"></fw-validate-error-output></label>
+                            <fw-input-mask model="$settings.formData.StartTimeSecondHalf" mask="99:99" disabled="$settings.isLoading"></fw-input-mask>
+                        </div>
+                        <div class="form-group col-12 col-md-3">
+                            <label class="require-field">เวลาออกงานครึ่งบ่าย<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.EndTimeSecondHalf.ErrorMessages"></fw-validate-error-output></label>
+                            <fw-input-mask model="$settings.formData.EndTimeSecondHalf" mask="99:99" disabled="$settings.isLoading||true"></fw-input-mask>
+                        </div>
+                    </div>
+                    <div class="form-row border-bottom mb-md-2">
+                        <div class="form-group col-12 col-md-3">
+                            <label class="require-field">เวลาเข้างานที่ถือว่ามาสาย<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.LateStartTime.ErrorMessages"></fw-validate-error-output></label>
+                            <fw-input-mask model="$settings.formData.LateStartTime" mask="99:99" disabled="$settings.isLoading"></fw-input-mask>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12 col-md-6">
+                            <label>หมายเหตุ/เพิ่มเติม<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.RemarkText.ErrorMessages"></fw-validate-error-output></label>
+                            <textarea class="form-control textarea-noresize" ng-model="$settings.formData.RemarkText" ng-disabled="$settings.isLoading"></textarea>
+                        </div>
+                        <div class="form-group col-12 col-md-6">
+                            <label class="required-field">รอบเวลาการเข้างาน<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.DayWeeksIndex.ErrorMessages"></fw-validate-error-output></label>
+                            <div>
+                                <md-checkbox ng-repeat="item in $settings.dayWeeks" ng-model="item.checked" ng-disabled="$settings.isLoading">{{item.dayName}}</md-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <fw-validate-error-output css-class="d-block mb-1" error-messages="$settings.formErrors.PersonIds.ErrorMessages"></fw-validate-error-output>
+                    <div class="row">
+                        <div class="col-12 col-md-4 text-left">
+                            จำนวน {{$settings.selectPersons.length|number:0}} คน
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <fw-execute-button text="เลือกบุคลากร" css-class="btn btn-primary btn-sm float-md-right" css-icon-class="ion-person-stalker"
+                                               ng-click="browsePerson($event)" ng-disabled="$settings.isLoading"></fw-execute-button>
+                        </div>
+                    </div>
+                    <div class="overflow-auto" style="min-height:230px;max-height:230px;height:230px">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th>ชื่อ - นามสกุล</th>
+                                <th style="min-width:60px;max-width:60px;width:60px" class="text-center">...</th>
+                            </tr>
+                            <tr ng-repeat="person in $settings.selectPersons">
+                                <td class="text-left bg-light">{{person.FIRST_NAME+' '+person.LAST_NAME}}</td>
+                                <td style="min-width:60px;max-width:60px;width:60px" class="text-center">
+                                    <a href="javascript:void(0)" ng-click="$settings.selectPersons.splice($index, 1)" class="text-danger f-w-900 f-14">ยกเลิก</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="text-md-right mt-2">
+                        <a href="javascript:void(0)" class="f-w-900 text-danger" ng-click="$settings.selectPersons = []">[ยกเลิกบุคลากรที่เลือกไว้ทั้งหมด]</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           on-loading="$settings.isSaving"
+                           css-icon-class="ti-save"
+                           ng-click="submitSave($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

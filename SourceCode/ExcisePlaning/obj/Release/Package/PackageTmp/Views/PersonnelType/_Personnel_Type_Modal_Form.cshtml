@@ -1,0 +1,36 @@
+﻿
+<md-dialog flex="100" flex-gt-sm="35">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ประเภทบุคลากร</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="required-field">ประเภทบุคลากร <fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.PersonTypeName.ErrorMessages"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" id="personTypeName" ng-model="$settings.formData.PersonTypeName" ng-disabled="$settings.isLoading" />
+                </div>
+                <div class="form-group col-12">
+                    <label>คำอธิบายเพิ่มเติม <fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.PersonTypeDescription.ErrorMessages"></fw-validate-error-output></label>
+                    <textarea class="form-control textarea-noresize"
+                              ng-model="$settings.formData.PersonTypeDescription"
+                              ng-disabled="$settings.isLoading"
+                              style="min-height:120px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึกประเภทบุคลากร" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="submitSave($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,13 @@
+{
+  "MasterStructure": {
+    "CommitteeGroupName": "",
+    "Items": []
+  },
+  "DetailStructure": {
+    "CommitteeTypeName": null,
+    "CommitteeAmounts": 0,
+    "AmountDays": 0,
+    "CompensationPriceRate": 0,
+    "TotalCompensationPrice": 0
+  }
+}

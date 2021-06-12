@@ -1,0 +1,442 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-1">
+        <div class="form-row">
+            <div class="col-12 col-md-3">
+                <div class="input-group">
+                    <input type="text" class="form-control text-primary" ng-model="$settings.formSearch.reserveId"
+                           ng-change="reserveIdChanged()" placeholder="เลขที่กันเงิน" maxlength="12" />
+                    <div class="input-group-append">
+                        <fw-execute-button text="ค้นหา" css-icon-class="ti-search"
+                                           ng-disabled="$settings.isLoading"
+                                           ng-click="searchModal($event)"></fw-execute-button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-9">
+                <fw-execute-button text="ยกเลิกใบกันเงิน" css-icon-class="ion-close"
+                                   css-class="btn btn-danger btn-sm float-md-right"
+                                   ng-disabled="$settings.isLoading||$settings.formData.ReserveId==null"
+                                   on-loading="$settings.isRejecting"
+                                   ng-click="submitReject($event)"></fw-execute-button>
+                <fw-execute-button text="กันเงินงบประมาณ" css-icon-class="ti-save"
+                                   css-class="btn btn-primary btn-sm float-md-right mr-1"
+                                   ng-disabled="$settings.isLoading"
+                                   on-loading="$settings.isSaving"
+                                   ng-click="submitSave($event)"></fw-execute-button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-block borderless-card shadow-sm m-0 mb-1">
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>ปีงบประมาณ</label>
+                <input type="text" class="form-control" value="{{$settings.formData.FiscalYear|convertYearToBuddhist}}" readonly />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="required-field">หน่วยงานภายใน<fw-validate-error-output error-messages="$settings.formErrors.SubDepId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                <select class="form-control" ng-model="$settings.formData.SubDepId" ng-disabled="$settings.isLoading||$settings.formData.ReserveId!=null" fw-select2>
+                    <option value="empty">--- หน่วยงานภายใน ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.SubDepartmentShortFieldProperty item in ViewBag.SubDepartments)
+                    {
+                        <option value="@item.SUB_DEP_ID">@item.SUB_DEP_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ผู้ทำรายการ</label>
+                <input type="text" class="form-control" value="{{$settings.formData.CreatedName}}" readonly />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>วันที่ทำรายการ</label>
+                <input type="text" class="form-control" value="{{$settings.formData.CreatedDate}}" readonly />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>แผนงาน<fw-validate-error-output error-messages="$settings.formErrors.PlanId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                <select class="form-control" ng-model="$settings.formData.PlanId"
+                        ng-disabled="$settings.isLoading||$settings.formData.ReserveId!=null" fw-select2>
+                    <option value="empty">--- แผนงาน ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.PlanShortFieldProperty item in ViewBag.Plans)
+                    {
+                        <option value="@item.PLAN_ID">@item.PLAN_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ผลผลิต<fw-validate-error-output error-messages="$settings.formErrors.ProduceId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                <select class="form-control" ng-model="$settings.formData.ProduceId" ng-disabled="$settings.isLoading||$settings.formData.ReserveId!=null" fw-select2>
+                    <option value="empty">--- ผลผลิต ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.ProduceShortFieldProperty item in ViewBag.Produces)
+                    {
+                        <option value="@item.PRODUCE_ID">@item.PRODUCE_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>กิจกรรม<fw-validate-error-output error-messages="$settings.formErrors.ActivityId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                <select class="form-control" ng-model="$settings.formData.ActivityId" ng-disabled="$settings.isLoading||$settings.formData.ReserveId!=null" fw-select2>
+                    <option value="empty">--- กิจกรรม ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.ActivityShortFieldProperty item in ViewBag.Activities)
+                    {
+                        <option value="@item.ACTIVITY_ID">@item.ACTIVITY_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="require-field">งบรายจ่าย<fw-validate-error-output error-messages="$settings.formErrors.BudgetTypeId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                <select class="form-control" ng-model="$settings.formData.BudgetTypeId" ng-disabled="$settings.isLoading||$settings.formData.ReserveId!=null" fw-select2
+                        ng-change="budgetTypeChanged()">
+                    <option value="empty">--- งบรายจ่าย ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.BudgetTypeShortFieldProperty item in ViewBag.BudgetTypes)
+                    {
+                        <option value="@item.BUDGET_TYPE_ID">@item.BUDGET_TYPE_NAME</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-row border-bottom mb-2">
+            <div class="form-group col-12 col-md-3">
+                <label class="require-field">หมวดค่าใช้จ่าย<fw-validate-error-output error-messages="$settings.formErrors.ExpensesGroupId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                <select class="form-control" ng-model="$settings.formData.ExpensesGroupId" ng-disabled="$settings.isLoading||$settings.expensesGroups.length==0||$settings.formData.ReserveId!=null" fw-select2
+                        ng-change="expensesGroupChanged()">
+                    <option value="empty">--- หมวดค่าใช้จ่าย ---</option>
+                    <option ng-repeat="item in $settings.expensesGroups" value="{{item.EXPENSES_GROUP_ID}}">{{item.EXPENSES_GROUP_NAME}}</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="require-field">ค่าใช้จ่าย<fw-validate-error-output error-messages="$settings.formErrors.ExpensesId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                <select class="form-control" ng-model="$settings.formData.ExpensesId" ng-disabled="$settings.isLoading||$settings.expenses.length==0||$settings.formData.ReserveId!=null" fw-select2>
+                    <option value="empty">--- ค่าใช้จ่าย ---</option>
+                    <option ng-repeat="item in $settings.expenses" value="{{item.EXPENSES_ID}}">{{item.EXPENSES_NAME}}</option>
+                </select>
+            </div>
+        </div>
+
+        @*ระบุรายละเอียดการกันเงิน*@
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label class="require-field">จำนวนเงิน<fw-validate-error-output error-messages="$settings.formErrors.ReserveAmounts.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <fw-input-number-mask ng-model="$settings.formData.ReserveAmounts" ng-disabled="$settings.isLoading"
+                                              min-value="0.00" max-value="99999999999999.99" placeholder="ระบุจำนวนเงิน (บาท)"></fw-input-number-mask>
+                    </div>
+                    <div class="form-group col-12">
+                        <div class="mb-2 pb-2 border-bottom">
+                            <md-checkbox ng-model="$settings.formData.ReserveType" ng-true-value="1" ng-false-value="2" class="mb-0">ผูกพัน</md-checkbox>
+                            <md-checkbox ng-model="$settings.formData.ReserveType" ng-true-value="2" ng-false-value="1" class="mb-0">กันไว้เบิก</md-checkbox>
+                        </div>
+                        <div>
+                            <md-checkbox ng-model="$settings.formData.BudgetType" ng-true-value="1" ng-false-value="2" class="mb-0">เงินงบประมาณ</md-checkbox>
+                            <md-checkbox ng-model="$settings.formData.BudgetType" ng-true-value="2" ng-false-value="1" class="mb-0">นอกงบประมาณ</md-checkbox>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-8">
+                <div class="form-group col-12">
+                    <label>หมายเหตุ<fw-validate-error-output error-messages="$settings.formErrors.RemarkText.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <textarea class="form-control textarea-noresize" ng-model="$settings.formData.RemarkText" rows="5" placeholder="ระบุรายละเอียดเพิ่มเติม"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*ประวัติการเบิกจ่าย*@
+    <div class="card card-block borderless-card shadow-sm m-0 mb-1" ng-if="$settings.formData.ReserveId!=null">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <tr class="bg-primary">
+                    <th colspan="3" class="text-center">สรุปภาพรวมการเบิกจ่าย (บาท)</th>
+                    <th colspan="2" class="text-center">เบิกจ่ายล่าสุด</th>
+                </tr>
+                <tr class="bg-primary">
+                    <th class="text-right">กันเงิน</th>
+                    <th class="text-right">เบิกจ่าย</th>
+                    <th class="text-right">คงเหลือ</th>
+                    <th class="text-left" style="width:160px;max-width:160px;min-width:160px;">ผู้ทำรายการ</th>
+                    <th class="text-left" style="width:160px;max-width:160px;min-width:160px;">วันที่ทำรายการ</th>
+                </tr>
+                <tr>
+                    <th class="text-right">{{$settings.formView.reserveAmounts|number:2}}</th>
+                    <th class="text-right">{{$settings.formView.useAmounts|number:2}}</th>
+                    <th class="text-right">{{$settings.formView.remainAmounts|number:2}}</th>
+                    <th class="text-left">{{$settings.formView.latestWithdrawalName}}</th>
+                    <th class="text-left">{{$settings.formView.latestWithdrawalDatetime}}</th>
+                </tr>
+            </table>
+        </div>
+        <h4 class="text-primary f-16 text-left m-0 mb-2 pb-2 border-bottom animated fadeIn">ประวัติการเบิกจ่าย</h4>
+        <div class="table-responsive animated fadeIn">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th style="width:70px;max-width:70px;min-width:70px;"></th>
+                    <th style="width:60px;max-width:60px;min-width:60px;" class="text-center">ครั้งที่</th>
+                    <th style="width:120px;max-width:120px;min-width:120px;" class="text-left">เลขที่ขอเบิก</th>
+                    <th style="width:160px;max-width:160px;min-width:160px;" class="text-left">ผู้ขอเบิก</th>
+                    <th style="width:160px;max-width:160px;min-width:160px;" class="text-center">วันที่เบิก</th>
+                    <th style="width:175px;max-width:175px;min-width:175px;" class="text-right">จำนวน (บาท)</th>
+                    <th style="min-width:180px;" class="text-left">หมายเหตุ</th>
+                </tr>
+
+                <tr ng-if="$settings.formView.rows.length==0&&!$settings.isLoading">
+                    <th colspan="7" class="text-center text-danger animated fadeIn">--- ยังไม่มีรายการเบิกจ่าย ---</th>
+                </tr>
+
+                <tr ng-repeat="row in $settings.formView.rows">
+                    <td class="text-center"><a href="javascript:void(0)" class="text-danger f-w-900" ng-click="submitRollback($event, row)">ยกเลิก</a></td>
+                    <td class="text-center">{{row.SEQ_NO}}</td>
+                    <td class="text-center word-wrap">{{row.WITHDRAWAL_CODE}}</td>
+                    <td class="text-left word-wrap">{{row.WITHDRAWAL_NAME}}</td>
+                    <td class="text-center">{{row.WITHDRAWAL_DATETIME|sqlDate:'':null:true}}</td>
+                    <td class="text-right">{{row.WITHDRAWAL_AMOUNT|number:2}}</td>
+                    <td class="text-left word-wrap">{{row.WITHDRAWAL_REMARK_TEXT}}</td>
+                </tr>
+                <tr class="bg-primary" ng-if="$settings.formView.rows.length>0&&!$settings.isLoading">
+                    <th colspan="5" class="text-right animated fadeIn">รวมทั้งสิ้น (บาท)</th>
+                    <th class="text-right animated fadeIn">{{$settings.formView.rows|fwSimpleSummary:['WITHDRAWAL_AMOUNT']:2}}</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/inputnumber")
+    @Scripts.Render("~/bundle/select2")
+<script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $fwUtils, $filter, $q, $customHttp, $fwDateService, $fwModalHelperService, $fwDialogService, $timeout) {
+            $scope.$settings = {
+                isLoading: false, isSaving: false, isRejecting: false,
+                expensesGroups: [], expenses: [],
+                formView: {
+                    rows: [],
+                    reserveAmounts: null, useAmounts: null, remainAmounts: null,
+                    latestWithdrawalName: '', latestWithdrawalDatetime: ''
+                },
+                formSearch: {
+                    reserveId: null
+                },
+                formData: {} // Initial by init
+            };
+
+            // จัดเตรียมค่าสำหรับฟอร์ม
+            $scope.init = function () {
+                $scope.$settings.formErrors = {};
+
+                $scope.$settings.formView.rows = [];
+                $scope.$settings.formView.reserveAmounts = null;
+                $scope.$settings.formView.useAmounts = null;
+                $scope.$settings.formView.remainAmounts = null;
+                $scope.$settings.formView.latestWithdrawalName = '';
+                $scope.$settings.formView.latestWithdrawalDatetime = '';
+
+                $scope.$settings.formData = {
+                    ReserveId: null,
+                    SubDepId: '@(ViewBag.SubDepId==null ? "empty" : ViewBag.SubDepId)',
+                    CreatedName: '@ViewBag.EmpFullName', CreatedDate: $fwDateService.getCurrDate().toString(),
+                    FiscalYear: @ViewBag.FiscalYear,
+                    PlanId: 'empty', ProduceId: 'empty', ActivityId: 'empty',
+                    BudgetTypeId: 'empty', ExpensesGroupId: 'empty', ExpensesId: 'empty',
+                    ReserveAmounts: null, RemarkText: null,
+                    ReserveType: 1, // ผูกพัน
+                    BudgetType: 1 // เงินงบประมาณ
+                };
+            };
+            // ส่งคำขอค้นหา
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    $scope.$settings.isLoading = true;
+                    $customHttp.formPost('@Url.Action("Retrieve", "BudgetReserve")', { reserveId: $scope.$settings.formSearch.reserveId }).then(function (res) {
+                        $scope.init();
+
+                        // ไม่พบข้อมูลกันเงิน
+                        if (null == res.data.row) {
+                            $fwDialogService.dangerDialog(null, 'ไม่พบข้อมูลการกันเงิน').then(function () {
+                                $scope.$settings.formSearch.reserveId = '';
+                            }, function () { });
+                            $scope.$settings.isLoading = false;
+                            return;
+                        }
+
+
+                        var row = res.data.row || {};
+
+                        $scope.$settings.formData.ReserveId = row.RESERVE_ID || null;
+                        $scope.$settings.formData.SubDepId = '' + (row.SUB_DEP_ID || 'empty');
+                        $scope.$settings.formData.FiscalYear = row.YR;
+                        $scope.$settings.formData.CreatedName = row.RESERVE_NAME || '';
+                        $scope.$settings.formData.CreatedDate = $filter('sqlDate')(row.CREATED_DATETIME, '', null, false);
+                        
+                        $scope.$settings.formData.PlanId = '' + (row.PLAN_ID || 'empty');
+                        $scope.$settings.formData.ProduceId = '' + (row.PRODUCE_ID || 'empty');
+                        $scope.$settings.formData.ActivityId = '' + (row.ACTIVITY_ID || 'empty');
+                        $scope.$settings.formData.BudgetTypeId = '' + (row.BUDGET_TYPE_ID || 'empty');
+                        //$scope.$settings.formData.ExpensesGroupId = row.EXPENSES_GROUP_ID || 'empty';
+                        //$scope.$settings.formData.ExpensesId = row.EXPENSES_ID || 'empty';
+                        $scope.budgetTypeChanged().then(function () {
+                            $scope.$settings.formData.ExpensesGroupId = '' + (row.EXPENSES_GROUP_ID || 'empty');
+                            $scope.expensesGroupChanged().then(function () {
+                                $scope.$settings.formData.ExpensesId = '' + (row.EXPENSES_ID || 'empty');
+                            });
+                        });
+
+                        $scope.$settings.formData.ReserveAmounts = row.RESERVE_BUDGET_AMOUNT || 0.00;
+                        $scope.$settings.formData.RemarkText = row.REMARK_TEXT || null;
+                        $scope.$settings.formData.ReserveType = row.RESERVE_TYPE || 1; // ผูกพัน
+                        $scope.$settings.formData.BudgetType = row.BUDGET_TYPE || 1; // เงินงบประมาณ
+
+                        // ประวัติ
+                        $scope.$settings.formView.rows = res.data.histories || [];
+                        $scope.$settings.formView.reserveAmounts = row.RESERVE_BUDGET_AMOUNT || 0.00;
+                        $scope.$settings.formView.useAmounts = row.USE_AMOUNT || 0.00;
+                        $scope.$settings.formView.remainAmounts = row.REMAIN_AMOUNT || 0.00;
+                        $scope.$settings.formView.latestWithdrawalName = row.LATEST_WITHDRAWAL_NAME || '';
+                        $scope.$settings.formView.latestWithdrawalDatetime = $filter('sqlDate')(row.LATEST_WITHDRAWAL_DATETIME, '', null, true);
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                    });
+                }, 300);
+            };
+            // เมื่อเลขที่ใบกันเงินเปลี่ยนแปลง
+            var reserveIdChangedId = null;
+            $scope.reserveIdChanged = function () {
+                $timeout.cancel(reserveIdChangedId);
+                reserveIdChangedId = $timeout(function () {
+                    var reserveId = '' + $scope.$settings.formSearch.reserveId;
+                    if (reserveId.length == 12)
+                        $scope.submitSearch();
+                }, 300);
+            };
+            // กดค้นหาเลขที่ใบกันเงิน
+            $scope.searchModal = function (event) {
+                $fwModalHelperService.getReserveBudgetSelectOneModal(event, null, null).then(function (selectedItem) {
+                    $scope.$settings.formSearch.reserveId = selectedItem.RESERVE_ID;
+                    $scope.submitSearch();
+                }, function () { });
+            };
+            // เมื่องบรายจ่าย เปลี่ยนแปลง
+            var budgetTypeIdChangedId = null;
+            $scope.budgetTypeChanged = function () {
+                return $q(function (resolve) {
+                    $timeout.cancel(budgetTypeIdChangedId);
+                    budgetTypeIdChangedId = $timeout(function () {
+                        $scope.$settings.expensesGroups = [];
+                        $scope.$settings.expenses = [];
+                        $scope.$settings.formData.ExpensesGroupId = 'empty';
+                        $scope.$settings.formData.ExpensesId = 'empty';
+                        var budgetTypeId = ('' + $scope.$settings.formData.BudgetTypeId).replace('empty', '');
+                        $customHttp.formPost('@Url.Action("RetrieveExpensesGroupByBudgetType", "Helper")', { budgetTypeId: budgetTypeId }).then(function (res) {
+                            $scope.$settings.expensesGroups = res.data || [];
+                            resolve({});
+                        }, function () { resolve({}); });
+                    }, 300);
+                });
+            };
+            // เมื่อหมวดค่าใช้จ่าย เปลี่ยนแปลง
+            var expensesGroupIdChangedId = null;
+            $scope.expensesGroupChanged = function () {
+                return $q(function (resolve) {
+                    $timeout.cancel(expensesGroupIdChangedId);
+                    expensesGroupIdChangedId = $timeout(function () {
+                        $scope.$settings.expenses = [];
+                        $scope.$settings.formData.ExpensesId = 'empty';
+                        var expensesGroupId = ('' + $scope.$settings.formData.ExpensesGroupId).replace('empty', '');
+                        $customHttp.formPost('@Url.Action("RetrieveExpensesByExpensesGroup", "Helper")', { expensesGroupId: expensesGroupId }).then(function (res) {
+                            $scope.$settings.expenses = res.data || [];
+                            resolve({});
+                        }, function () { resolve({}); });
+                    }, 300);
+                });
+            };
+            // ส่งคำขอเพื่อบันทึก
+            $scope.submitSave = function (event) {
+                $scope.$settings.isLoading = true;
+                $scope.$settings.isSaving = true;
+
+                var params = $.extend(true, {}, $scope.$settings.formData);
+                params.SubDepId = ('' + params.SubDepId).replace(/[^\d]/g, '');
+                params.PlanId = ('' + params.PlanId).replace(/[^\d]/g, '');
+                params.ProduceId = ('' + params.ProduceId).replace(/[^\d]/g, '');
+                params.ActivityId = ('' + params.ActivityId).replace(/[^\d]/g, '');
+                params.BudgetTypeId = ('' + params.BudgetTypeId).replace(/[^\d]/g, '');
+                params.ExpensesGroupId = ('' + params.ExpensesGroupId).replace(/[^\d]/g, '');
+                params.ExpensesId = ('' + params.ExpensesId).replace(/[^\d]/g, '');
+                $customHttp.formPost('@Url.Action("SubmitSave", "BudgetReserve")', params).then(function (res) {
+                    $scope.$settings.formErrors = res.data.errors || {};
+                    if (null != res.data.errorText)
+                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                    else if (null == res.data.errors)
+                        $fwDialogService.alertDialog(event, 'กันเงินงบประมาณเรียบร้อยแล้ว').then(function () {
+                            $scope.$settings.formSearch.reserveId = res.data.reserveId;
+                            $scope.submitSearch();
+                        });
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                });
+            };
+            // ยกเลิกใบกันเงิน
+            $scope.submitReject = function (event) {
+                $fwDialogService.confirmDialog(event, $filter('textFormat')('ยืนยันการยกเลิกใบกันเงินเลขที่ {0}', $scope.$settings.formData.ReserveId)).then(function () {
+                    $scope.$settings.isLoading = true;
+                    $scope.$settings.isRejecting = true;
+                    $customHttp.formPost('@Url.Action("SubmitReject", "BudgetReserve")', { reserveId: $scope.$settings.formData.ReserveId }).then(function (res) {
+                        if (null != res.data.errorText)
+                            $fwDialogService.dangerDialog(event, res.data.errorText);
+                        else
+                            $fwDialogService.alertDialog(event, 'ยกเลิกใบกันเงิน เรียบร้อยแล้ว').then(function () {
+                                $scope.$settings.formSearch.reserveId = '';
+                                $scope.init();
+                            }, function () { });
+                        $scope.$settings.isLoading = false;
+                        $scope.$settings.isRejecting = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                        $scope.$settings.isRejecting = false;
+                    });
+                }, function () { });
+            };
+            // ยกเลิกการเบิกจ่าย
+            $scope.submitRollback = function (event, row) {
+                $fwDialogService.confirmDialog(event, 'ยืนยันการยกเลิก การเบิกจ่าย').then(function () {
+                    $scope.$settings.isLoading = true;
+                    $customHttp.formPost('@Url.Action("SubmitCancelWithdrawal", "BudgetReserve")', { reserveId: row.RESERVE_ID, seqNo: row.SEQ_NO }).then(function (res) {
+                        if (null != res.data.errorText)
+                            $fwDialogService.alertDialog(event, res.data.errorText);
+                        else
+                            $scope.submitSearch();
+
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                    });
+                }, function () { });
+            };
+
+
+
+            // เตรียมค่าเริ่มต้นของฟอร์ม
+            $scope.init();
+        });
+</script>
+}

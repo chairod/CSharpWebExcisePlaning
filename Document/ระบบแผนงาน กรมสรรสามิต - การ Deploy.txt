@@ -1,0 +1,449 @@
+==========================================================================================
+[Config ค่า]
+    1. AppSettings.xml
+        => UserAuthorizeCachePath
+            พาร์ทสำหรับเขียน Cache profile หลังจากเข้าสู่ระบบ
+        => ErrorLogPath
+            พาร์ทสำหรับเขียนข้อผิดพลาดลงไป
+        => TemporaryPath
+            พาร์ทสำหรับเขียน Temporary File ของระบบ
+		=> AcceptMimeTypeValues
+			MIME Type ที่ระบบรองรับการอัพโหลดไฟล์จากเครื่องไคเอ็นท์
+		=> LimitedFileSizeBytesValue
+			ขนาดไฟล์สูงสุดที่ระบบรองรับในการอัพโหลดไฟล์จากเครื่องไคเอ็นท์
+        => DepartmentIdsCanReserveBudgetStr
+            รหัสหน่วยงาน ที่สามารถกันเงิน ได้ อ้างอิง dep_id จากตาราง T_DEPARTMENT จะมีผลกับหน้าจอ กันเงิน 
+            โปรแกรมจะดึงหน่วยงานภายใน (sub_department) ของรหัสหน่วยงานที่ระบุ
+        => ExpensesIdsReserveForPetoluem
+            รหัสรายการค่าใช้จ่าย ที่สงวนไว้ ไม่สามารถเลือกได้
+            ในการบันทึกรายการค่าใช้จ่ายปิโตรเลียม
+            เนื่องจาก: ค่าปิโตรเลียมจะเป็นการรวม แต่ละรายการค่าใช้จ่ายมาบันทึกข้อมูล
+    2. Web.Config
+        => customErrors <system.web>
+            กรณีนำเป็นใช้งานโดยกำหนด AliasName ให้ระบุ AliasName นำหน้าด้วย 
+        เช่น DefualtRedirect="/Authorize/PageErrors" ถ้ามี AliasName = "LeaveSystem" ให้กำหนดค่าให้เป็น
+            DefaultRedirect="/LeaveSystem/Authorize/PageErrors"
+        => globalization <system.web>
+            ในระบบจะใช้ Culture inf เป็น "en-US" กำหนดไว้ในกรณีไม่ต้องการให้อ่าน Culture infomation จากเครื่อง Server ที่ตั้งไว้
+        
+[vegas.js]
+ Location: Contents/Standalone/vegas.js
+        ** กรณีนำแอพไปรันโดยมี AliasName ให้ระบุ AliasName นำหน้าด้วย เช่น AliasName = "LeaveSystem"
+        /LeaveSystem/Resource/GetImage...
+
+[angular.app.js]
+    .run => 
+        $rootScope.baseUrl กำหนด Url หลักของเว็บไซด์ เช่น มี Alias ของระบบ ให้ระบุ Alias ด้วย http://www.abce.com/excise_planing/ เป็นต้น
+
+
+
+
+การกำหนด Sql Server Remote Connection & Open firewall ให้สามารถเชื่อมจากภายนอกได้
+https://knowledgebase.apexsql.com/configure-remote-access-connect-remote-sql-server-instance-apexsql-tools/
+
+การเรียกใช้งาน Controller อื่นๆ และยังคง HttpContext ไว้
+https://stackoverflow.com/questions/16870413/how-to-call-another-controller-action-from-a-controller-in-mvc
+
+
+
+
+==========================================================================================
+[ข้อมูลสำหรับทดสอบระบบ]
+==========================================================================================
+admin@gmail.com,1234
+
+
+
+=================== รออัพเดต =======================
+ExcisePlaning.dll, ExcisePlaningDb.dbml
+Views/*, angular.app.js
+
+
+
+[24/05/2021, BUGs & เพิ่ม Filter]
+    V_GET_SUMMARY_BUDGET_ALLOCATE
+    Views/Helper/GetHelperReserveBudgetSearchSelectMultipleForm.cshtml
+    angular.app.js
+    ReportTemplates/RptExpenseResult.xlsx
+=================== ประวัติการอัพเดต ==================
+
+
+
+
+
+
+
+[28/04/2021, Updated 06/05/2021]
+    V_GET_SUMMARY_OVERALL_BUDGET => build test & prd แล้ว
+    V_GET_SUMMARY_BUDGET_REQUEST => build test & prd แล้ว
+    V_GET_SUMMARY_BUDGET_ALLOCATE => build test & prd แล้ว
+
+    RptSummaryBudgetUsed.xlsx
+    RptRequestBudgetOfYear.xlsx
+    RptPlansIncomeOfYear.xlsx
+    RptExpenseResult.xlsx
+
+
+
+[07/04/2021, Updated 26/04/2021]
+    Report007_Department_Report_Payment_Template.xlsx
+    BudgetAllocateTemplate.xlsx => Allocate_Budget_To_Department_Template.xlsx
+
+    ให้สิทธิ์เมนู
+        เบิกจ่ายงบประมาณ
+        โอนเปลี่ยนแปลง
+        ปรับแผนรายรับ/รายจ่าย
+
+[29/03/2021, Updated 03/04/2021]
+REBUILD:
+    YES - V_GET_DEPARTMENT_BUDGET_CASH_FLOW_STATEMENT
+    YES - V_GET_TAX_FORCAST_EXPENSES_TYPE_FORMULA_INFORMATION
+    YES - V_GET_TAX_FORCAST_INCOME_MONTHLY_INFORMATION
+
+    YES - dbo.fn_CalForcastExpensesTypeValue
+
+Report Templates:
+    YES - Report001_RptDepartmentBudgetGroupByExpenses_Template
+    YES - Report003_RptDepartmentBudgetGroupByBudgetType_Template
+    YES - Report006_DepartmentBudgetCashFlow_Template
+
+New Menus:
+    YES - รายงานทะเบียนคุมหน่วยงานภูมิภาค              => ลำดับที่ 10
+
+    YES - รายงานผลการใช้จ่ายเงินนอกงบประมาณประจำปี    => ลำดับ 9 เป็น 11
+    YES - รายงานผลการใช้จ่ายเงินงบประมาณประจำปี       => ลำดับ 8 เป็น 12
+
+Table:
+    YES - T_TAX_FORCAST_EXPENSES_TYPE_PERCENT_FORMULA             => ลด จน. คอลัมล์
+    YES - T_TAX_FORCAST_EXPENSES_TYPE_PERCENT_FORMULA_DETAIL      => ตารางใหม่
+
+
+
+
+[15/03/2021, Updated 25/03/2021]
+A. ตารางใหม่
+    YES - T_TAX_INCOME_SOURCE                         -> นำค่าไป Init ด้วย
+    
+    YES - T_TAX_FORCAST_EXPENSES_TYPE                 -> นำค่าไป Init ด้วย
+    YES - T_TAX_FORCAST_EXPENSES_TYPE_PERCENT_FORMULA -> นำค่าไป Init ด้วย
+
+    T_TAX_FORCAST_INCOME
+    T_TAX_FORCAST_INCOME_HISTORY
+
+    YES - T_REPORTED_BUDGET_TARGET_PERCENT            -> พร้อม Init ค่าด้วย
+
+    T_BUDGET_ALLOCATE_EXPENSES_GROUP
+    T_BUDGET_ALLOCATE_EXPENSES_GROUP_HISTORY    -> INDEX(YR,ACTIVE)
+
+    ปรับปรุงตาราง:
+        YES - T_BUDGET_RESERVE_WITHDRAWAL             -> REFER_DOC_CODE
+        YES - T_BUDGET_RESERVE_WITHDRAWAL_HISTORY     -> REFER_DOC_CODE
+
+        YES - T_EXPENSES_GROUP                        -> ALLOCATE_GROUP_FLAG
+        YES - T_BUDGET_ALLOCATE_EXPENSES              -> ALLOCATE_EXPENSES_GROUP_ID
+        YES - T_BUDGET_ALLOCATE_EXPENSES_HISTORY      -> ALLOCATE_EXPENSES_GROUP_HIS_ID, INDEX(YR,Active)
+B. เมนู
+    เพิ่มเมนูใหม่ + เพิ่มสิทธิ์ให้ Admin:
+        สูตรการคำนวณประเภทรายจ่าย ประมาณการภาษี
+        ประมาณการรายได้ภาษี
+
+    ย้ายลำดับ:
+        YES - ประเภทรายได้ภาษี => ลำดับที่ 25
+        YES - แผนยุทธศาสตร์กรมสรรพสามิต => ลำดับที่ 26
+
+        YES - ติดตามเงินนอกงบประมาณ => ลำดับที่ 5
+        YES - ประเภทรายได้ภาษี => "ประมาณการรายได้ภาษี", ลำดับที่ 4, เปลี่ยน GROUP_ID = 17, MENU_CONST, ROUTE (class Name)
+
+YES - D. Db Custom function & view
+    YES - dbo.fn_CalForcastExpensesTypeValue
+
+    YES - V_GET_TAX_FORCAST_INCOME_MONTHLY_INFORMATION
+    YES - V_GET_TAX_FORCAST_INCOME_HISTORY_INFORMATION
+    
+    YES - V_GET_BUDGET_RESERVE_WITHDRAWAL_INFORMATION
+    YES - V_GET_BUDGET_RESERVE_WITHDRAWAL_HISTORY_INFORMATION
+    YES - V_GET_EXPENSES_GROUP_INFORMATION
+    YES - V_GET_SUMMARY_OVERALL_BUDGET
+    YES - V_GET_DEPARTMENT_REPORT_EXPENSES_INFORMATION เปลี่ยนเป็นชื่อ V_GET_DEPARTMENT_EXPENSES_BUDGET_INFORMATION
+    YES - V_GET_BUDGET_EXPENSES_INFORMATION
+    YES - V_GET_SUMMARY_OVERALL_BUDGET
+    YES - V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION
+    YES - V_GET_BUDGET_RESERVE_INFORMATION
+    YES - V_GET_TAX_FORCAST_EXPENSES_TYPE_FORMULA_INFORMATION
+
+    YES - proc_GetDepartmentRequestBudgetForAllocate
+
+YES - C. AppSettings
+    <!-- 
+  รหัสหน่วยงาน ที่สามารถกันเงิน ได้ อ้างอิง dep_id จากตาราง T_DEPARTMENT 
+  จะมีผลกับหน้าจอ กันเงิน
+  -->
+  <AreaIdsCanReserveBudgetStr>11</AreaIdsCanReserveBudgetStr>
+
+
+YES - D. เปลี่ยน Module กันเงินให้ใช้หน่วยงานจาก T_DEPARTMENT
+-- เครื่อง ลค. ตรงตามนี้ - กลุ่มตรวจสอบภายใน
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 142 WHERE SUB_DEP_ID = 1;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 142 WHERE SUB_DEP_ID = 1;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 142 WHERE SUB_DEP_ID = 1;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 142 WHERE SUB_DEP_ID = 1;
+
+-- เครื่อง ลค. ตรงตามนี้ - สำนักงานเลขานุการกรม
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 151 WHERE SUB_DEP_ID = 2;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 151 WHERE SUB_DEP_ID = 2;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 151 WHERE SUB_DEP_ID = 2;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 151 WHERE SUB_DEP_ID = 2;
+
+-- เครื่อง ลค. ตรงตามนี้ - สำนักบริหารการคลังและรายได้
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 64 WHERE SUB_DEP_ID = 3;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 64 WHERE SUB_DEP_ID = 3;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 64 WHERE SUB_DEP_ID = 3;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 64 WHERE SUB_DEP_ID = 3;
+
+
+-- เครื่อง ลค. ตรงตามนี้ - สำนักบริหารทรัพยากรบุคคล
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 152 WHERE SUB_DEP_ID = 4;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 152 WHERE SUB_DEP_ID = 4;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 152 WHERE SUB_DEP_ID = 4;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 152 WHERE SUB_DEP_ID = 5;
+
+
+-- เครื่อง ลค. ตรงตามนี้ - ศูนย์เทคโนโลยีสารสนเทศ
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 153 WHERE SUB_DEP_ID = 5;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 153 WHERE SUB_DEP_ID = 5;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 153 WHERE SUB_DEP_ID = 5;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 153 WHERE SUB_DEP_ID = 5;
+
+
+-- เครื่อง ลค. ตรงตามนี้ - สำนักกฎหมาย
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 150 WHERE SUB_DEP_ID = 6;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 150 WHERE SUB_DEP_ID = 6;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 150 WHERE SUB_DEP_ID = 6;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 150 WHERE SUB_DEP_ID = 6;
+
+
+-- เครื่อง ลค. ตรงตามนี้ - สำนักตรวจสอบ ป้องกันและปราบปราม
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 148 WHERE SUB_DEP_ID = 7;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 148 WHERE SUB_DEP_ID = 7;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 148 WHERE SUB_DEP_ID = 7;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 148 WHERE SUB_DEP_ID = 7;
+
+
+-- เครื่อง ลค. ตรงตามนี้ - สำนักมาตรฐานและพัฒนาการจัดเก็บภาษี 1
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 144 WHERE SUB_DEP_ID = 8;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 144 WHERE SUB_DEP_ID = 8;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 144 WHERE SUB_DEP_ID = 8;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 144 WHERE SUB_DEP_ID = 8;
+
+
+-- เครื่อง ลค. ตรงตามนี้ - สำนักมาตรฐานและพัฒนาการจัดเก็บภาษี 2
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 145 WHERE SUB_DEP_ID = 10;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 145 WHERE SUB_DEP_ID = 10;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 145 WHERE SUB_DEP_ID = 10;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 145 WHERE SUB_DEP_ID = 10;
+
+
+-- เครื่อง ลค. ตรงตามนี้ - สำนักแผนภาษี
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 143 WHERE SUB_DEP_ID = 11;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 143 WHERE SUB_DEP_ID = 11;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 143 WHERE SUB_DEP_ID = 11;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 143 WHERE SUB_DEP_ID = 11;
+
+
+-- เครื่อง ลค. ตรงตามนี้ - กลุ่มพัฒนาและตรวจสอบทางเทคนิค
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 147 WHERE SUB_DEP_ID = 12;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 147 WHERE SUB_DEP_ID = 12;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 147 WHERE SUB_DEP_ID = 12;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 147 WHERE SUB_DEP_ID = 12;
+
+
+-- เครื่อง ลค. ตรงตามนี้ - กลุ่มวิเคราะห์สินค้าและของกลาง
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 146 WHERE SUB_DEP_ID = 13;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 146 WHERE SUB_DEP_ID = 13;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 146 WHERE SUB_DEP_ID = 13;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 146 WHERE SUB_DEP_ID = 13;
+
+
+-- เครื่อง ลค. ตรงตามนี้ - กองกำกับและตรวจสอบภาษีสรรพสามิต
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 149 WHERE SUB_DEP_ID = 16;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 149 WHERE SUB_DEP_ID = 16;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 149 WHERE SUB_DEP_ID = 16;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 149 WHERE SUB_DEP_ID = 16;
+
+
+-- เครื่อง ลค. ตรงตามนี้ - กองกำกับและพัฒนามาตรฐานราคาภาษีสรรพสามิต
+UPDATE T_BUDGET_RESERVE SET DEP_ID = 155 WHERE SUB_DEP_ID = 17;
+UPDATE T_BUDGET_RESERVE_HISTORY SET DEP_ID = 155 WHERE SUB_DEP_ID = 17;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL SET DEP_ID = 155 WHERE SUB_DEP_ID = 17;
+UPDATE T_BUDGET_RESERVE_WITHDRAWAL_HISTORY SET DEP_ID = 155 WHERE SUB_DEP_ID = 17;
+
+
+
+
+
+
+
+[05/03/2021, Updated 11/03/2021]
+    YES - T_BUDGET_RESERVE_WITHDRAWAL_HISTORY
+    YES -     TRAN_TYPE เพิ่ม 3 = ปรับปรุงบัญชี
+    YES - T_BUDGET_RESERVE_WITHDRAWAL
+    YES -     WITHDRAWAL_REFER_RESERVE_ID
+    YES -     WITHDRAWAL_REFER_SEQ_NO
+    YES -     WITHDRAWAL_TYPE 
+    YES -     WITHDRAWAL_DATE
+
+    YES - T_BUDGET_RESERVE_HISTORY
+    YES -     TRAN_TYPE เพิ่มคำอธิบายคอลัมล์
+        เพิ่มคอลัมล์:
+    YES -         ADJUSTMENT_REFER_CODE
+
+    YES - REBUILD:
+    YES -     V_GET_BUDGET_RESERVE_HISTORY_INFORMATION
+    YES -     V_GET_BUDGET_RESERVE_WITHDRAWAL_HISTORY_INFORMATION
+    YES -     V_GET_BUDGET_RESERVE_WITHDRAWAL_INFORMATION
+    YES -     V_GET_SUMMARY_OVERALL_BUDGET
+        
+    YES - Menu:
+    YES -     ติดตามการกันเงิน เลื่อนไปลำดับที่ 6
+    YES -     เบิกเกินส่งคืน (เพิ่มใหม่)
+    YES -     ปรับปรุงบัญชี (เพิ่มใหม่)
+    YES -     ปรับปรุงใบกัน (เพิ่มใหม่)
+
+    YES - Report Template:
+    YES -     Report002_RptReserveBudget_Template.xlsx
+
+
+
+[08/02/2021, Updated - 09/02/2021]
+    T_BUDGET_RESERVE
+        เพิ่มคอลัมล์ 
+        RESERVE_DATE วันที่กันเงิน
+
+    Rebuild:
+        V_GET_BUDGET_RESERVE_INFORMATION
+        V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION
+
+
+[02/02/2021, Updated - 02/02/2021]
+YES - T_PRODUCE_CONFIGURE
+    เพิ่มคอลัมล์
+        PLAN_ID INT
+YES - T_ACTIVITY_CONFIGURE 
+    เพิ่มคอลัมล์
+        PRODUCE_ID INT
+
+[31/01/2021, Updated - 31/01/2021]
+    T_BUDGET_ALLOCATE_EXPENSES_HISTORY
+        เพิ่มคอลัมล์ REFER_DOC_NO
+    T_BUDGET_EXPENSES_INCOME, V_GET_BUDGET_EXPENSES_INCOME_INFORMATION (Rebuild)
+        เพิ่มคอลัมล์ REFER_DOC_NO
+
+
+[15/01/2021, Updated - 17/01/2021]
+    T_PLAN_CONFIGURE, T_PRODUCE_CONFIGURE, T_ACTIVITY_CONFIGURE
+    T_EXPENSES_GROUP, T_EXPENSES_ITEM
+    เพิ่มคอลัมล์
+     ORDER_SEQ SMALLINT ลำดับการจัดเรียงข้อมูล
+
+    Rebuild:
+     V_GET_EXPENSES_GROUP_INFORMATION
+     V_GET_EXPENSES_INFORMATION
+     V_GET_EXPENSES_ITEM
+
+     V_GET_BUDGET_TEMPLATE_EXPENSES_INFORMATION
+     V_GET_BUDGET_REQUEST_DETAIL_INFORMATION
+     V_GET_BUDGET_TEMPLATE_INFORMATION
+     V_GET_BUDGET_REQUEST_INFORMATION
+     V_GET_BUDGET_RESERVE_INFORMATION
+     V_GET_DEPARTMENT_REPORT_EXPENSES_INFORMATION
+     V_GET_SUMMARY_OVERALL_BUDGET
+
+     proc_GetDepartmentRequestBudgetForAllocate
+     proc_GetExpensesAllocateBudgetFromGovernmentByYear
+     proc_GetExpensesIncomeBudgetFromGovernmentByYear
+
+[10/01/2021, Updated - 14/01/2021]
+    V_GET_EXPENSES_ITEM
+
+    เพิ่มตาราง
+    T_ORGANIZATION, T_ORGANIZATION_AUTHORIZE_EXPENSES
+
+    T_EXPENSES_ITEM
+        ขยายขนาดของคอลัมล์ และ เพิ่มข้อมูล คชจ. ปิโตรเลียม
+        FORM_TEMPLATE_NAME NVARCHAR(200)
+
+    AppSettings.xml
+        DepartmentIdsCanReserveBudgetStr = 68,1
+        ExpensesIdsReserveForPetolium = 68,69,70
+
+    เพิ่มเมนู
+        ข้อมูลองค์กร
+
+
+[04/01/2020, Updated - 07/01/2021]
+    T_BUDGET_ALLOCATE, T_BUDGET_ALLOCATE_EXPENSES
+    เพิ่มคอลัมล์
+        USE_BUDGET_AMOUNT, REMAIN_BUDGET_AMOUNT
+        USE_OFF_BUDGET_AMOUNT, REMAIN_OFF_BUDGET_AMOUNT
+        NET_USE_BUDGET_AMOUNT, NET_REMAIN_BUDGET_AMOUNT
+
+    T_BUDGET_REPORTED_USE_EXPENSES_HISTORY
+    เพิ่มคอลัมล์
+        BUDGET_TYPE (แหล่งเงินที่ใช้บันทึกผลการใช้จ่าย)
+
+    Rebuild
+        V_GET_CONFIGURATION
+        V_GET_DEPARTMENT_REPORT_EXPENSES_HISTORY
+        V_GET_DEPARTMENT_REPORT_EXPENSES_INFORMATION
+
+[Updated - 10/11/2020]
+ V_GET_EXPENSES_ITEM
+ V_GET_EXPENSES_INFORMATION
+ proc_GetExpensesAllocateBudgetFromGovernmentByYear
+ proc_GetUserMenu
+
+ ผู้ใช้งานสามารถเลือกได้มากกว่า 1 Templates
+ t_budget_request_master 
+    TEMPLATE_ID เปลี่ยนเป็น MASTER_TEMPLATE_ID
+ t_budget_request_detail เพิ่มคอลัมล์ template_id 
+
+ T_BUDGET_MASTER เพิ่มคอลัมล์
+    ACTUAL_BUDGET_AMOUNT, LATEST_ALLOCATE_BUDGET, LATEST_ALLOCATE_OFF_BUDGET
+T_BUDGET_EXPENSES เพิ่มคอลัมล์ 
+    ACTUAL_BUDGET_AMOUNT (จำนวนเงิน งบประมาณ ที่สามารถนำไปใช้จัดสรร กันเงิน ได้)
+    CAN_ADD_PROJECT BIT DEAFULT 0
+ 
+ T_EXPENSES_ITEM 
+    CAN_ADD_PROJECT เพิ่มคอลัมล์
+    นำข้อมูล เข้าไปใหม่
+ 
+
+ T_BUDGET_ALLOCATE_EXPENSES
+    PROJECT_ID INT เพิ่มคอลัมล์
+ T_BUDGET_ALLOCATE_EXPENSES_HISTORY
+    PROJECT_ID INT เพิ่มคอลัมล์
+
+ T_MENU
+    นำข้อมูล เข้าไปใหม่
+
+ เพิ่มตารางใหม่
+    T_BUDGET_EXPENSES_PROJECT
+
+
+ anguluar.app.js
+
+
+
+[Update 20/10/2020]
+Alter       => [V_GET_EXPENSES_GROUP_INFORMATION] 
+Alter       => [V_GET_PERSONNEL_INFORMATION]
+Create New  => T_PROVINCE
+Create New  => pro_GRAPH_ANNUAL_BUDGET_RESULT
+
+V_GET_EXPENSES_ITEM
+จัดลำดับเมนูใหม่
+ยกเลิกเมนู "รายการค่าใช้จ่ายทางบัญชี (GL CODE)", "รหัสอ้างอิงแหล่งที่มาเงินงบประมาณ จากระบบของรัฐบาล"
+
+T_BUDGET_TYPE_GOVERNMENT_REFER_CODE, T_EXPENSES_GROUP_GOVERNMENT_REFER_CODE เพิ่มคอลัมล์ REMARK_TEXT NVARCHAR(100) NULL
+truncate table T_EXPENSES_GROUP_GOVERNMENT_REFER_CODE;
+truncate table t_budget_type_government_refer_code;

@@ -1,0 +1,280 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="container-fluid shadow-sm m-0 mb-2 rounded-bottom">
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>ชื่อตำแหน่งงาน</label>
+                <input type="text" class="form-control" ng-model="$settings.formSearch.positionName" 
+                       ng-change="positionNameChanged()" placeholder="ระบุบางส่วนของชื่อตำแหน่งงาน"
+                       ng-disabled="$settings.isLoading" />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>สิทธิ์การอนุมัติลา</label>
+                <select class="form-control" ng-model="$settings.formSearch.authorizeApproveLeave" 
+                        ng-change="submitSearch()"
+                        ng-disabled="$settings.isLoading">
+                    <option value="">--- สิทธิ์การอนุมัติลา ---</option>
+                    <option value="0">ไม่ให้สิทธิ์</option>
+                    <option value="1">ให้สิทธิ์</option>
+                    <option value="2">ให้สิทธิ์ แต่ต้องมอบหมายก่อน</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>สิทธิ์การอนุมัติ OT</label>
+                <select class="form-control" ng-model="$settings.formSearch.authorizeApproveOT" 
+                        ng-change="submitSearch()"
+                        ng-disabled="$settings.isLoading">
+                    <option value="">--- สิทธิ์การอนุมัติ OT ---</option>
+                    <option value="0">ไม่ให้สิทธิ์</option>
+                    <option value="1">ให้สิทธิ์</option>
+                    <option value="2">ให้สิทธิ์ แต่ต้องมอบหมายก่อน</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ลำดับขั้นในการอนุมัติ</label>
+                <select class="form-control" ng-model="$settings.formSearch.authorizeApproveStepIndex" 
+                        ng-change="submitSearch()" fw-select2
+                        ng-disabled="$settings.isLoading">
+                    <option value="empty">--- ลำดับขั้นการอนุมัติ ---</option>
+                    <option value="1">ผู้อนุมัติคนที่ 1</option>
+                    <option value="2">ผู้อนุมัติคนที่ 2</option>
+                    <option value="3">ผู้อนุมัติคนที่ 3</option>
+                    <option value="4">ผู้อนุมัติคนที่ 4</option>
+                    <option value="5">ผู้อนุมัติคนที่ 5</option>
+                    <option value="6">ผู้อนุมัติคนที่ 6</option>
+                    <option value="7">ผู้อนุมัติคนที่ 7</option>
+                    <option value="8">ผู้อนุมัติคนที่ 8</option>
+                    <option value="9">ผู้อนุมัติคนที่ 9</option>
+                    <option value="10">ผู้อนุมัติคนที่ 10</option>
+                </select>
+            </div> 
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 offset-md-2 col-md-11">
+                <md-checkbox ng-model="$settings.formSearch.canRequestLeave" ng-true-value="1" ng-false-value="0" ng-change="submitSearch()" ng-disabled="$settings.isLoading">ส่งคำขอลา</md-checkbox>
+                <md-checkbox ng-model="$settings.formSearch.canRequestOT" ng-true-value="1" ng-false-value="0" ng-change="submitSearch()" ng-disabled="$settings.isLoading">ส่งคำขอ OT</md-checkbox>
+                <md-checkbox ng-model="$settings.formSearch.canApproveInstead" ng-true-value="1" ng-false-value="0" ng-change="submitSearch()" ng-disabled="$settings.isLoading">อนุมัติแทน</md-checkbox>
+                <md-checkbox ng-model="$settings.formSearch.authorizeMultiDepartment" ng-true-value="1" ng-false-value="0" ng-change="submitSearch()" ng-disabled="$settings.isLoading">รับผิดชอบมากกว่า 1 หน่วยงาน</md-checkbox>
+                <md-checkbox ng-model="$settings.formSearch.authorizeChangeWorkingTime" ng-true-value="1" ng-false-value="0" ng-change="submitSearch()" ng-disabled="$settings.isLoading">คำขอเปลี่ยนแปลงเวลามา-กลับ</md-checkbox>
+            </div>
+        </div>
+    </div>
+    <div class="card card-block borderless-card shadown-sm">
+        <div class="form-row">
+            <div class="col-12 col-md-7">
+                <fw-execute-button text="สร้างใหม่"
+                                   css-class="btn btn-primary btn-sm mb-1 d-inline-block"
+                                   css-icon-class="ion-plus"
+                                   ng-click="createNew($event)"
+                                   ng-disabled="$settings.isLoading"></fw-execute-button>
+                <fw-execute-button text="โหลดข้อมูลใหม่"
+                                   css-class="btn btn-warning btn-sm mb-1 d-inline-block"
+                                   css-icon-class="ti-server"
+                                   ng-click="submitSearch()"
+                                   on-loading="$settings.isLoading"
+                                   ng-disabled="$settings.isLoading"></fw-execute-button>
+            </div>
+        </div>
+        <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                              title="ข้อมูลตำแหน่งงาน"
+                              auto-load="false"
+                              ng-disabled="$settings.isLoading"
+                              row-click-callback="rowClick($event, $row, $columnConfig)"
+                              route-url="@Url.Action("RetrievePosition", "Position")"></fw-simple-data-table>
+    </div>
+</div>
+@section Styles{
+    @Styles.Render("~/content/select2")    
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/select2")
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController',
+            function ($scope, $fwDialogService, $fwModalService, $timeout, $customHttp, $q, $filter) {
+                $scope.$settings = {
+                    isLoading: false,
+                    formSearch: {
+                        positionName: '',
+                        authorizeApproveLeave: '', authorizeApproveOT: '',
+                        authorizeApproveStepIndex: 'empty',
+                        canRequestOT: 0, canRequestLeave: 0, 
+                        canApproveInstead: 0, authorizeMultiDepartment: 0,
+                        authorizeChangeWorkingTime: 0
+                    },
+                    tableConfigs: {
+                        columns: [
+                            { label: 'No.', className: 'text-center word-wrap', type: 'rowNumber', style: 'min-width:50px;max-width:50px;width:50px;' },
+                            {
+                                label: 'ตำแหน่งงาน', className: 'text-left word-wrap',
+                                params: 'BTN_EDIT',
+                                type: 'html',
+                                field: '<a href="javascript:void(0)" class="text-primary f-w-900">{{row.POSITION_NAME}}<sup class="ml-1 ti-new-window f-w-900"></sup></a><span class="d-block text-danger f-12">{{row.ITEM_DESCRIPTION}}</span>',
+                                style: 'min-width:220px'
+                            },
+                            { label: 'ส่งคำขอ OT', className: 'text-center word-wrap bg-light', type: 'expression', field: '{{row.CAN_REQUEST_OT==true?\'Y\':\'\'}}', style: 'min-width:70px;max-width:70px;width:70px;' },
+                            { label: 'ส่งคำขอลา', className: 'text-center word-wrap bg-light', type: 'expression', field: '{{row.CAN_REQUEST_LEAVE==true?\'Y\':\'\'}}', style: 'min-width:70px;max-width:70px;width:70px;' },
+                            {
+                                label: 'อนุมัติ OT', className: 'text-center word-wrap', type: 'html',
+                                field: '<div ng-if="row.AUTHORIZE_APPROVE_OT!=0"><span ng-if="row.AUTHORIZE_APPROVE_OT==1">ให้สิทธิ์</span><span ng-if="row.AUTHORIZE_APPROVE_OT==2">ให้สิทธิ์ แต่ต้องมอบหมายก่อน</span><span class="d-block mt-1 f-10 text-danger">[{{row.AUTHORIZE_APPROVE_OT_COMPLETELY==true?\'อนุมัติและอนุญาต\':\'อนุมัติอย่างเดียว\'}}]</span></div>',
+                                style: 'min-width:150px;max-width:150px;width:150px;'
+                            },
+                            {
+                                label: 'อนุมัติลา', className: 'text-center word-wrap', type: 'html',
+                                field: '<div ng-if="row.AUTHORIZE_APPROVE_LEAVE!=0"><span ng-if="row.AUTHORIZE_APPROVE_LEAVE==1">ให้สิทธิ์</span><span ng-if="row.AUTHORIZE_APPROVE_LEAVE==2">ให้สิทธิ์ แต่ต้องมอบหมายก่อน</span><span class="d-block mt-1 f-10 text-danger">[{{row.AUTHORIZE_APPROVE_LEAVE_COMPLETELY==true?\'อนุมัติและอนุญาต\':\'อนุมัติอย่างเดียว\'}}]</span></div>',
+                                style: 'min-width:150px;max-width:150px;width:150px;'
+                            },
+                            { label: 'วันที่สร้าง', className: 'text-center word-wrap', type: 'expression', field: '{{row.CREATED_DATETIME|sqlDate:\'dd/MM/yyyy HH:mm:ss\'}}', style: 'min-width:165px;max-width:165px;width:165px;' },
+                            {
+                                label: '...', className: 'text-center word-wrap',
+                                params: 'BTN_DELETE', type: 'html',
+                                field: '<a href="javascript:void(0)" class="text-danger ti-trash f-26 mr-1 text-decoration-none"></a>',
+                                style: 'min-width:110px;max-width:110px;width:110px;'
+                            }
+                        ]
+                    }
+                };
+
+                $scope.createNew = function (event, formData) {
+                    $fwModalService.getModal('@Url.Action("GetResource", "Position")', {
+                        _formData: formData
+                    },
+                        function ($scope, $mdDialog, $customHttp, $fwDialogService, _formData) {
+                            $scope.$settings = {
+                                isLoading: false,
+                                formErrors: {},
+                                formData: {}
+                            };
+
+                            $scope.init = function () {
+                                var formData = _formData || {};
+                                $scope.$settings.formData = {
+                                    PositionId: formData.POSITION_ID || null,
+                                    PositionName: formData.POSITION_NAME || null,
+                                    CanRequestOT: formData.CAN_REQUEST_OT ? '1' : '0',
+                                    CanRequestLeave: formData.CAN_REQUEST_LEAVE ? '1' : '0',
+                                    AuthorizeApproveOT: $.trim(formData.AUTHORIZE_APPROVE_OT),
+                                    AuthorizeApproveOTCompletely: formData.AUTHORIZE_APPROVE_OT_COMPLETELY ? '1' : '0',
+                                    AuthorizeApproveLeave: $.trim(formData.AUTHORIZE_APPROVE_LEAVE),
+                                    AuthorizeApproveLeaveCompletely: formData.AUTHORIZE_APPROVE_LEAVE_COMPLETELY ? '1' : '0',
+                                    AuthorizeApproveStepIndex: $.trim(formData.AUTHORIZE_APPROVE_STEP_INDEX),
+                                    AuthorizeApproveInstead: formData.AUTHORIZE_APPROVE_INSTEAD ? '1' : '0',
+                                    AuthorizeActMultiDepartment: formData.AUTHORIZE_ACT_MULTI_DEPARTMENT ? '1' : '0',
+                                    AuthorizeApproveChangeWorkingTime: formData.AUTHORIZE_ALLOW_APPROVE_CHANGE_WORKING_TIME ? '1' : '0',
+                                    RemarkText: formData.ITEM_DESCRIPTION || null
+                                };
+
+                                $timeout(function () {
+                                    $('#positionName').focus();
+                                }, 500);
+                            };
+
+                            // Watch
+                            $scope.$watch('$settings.formData.AuthorizeApproveOT', function (newVal) {
+                                if (newVal == '' || newVal == '0')
+                                    $scope.$settings.formData.AuthorizeApproveOTCompletely = '0';
+                                if (newVal == '2')
+                                    $scope.$settings.formData.AuthorizeApproveInstead = '1';
+                            });
+                            $scope.$watch('$settings.formData.AuthorizeApproveLeave', function (newVal) {
+                                if (newVal == '' || newVal == '0')
+                                    $scope.$settings.formData.AuthorizeApproveLeaveCompletely = '0';
+                                if (newVal == '2')
+                                    $scope.$settings.formData.AuthorizeApproveInstead = '1';
+                            });
+
+
+                            $scope.submitSave = function (event) {
+                                $scope.$settings.isLoading = true;
+                                $customHttp.formPost('@Url.Action("SubmitSave", "Position")', $scope.$settings.formData).then(function (res) {
+                                    $scope.$settings.formErrors = res.data.errors || {};
+                                    if (res.data.errors == null) {
+                                        var alertMsg = 'บันทึกข้อมูลตำแหน่งงานเรียบร้อยแล้ว';
+                                        if (null != $scope.$settings.formData.PositionId)
+                                            alertMsg = 'ปรับปรุงข้อมูลตำแหน่งงานเรียบร้อยแล้ว';
+                                        $fwDialogService.alertDialog(event, alertMsg).then(function () {
+                                            if (null == $scope.$settings.formData.PositionId)
+                                                $scope.init();
+                                            else
+                                                $scope.close();
+                                        });
+                                    }
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+
+                            $scope.close = function () {
+                                $mdDialog.hide({ behavior: true });
+                            };
+
+
+                            $scope.init();
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        });
+                };
+
+                $scope.rowClick = function (event, row, columnConfig) {
+                    if (columnConfig.params == 'BTN_DELETE') {
+                        var confirmMsg = 'ยืนยัน!! การยกเลิกตำแหน่งงาน';
+                        if (row.COUNT_USED > 0)
+                            confirmMsg = $filter('textFormat')('ตำแหน่งงานนี้กำหนดให้กับบุคลากรไปแล้วจำนวน {0} คน ยืนยัน!! การยกเลิกตำแหน่งงาน', row.COUNT_USED);
+                        $fwDialogService.confirmDialog(event, confirmMsg).then(function () {
+                            $scope.$settings.isLoading = true;
+                            $customHttp.formPost('@Url.Action("SubmitDelete", "Position")', {
+                                positionId: row.POSITION_ID
+                            }).then(function (res) {
+                                $scope.$settings.isLoading = false;
+                                $scope.submitSearch();
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        });
+                    } else if (columnConfig.params == 'BTN_EDIT') {
+                        $scope.createNew(event, row);
+                    }
+
+                    // fwSimpleDataTable บังคับให้ Return promise
+                    return $q(function (resolve) {
+                        resolve({ row: row });
+                    });
+                };
+
+                var timeoutId = null;
+                $scope.submitSearch = function () {
+                    $timeout.cancel(timeoutId);
+                    timeoutId = $timeout(function () {
+                        $scope.$broadcast('fwSimpleDataTable.paramsChanged', {
+                            positionName: $scope.$settings.formSearch.positionName,
+                            authorizeApproveLeave: $scope.$settings.formSearch.authorizeApproveLeave,
+                            authorizeApproveOT: $scope.$settings.formSearch.authorizeApproveOT,
+                            authorizeApproveStepIndex: $scope.$settings.formSearch.authorizeApproveStepIndex,
+                            canRequestOT: $scope.$settings.formSearch.canRequestOT,
+                            canRequestLeave: $scope.$settings.formSearch.canRequestLeave,
+                            canApproveInstead: $scope.$settings.formSearch.canApproveInstead,
+                            authorizeMultiDepartment: $scope.$settings.formSearch.authorizeMultiDepartment,
+                            authorizeChangeWorkingTime: $scope.$settings.formSearch.authorizeChangeWorkingTime
+                        });
+                    }, 300);
+                };
+
+
+                // Watch
+                var positionNameChangeId = null;
+                $scope.positionNameChanged =  function () {
+                    $timeout.cancel(positionNameChangeId);
+                    positionNameChangeId = $timeout(function () {
+                        $scope.submitSearch();
+                    }, 500);
+                };
+
+
+                $scope.submitSearch();
+            });
+    </script>
+}

@@ -1,0 +1,32 @@
+﻿
+<md-dialog flex="100" flex-gt-sm="55">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แหล่งที่มาของเงินนอก งปม.</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-6">
+                    <label class="required-field">ที่มาของเงินนอก งปม. <fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.OFF_BUDGET_SOURCE_NAME.ErrorMessages"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" id="OFF_BUDGET_SOURCE_NAME" ng-model="$settings.formData.OFF_BUDGET_SOURCE_NAME" ng-disabled="$settings.isLoading" />
+                    <input type="text" class="form-control" id="OFF_BUDGET_SOURCE_ID" ng-model="$settings.formData.OFF_BUDGET_SOURCE_ID" ng-disabled="$settings.isLoading" />
+                </div>
+                
+            </div>
+        
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึกข้อมูล" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="submitSave($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

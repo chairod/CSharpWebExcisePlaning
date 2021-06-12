@@ -1,0 +1,18 @@
+{
+  "LevelId": "empty",
+  "LevelName": null,
+  "TimeAmounts": 0,
+
+  "AllowancePersonAmounts": null,
+  "AllowanceAmountDays": null,
+  "AllowanceCompensationRatePrice": null,
+  "AllowanceTotalCompensationPrice": null,
+
+  "RentRoomPersonAmounts": null,
+  "RentRoomAmountDays": null,
+  "RentRoomCompensationRatePrice": null,
+  "RentRoomTotalCompensationPrice": null,
+
+  "VehicleAndOilPrice": null,
+  "NetExpensesPrice": null
+}

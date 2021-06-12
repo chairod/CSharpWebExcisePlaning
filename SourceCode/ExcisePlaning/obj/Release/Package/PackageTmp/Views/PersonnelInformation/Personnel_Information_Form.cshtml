@@ -1,0 +1,188 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section ng-controller="AppController">
+    <div class="container-fluid shadow-sm m-0 mb-2 rounded-bottom">
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>หน่วยงาน</label>
+                <select class="form-control" ng-model="$settings.formSearch.depId" ng-disabled="$settings.isLoading" fw-select2>
+                    <option value="empty">--- หน่วยงาน ---</option>
+                    @foreach (var depItem in ViewBag.Departments)
+                    {
+                        <option value="@depItem.DEP_ID">@depItem.DEP_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ตำแหน่งงาน</label>
+                <select class="form-control" ng-model="$settings.formSearch.positionId" ng-disabled="$settings.isLoading" fw-select2>
+                    <option value="empty">--- ตำแหน่งงาน ---</option>
+                    <option value="-1" class="text-black-50 f-w-900">** ยังไม่กำหนดตำแหน่งงาน **</option>
+                    @foreach (var posItem in ViewBag.Positions)
+                    {
+                        <option value="@posItem.POSITION_ID">@posItem.POSITION_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ประเภทบุคลากร</label>
+                <select class="form-control" ng-model="$settings.formSearch.personTypeId" ng-disabled="$settings.isLoading" fw-select2>
+                    <option value="empty">--- ประเภทบุคลากร ---</option>
+                    @foreach (var personTypeItem in ViewBag.PersonnelTypes)
+                    {
+                        <option value="@personTypeItem.PERSON_TYPE_ID">@personTypeItem.PERSON_TYPE_NAME</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>รหัสพนักงาน</label>
+                <input type="text" class="form-control" ng-model="$settings.formSearch.personCode" ng-disabled="$settings.isLoading" />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ชื่อ - นามสกุลพนักงาน</label>
+                <input type="text" class="form-control" ng-model="$settings.formSearch.personName" ng-disabled="$settings.isLoading" />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <fw-execute-button text="ค้นหา" css-class="btn btn-primary btn-sm" css-icon-class="ti-search"
+                                   on-loading="$settings.isLoading"
+                                   ng-disabled="$settings.isLoading"
+                                   ng-click="submitSearch()"></fw-execute-button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-block borderless-card shadow-sm">
+        <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                              route-url="@Url.Action("RetrievePersonnel", "PersonnelInformation")"
+                              disabled="$settings.isLoading"
+                              row-click-callback="rowClick($event, $row, $columnConfig)"
+                              title="ข้อมูลพนักงาน *** ข้อมูลพนักงานที่อยู่ในระบบจะได้จากการอ่านข้อมูลจากเครื่องลงเวลา"></fw-simple-data-table>
+    </div>
+</section>
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/select2")
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $timeout, $q, $fwModalService) {
+            $scope.$settings = {
+                isLoading: false,
+                formSearch: {
+                    depId: 'empty', positionId: 'empty',
+                    peronCode: '', personName: '', personTypeId: 'empty',
+                    periodId: 'empty'
+                },
+                tableConfigs: {
+                    columns: [
+                        { label: 'รหัสพนักงาน', className: 'text-center word-wrap', type: 'field', field: 'PERSON_CODE', style: 'min-width:100px;max-width:100px;width:100px;' },
+                        { label: 'ชื่อ - นามสกุล', className: 'text-left word-wrap bg-light f-w-900', type: 'html', params: 'BTN_VIEW', field: '<a href="javascript:void(0)"><span class="text-primary">{{row.FIRST_NAME}} {{row.LAST_NAME}}<sup class="ml-1 ti-new-window"></sup></span></a><div class="text-danger f-12 f-w-900">[เข้าสู่ระบบครั้งล่าสุด: {{row.LAST_LOGIN_DATETIME|sqlDate:\'dd/MM/yyyy HH:mm:ss\':null:true}}]</div>', style: 'min-width:180px;' },
+                        { label: 'หน่วยงาน', className: 'text-left word-wrap', type: 'field', field: 'DEP_NAME', style: 'min-width:170px;max-width:170px;width:170px;' },
+                        //{ label: 'ส่วน/ฝ่าย', className: 'text-left word-wrap', type: 'field', field: 'SUB_DEP_NAME', style: 'min-width:170px;max-width:170px;width:170px;' },
+                        { label: 'ตำแหน่งงาน', className: 'text-left word-wrap', type: 'field', field: 'POSITION_NAME', style: 'min-width:170px;max-width:170px;width:170px;' },
+                        { label: 'ประเภทบุคลากร', className: 'text-left word-wrap', type: 'field', field: 'PERSON_TYPE_NAME', style: 'min-width:150px;max-width:150px;width:150px;' },
+                        //{ label: 'รอบ/กะงาน', className: 'text-left word-wrap', type: 'field', field: 'PERIOD_NAME', style: 'min-width:100px;max-width:100px;width:100px;' },
+                        //{ label: 'วันที่บรรจุ', className: 'text-left word-wrap', type: 'expression', field: '{{row.REGISTER_DATE|sqlDate:\'dd/MM/yyyy\'}}', style: 'min-width:115px;max-width:115px;width:115px;' },
+                        { label: 'ประเภทผู้ใช้งาน', className: 'text-center word-wrap', type: 'html', field: '<span ng-if="row.ACC_TYPE==1" class="f-w-900 text-primary">SUPER</span>', style: 'min-width:90px;max-width:90px;width:90px;' }//,
+                        //{ label: '...', className: 'text-center word-wrap', type: 'html', params: 'BTN_VIEW', field: '<a href="javascript:void(0)" class="ti-new-window text-primary f-w-900 f-18"></a>', style: 'min-width:50px;max-width:50px;width:50px;' }
+                    ]
+                }
+            };
+
+            // Search
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    $scope.$broadcast('fwSimpleDataTable.paramsChanged', {
+                        depId: ($scope.$settings.formSearch.depId || '').replace('empty', ''),
+                        positionId: ($scope.$settings.formSearch.positionId || '').replace('empty', ''),
+                        personCode: $scope.$settings.formSearch.personCode,
+                        personName: $scope.$settings.formSearch.personName,
+                        personTypeId: ($scope.$settings.formSearch.personTypeId || '').replace('empty', ''),
+                        periodId: ($scope.$settings.formSearch.periodId || '').replace('empty', '')
+                    });
+                }, 100);
+            };
+            // row click
+            $scope.rowClick = function (event, row, columnConfig) {
+                if (columnConfig.params == 'BTN_VIEW') {
+                    $fwModalService.getModal('@Url.Action("GetResource", "PersonnelInformation")', { $row: row }, function ($scope, $mdDialog, $timeout, $row, $fwDialogService, $customHttp) {
+                        $scope.$settings = {
+                            isLoading: false,
+                            formErrors: {},
+                            formData: {
+                                PersonId: ''+$row.PERSON_ID,
+                                DepId: '' +$row.DEP_ID,
+                                PositionId: '' +$row.POSITION_ID,
+                                PersonTypeId: '' +$row.PERSON_TYPE_ID,
+                                FirstName: $row.FIRST_NAME,
+                                LastName: $row.LAST_NAME,
+                                PersonCode: $row.PERSON_CODE,
+                                SexType: $row.SEX_TYPE,
+                                AccountType: $row.ACC_TYPE,
+                                CancelFlag: '0' // 1 = ยกเลิกออกจาระบบ, 0 = ไม่ต้องทำอะไร
+                            }
+                        };
+
+                        // บันทึกการเปลี่ยนแปลง
+                        $scope.submitSave = function (event) {
+                            $scope.$settings.isLoading = true;
+                            $customHttp.formPost('@Url.Action("SubmitSave", "PersonnelInformation")', $scope.$settings.formData).then(function (res) {
+                                $scope.$settings.formErrors = res.data.errors || {};
+                                if (null != res.data.errorText)
+                                    $fwDialogService.dangerDialog(event, res.data.errorText);
+
+                                if (null == res.data.errorText && null == res.data.errors)
+                                    $fwDialogService.alertDialog(event, 'บันทึกการเปลี่ยนแปลงเรียบร้อยแล้ว').then(function () {
+                                        $scope.close();
+                                    });
+                                $scope.$settings.isLoading = false;
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        };
+                        // ปิดหน้าต่าง
+                        $scope.close = function () {
+                            $mdDialog.hide({ behavior: true });
+                        };
+
+
+                        // Watch
+                        var personCodeWatchId = null;
+                        $scope.$watch('$settings.formData.PersonCode', function (newVal) {
+                            $timeout.cancel(personCodeWatchId);
+                            personCodeWatchId = $timeout(function () {
+                                var regex = /[^\d]/ig;
+                                if (regex.test(newVal))
+                                    $scope.$settings.formData.PersonCode = newVal.replace(regex, '');
+                            }, 100);
+                        });
+
+                        // กำหนดค่าเริ่มต้น
+                        $timeout(function () {
+                            $('#personCode').focus();
+                        }, 100);
+                    }, event).then(function () {
+                        $scope.submitSearch();
+                    });
+                }
+
+                // fwSimpleDataTable บังคับให้ตอบกลับ
+                return $q(function (resolve) {
+                    resolve({ row: row });
+                });
+            };
+
+        });
+    </script>
+}
+

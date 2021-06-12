@@ -1,0 +1,92 @@
+﻿<md-dialog flex="100" flex-gt-sm="50">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ปรับปรุงข้อมูลพนักงาน</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">รหัสพนักงาน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.PersonCode.ErrorMessages"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" id="personCode" maxlength="5" ng-model="$settings.formData.PersonCode" ng-disabled="$settings.isLoading" />
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">ชื่อพนักงาน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.FirstName.ErrorMessages"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" maxlength="100" ng-model="$settings.formData.FirstName" ng-disabled="$settings.isLoading" />
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">นามสกุลพนักงาน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.LastName.ErrorMessages"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" maxlength="100" ng-model="$settings.formData.LastName" ng-disabled="$settings.isLoading" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">ประเภทพนักงาน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.PersonTypeId.ErrorMessages"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.PersonTypeId" ng-disabled="$settings.isLoading" fw-select2>
+                        <option value="">--- ประเภทพนักงาน ---</option>
+                        @foreach (var personTypeItem in ViewBag.PersonnelTypes)
+                        {
+                            <option value="@personTypeItem.PERSON_TYPE_ID">@personTypeItem.PERSON_TYPE_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">ตำแหน่งงาน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.PositionId.ErrorMessages"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.PositionId" ng-disabled="$settings.isLoading" fw-select2>
+                        <option value="">--- ตำแหน่งงาน ---</option>
+                        @foreach (var posItem in ViewBag.Positions)
+                        {
+                            <option value="@posItem.POSITION_ID">@posItem.POSITION_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">หน่วยงาน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.DepId.ErrorMessages"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.DepId" ng-disabled="$settings.isLoading" fw-select2>
+                        <option value="">--- หน่วยงาน ---</option>
+                        @foreach (var depItem in ViewBag.Departments)
+                        {
+                            <option value="@depItem.DEP_ID">@depItem.DEP_NAME</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">เพศ<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.SexType.ErrorMessages"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.SexType" ng-disabled="$settings.isLoading">
+                        <option value="">--- ระบุเพศ ---</option>
+                        <option value="F">หญิง</option>
+                        <option value="M">ชาย</option>
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label class="d-none d-md-block">&nbsp;</label>
+                    <div>
+                        <md-checkbox class="m-0 p-0" ng-model="$settings.formData.AccountType" ng-true-value="1" ng-false-value="0" ng-disabled="$settings.isLoading">กำหนดผู้ใช้งานนี้เป็น Super User</md-checkbox>
+                    </div>
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label class="d-none d-md-block">&nbsp;</label>
+                    <div>
+                        <md-checkbox class="m-0 p-0" ng-model="$settings.formData.CancelFlag" ng-disabled="$settings.isLoading" ng-true-value="'1'" ng-false-value="'0'">ยกเลิกพนักงานคนนี้ออกจากระบบ</md-checkbox>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึกการเปลี่ยนแปลง" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           on-loading="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="submitSave($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

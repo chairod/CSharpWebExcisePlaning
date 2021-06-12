@@ -1,0 +1,47 @@
+﻿<md-dialog flex="98" flex-gt-sm="70">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>กำหนด หมวดค่าตอบแทน ใช้สอยและวัสดุ</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-3">
+                    <label>รหัสอ้างอิงแหล่งที่มาเงินงบประมาณ จากระบบของรัฐบาล</label>
+                    <select class="form-control" ng-model="$settings.formData.ExpensesGroupID"  ng-disabled="$settings.isLoading" fw-select2>
+                        <option value="empty">--- หมวดรายการค่าใช้จ่าย ---</option>
+                        @foreach (var ExpensesGroup in ViewBag.ExpensesGroup)
+                        {
+                            <option value="@ExpensesGroup.EXPENSES_GROUP_ID">@ExpensesGroup.EXPENSES_GROUP_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-5">
+                    <label>รหัสอ้างอิงแหล่งที่มาเงินงบประมาณ จากระบบของรัฐบาล</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="$settings.formData.ReferCode" />
+                    </div>
+                </div>
+                <div class="form-group col-12 col-md-2">
+                    <label>ปีงบประมาณ</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="$settings.formData.Yr" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-2"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="save($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

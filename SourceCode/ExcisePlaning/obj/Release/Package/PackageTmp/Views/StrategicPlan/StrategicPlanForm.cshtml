@@ -1,0 +1,484 @@
+﻿
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <div class="form-row">
+
+            <div class="row">
+                <div class=" col-12 col-md-12">
+                    <h4 class="text-primary ">วิสัยทัศน์กรมสรรสามิต</h4>
+                </div>
+                <div class="col-12 col-md-12">
+                    <fw-execute-button text="เพิ่มรายการใหม่" css-class="btn btn-primary btn-sm"
+                                       css-icon-class="ion-plus-round" ng-disabled="$settings.isLoading"
+                                       ng-click="createNewVision($event)"></fw-execute-button>
+
+                </div>
+
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <tr class="bg-dark">
+                        <th style="width:50px;max-width:50px;min-width:50px" class="text-left">ตัวชี้วัด</th>
+                        <th style="width:150px;max-width:150px;min-width:150px">ค่าเป้าหมาย</th>
+                        @*<th style="width:128px;max-width:128px;min-width:128px" class="text-center">VISION_ID</th>*@
+                        <th style="width:50px;max-width:50px;min-width:50px">...</th>
+                    </tr>
+                    <tr ng-repeat="row in $settings.formView.Visionrows">
+                        <td style="width:50px;max-width:50px;min-width:50px" class="word-wrap">{{row.INDICATORS_NAME}}</td>
+                        <td style="width:150px;max-width:150px;min-width:150px" class="word-wrap">{{row.TARGET_VALUE}}</td>
+                        @*<td style="width:128px;max-width:128px;min-width:128px" class="text-center">{{row.VISION_ID}}</td>*@
+                        <th style="width:50px;max-width:50px;min-width:50px" class="text-danger" ng-click="DeleteVision($event, row)">ลบ</th>
+
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <div class="form-row">
+
+            <div class="row">
+                <div class=" col-12 col-md-12">
+                    <h4 class="text-primary ">พันธกิจกรมสรรสามิต</h4>
+                </div>
+                <div class="col-12 col-md-12">
+                    <fw-execute-button text="เพิ่มรายการใหม่" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round" ng-disabled="$settings.isLoading"
+                                       ng-click="createNewMission($event)"></fw-execute-button>
+
+                </div>
+
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <tr class="bg-dark">
+                        <th style="width:10px;max-width:10px;min-width:10px" class="text-left">ลำดับ</th>
+                        <th style="width:350px;max-width:350px;min-width:350px"> </th>
+                        @*<th style="width:128px;max-width:128px;min-width:128px" class="text-center">MISSION_ID</th>*@
+                        <th style="width:50px;max-width:50px;min-width:50px">...</th>
+                    </tr>
+                    <tr ng-repeat="row in $settings.formView.Missionrows">
+                        <td style="width:10px;max-width:10px;min-width:10px" class="word-wrap">{{$index + 1}}</td>
+                        <td style="width:350px;max-width:350px;min-width:350px" class="word-wrap">{{row.MISSION_NAME}}</td>
+                        @*<td style="width:128px;max-width:128px;min-width:128px" class="text-center">{{row.MISSION_ID}}</td>*@
+                        <th style="width:50px;max-width:50px;min-width:50px" class="text-danger" ng-click="DeleteMission($event, row)">ลบ</th>
+
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <div class="form-row">
+            <div class="row">
+                <div class=" col-12 col-md-12">
+                    <h4 class="text-primary ">ค่านิยมกรมสรรพสามิต</h4>
+                </div>
+                <div class="col-12 col-md-12">
+                    <fw-execute-button text="เพิ่มรายการใหม่" css-class="btn btn-primary btn-sm" 
+                                       css-icon-class="ion-plus-round" ng-disabled="$settings.isLoading" ng-click="createNewPopularity($event)"></fw-execute-button>
+
+                </div>
+
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <tr class="bg-dark">
+                        <th style="width:10px;max-width:10px;min-width:10px" class="text-left">ลำดับ</th>
+                        <th style="width:350px;max-width:350px;min-width:350px"> </th>
+                        @*<th style="width:128px;max-width:128px;min-width:128px" class="text-center">MISSION_ID</th>*@
+                        <th style="width:50px;max-width:50px;min-width:50px">...</th>
+                    </tr>
+                    <tr ng-repeat="row in $settings.formView.Popularityrows">
+                        <td style="width:10px;max-width:10px;min-width:10px" class="word-wrap">{{$index + 1}}</td>
+                        <td style="width:350px;max-width:350px;min-width:350px" class="word-wrap">{{row.POPULARITY_NAME}}</td>
+                        @*<td style="width:128px;max-width:128px;min-width:128px" class="text-center">{{row.POPULARITY_ID}}</td>*@
+                        <th style="width:50px;max-width:50px;min-width:50px" class="text-danger" ng-click="DeletePopularity($event, row)" >ลบ</th>
+
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <div class="form-row">
+
+            <div class="row">
+                <div class=" col-12 col-md-12">
+                    <h4 class="text-primary ">นโยบายกรมสรรพสามิต</h4>
+                </div>
+                <div class="col-12 col-md-12">
+                    <fw-execute-button text="เพิ่มรายการใหม่" css-class="btn btn-primary btn-sm" 
+                                       css-icon-class="ion-plus-round" ng-disabled="$settings.isLoading" ng-click="createNewPolicy($event)"></fw-execute-button>
+
+                </div>
+
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <tr class="bg-dark">
+                        <th style="width:10px;max-width:10px;min-width:10px" class="text-left">ลำดับ</th>
+                        <th style="width:350px;max-width:350px;min-width:350px"> </th>
+                        @*<th style="width:128px;max-width:128px;min-width:128px" class="text-center">MISSION_ID</th>*@
+                        <th style="width:50px;max-width:50px;min-width:50px">...</th>
+                    </tr>
+                    <tr ng-repeat="row in $settings.formView.Policyrows">
+                        <td style="width:10px;max-width:10px;min-width:10px" class="word-wrap">{{$index + 1}}</td>
+                        <td style="width:350px;max-width:350px;min-width:350px" class="word-wrap">{{row.POLICY_NAME}}</td>
+                        @*<td style="width:128px;max-width:128px;min-width:128px" class="text-center">{{row.POLICY_ID}}</td>*@
+                        <th style="width:50px;max-width:50px;min-width:50px" class="text-danger" ng-click="DeletePolicy($event, row)" >ลบ</th>
+
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundle/inputnumber")
+    @Scripts.Render("~/bundle/select2")
+<script type="text/javascript">
+    angular.module('leaveApp').controller('AppController',
+        function ($scope, $customHttp, $timeout, $q, $fwDialogService, $fwModalService) {
+            $scope.$settings = {
+                isLoading: false,
+                departments: [],
+                formSearch: {},
+                formView: {
+                    Visionrows: [],
+                    Missionrows: [],
+                    Popularityrows: [],
+                    Policyrows: []
+                }
+            };
+
+
+
+            // แสกงข้อมูลเร่ิมต้น
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    $scope.$settings.isLoading = true;
+
+                    $customHttp.formPost('@Url.Action("RetrieveForm", "StrategicPlan")', {  } ).then(function (res) {
+                        $scope.$settings.formView.Visionrows = res.data.Visionrows || [];
+                        $scope.$settings.formView.Missionrows = res.data.Missionrows || [];
+                        $scope.$settings.formView.Popularityrows = res.data.Popularityrows || [];
+                        $scope.$settings.formView.Policyrows = res.data.Policyrows || [];
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                    });
+                }, 500);
+            };
+
+            // จัดเตรียมหน้าเว็บ
+            $scope.submitSearch();
+
+
+
+            //Create Vision
+            $scope.createNewVision = function (event, formData) {
+                $fwModalService.getModal('@Url.Action("GetVisionModalResource", "StrategicPlan", new { })', {
+                        $formData: (formData || {})
+                    },
+                        function ($scope, $customHttp, $mdDialog, $fwDialogService, $timeout, $fwModalHelperService, $formData) {
+                            $scope.$settings = {
+                                isLoading: false,
+                                formData: {
+                                    VisionID: $formData.VisionID || null,
+                                    IndicatorsName: $formData.IndicatorsName || '',
+                                    TargetValue: $formData.TargetValue || null
+                                },
+                                formError: {},
+                                menus: $formData.MENUs || [],
+                                persons: $formData.PERSONs || []
+                            };
+
+                            // กำหนดค่าเริ่มต้น
+                            $scope.init = function () {
+                                $scope.$settings.formError = {};
+                                $scope.$settings.formData = {
+                                    VisionID: $formData.VisionID || null,
+                                    IndicatorsName: $formData.IndicatorsName || '',
+                                    TargetValue: $formData.TargetValue || null
+                                };
+                            };
+                            // ส่งคำขอบันทึกข้อมูล
+                            $scope.save = function (event) {
+                                $scope.$settings.isLoading = true;
+                                $scope.$settings.formError = {};
+
+                                var params = $.extend(true, {
+                                    MenuIds: $scope.$settings.menus.map(function (item) { return item.MENU_ID; }),
+                                    PersonIds: $scope.$settings.persons.map(function (item) { return item.PERSON_ID; })
+                                }, $scope.$settings.formData);
+                                $customHttp.formPost('@Url.Action("SubmitSaveVision", "StrategicPlan")', params).then(function (res) {
+                                    $scope.$settings.formError = res.data.errors || {};
+                                    if (res.data.errors == null)
+                                        $fwDialogService.alertDialog(event, 'บันทึกการเปลี่ยนแปลงเรียบร้อยแล้ว').then(function () {
+                                            $scope.close();
+                                        });
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+
+                            // ปิดหน้าต่าง
+                            $scope.close = function () {
+                                $mdDialog.hide();
+                            };
+
+
+                            $scope.init();
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        });
+                };
+            //delete Vision
+            $scope.DeleteVision = function (event, row) {
+                $fwDialogService.confirmDialog(event, 'ยืนยัน!! การยกเลิก').then(function () {
+                            $scope.$settings.isLoading = true;
+                    $customHttp.formPost('@Url.Action("SubmitDeleteVision", "StrategicPlan")', { VisionID: row.VISION_ID }).then(function () {
+                                $scope.submitSearch();
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        });
+            };
+
+
+            //Create Mission
+            $scope.createNewMission = function (event, formData) {
+                $fwModalService.getModal('@Url.Action("GetMissionModalResource", "StrategicPlan", new { })', {
+                        $formData: (formData || {})
+                    },
+                        function ($scope, $customHttp, $mdDialog, $fwDialogService, $timeout, $fwModalHelperService, $formData) {
+                            $scope.$settings = {
+                                isLoading: false,
+                                formData: {
+                                    MissionID: $formData.MissionID || null,
+                                    MissionName: $formData.MissionName || ''
+                                },
+                                formError: {},
+                                menus: $formData.MENUs || [],
+                                persons: $formData.PERSONs || []
+                            };
+
+                            // กำหนดค่าเริ่มต้น
+                            $scope.init = function () {
+                                $scope.$settings.formError = {};
+                                $scope.$settings.formData = {
+                                    MissionID: $formData.MissionID || null,
+                                    MissionName: $formData.MissionName || ''
+                                };
+                            };
+                            // ส่งคำขอบันทึกข้อมูล
+                            $scope.save = function (event) {
+                                $scope.$settings.isLoading = true;
+                                $scope.$settings.formError = {};
+
+                                var params = $.extend(true, {
+                                    MenuIds: $scope.$settings.menus.map(function (item) { return item.MENU_ID; }),
+                                    PersonIds: $scope.$settings.persons.map(function (item) { return item.PERSON_ID; })
+                                }, $scope.$settings.formData);
+                                $customHttp.formPost('@Url.Action("SubmitSaveMission", "StrategicPlan")', params).then(function (res) {
+                                    $scope.$settings.formError = res.data.errors || {};
+                                    if (res.data.errors == null)
+                                        $fwDialogService.alertDialog(event, 'บันทึกการเปลี่ยนแปลงเรียบร้อยแล้ว').then(function () {
+                                            $scope.close();
+                                        });
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+
+                            // ปิดหน้าต่าง
+                            $scope.close = function () {
+                                $mdDialog.hide();
+                            };
+
+
+                            $scope.init();
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        });
+                };
+            //delete Mission
+            $scope.DeleteMission = function (event, row) {
+                $fwDialogService.confirmDialog(event, 'ยืนยัน!! การยกเลิก').then(function () {
+                    $scope.$settings.isLoading = true;
+                    $customHttp.formPost('@Url.Action("SubmitDeleteMission", "StrategicPlan")', { MissionID: row.MISSION_ID }).then(function () {
+                                $scope.submitSearch();
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        });
+            };
+
+
+            //Create Popularity
+            $scope.createNewPopularity = function (event, formData) {
+                $fwModalService.getModal('@Url.Action("GetPopularityModalResource", "StrategicPlan", new { })', {
+                        $formData: (formData || {})
+                    },
+                        function ($scope, $customHttp, $mdDialog, $fwDialogService, $timeout, $fwModalHelperService, $formData) {
+                            $scope.$settings = {
+                                isLoading: false,
+                                formData: {
+                                    PopularityID: $formData.PopularityID || null,
+                                    PopularityName: $formData.PopularityName || ''
+                                },
+                                formError: {},
+                                menus: $formData.MENUs || [],
+                                persons: $formData.PERSONs || []
+                            };
+
+                            // กำหนดค่าเริ่มต้น
+                            $scope.init = function () {
+                                $scope.$settings.formError = {};
+                                $scope.$settings.formData = {
+                                    PopularityID: $formData.PopularityID || null,
+                                    PopularityName: $formData.PopularityName || ''
+                                };
+                            };
+                            // ส่งคำขอบันทึกข้อมูล
+                            $scope.save = function (event) {
+                                $scope.$settings.isLoading = true;
+                                $scope.$settings.formError = {};
+
+                                var params = $.extend(true, {
+                                    MenuIds: $scope.$settings.menus.map(function (item) { return item.MENU_ID; }),
+                                    PersonIds: $scope.$settings.persons.map(function (item) { return item.PERSON_ID; })
+                                }, $scope.$settings.formData);
+                                $customHttp.formPost('@Url.Action("SubmitSavePopularity", "StrategicPlan")', params).then(function (res) {
+                                    $scope.$settings.formError = res.data.errors || {};
+                                    if (res.data.errors == null)
+                                        $fwDialogService.alertDialog(event, 'บันทึกการเปลี่ยนแปลงเรียบร้อยแล้ว').then(function () {
+                                            $scope.close();
+                                        });
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+
+                            // ปิดหน้าต่าง
+                            $scope.close = function () {
+                                $mdDialog.hide();
+                            };
+
+
+                            $scope.init();
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        });
+                };
+            //delete Popularity
+            $scope.DeletePopularity = function (event, row) {
+                $fwDialogService.confirmDialog(event, 'ยืนยัน!! การยกเลิก').then(function () {
+                    $scope.$settings.isLoading = true;
+                    $customHttp.formPost('@Url.Action("SubmitDeletePopularity", "StrategicPlan")', { PopularityID: row.POPULARITY_ID }).then(function () {
+                                $scope.submitSearch();
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        });
+            };
+
+
+            //Create Policy
+            $scope.createNewPolicy = function (event, formData) {
+                $fwModalService.getModal('@Url.Action("GetPolicyModalResource", "StrategicPlan", new { })', {
+                        $formData: (formData || {})
+                    },
+                        function ($scope, $customHttp, $mdDialog, $fwDialogService, $timeout, $fwModalHelperService, $formData) {
+                            $scope.$settings = {
+                                isLoading: false,
+                                formData: {
+                                    PolicyID: $formData.PolicyID || null,
+                                    PolicyName: $formData.PolicyName || ''
+                                },
+                                formError: {},
+                                menus: $formData.MENUs || [],
+                                persons: $formData.PERSONs || []
+                            };
+
+                            // กำหนดค่าเริ่มต้น
+                            $scope.init = function () {
+                                $scope.$settings.formError = {};
+                                $scope.$settings.formData = {
+                                    PolicyID: $formData.PolicyID || null,
+                                    PolicyName: $formData.PolicyName || ''
+                                };
+                            };
+                            // ส่งคำขอบันทึกข้อมูล
+                            $scope.save = function (event) {
+                                $scope.$settings.isLoading = true;
+                                $scope.$settings.formError = {};
+
+                                var params = $.extend(true, {
+                                    MenuIds: $scope.$settings.menus.map(function (item) { return item.MENU_ID; }),
+                                    PersonIds: $scope.$settings.persons.map(function (item) { return item.PERSON_ID; })
+                                }, $scope.$settings.formData);
+                                $customHttp.formPost('@Url.Action("SubmitSavePolicy", "StrategicPlan")', params).then(function (res) {
+                                    $scope.$settings.formError = res.data.errors || {};
+                                    if (res.data.errors == null)
+                                        $fwDialogService.alertDialog(event, 'บันทึกการเปลี่ยนแปลงเรียบร้อยแล้ว').then(function () {
+                                            $scope.close();
+                                        });
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+
+                            // ปิดหน้าต่าง
+                            $scope.close = function () {
+                                $mdDialog.hide();
+                            };
+
+
+                            $scope.init();
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        });
+                };
+            //delete Policy
+            $scope.DeletePolicy = function (event, row) {
+                $fwDialogService.confirmDialog(event, 'ยืนยัน!! การยกเลิก').then(function () {
+                    $scope.$settings.isLoading = true;
+                    $customHttp.formPost('@Url.Action("SubmitDeletePolicy", "StrategicPlan")', { PolicyID: row.POLICY_ID }).then(function () {
+                                $scope.submitSearch();
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        });
+            };
+
+
+
+        });
+</script>
+}
+

@@ -1,0 +1,152 @@
+﻿<md-dialog flex="99" flex-gt-sm="60">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์ม{{$settings.expensesName}}</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <fw-tabs>
+                <fw-tab label="คณะกรรมการ">
+                    <fw-execute-button text="เพิ่มคณะกรรมการ" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round"
+                                       ng-click="addNewItem('Committee')" ng-disabled="$settings.isLoading"></fw-execute-button>
+                    <div class="d-block d-md-inline-block float-md-right">
+                        <span class="text-danger f-w-900">จำนวน {{$settings.formData.CommitteeGroups.length|number:0}} รายการ</span>
+                        <span class="text-danger f-w-900 ml-2">รวม {{$settings.formView.netCommitteeCompensationPrice|number:2}} บาท</span>
+                    </div>
+                    <div class="table-responsive overflow-auto" style="min-height:450px;max-height:450px;height:450px">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th style="min-width:145px" class="text-left">คณะกรรมการ</th>
+                                <th style="min-width:120px;max-width:120px;width:120px" class="text-center">จำนวนคน</th>
+                                <th style="min-width:120px;max-width:120px;width:120px" class="text-center">จำนวนวัน</th>
+                                <th class="text-right" style="min-width:170px;max-width:170px;width:170px">ค่าตอบแทน (บาท)</th>
+                                <th class="text-right" style="min-width:170px;max-width:170px;width:170px">รวม (บาท)</th>
+                                <th style="width:60px;min-width:60px;max-width:60px;" class="text-center"></th>
+                            </tr>
+
+                            <tr ng-if="$settings.formData.CommitteeGroups.length==0">
+                                <th colspan="6" class="text-center text-danger animated fadeIn">--- โปรดกดที่ปุ่ม "เพิ่มคณะกรรมการ" ---</th>
+                            </tr>
+
+                            <tr ng-repeat-start="row in $settings.formData.CommitteeGroups"></tr>
+                            @*ระบุชื่อกลุ่มคณะกรรมการ*@
+                            <tr>
+                                <td colspan="5" class="bg-light">
+                                    <input type="text" class="form-control" ng-model="row.CommitteeGroupName" maxlength="250" placeholder="ระบุชื่อกลุ่มคณะกรรมการ" />
+                                </td>
+                                <th rowspan="{{row.Items.length+1}}" style="width:60px;min-width:60px;max-width:60px;" class="text-center">
+                                    <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.CommitteeGroups.splice($index, 1)">ยกเลิก</a>
+                                </th>
+                            </tr>
+                            @*รายละเอียดย่อย ได้แก่ ประธาน คณะกรรมการ*@
+                            <tr ng-repeat="item in row.Items">
+                                <th style="min-width:145px" class="text-left bg-light">{{item.CommitteeTypeName}}</th>
+                                <td style="min-width:120px;max-width:120px;width:120px" class="text-center">
+                                    <fw-input-number-mask ng-model="item.CommitteeAmounts" css-class="text-center"
+                                                          ng-change="calCompensationPrice(item)"
+                                                          min-value="0" max-value="9999999" placeholder="จำนวนคน"></fw-input-number-mask>
+                                </td>
+                                <td style="min-width:120px;max-width:120px;width:120px" class="text-center">
+                                    <fw-input-number-mask ng-model="item.AmountDays" css-class="text-center"
+                                                          ng-change="calCompensationPrice(item)"
+                                                          min-value="0" max-value="9999999" placeholder="จำนวนวัน"></fw-input-number-mask>
+                                </td>
+                                <td class="text-right" style="min-width:170px;max-width:170px;width:170px">
+                                    <fw-input-number-mask ng-model="item.CompensationPriceRate" css-class="text-right"
+                                                          ng-change="calCompensationPrice(item)"
+                                                          min-value="0.00" max-value="9999999.00" placeholder="ค่าตอบแทน"></fw-input-number-mask>
+                                </td>
+                                <td class="text-right align-middle bg-light" style="min-width:170px;max-width:170px;width:170px">{{item.TotalCompensationPrice|number:2}}</td>
+                            </tr>
+                            @*รวมค่าตอบแทนของ ประธานและคณะกรรมการ*@
+                            <tr class="bg-light">
+                                <th colspan="4" class="text-right">รวม</th>
+                                <th class="text-right">{{row.Items|fwSimpleSummary:['TotalCompensationPrice']:2}}</th>
+                                <th class="text-center">&nbsp;</th>
+                            </tr>
+                            <tr ng-repeat-end></tr>
+                        </table>
+                    </div>
+                </fw-tab>
+                <fw-tab label="ผู้ควบคุมงาน">
+                    <fw-execute-button text="เพิ่มผู้ควบคุมงาน" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round"
+                                       ng-click="addNewItem('QualityAssurance')" ng-disabled="$settings.isLoading"></fw-execute-button>
+                    <div class="d-block d-md-inline-block float-md-right">
+                        <span class="text-danger f-w-900">จำนวน {{$settings.formData.QualityAssuranceGroups.length|number:0}} รายการ</span>
+                        <span class="text-danger f-w-900 ml-2">รวม {{$settings.formView.netQualityAssuranceCompensationPrice|number:2}} บาท</span>
+                    </div>
+                    <div class="table-responsive overflow-auto" style="min-height:450px;max-height:450px;height:450px">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th style="min-width:145px" class="text-left">ผู้คุมงาน</th>
+                                <th style="min-width:120px;max-width:120px;width:120px" class="text-center">จำนวนคน</th>
+                                <th style="min-width:120px;max-width:120px;width:120px" class="text-center">จำนวนวัน</th>
+                                <th class="text-right" style="min-width:170px;max-width:170px;width:170px">ค่าตอบแทน (บาท)</th>
+                                <th class="text-right" style="min-width:170px;max-width:170px;width:170px">รวม (บาท)</th>
+                                <th style="width:60px;min-width:60px;max-width:60px;" class="text-center"></th>
+                            </tr>
+
+                            <tr ng-if="$settings.formData.QualityAssuranceGroups.length==0">
+                                <th colspan="6" class="text-center text-danger animated fadeIn">--- โปรดกดที่ปุ่ม "เพิ่มผู้ควบคุมงาน" ---</th>
+                            </tr>
+
+                            <tr ng-repeat-start="row in $settings.formData.QualityAssuranceGroups"></tr>
+                            @*ระบุชื่อกลุ่ม*@
+                            <tr>
+                                <td colspan="5" class="bg-light">
+                                    <input type="text" class="form-control" ng-model="row.CommitteeGroupName" maxlength="250" placeholder="ระบุชื่อกลุ่มผู้คุมงาน" />
+                                </td>
+                                <th rowspan="{{row.Items.length+1}}" style="width:60px;min-width:60px;max-width:60px;" class="text-center">
+                                    <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.QualityAssuranceGroups.splice($index, 1)">ยกเลิก</a>
+                                </th>
+                            </tr>
+                            @*รายละเอียดย่อย ได้แก่ หัวหน้างาน ผู้ควบคุมงาน*@
+                            <tr ng-repeat="item in row.Items">
+                                <th style="min-width:145px" class="text-left bg-light">{{item.CommitteeTypeName}}</th>
+                                <td style="min-width:120px;max-width:120px;width:120px" class="text-center">
+                                    <fw-input-number-mask ng-model="item.CommitteeAmounts" css-class="text-center"
+                                                          ng-change="calCompensationPrice(item)"
+                                                          min-value="0" max-value="9999999" placeholder="จำนวนคน"></fw-input-number-mask>
+                                </td>
+                                <td style="min-width:120px;max-width:120px;width:120px" class="text-center">
+                                    <fw-input-number-mask ng-model="item.AmountDays" css-class="text-center"
+                                                          ng-change="calCompensationPrice(item)"
+                                                          min-value="0" max-value="9999999" placeholder="จำนวนวัน"></fw-input-number-mask>
+                                </td>
+                                <td class="text-right" style="min-width:170px;max-width:170px;width:170px">
+                                    <fw-input-number-mask ng-model="item.CompensationPriceRate" css-class="text-right"
+                                                          ng-change="calCompensationPrice(item)"
+                                                          min-value="0.00" max-value="9999999.00" placeholder="ค่าตอบแทน"></fw-input-number-mask>
+                                </td>
+                                <td class="text-right align-middle bg-light" style="min-width:170px;max-width:170px;width:170px">{{item.TotalCompensationPrice|number:2}}</td>
+                            </tr>
+                            @*รวมค่าตอบแทนของ หัวหน้างานและผู้ควบคุมงาน*@
+                            <tr class="bg-light">
+                                <th colspan="4" class="text-right">รวม</th>
+                                <th class="text-right">{{row.Items|fwSimpleSummary:['TotalCompensationPrice']:2}}</th>
+                                <th class="text-center">&nbsp;</th>
+                            </tr>
+                            <tr ng-repeat-end></tr>
+                        </table>
+                    </div>
+                </fw-tab>
+            </fw-tabs>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div ng-if="$settings.isLoading">
+            <span class="text-danger f-w-900 animated fadeIn">กำลังจัดเตรียมแบบฟอร์ม ...</span>
+        </div>
+        <span flex></span>
+        <fw-execute-button text="ตกลง" css-class="btn btn-primary btn-sm mr-md-1 mb-1 mb-md-0"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-ios-checkmark"
+                           ng-click="ok()"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

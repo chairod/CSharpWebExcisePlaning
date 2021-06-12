@@ -1,0 +1,480 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="d-block shadow-sm m-0 mb-2 p-3">
+        <div class="form-row">
+            <div class="col-12 col-md-4">
+                <label>ปี งปม. (พ.ศ.) </label>
+                <fw-input-mask model="$settings.formData.FiscalYear" mask="9999" change="fiscalYearChanged()" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+            </div>
+            <div class="col-12 col-md-4">
+                <fw-validate-error-output error-messages="$settings.formErrors.TemporaryYear.ErrorMessages" css-class="d-block m-0"></fw-validate-error-output>
+                <div class="input-group border-bottom mb-2 pb-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <input type="checkbox" ng-model="$settings.formData.TemporaryBudgetFlag"
+                                   ng-true-value="2" ng-false-value="1"
+                                   ng-disabled="$settings.isLoading" />&nbsp;พลางก่อน
+                        </div>
+                    </div>
+                    <fw-input-mask model="$settings.formData.TemporaryYear" mask="9999"
+                                   style="max-width:150px;width:150px;min-width:150px;"
+                                   disabled="$settings.formData.TemporaryBudgetFlag!=2"
+                                   change="temporaryYearChanged()" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+                </div>
+                <md-checkbox ng-model="$settings.formData.ReleaseBudgetFlag"
+                             ng-disabled="$settings.isLoading"
+                             ng-true-value="1" ng-false-value="0">เปิดใช้งบประมาณ</md-checkbox>
+            </div>
+            <div class="col-12 col-md-4">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <div class="d-flex float-md-right">
+                    <fw-execute-button text="บันทึกงบประมาณ" css-icon-class="ti-save"
+                                       css-class="btn btn-primary btn-sm mr-1"
+                                       ng-click="submitSave($event)"
+                                       ng-disabled="$settings.isLoading||$settings.formView.expenses.length==0||!$settings.formView.editAble"
+                                       on-loading="$settings.isSaving"></fw-execute-button>
+                    <fw-execute-button text="ยกเลิก" css-icon-class="ion-close-circled"
+                                       css-class="btn btn-danger btn-sm"
+                                       ng-disabled="$settings.isLoading"
+                                       ng-click="submitSearch()"></fw-execute-button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <div class="d-block mb-2 pb-2 border-bottom">
+            <h4 class="float-md-left text-primary f-w-900 f-16">ข้อมูลงบประมาณที่ได้รับจัดสรรจากรัฐบาล</h4>
+            <h4 class="float-md-right f-w-900 f-16">คำขอต้นปี: {{$settings.formView.netBudgetRequestStartYearAmounts|number:2}} บาท</h4>
+        </div>
+        <div class="row">
+            <div class="col-12">
+
+                @*สรุปยอดจัดสรรเงินงบประมาณ (เงิน งปม., เงินนอก งปม.)*@
+                <div class="d-block">
+                    <div class="d-block mb-1 float-md-left align-middle">
+                        <span class="text-danger f-w-900 f-12">*** ปีงบประมาณใดยังไม่มีข้อมูลรายการจัดสรรจากรัฐบาล ระบบจะรวบรวมรายการค่าใช้จ่ายที่ทำคำขอ งปม. ต้นปีของหน่วยงานมาตั้งต้นข้อมูลให้</span>
+                        <fw-validate-error-output error-messages="$settings.formErrors.Expenses.ErrorMessages" css-class="d-block"></fw-validate-error-output>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <tr class="bg-primary">
+                            <th colspan="3" class="text-center">เงินงบประมาณ (บาท)</th>
+                            <th colspan="4" class="text-center">เงินนอกงบประมาณ (บาท)</th>
+                        </tr>
+                        <tr class="bg-primary">
+                            <th style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap">จัดสรร</th>
+                            <th style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap">ใช้ไป</th>
+                            <th style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap">คงเหลือสุทธิ</th>
+                            <th style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap">จัดสรร</th>
+                            <th style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap">จัดเก็บรายได้</th>
+                            <th style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap">ใช้ไป</th>
+                            <th style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap">คงเหลือสุทธิ</th>
+                        </tr>
+                        <tr>
+                            <td style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap">{{$settings.formView.netBudgetAmounts|number:2}}</td>
+                            <td style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap">{{$settings.formView.netUseBudgetAmounts|number:2}}</td>
+                            <td style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap">{{$settings.formView.netRemainBudgetAmounts|number:2}}</td>
+                            <td style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap text-muted">{{$settings.formView.netOffBudgetAmounts|number:2}}</td>
+                            <td style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap">{{$settings.formView.netOffActualBudgetAmounts|number:2}}</td>
+                            <td style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap">{{$settings.formView.netOffUseBudgetAmounts|number:2}}</td>
+                            <td style="width:150px;min-width:150px;max-width:150px;" class="text-right word-wrap">{{$settings.formView.netOffRemainBudgetAmounts|number:2}}</td>
+
+                        </tr>
+                    </table>
+                </div>
+
+                @*แสดงรายการค่าใช้จ่าย และ ช่องให้ระบุจำนวนเงินที่ได้รับจัดสรร*@
+                <div class="table-responsive">
+                    <table class="table table-bordered m-0 p-0">
+
+                        <tr ng-if="!$settings.isLoading && $settings.formView.expenses.length == 0">
+                            <th colspan="9" class="text-center text-danger">--- ไม่พบรายการค่าใช้จ่ายที่จัดสรรจากรัฐบาล ---</th>
+                        </tr>
+
+                        <tr ng-repeat-start="row in $settings.formView.expenses" ng-if="false"></tr>
+                        @*แสดงส่วน Header*@
+                        <tr>
+                            <td colspan="9">
+                                <div class="row mb-2">
+                                    <div class="col-12 col-md-4">
+                                        <input type="text" class="form-control" value="{{row.GroupBy.PLAN_NAME || '-'}}" title="{{row.GroupBy.PLAN_NAME}}" readonly />
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <input type="text" class="form-control" value="{{row.GroupBy.PRODUCE_NAME || '-'}}" title="{{row.GroupBy.PRODUCE_NAME}}" readonly />
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <input type="text" class="form-control" value="{{row.GroupBy.ACTIVITY_NAME || '-'}}" title="{{row.GroupBy.ACTIVITY_NAME}}" readonly />
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-12 col-md-4">
+                                        <input type="text" class="form-control"
+                                               value="{{row.GroupBy.BUDGET_TYPE_NAME + ' (แหล่งเงิน: ' + (row.GroupBy.BUDGET_TYPE_GOVERNMENT_REFER_CODE || 'N/A') + ')'}}"
+                                               title="{{row.GroupBy.BUDGET_TYPE_NAME + ' (แหล่งเงิน: ' + (row.GroupBy.BUDGET_TYPE_GOVERNMENT_REFER_CODE || 'N/A') + ')'}}" readonly />
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <input type="text" class="form-control"
+                                               value="{{row.GroupBy.EXPENSES_GROUP_NAME + ' (แหล่งเงิน: ' + (row.GroupBy.EXPENSES_GROUP_GOVERNMENT_REFER_CODE || 'N/A') + ')'}}"
+                                               title="{{row.GroupBy.EXPENSES_GROUP_NAME + ' (แหล่งเงิน: ' + (row.GroupBy.EXPENSES_GROUP_GOVERNMENT_REFER_CODE || 'N/A') + ')'}}" readonly />
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <fw-execute-button text="เพิ่มรายการ คชจ."
+                                                           css-icon-class="ion-plus" css-class="btn btn-primary btn-sm mt-2 mt-md-0"
+                                                           ng-disabled="$settings.isLoading||!$settings.formView.editAble"
+                                                           ng-click="addExpenses($event, row)"></fw-execute-button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        @*แสดงรายการค่าใช้จ่ายที่จัดสรรจากรัฐบาล*@
+                        <tr class="bg-primary">
+                            <th rowspan="2" class="text-center align-middle" style="width:50px;min-width:50px;max-width:50px;"></th>
+                            <th rowspan="2" style="width:190px;min-width:190px;max-width:190px;" class="text-left align-middle">รายการค่าใช้จ่าย</th>
+                            <th colspan="6" class="text-center">จัดสรรงบประมาณ (บาท)</th>
+                            <th rowspan="2" class="text-center align-middle" style="width:50px;min-width:50px;max-width:50px;"></th>
+                        </tr>
+                        <tr class="bg-primary">
+                            <th style="width:100px;min-width:100px;max-width:100px;"></th>
+                            <th style="width:121px;min-width:121px;max-width:121px;" class="text-right">สะสม</th>
+                            <th style="width:135px;min-width:135px;max-width:135px;" class="text-right">จัดสรรเพิ่ม</th>
+                            <th style="width:140px;min-width:140px;max-width:140px;" class="text-left">หมายเหตุ</th>
+                            <th style="width:121px;min-width:121px;max-width:121px;" class="text-right">ใช้ไป</th>
+                            <th style="width:121px;min-width:121px;max-width:121px;" class="text-right">คงเหลือ</th>
+                        </tr>
+                        @*เงินงบประมาณ*@
+                        <tr ng-repeat-start="expenses in row.ExpensesItems">
+                            <td rowspan="2" class="text-center align-top" style="width:50px;min-width:50px;max-width:50px;">
+                                <a href="javascript:void(0)" class="text-danger"
+                                   ng-if="$settings.formView.editAble"
+                                   ng-click="deleteExpenses($event, row.ExpensesItems, $index, expenses.SEQ_ID)">ยกเลิก</a>
+                            </td>
+                            <td rowspan="2" style="width:190px;min-width:190px;max-width:190px;" class="word-wrap align-top">{{expenses.EXPENSES_NAME}}</td>
+                            <th style="width:100px;min-width:100px;max-width:100px;" class="bg-white">เงิน งปม.</th>
+                            <td style="width:121px;min-width:121px;max-width:121px;" class="text-right bg-white align-middle">{{+expenses.BUDGET_AMOUNT|number:2}}</td>
+                            <td style="width:135px;min-width:135px;max-width:135px;" class="text-right bg-white">
+                                <fw-input-number-mask ng-model="expenses.NewAllocateBudgetAmounts"
+                                                      ng-disabled="$settings.isLoading"
+                                                      ng-change="calBudget(expenses)"
+                                                      css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                            </td>
+                            <th rowspan="2" style="width:140px;min-width:140px;max-width:140px;" class="text-left align-top">
+                                <textarea ng-model="expenses.RemarkText" maxlength="120"
+                                          class="form-control textarea-noresize" placeholder="ความยาวไม่เกิน 120 ตัวอักษร"
+                                          style="min-height:100px;max-height:100px;height:100px"
+                                          ng-disabled="$settings.isLoading"></textarea>
+                            </th>
+                            <td style="width:121px;min-width:121px;max-width:121px;" class="text-right bg-white align-middle">{{+expenses.USE_BUDGET_AMOUNT|number:2}}</td>
+                            <td style="width:121px;min-width:121px;max-width:121px;" class="text-right bg-white align-middle">{{+expenses.REMAIN_BUDGET_AMOUNT|number:2}}</td>
+                            <td rowspan="2" style="width:50px;min-width:50px;max-width:50px;" class="text-center align-top">
+                                <a href="javascript:void(0)" class="text-primary"
+                                   ng-if="$settings.formData.BudgetId!=null"
+                                   ng-click="viewAllocateExpensesHistory($event, expenses)"><span class="animated fadeIn">ประวัติ</span></a>
+                            </td>
+                        </tr>
+                        @*เงินนอกงบประมาณ*@
+                        <tr>
+                            <th class="bg-light" style="width:100px;min-width:100px;max-width:100px;">เงินนอก งปม.</th>
+                            <td style="width:121px;min-width:121px;max-width:121px;" class="text-right bg-light align-middle">{{+expenses.OFF_BUDGET_AMOUNT|number:2}}</td>
+                            <td style="width:135px;min-width:135px;max-width:135px;" class="text-right bg-light">
+                                <fw-input-number-mask ng-model="expenses.NewAllocateOffBudgetAmounts"
+                                                      ng-change="calBudget(expenses)"
+                                                      ng-disabled="$settings.isLoading"
+                                                      css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                            </td>
+                            <td style="width:121px;min-width:121px;max-width:121px;" class="text-right bg-light align-middle">{{+expenses.USE_OFF_BUDGET_AMOUNT|number:2}}</td>
+                            <td style="width:121px;min-width:121px;max-width:121px;" class="text-right bg-light align-middle">{{+expenses.REMAIN_OFF_BUDGET_AMOUNT|number:2}}</td>
+                        </tr>
+                        <tr ng-repeat-end ng-if="false"></tr>
+
+                        <tr>
+                            <th rowspan="2" colspan="2" class="text-right align-middle bg-primary">รวม (บาท)</th>
+                            <th class="bg-white">เงิน งปม.</th>
+                            <th class="text-right bg-white">{{row.ExpensesItems|fwSimpleSummary:['BUDGET_AMOUNT']:2}}</th>
+                            <th class="text-right bg-white">{{row.ExpensesItems|fwSimpleSummary:['NewAllocateBudgetAmounts']:2}}</th>
+                            <th rowspan="2">&nbsp;</th>
+                            <th class="text-right bg-white">{{row.ExpensesItems|fwSimpleSummary:['USE_BUDGET_AMOUNT']:2}}</th>
+                            <th class="text-right bg-white">{{row.ExpensesItems|fwSimpleSummary:['REMAIN_BUDGET_AMOUNT']:2}}</th>
+                            <th rowspan="2">&nbsp;</th>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">เงินนอก งปม.</th>
+                            <th class="text-right bg-light">{{row.ExpensesItems|fwSimpleSummary:['OFF_BUDGET_AMOUNT']:2}}</th>
+                            <th class="text-right bg-light">{{row.ExpensesItems|fwSimpleSummary:['NewAllocateOffBudgetAmounts']:2}}</th>
+                            <th class="text-right bg-light">{{row.ExpensesItems|fwSimpleSummary:['USE_OFF_BUDGET_AMOUNT']:2}}</th>
+                            <th class="text-right bg-light">{{row.ExpensesItems|fwSimpleSummary:['REMAIN_OFF_BUDGET_AMOUNT']:2}}</th>
+                        </tr>
+                        <tr ng-repeat-end ng-if="false"></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/inputnumber")
+    @Scripts.Render("~/bundle/select2")
+<script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $fwModalHelperService, $fwModalService, $fwDialogService, $customHttp, $timeout, $fwDateService, $fwUtils, $filter) {
+            $scope.$settings = {
+                isLoading: false, isSaving: false,
+                formErrors: {},
+                formView: {
+                    editAble: false,
+                    netBudgetAmounts: 0, netUseBudgetAmounts: 0, netRemainBudgetAmounts: 0,
+                    netOffBudgetAmounts: 0, netOffActualBudgetAmounts: 0, netOffUseBudgetAmounts: 0, netOffRemainBudgetAmounts: 0,
+                    netBudgetRequestStartYearAmounts: 0,
+                    expenses: []
+                },
+                formData: {
+                    BudgetId: null,
+                    FiscalYear: $fwDateService.convertYearToBuddhist('@ViewBag.FiscalYear'),
+                    TemporaryBudgetFlag: 1, // งบประมาณพลางก่อน
+                    TemporaryYear: null, // งบประมาณพลางก่อน ปี งปม. ใด
+                    OldTemporaryYear: null, // พลางก่อน ก่อนที่จะถูกแก้ไข
+                    ReleaseBudgetFlag: 0 // เปิดใช้งบประมาณ
+                }
+            };
+
+            // เมื่อปีเปลี่ยนแปลง
+            var fiscalYearChagedId = null;
+            $scope.fiscalYearChanged = function () {
+                $timeout.cancel(fiscalYearChagedId);
+                fiscalYearChagedId = $timeout(function () {
+                    var fiscalYear = ('' + $scope.$settings.formData.FiscalYear).replace(/[^\d]/g, '');
+                    if (fiscalYear.length == 4)
+                        $scope.submitSearch();
+                }, 500);
+            };
+            // ปีงบประมาณพลางก่อนเปลี่ยนแปลง
+            var temporaryYearChangedId = null;
+            $scope.temporaryYearChanged = function () {
+                $timeout.cancel(temporaryYearChangedId);
+                temporaryYearChangedId = $timeout(function () {
+                    var fiscalYear = ('' + $scope.$settings.formData.TemporaryYear).replace(/[^\d]/g, '');
+                    if (fiscalYear.length == 4) {
+                        $scope.$settings.isLoading = true;
+                        fiscalYear = $fwDateService.convertYearToBritish(fiscalYear);
+                        $customHttp.formPost('@Url.Action("Retrieve", "BudgetReceive")', { fiscalYear: fiscalYear, getType: '2' }).then(function (res) {
+                            $scope.$settings.formView.expenses = res.data.expenses || [];
+                            $scope.$settings.formView.netBudgetAmounts = res.data.netBudgetAmounts || 0;
+                            $scope.$settings.formView.netUseBudgetAmounts = res.data.netUseBudgetAmounts || 0;
+                            $scope.$settings.formView.netRemainBudgetAmounts = res.data.netRemainBudgetAmounts || 0;
+
+                            $scope.$settings.formView.netOffBudgetAmounts = res.data.netOffBudgetAmounts || 0;
+                            $scope.$settings.formView.netOffActualBudgetAmounts = res.data.netOffActualBudgetAmounts || 0;
+                            $scope.$settings.formView.netOffUseBudgetAmounts = res.data.netOffUseBudgetAmounts || 0;
+                            $scope.$settings.formView.netOffRemainBudgetAmounts = res.data.netOffRemainBudgetAmounts || 0;
+
+                            $scope.$settings.formView.editAble = $scope.$settings.formView.expenses.length > 0;
+                            $scope.$settings.isLoading = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                        });
+                    }
+                }, 500);
+            };
+            // คำนวยอดเงิน งบประมาณ
+            //var calBudgetId = null;
+            //$scope.calBudget = function (expenses) {
+                //$timeout.cancel(calBudgetId);
+                //calBudgetId = $timeout(function () {
+                //    // เงินงบประมาณ
+                //    expenses.BUDGET_AMOUNT = (+expenses.BUDGET_AMOUNT) + (+expenses.NewAllocateBudgetAmounts);
+                //    expenses.REMAIN_BUDGET_AMOUNT = expenses.BUDGET_AMOUNT - (+expenses.USE_BUDGET_AMOUNT);
+                //    // เงินนอก งบประมาณ
+                //    expenses.OFF_BUDGET_AMOUNT = (+expenses.OFF_BUDGET_AMOUNT) + (+expenses.NewAllocateOffBudgetAmounts);
+                //    expenses.REMAIN_OFF_BUDGET_AMOUNT = expenses.OFF_BUDGET_AMOUNT - (+expenses.USE_OFF_BUDGET_AMOUNT);
+                //}, 300);
+            //};
+            // ส่งคำขอข้อมูล
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    $scope.$settings.isLoading = true;
+                    var fiscalYear = $fwDateService.convertYearToBritish($scope.$settings.formData.FiscalYear);
+                    $customHttp.formPost('@Url.Action("Retrieve", "BudgetReceive")', { fiscalYear: fiscalYear, getType: '1' }).then(function (res) {
+                        $scope.$settings.formView.netBudgetRequestStartYearAmounts = res.data.netBudgetRequestStartYearAmounts;
+
+                        $scope.$settings.formView.expenses = res.data.expenses || [];
+                        $scope.$settings.formView.netBudgetAmounts = res.data.netBudgetAmounts || 0;
+                        $scope.$settings.formView.netUseBudgetAmounts = res.data.netUseBudgetAmounts || 0;
+                        $scope.$settings.formView.netRemainBudgetAmounts = res.data.netRemainBudgetAmounts || 0;
+
+                        $scope.$settings.formView.netOffBudgetAmounts = res.data.netOffBudgetAmounts || 0;
+                        $scope.$settings.formView.netOffActualBudgetAmounts = res.data.netOffActualBudgetAmounts || 0;
+                        $scope.$settings.formView.netOffUseBudgetAmounts = res.data.netOffUseBudgetAmounts || 0;
+                        $scope.$settings.formView.netOffRemainBudgetAmounts = res.data.netOffRemainBudgetAmounts || 0;
+
+                        $scope.$settings.formView.editAble = res.data.editAble;
+                        $scope.$settings.formView.expenses = res.data.expenses || [];
+
+                        $scope.$settings.formData.BudgetId = res.data.budgetId;
+                        $scope.$settings.formData.TemporaryBudgetFlag = res.data.TemporaryBudgetFlag;
+                        $scope.$settings.formData.TemporaryYear = $fwDateService.convertYearToBuddhist(res.data.TemporaryYear);
+                        $scope.$settings.formData.OldTemporaryYear = res.data.TemporaryYear;
+                        $scope.$settings.formData.ReleaseBudgetFlag = res.data.ReleaseBudgetFlag;
+
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                    });
+                }, 300);
+            };
+            // บันทึกรายการจัดสรร งปม.
+            $scope.submitSave = function (event) {
+                if (!$scope.$settings.formView.editAble)
+                    return;
+
+                $scope.$settings.isLoading = true;
+                $scope.$settings.isSaving = true;
+
+                var params = $.extend(true, {
+                    Expenses: []
+                }, $scope.$settings.formData);
+                params.FiscalYear = $fwDateService.convertYearToBritish(params.FiscalYear);
+                params.TemporaryYear = $fwDateService.convertYearToBritish(params.TemporaryYear);
+                // รวบรวมรายการ คชจ. เพื่อส่งไปบันทึก
+                angular.forEach($scope.$settings.formView.expenses, function (item) {
+
+                    var allocateNewItems = $.extend(true, [], item.ExpensesItems);
+                    // เคยมีการบันทึกรายการไว้แล้ว ให้กรองเอาเฉพาะรายการที่ ระบุค่างบประมาณที่ได้รับเพิ่ม
+                    if ($scope.$settings.formData.BudgetId != null)
+                        allocateNewItems = allocateNewItems.filter(function (expensesItem) {
+                            return expensesItem.NewAllocateBudgetAmounts != undefined
+                                || expensesItem.NewAllocateOffBudgetAmounts != undefined;
+                        });
+                    params.Expenses = params.Expenses.concat(allocateNewItems);
+                });
+
+                // ส่งคำขอบันทึกรายการ
+                $scope.$settings.formErrors = {};
+                $customHttp.formPost('@Url.Action("SubmitSave", "BudgetReceive")', params).then(function (res) {
+                    $scope.$settings.formErrors = res.data.errors || {}
+                    if (null != res.data.errorText)
+                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                    else if (null != res.data.errors)
+                        $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งให้เรียบร้อยก่อน');
+                    else
+                        $fwDialogService.alertDialog(event, 'บันทึกเงินงบประมาณ/เงินนอก งปม. เรียบร้อยแล้ว').then(function () {
+                            $scope.submitSearch();
+                        });
+
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                });
+            };
+            // เมื่อกดเพิ่มรายการค่าใช้จ่าย
+            $scope.addExpenses = function (event, row) {
+                $fwModalHelperService.getExpensesSelectOneModal(event, row.GroupBy.EXPENSES_GROUP_ID, true).then(function (selectedItem) {
+                    var expensesIds = row.ExpensesItems.map(function (item) { return item.EXPENSES_ID; });
+                    if (expensesIds.indexOf(selectedItem.EXPENSES_ID) == -1) {
+                        var newItemJsonStr = $fwUtils.toJson($.extend(true, {}, row.ExpensesItems[0]));
+                        var newItem = $fwUtils.parseJson(newItemJsonStr);
+
+                        newItem = $.extend(newItem, {
+                            SEQ_ID: null,
+                            EXPENSES_ID: selectedItem.EXPENSES_ID,
+                            EXPENSES_NAME: selectedItem.EXPENSES_NAME,
+                            BUDGET_AMOUNT: 0, USE_BUDGET_AMOUNT: 0, REMAIN_BUDGET_AMOUNT: 0,
+                            OFF_BUDGET_AMOUNT: 0, USE_OFF_BUDGET_AMOUNT: 0, REMAIN_OFF_BUDGET_AMOUNT: 0, ACTUAL_OFF_BUDGET_AMOUNT: 0,
+                            NewAllocateBudgetAmounts: null,
+                            NewAllocateOffBudgetAmounts: null
+                        });
+                        row.ExpensesItems.unshift(newItem);
+                    } else
+                        $fwDialogService.dangerDialog(event, $filter('textFormat')('รายการค่าใช้จ่าย {0} ซ้ำกับที่มีอยู่', selectedItem.EXPENSES_NAME));
+                }, function () { });
+            };
+            // ยกเลิกรายการค่าใช้จ่าย
+            $scope.deleteExpenses = function (event, expensesItems, index, seqId) {
+                if (seqId != null)
+                    $fwDialogService.confirmDialog(event, 'ยืนยันการยกเลิกรายการค่าใช้จ่าย').then(function () {
+                        $customHttp.formPost('@Url.Action("SubmitCancelExpenses", "BudgetReceive")', { seqId: seqId }).then(function (res) {
+                            if (null == res.data.errorText) {
+                                $scope.submitSearch();
+                            } else {
+                                $fwDialogService.dangerDialog(event, res.data.errorText);
+                            }
+                        }, function () { });
+                    }, function () { });
+                else
+                    expensesItems.splice(index, 1);
+            };
+            // แสดงประวัติการรับเงินงบประมาณจากรัฐบาลของรายการค่าใช้จ่าย
+            $scope.viewAllocateExpensesHistory = function (event, expensesInfo) {
+                $fwModalService.getModal('@Url.Action("GetExpensesAllocateHistoryView", "BudgetReceive")', { $expensesInfo: expensesInfo }, function ($scope, $timeout, $customHttp, $fwDialogService, $mdDialog, $expensesInfo) {
+                    $scope.$settings = {
+                        isLoading: false,
+                        formView: {
+                            expensesInfo: $.extend(true, {}, $expensesInfo),
+                            rows: []
+                        }
+                    };
+
+                    // ส่งคำขอข้อมูล
+                    $scope.submitSearch = function () {
+                        $scope.$settings.isLoading = true;
+                        $customHttp.formPost('@Url.Action("RetrieveExpensesReceiveHistory", "BudgetReceive")', {
+                            fiscalYear: $expensesInfo.YR,
+                            planId: $expensesInfo.PLAN_ID,
+                            produceId: $expensesInfo.PRODUCE_ID,
+                            activityId: $expensesInfo.ACTIVITY_ID,
+                            budgetTypeId: $expensesInfo.BUDGET_TYPE_ID,
+                            expensesGroupId: $expensesInfo.EXPENSES_GROUP_ID,
+                            expensesId: $expensesInfo.EXPENSES_ID,
+                        }).then(function (res) {
+                            $scope.$settings.formView.rows = res.data || [];
+                            $scope.$settings.isLoading = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                        });
+                    };
+                    // ยกเลิกประวัติการรับเงินจากรัฐบาล
+                    $scope.submitRejectReceiveBudget = function (event, row) {
+                        $fwDialogService.confirmDialog(event, 'ยืนยันการยกเลิก รายการรับเงินจากรัฐบาล รายการนี้').then(function () {
+                            $customHttp.formPost('@Url.Action("SubmitRejectExpensesReceiveBudget", "BudgetReceive")', { receiveId: row.RECEIVE_ID }).then(function (res) {
+                                if (null != res.data.errorText)
+                                    $fwDialogService.dangerDialog(event, res.data.errorText);
+                                else
+                                    $timeout(function () {
+                                        $scope.submitSearch();
+                                    }, 100);
+                            }, function () { });
+                        }, function () { });
+                    };
+                    // ปิด Dialog
+                    $scope.close = function () {
+                        $mdDialog.hide({});
+                    };
+
+                    // จัดเตรียมข้อมูลแสดงผลในฟอร์ม
+                    $timeout(function () {
+                        $scope.submitSearch();
+                    }, 100);
+                }, event).then(function () {
+                    $scope.submitSearch();
+                }, function () { });
+            };
+
+            // โหลดข้อมูลตั้งตนของฟอร์ม
+            $scope.submitSearch();
+        });
+</script>
+}

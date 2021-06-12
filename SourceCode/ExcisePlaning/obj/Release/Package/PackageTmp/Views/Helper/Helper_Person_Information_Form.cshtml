@@ -1,0 +1,69 @@
+﻿<md-dialog flex="98" flex-gt-sm="65">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ค้นหาข้อมูลบุคลากร</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="container-fluid shadow-sm m-0 mb-2 rounded-bottom">
+                <div class="form-row">
+                    <div class="form-group col-12 offset-md-1 col-md-4">
+                        <label>ประเภทบุคลากร</label>
+                        <select class="form-control border-0 bg-light" ng-model="$settings.formSearch.personTypeId"
+                                ng-change="submitSearch()"
+                                ng-disabled="$settings.isLoading" fw-select2>
+                            <option value="empty">--- ประเภทบุคลากร ---</option>
+                            @foreach (var personTypeItem in ViewBag.PersonTypes)
+                            {
+                                <option value="@personTypeItem.PERSON_TYPE_ID">@personTypeItem.PERSON_TYPE_NAME</option>
+                            }
+                        </select>
+                        <input type="hidden" ng-model="$settings.formSearch.depId" ng-value="@ViewBag.DepartmentId" />
+                    </div>
+                    <div class="form-group col-12 col-md-4">
+                        <label>ตำแหน่งงาน</label>
+                        <select class="form-control border-0 bg-light" ng-model="$settings.formSearch.positionId" 
+                                ng-change="submitSearch()"
+                                ng-disabled="$settings.isLoading" fw-select2>
+                            <option value="empty">--- ตำแหน่งงาน ---</option>
+                            @foreach (var posItem in ViewBag.Positions)
+                            {
+                                <option value="@posItem.POSITION_ID">@posItem.POSITION_NAME</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-12 offset-md-1 col-md-4">
+                        <label>รหัสพนักงาน</label>
+                        <input type="text" ng-model="$settings.formSearch.personCode" 
+                               ng-change="submitSearch()"
+                               maxlength="5" class="form-control border-0 bg-light" />
+                    </div>
+                    <div class="form-group col-12 col-md-4">
+                        <label>ชื่อ - นามสกุล</label>
+                        <input type="text" ng-model="$settings.formSearch.personName" 
+                               ng-change="submitSearch()"
+                               class="form-control border-0 bg-light" />
+                    </div>
+                </div>
+            </div>
+            <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                                  title="ข้อมูลพนักงาน"
+                                  event-name="fwSimpleDataTable.modal.paramsChanged"
+                                  auto-load="false"
+                                  disabled="$settings.isLoading"
+                                  visible-page-size="false"
+                                  row-click-callback="rowClick($row, $columnConfig)"
+                                  route-url="@Url.Action("RetrievePersonnel", "Helper")"></fw-simple-data-table>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

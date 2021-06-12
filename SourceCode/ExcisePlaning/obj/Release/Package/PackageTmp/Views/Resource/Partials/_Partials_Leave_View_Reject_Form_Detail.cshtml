@@ -1,0 +1,39 @@
+﻿<md-dialog flex="100" flex-gt-sm="45">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>รายละเอียดการขอลา</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <label class="require-field">ระบุเหตุผลการขอยกเลิกใบลา<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.RemarkText.ErrorMessages"></fw-validate-error-output></label>
+                <textarea class="form-control textarea-noresize" ng-model="$settings.formData.RemarkText" placeholder="ความยาวไม่เกิน 100 ตัวอักษร" style="min-height:50px;" ng-disabled="$settings.isLoading"></textarea>
+            </div>
+            <fw-validate-error-output error-messages="$settings.formErrors.ReqDates.ErrorMessages"></fw-validate-error-output>
+            <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                                  title="{{$settings.title}}"
+                                  event-name="fwSimpleDataTable.paramsChanged1"
+                                  auto-load="false"
+                                  disabled="$settings.isLoading"
+                                  visible-page-size="true"
+                                  visible-paging="true"
+                                  search-done-callback="searchDone($res)"
+                                  row-click-callback="rowClick($event, $row, $columnConfig)"
+                                  column-click-callback="columnClick($event, $rows, $columnConfig)"
+                                  route-url="@Url.Action("RetireveDetail", "LeaveApprove")"></fw-simple-data-table>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="ส่งคำขอยกเลิกใบลา" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           on-loading="$settings.isSaving"
+                           css-icon-class="ion-checkmark-circled"
+                           ng-click="submitSave($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

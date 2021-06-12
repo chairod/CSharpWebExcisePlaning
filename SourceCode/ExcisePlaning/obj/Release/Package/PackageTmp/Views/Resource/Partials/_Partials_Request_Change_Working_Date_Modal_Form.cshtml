@@ -1,0 +1,46 @@
+﻿<md-dialog flex="98" flex-gt-sm="55">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ค้นคำขอแก้ไขเวลามา-กลับเพื่อพิมพ์</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 offset-md-2 col-md-3">
+                    <label>ช่วงวันที่ขอแก้ไขเวลามา-กลับ</label>
+                    <fw-date-range model="$settings.formSearch.dateRange"
+                                   change="submitSearch()"
+                                   disabled="$settings.isLoading"></fw-date-range>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>สถานะเอกสาร</label>
+                    <select class="form-control" ng-model="$settings.formSearch.documentStatus"
+                            ng-change="submitSearch()"
+                            ng-disabled="$settings.isLoading||true">
+                        <option value="">--- สถานะเอกสาร ---</option>
+                        <option value="0">รอพิจารณา</option>
+                        <option value="1">อยู่ระหว่างพิจารณา</option>
+                        <option value="2">อนุมัติ</option>
+                    </select>
+                </div>
+            </div>
+            <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                                  event-name="fwSimpleDataTable.modal.paramsChanged"
+                                  auto-load="false"
+                                  disabled="$settings.isLoading"
+                                  visible-page-size="false"
+                                  visible-paging="true"
+                                  row-click-callback="rowClick($row, $columnConfig)"
+                                  route-url="@Url.Action("RetrieveForPrint", "RequestChangeWorkingDate")"></fw-simple-data-table>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span class="f-w-900 f-12 text-danger">*** ใบคำขอแก้ไขเวลาจะสามารถพิมพ์ได้เฉพาะรายการที่อนุมัติแล้วเท่านั้น</span>
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

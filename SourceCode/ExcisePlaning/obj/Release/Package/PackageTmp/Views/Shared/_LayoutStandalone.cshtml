@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="en-us" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <title>@ViewBag.Title</title>
+    <meta name="description" content="Leave System, Application configure not defined">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Leave System">
+    @Styles.Render("~/Contents/Standalone/css/style.css")
+    @Styles.Render("~/Third_Party/assets/icon/font-awesome/css/font-awesome.min.css")
+</head>
+<body style="overflow:hidden;">
+    <!-- Your logo on the top left -->
+    <a href="#" class="logo-link" title="back home">
+        <img src="@Url.Action("GetImage", "Resource", new { groupType = "third_party", filename = "leave-logo-small.png" })" class="logo" alt="Company's logo" />
+    </a>
+    <div class="content">
+        <div class="content-box">
+            <div class="big-content">
+                <!-- Main squares for the content logo in the background -->
+                <div class="list-square">
+                    <span class="square"></span>
+                    <span class="square"></span>
+                    <span class="square"></span>
+                </div>
+                <!-- Main lines for the content logo in the background -->
+                <div class="list-line">
+                    <span class="line"></span>
+                    <span class="line"></span>
+                    <span class="line"></span>
+                    <span class="line"></span>
+                    <span class="line"></span>
+                    <span class="line"></span>
+                </div>
+                <!-- The animated searching tool -->
+                <i class="fa fa-search color" aria-hidden="true"></i>
+                <!-- div clearing the float -->
+                <div class="clear"></div>
+            </div>
+            <!-- Your text -->
+            @RenderBody()
+        </div>
+    </div>
+    <footer class="light">
+        <ul>
+            <li><a href="javascript:void(0)" onclick="window.history.back();">Back</a></li>
+        </ul>
+    </footer>
+
+    @Scripts.Render("~/bundle/jquery")
+    @Scripts.Render("~/bundle/bootstrap")
+    <!-- Bubble plugin -->
+    @Scripts.Render("~/Contents/Standalone/vegas.js")
+</body>
+
+</html>
+

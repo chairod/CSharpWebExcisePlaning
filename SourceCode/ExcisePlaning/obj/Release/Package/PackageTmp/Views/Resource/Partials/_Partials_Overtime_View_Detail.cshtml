@@ -1,0 +1,27 @@
+﻿<md-dialog flex="100" flex-gt-sm="45">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>รายละเอียดการขอทำงานล่วงเวลา (OT)</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="text-danger f-12">*** ข้อความที่แสดงเป็นสีแดง เป็นการทำ OT ในวันหยุด ***</div>
+            <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                                  title="{{$settings.title}}"
+                                  event-name="fwSimpleDataTable.paramsChanged1"
+                                  auto-load="false"
+                                  visible-page-size="false"
+                                  visible-paging="false"
+                                  row-click-callback="rowClick($event, $row, $columnConfig)"
+                                  route-url="@Url.Action("RetireveDetail", "OvertimeApprove")"></fw-simple-data-table>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

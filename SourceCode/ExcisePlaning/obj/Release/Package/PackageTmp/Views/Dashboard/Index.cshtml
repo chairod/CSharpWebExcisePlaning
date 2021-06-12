@@ -1,0 +1,337 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    @*หน้าจอกว้างไปทำให้การแสดงผลข้อมูล ไม่กระชับ จึงบีบด้านข้างซ้ายขวาเข้าอย่างล่ะ 5*@
+    <div class="ml-md-5 mr-md-5">
+        @*เงื่อนไขการกรองข้อมูล*@
+        <div class="row mb-2 mb-mb-0">
+            <div class="col-12 offset-md-8 col-md-4 float-md-right">
+                <div class="form-row">
+                    <div class="form-group col-3">
+                        <label class="d-none d-md-block">ปี (พ.ศ.)</label>
+                        <fw-input-mask mask="9999" model="$settings.formSearch.fiscalYear" disablee="$settings.isLoading"></fw-input-mask>
+                    </div>
+                    <div class="form-group col-9">
+                        <label class="d-none d-md-block">หน่วยงาน</label>
+                        <select class="form-control" ng-model="$settings.formSearch.depId" ng-disabled="$settings.isLoading" fw-select2>
+                            <option value="empty">--- หน่วยงาน ---</option>
+                            @foreach (ExcisePlaning.Classes.Mappers.DepartmentShortFieldProperty depItem in ViewBag.Departments)
+                            {
+                                <option value="@depItem.DEP_ID">@depItem.DEP_NAME</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+
+
+        @*ครั้งล่าสุดที่ ส่งคำขอ จัดสรร รายงานผล*@
+        <div class="form-row">
+            <div class="col-12 col-md-4 mb-2 mb-md-0">
+                <div class="form-row shadow-sm p-3 text-white rounded-lg mr-md-1" style="background-color:#96C8FD">
+                    <div class="col-4 mr-1 border-right">
+                        <i class="icofont icofont-user-alt-3 f-66 f-w-900"></i>
+                    </div>
+                    <div class="col-7 ml-1 default-font-color">
+                        <h5 class="mb-3">คำขอครั้งล่าสุด</h5>
+                        <div class="f-12"><i class="ti-user mr-1"></i>นายทศพล พุ่มเมือง</div>
+                        <div class="f-12"><i class="ion-android-calendar mr-1"></i>12/04/2563</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 mb-2 mb-md-0">
+                <div class="form-row shadow-sm p-3 text-white rounded-lg mr-md-1" style="background-color:#DF7A50">
+                    <div class="col-4 mr-1 border-right">
+                        <i class="icofont icofont-user-alt-3 f-66 f-w-900"></i>
+                    </div>
+                    <div class="col-7 ml-1 default-font-color">
+                        <h5 class="mb-3">จัดสรรครั้งล่าสุด</h5>
+                        <div class="f-12"><i class="ti-user mr-1"></i>นายทองดี พระแสงทอง</div>
+                        <div class="f-12"><i class="ion-android-calendar mr-1"></i>09/07/2563</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 mb-2 mb-md-0">
+                <div class="form-row shadow-sm p-3 text-white rounded-lg" style="background-color:#DFBB50">
+                    <div class="col-4 mr-1 border-right">
+                        <i class="icofont icofont-user-alt-3 f-66 f-w-900"></i>
+                    </div>
+                    <div class="col-7 ml-1 default-font-color">
+                        <h5 class="mb-3">รายงานผลครั้งล่าสุด</h5>
+                        <div class="f-12"><i class="ti-user mr-1"></i>น.ส. คณสดี ฤทธิ์ไกรพล</div>
+                        <div class="f-12"><i class="ion-android-calendar mr-1"></i>05/08/2563</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        @*สรุปการจัดสรร และ รายงานผล(ภาพรวม และ รายไตรมาส)*@
+        <div class="form-row mt-md-2">
+            <div class="col-12 col-md-6 p-0 pr-md-1">
+                <div class="form-row">
+                    <div class="col-12">
+                        @*<div id="chartContainer" class="mb-2 mb-md-0" style="width:100%;height:316px;min-height:316px;max-height:316px;"></div>*@
+                        <div id="chartContainer" class="mb-2 mb-md-0" style="width:100%;min-height:305px;"></div>
+                    </div>
+                </div>
+                <div class="form-row mt-md-2">
+                    <div class="col-12">
+                        <div id="chartReportContainer" class="mb-2 mb-md-0" style="width:100%;min-height:188px;"></div>
+                    </div>
+                </div>
+
+                <!--<div class="form-row mt-md-2">
+            <div class="col-12">-->
+                @*รายงานผลไตรมาส 1-2*@
+                <!--<div class="form-row">
+                <div class="col-12 col-md-6 mb-2 mb-md-0">
+                    <div class="form-row bg-white shadow-sm rounded-lg p-2 mr-md-1">
+                        <div class="col-4 text-primary"><i class="icofont icofont-chart-bar-graph f-68"></i></div>
+                        <div class="col-8 default-font-color">
+                            <h5>รายงานผลไตรมาส 1</h5>
+                            <span class="mt-3 text-primary f-28 f-w-900">3.5 ล้าน</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 mb-2 mb-md-0">
+                    <div class="form-row bg-white shadow-sm rounded-lg p-2">
+                        <div class="col-4 text-primary"><i class="icofont icofont-chart-bar-graph f-68"></i></div>
+                        <div class="col-8 default-font-color">
+                            <h5>รายงานผลไตรมาส 2</h5>
+                            <span class="mt-3 text-primary f-28 f-w-900">24 ล้าน</span>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+                @*รายงานผลไตรมาส 3-4*@
+                <!--<div class="form-row mt-md-2">
+                        <div class="col-12 col-md-6 mb-2 mb-md-0">
+                            <div class="form-row bg-white shadow-sm rounded-lg p-2 mr-md-1">
+                                <div class="col-4 text-primary"><i class="icofont icofont-chart-bar-graph f-68"></i></div>
+                                <div class="col-8 default-font-color">
+                                    <h5>รายงานผลไตรมาส 3</h5>
+                                    <span class="mt-3 text-primary f-28 f-w-900">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 mb-2 mb-md-0">
+                            <div class="form-row bg-white shadow-sm rounded-lg p-2">
+                                <div class="col-4 text-primary"><i class="icofont icofont-chart-bar-graph f-68"></i></div>
+                                <div class="col-8 default-font-color">
+                                    <h5>รายงานผลไตรมาส 4</h5>
+                                    <span class="mt-3 text-primary f-28 f-w-900">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+            </div>
+            <div class="col-12 col-md-6">
+                @*คำของบประมาณ*@
+                <div class="form-row">
+                    <div class="col-12 p-0 mb-2 mb-md-0">
+                        <div class="shadow-sm rounded-lg p-3 bg-white">
+                            <h5 class="text-center">คำของบประมาณ</h5>
+                            <div class="text-center mt-3 text-primary f-w-900 f-36">30 ล้าน</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row mt-md-2">
+                    <div class="col-12 col-md-6 p-0 mb-2 mb-md-0">
+                        <div class="shadow-sm rounded-lg p-3 bg-white mr-md-1">
+                            <h5 class="text-center">เงิน งปม.</h5>
+                            <div class="text-center mt-3 f-w-900 f-36" style="color:#DF7A50;">12 ล้าน</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 p-0 mb-2 mb-md-0">
+                        <div class="shadow-sm rounded-lg p-3 bg-white">
+                            <h5 class="text-center">เงินนอก งปม.</h5>
+                            <div class="text-center mt-3 f-w-900 f-36" style="color:#DFBB50;">18 ล้าน</div>
+                        </div>
+                    </div>
+                </div>
+
+                @*จัดสรรงบประมาณ*@
+                <div class="form-row mt-md-2">
+                    <div class="col-12 p-0 mb-2 mb-md-0">
+                        <div class="shadow-sm rounded-lg p-3 bg-white">
+                            <h5 class="text-center">จัดสรรงบประมาณ</h5>
+                            <div class="text-center mt-3 text-primary f-w-900 f-36">30 ล้าน</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row mt-md-2">
+                    <div class="col-12 col-md-6 p-0 mb-2 mb-md-0">
+                        <div class="shadow-sm rounded-lg p-3 bg-white mr-md-1">
+                            <h5 class="text-center">เงิน งปม.</h5>
+                            <div class="text-center mt-3 f-w-900 f-36" style="color:#DF7A50;">12 ล้าน</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 p-0 mb-2 mb-md-0">
+                        <div class="shadow-sm rounded-lg p-3 bg-white">
+                            <h5 class="text-center">เงินนอก งปม.</h5>
+                            <div class="text-center mt-3 f-w-900 f-36" style="color:#DFBB50;">18 ล้าน</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/select2")
+    @Scripts.Render("~/bundle/fusionChart")
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $q, $timeout, $fwModalService, $fwDialogService, $customHttp) {
+
+            //กำหนดค่าโครงสร้างข้อมูลเริ่มต้นให้กับ Fusion Chart
+            var baseFontNames = "CSChatThai, Roboto, Montserrat, Lato, Raleway";
+            var globalChartConfigs = {
+                type: "msstackedcolumn2d", //"mscolumn2d",
+                width: "100%",
+                height: "100%",
+                dataFormat: "json",
+                dataSource: {
+                    chart: {
+                        "baseFont": baseFontNames,
+                        // Font คำอธิบายกราฟ
+                        "captionFont": baseFontNames,
+                        "captionFontSize": "12",
+                        // Font Legend
+                        "legendItemFont": baseFontNames,
+                        "legendItemFontSize": "9",
+                        // Font คำอธิบายแกน Y
+                        "xAxisNameFont": baseFontNames,
+                        "xAxisNameFontSize": "10",
+                        // Font คำอธิบายแกน Y
+                        "yAxisNameFont": baseFontNames,
+                        "yAxisNameFontSize": "10",
+                        // Font Label ในแกน X
+                        "labelFont": baseFontNames,
+                        "labelFontSize": "7",
+                        // Rotate Label
+                        //"labelDisplay": "rotate",
+                        //"slantLabel": "1", // 45 องศา
+
+                        "outCnvBaseFont": baseFontNames,
+                        caption: "ประวัติการมาทำงาน ประจำปี 2563 (ม.ค. - ธ.ค.)",
+                        //subcaption: "ม.ค. - ธ.ค.",
+                        xaxisname: "เดือน",
+                        yaxisname: "จำนวนวันที่มา สาย/ตามเวลาปกติ",
+                        formatnumberscale: "1",
+                        plottooltext:
+                            "<b>$seriesName</b> [$label]: <b>$dataValue&nbsp;ล้านบาท</b>",
+                        theme: "fusion",
+                        drawcrossline: "1",
+                        showXAxisValues: "1", // ไม่แสดง Label XAxis
+                        showYAxisValues: "0", // ไม่แสดง Label YAxis
+                        showLegend: "0", // ไม่ต้องแสดง Legend
+                    },
+                    data: [],
+                    //categories: [],
+                    //// Stack
+                    //dataset: []
+                }
+            };
+
+
+            // กำหนดค่าเริ่มต้นให้กับ Controller
+            $scope.$settings = {
+                formSearch: {
+                    fiscalYear: @ViewBag.fiscalYear + 543,
+                    depId: '@ViewBag.DepartmentId'
+                }
+            };
+            // แสดงผลกราฟ การจัดสรรงบประมาณและรายงานผล
+            $scope.renderAllocateChart = function () {
+                var chartConfigs = $.extend(true, {}, globalChartConfigs);
+                chartConfigs.type = 'bar2d';
+                chartConfigs.dataSource.chart.caption = 'การจัดสรรเทียบรายงานผล งปม.';
+                chartConfigs.dataSource.chart.captionFontSize = "14";
+                chartConfigs.dataSource.chart.yaxisname = 'เงิน งปม.';
+                chartConfigs.dataSource.chart.yAxisNameFontSize = "12";
+                chartConfigs.dataSource.chart.xaxisname = '';
+                chartConfigs.dataSource.chart.labelFontSize = "12";
+                chartConfigs.dataSource.data = [
+                    {
+                        label: "จัดสรร",
+                        value: "50000000",
+                        color: "#96C8FD"
+                    },
+                    {
+                        label: "รายงานผล",
+                        value: "4690000",
+                        color: "#00FD69"
+                    },
+                    {
+                        label: "รายงานผล (เงิน งปม.)",
+                        value: "445623",
+                        color: "#FD0048"
+                    },
+                    {
+                        label: "รายงานผล (เงินนอก งปม.)",
+                        value: "4244377",
+                        color: "#FD7700"
+                    }
+                ];
+                $('#chartContainer').insertFusionCharts(chartConfigs);
+            };
+            // แสดงผลกราฟ รายงานผลรายไตรมาส
+            $scope.renderReportChart = function () {
+                var chartConfigs = $.extend(true, {}, globalChartConfigs);
+                chartConfigs.type = 'bar2d';
+                chartConfigs.dataSource.chart.caption = 'รายงานผล งปม. รายไตรมาส';
+                chartConfigs.dataSource.chart.captionFontSize = "14";
+                chartConfigs.dataSource.chart.yaxisname = 'เงิน งปม.';
+                chartConfigs.dataSource.chart.yAxisNameFontSize = "12";
+                chartConfigs.dataSource.chart.xaxisname = '';
+                chartConfigs.dataSource.chart.labelFontSize = "12";
+                chartConfigs.dataSource.data = [
+                    {
+                        label: "ไตรมาส 1",
+                        value: "50000000",
+                        color: "#96C8FD"
+                    },
+                    {
+                        label: "ไตรมาส 2",
+                        value: "4690000",
+                        color: "#00FD69"
+                    },
+                    {
+                        label: "ไตรมาส 3",
+                        value: "445623",
+                        color: "#FD0048"
+                    },
+                    {
+                        label: "ไตรมาส 4",
+                        value: "4244377",
+                        color: "#FD7700"
+                    }
+                ];
+                $('#chartReportContainer').insertFusionCharts(chartConfigs);
+            };
+
+
+            // กำหนดค่าพื้นฐานของหน้าจอ
+            $timeout(function () {
+                $scope.renderAllocateChart();
+                $scope.renderReportChart();
+            }, 400);
+        });
+    </script>
+}
+

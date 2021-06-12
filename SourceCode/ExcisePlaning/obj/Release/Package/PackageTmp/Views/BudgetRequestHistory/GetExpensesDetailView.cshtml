@@ -1,0 +1,75 @@
+﻿<md-dialog flex="99" flex-gt-sm="75">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>สรุปรายการค่าใช้จ่ายที่ส่งคำขอ งปม.</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="row mb-2">
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="{{$settings.formView.YR|convertYearToBuddhist}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="{{$settings.formView.AREA_NAME}}" title="{{$settings.formView.AREA_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="{{$settings.formView.DEP_NAME}}" title="{{$settings.formView.DEP_NAME}}" readonly /></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="{{$settings.formView.PLAN_NAME}}" title="{{$settings.formView.PLAN_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="{{$settings.formView.PRODUCE_NAME}}" title="{{$settings.formView.PRODUCE_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="{{$settings.formView.ACTIVITY_NAME}}" title="{{$settings.formView.ACTIVITY_NAME}}" readonly /></div>
+            </div>
+            <div class="row mb-2 border-bottom pb-2">
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="{{$settings.formView.BUDGET_TYPE_NAME}}" title="{{$settings.formView.BUDGET_TYPE_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="{{$settings.formView.EXPENSES_GROUP_NAME}}" title="{{$settings.formView.EXPENSES_GROUP_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="วันที่ขอ: {{$settings.formView.CREATED_DATETIME|sqlDate:'':null:true}}" title="{{$settings.formView.CREATED_DATETIME|sqlDate:'':null:true}}" readonly /></div>
+            </div>
+
+            @*รายการค่าใช้จ่าย ที่อยู่ในคำขอ งปม.*@
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th rowspan="2" style="width:60px;min-width:60px;max-width:60px;" class="align-middle"></th>
+                        <th rowspan="2" style="width:200px;min-width:200px;max-width:200px;" class="align-middle">รายการค่าใช้จ่าย</th>
+                        <th colspan="5" class="text-center">งบประมาณ</th>
+                    </tr>
+                    <tr>
+                        <th style="width:170px;min-width:170px;max-width:170px;" class="text-right word-wrap">คำขอ (บาท)</th>
+                        <th style="width:140px;min-width:140px;max-width:140px;" class="text-right word-wrap">จัดสรร (บาท)</th>
+                        <th style="width:100px;min-width:100px;max-width:100px;" class="text-center word-wrap">ครั้งที่จัดสรร</th>
+                        <th style="width:160px;min-width:160px;max-width:160px;" class="text-left word-wrap">ผู้จัดสรร</th>
+                        <th style="width:180px;min-width:180px;max-width:180px;" class="text-left word-wrap">วันที่จัดสรร</th>
+                    </tr>
+                    <tr ng-repeat="row in $settings.expenses">
+                        <td style="width:60px;min-width:60px;max-width:60px;" class="text-center">{{$index+1}}</td>
+                        <td style="width:200px;min-width:200px;max-width:200px;" class="text-left word-wrap">{{row.EXPENSES_NAME}}</td>
+                        <td style="width:140px;min-width:140px;max-width:140px;" class="text-right word-wrap">{{row.TOTAL_REQUEST_BUDGET|number:2}}</td>
+                        <td style="width:140px;min-width:140px;max-width:140px;" class="text-right word-wrap">{{row.ALLOCATE_BUDGET_AMOUNT|number:2}}</td>
+                        <td style="width:100px;min-width:100px;max-width:100px;" class="text-center word-wrap">{{row.ALLOCATE_SEQ_NO}}</td>
+                        <td style="width:160px;min-width:160px;max-width:160px;" class="text-left word-wrap">{{row.ALLOCATE_NAME}}</td>
+                        <td style="width:180px;min-width:180px;max-width:180px;" class="text-left word-wrap">{{row.ALLOCATE_HISTORY_DATETIME|sqlDate:'':null:true}}</td>
+                    </tr>
+
+                    <tr class="bg-primary">
+                        <th colspan="2" class="text-right">รวมทั้งสิ้น (บาท)</th>
+                        <th class="text-right word-wrap">{{$settings.expenses|fwSimpleSummary:['TOTAL_REQUEST_BUDGET']:2}}</th>
+                        <th class="text-right word-wrap">{{$settings.expenses|fwSimpleSummary:['ALLOCATE_BUDGET_AMOUNT']:2}}</th>
+                        <th class="text-right word-wrap">&nbsp;</th>
+                        <th class="text-right word-wrap">&nbsp;</th>
+                        <th class="text-right word-wrap">&nbsp;</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div>
+            <strong class="text-danger f-w-900">เลขที่คำขอ: {{$settings.formView.REQ_ID}}</strong>
+            <strong class="text-danger f-w-900 ml-1" ng-if="$settings.formView.REQ_TYPE==1">[คำขอต้นปี]</strong>
+            <strong class="text-danger f-w-900 ml-1" ng-if="$settings.formView.REQ_TYPE==2">[คำขอเพิ่มเติม]</strong>
+        </div>
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

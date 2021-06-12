@@ -1,0 +1,85 @@
+﻿<md-dialog flex="98" flex-gt-sm="70">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ประเภทรายได้ภาษี</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-4">
+                    <label>ประเภทรายได้ภาษี</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="$settings.formData.TaxTypeName"  />
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-row">
+
+                <div class="form-group col-12 col-md-2">
+                    <label>ในประเทศ</label>
+                    <fw-input-number-mask ng-model="$settings.formData.DomesticIncome" css-class="text-center"
+                                          ng-change="CalTotalIncome()" 
+                                          ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999.00">
+
+                    </fw-input-number-mask>
+                </div>
+                <div class="form-group col-12 col-md-2">
+                    <label>นำเข้า</label>
+                    <fw-input-number-mask ng-model="$settings.formData.ImportIncome" css-class="text-center"
+                                          ng-change="CalTotalIncome()"
+                                          ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999.00" >
+
+                    </fw-input-number-mask>
+                </div>
+                <div class="form-group col-12 col-md-2">
+                    <label>รวม</label>
+                    <fw-input-number-mask ng-model="$settings.formData.TotalIncome" css-class="text-center" 
+                                          ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999.00">
+
+                    </fw-input-number-mask>
+                </div>
+
+               
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12 col-md-2">
+                    <label>ภาษีเพื่อมหาดไทย ร้อยละ 10</label>
+                    <fw-input-number-mask ng-model="$settings.formData.InteriorTax" css-class="text-center"
+                                          ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999.00">
+
+                    </fw-input-number-mask>
+                </div>
+
+                <div class="form-group col-12 col-md-2">
+                    <label>เงินค่าใช้จ่ายท้องถิ่น ในประเทศ</label>
+                    <fw-input-number-mask ng-model="$settings.formData.OtherDomesticIncome" css-class="text-center"
+                                          ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999.00">
+
+                    </fw-input-number-mask>
+                </div>
+
+                <div class="form-group col-12 col-md-2">
+                    <label>เงินค่าใช้จ่ายท้องถิ่น นำเข้า</label>
+                    <fw-input-number-mask ng-model="$settings.formData.OtherImportIncome" css-class="text-center"
+                                          ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999.00">
+
+                    </fw-input-number-mask>
+                </div>
+            </div>
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-2"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="save($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

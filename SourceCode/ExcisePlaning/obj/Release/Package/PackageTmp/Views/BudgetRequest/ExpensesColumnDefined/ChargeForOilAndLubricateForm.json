@@ -1,0 +1,10 @@
+{
+  "VehicleTypeId": "empty",
+  "VehicleTypeName": null,
+  "VehicleAmounts": null,
+  "AmountDays": null,
+  "LiterAmountsPerMonth": null,
+  "PricePerLiter": null,
+  "TotalPrice": null,
+  "TotalYearlyPrice": null
+}

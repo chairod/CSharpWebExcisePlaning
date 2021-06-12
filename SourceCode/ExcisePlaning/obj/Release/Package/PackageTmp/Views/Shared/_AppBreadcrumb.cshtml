@@ -1,0 +1,69 @@
+﻿@if (!string.IsNullOrEmpty(ViewBag.PageName))
+{
+    <div class="form-row">
+        <div class="col-12 col-md-8">
+            <div class="d-inline-block d-md-inline-block f-w-900 f-20">
+                @ViewBag.PageName
+                @if (!string.IsNullOrEmpty(ViewBag.PersonFullname))
+                {
+                    <span class="ml-2 d-none d-md-inline-block" style="font-weight:normal;">[@ViewBag.PersonFullname]</span>
+                }
+            </div>
+        <div class="d-inline-block d-md-inline-block f-14 ml-md-2">@ViewBag.PageDescription</div>
+
+        @*Breacrump*@
+        <div class="d-none d-md-block mt-0 mt-md-1">
+            <ul>
+                @{
+                    int loopIndex = 1;
+                }
+
+                @if (ViewBag.breadcrumps != null)
+                {
+                    foreach (ExcisePlaning.Classes.Breadcrump item in (List<ExcisePlaning.Classes.Breadcrump>)ViewBag.breadcrumps)
+                    {
+                        <li class="float-left f-12 text-default">
+                            @if (loopIndex++ > 1)
+                            {
+                                <span class="mr-1 ml-1">/</span>
+                            }
+
+
+                            @if (String.IsNullOrEmpty(item.ActionName))
+                            {
+                                <a href="javascript:void(0)">
+                                    @if (String.IsNullOrEmpty(item.CssIcon) == false)
+                                    {
+                                        <i class="@item.CssIcon m-r-5"></i>
+                                    }
+                                    @item.Text
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action(item.ActionName, item.ControllerName)">
+                                    @if (String.IsNullOrEmpty(item.CssIcon) == false)
+                                    {
+                                        <i class="@item.CssIcon m-r-5"></i>
+                                    }
+                                    @item.Text
+                                </a>
+                            }
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+    @*<div class="col-12 col-md-4">
+            <div class="btn-group shadow-sm rounded-lg float-md-right mt-3 mt-md-0" role="group">
+                <button type="button" class="btn btn-primary active">
+                    สาย : 20 วัน
+                </button>
+                <button type="button" class="btn btn-primary active">
+                    ลา : 5 วัน
+                </button>
+            </div>
+        </div>*@
+</div>
+}

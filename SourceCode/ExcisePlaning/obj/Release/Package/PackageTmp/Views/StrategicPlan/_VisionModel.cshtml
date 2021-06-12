@@ -1,0 +1,36 @@
+﻿<md-dialog flex="98" flex-gt-sm="70">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>กำหนด วิสัยทัศน์กรมสรรสามิต</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-4">
+                    <label>ตัวชี้วัด</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="$settings.formData.IndicatorsName" />
+                    </div>
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label>ค่าเป้าหมาย</label>
+                    <fw-input-number-mask ng-model="$settings.formData.TargetValue" css-class="text-right"
+                                          disabled="$settings.isLoading"></fw-input-number-mask>
+                </div>
+
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-2"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="save($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

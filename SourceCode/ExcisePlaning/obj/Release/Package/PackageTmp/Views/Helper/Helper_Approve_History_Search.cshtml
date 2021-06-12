@@ -1,0 +1,26 @@
+﻿<md-dialog flex="98" flex-gt-sm="70">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ประวัติการอนุมัติรายการ</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="f-w-900 text-danger f-14">** เรียงลำดับจากผู้อนุมัติลำดับแรกไปผู้อนุมัติลำดับสุดท้าย ***</div>
+            <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                                  event-name="fwSimpleDataTable.approveHistory.modal.paramsChanged"
+                                  disabled="$settings.isLoading"
+                                  auto-load="false"
+                                  visible-page-size="false"
+                                  visible-paging="false"
+                                  route-url="@Url.Action("RetrieveApproveHistory", "Helper")"></fw-simple-data-table>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

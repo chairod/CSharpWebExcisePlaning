@@ -1,0 +1,43 @@
+﻿<md-dialog flex="99" flex-gt-sm="55">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ค้นหารายการค่าใช้จ่าย</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-6">
+                    <label>หมวดค่าใช้จ่าย</label>
+                    <select class="form-control" ng-model="$settings.formSearch.expensesGroupId"
+                            ng-disabled="$settings.isLoading||$settings.expensesGroupReadonly" fw-select2
+                            ng-change="submitSearch()">
+                        <option value="empty">--- หมวดค่าใช้จ่าย ---</option>
+                        <option ng-repeat="item in $settings.expensesGroups" value="{{item.EXPENSES_GROUP_ID}}">{{item.EXPENSES_GROUP_NAME}}</option>
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-6">
+                    <label>ชื่อรายการค่าใช้จ่าย</label>
+                    <input type="text" class="form-control"
+                           ng-model="$settings.formSearch.expensesName"
+                           ng-change="expensesNameChanged()" />
+                </div>
+            </div>
+
+            <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                                  event-name="fwSimpleDataTable.expenses.modal.paramsChanged"
+                                  auto-load="false"
+                                  disabled="$settings.isLoading"
+                                  row-click-callback="rowClick($row, $columnConfig)"
+                                  route-url="@Url.Action("RetrieveExpenses", "Helper")"></fw-simple-data-table>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+
