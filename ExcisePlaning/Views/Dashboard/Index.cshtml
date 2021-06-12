@@ -1,0 +1,439 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="form-row">
+        <div class="form-group col-12 col-md-2 mb-1">
+            <fw-input-mask class="form-control" model="$settings.formSearch.fiscalYear" mask="9999"
+                           change="fiscalYearChanged()" placeholder="ระบุปี พ.ศ."/>
+        </div>
+        <div class="form-group col-12 col-md-3 mb-1">
+            <select class="form-control" ng-model="$settings.formSearch.quarterNo" ng-disabled="$settings.isLoading" fw-select2
+                    ng-change="quarterChanged()">
+                <option value="1">ไตรมาส 1</option>
+                <option value="2">ไตรมาส 2</option>
+                <option value="3">ไตรมาส 3</option>
+                <option value="4">ไตรมาส 4</option>
+            </select>
+        </div>
+    </div>
+    <div class="card card-block borderless-card mb-1 pl-1 pr-1 pt-2 pb-1 shadow-sm">
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3 mb-md-0">
+                <select class="form-control" ng-model="$settings.formSearch.areaId"
+                        ng-disabled="$settings.isLoading@(ViewBag.CanSelectDepartment ? "" : "||true")"
+                        ng-change="areaChanged()" fw-select2>
+                    <option value="empty">--- เขตพื้นที่ ---</option>
+                    @foreach (var item in ViewBag.Areas)
+                    {
+                        <option value="@item.AREA_ID">@item.AREA_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-5 mb-md-0">
+                <select class="form-control" ng-model="$settings.formSearch.depId"
+                        ng-disabled="$settings.isLoading||$settings.departments.length==0@(ViewBag.CanSelectDepartment ? "" : "||true")"
+                        ng-change="submitSearch()" fw-select2>
+                    <option value="empty">--- หน่วยงาน ---</option>
+                    <option ng-repeat="item in $settings.departments" value="{{item.DEP_ID}}">{{item.DEP_NAME}}</option>
+                </select>
+                @*<span ng-if="$settings.isDepartmentLoading" class="ti-reload rotate-refresh ml-1"></span>*@
+            </div>
+            <div class="form-group col-12 col-md-3 mb-md-0 align-middle">
+                <md-checkbox ng-model="$settings.formSearch.budgetType" ng-true-value="1" ng-disabled="$settings.isLoading"
+                             ng-click="submitSearch()">เงินงบประมาณ</md-checkbox>
+                <md-checkbox ng-model="$settings.formSearch.budgetType" ng-true-value="2" ng-disabled="$settings.isLoading"
+                             ng-click="submitSearch()">เงินนอกงบประมาณ</md-checkbox>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row mb-0">
+        <div class="col-12 col-md-4 p-1 m-0"><div id="chart-overallPercentTarget" class="shadow-sm" style="min-height:220px"></div></div>
+        <div class="col-12 col-md-4 p-1 m-0"><div id="chart-expensesPercentTarget" class="shadow-sm"></div></div>
+        <div class="col-12 col-md-4 p-1 m-0"><div id="chart-investmentPercentTarget" class="shadow-sm"></div></div>
+    </div>
+    <div class="form-row mb-0">
+        <div class="col-12 col-md-7 p-1 m-0">
+            <div id="chart-proportionBudget" class="shadow-sm" style="min-height:404px"></div>
+        </div>
+        <div class="col-12 col-md-5 p-1 m-0">
+            <fw-tabs>
+                <fw-tab label="ประเภทรายจ่าย">
+                    <div id="chart-columnstack1" style="min-height:350px;"></div>
+                </fw-tab>
+                <fw-tab label="งบรายจ่าย">
+                    <div id="chart-columnstack2"></div>
+                </fw-tab>
+            </fw-tabs>
+        </div>
+    </div>
+</div>
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/select2")
+    @Scripts.Render("~/bundle/fusionChart")
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $q, $fwDialogService, $filter, $fwDateService, $timeout, $customHttp) {
+            $scope.$settings = {
+                isLoading: false, isDepartmentLoading: false,
+                departments: [],
+                formSearch: {
+                    fiscalYear: $fwDateService.convertYearToBuddhist('@ViewBag.FiscalYear'),
+                    areaId: '@ViewBag.AreaId',
+                    depId: 'empty', quarterNo: '1'
+                },
+                formView: {},
+                reportedPercentTarget: {}
+            };
+
+            // เมื่อปีเปลี่ยนแปลง
+            var fiscalYearChangedId = null;
+            $scope.fiscalYearChanged = function () {
+                $timeout.cancel(fiscalYearChangedId);
+                fiscalYearChangedId = $timeout(function () {
+                    var fiscalYearStr = ('' + $scope.$settings.formSearch.fiscalYear).replace(/[^\d]/g, '');
+                    if (fiscalYearStr.length == 4)
+                        $scope.submitSearch();
+                }, 400);
+            };
+            // เมื่อไตรมาสเปลี่ยนแปลง
+            var quarterChangedId = null;
+            $scope.quarterChanged = function (isRenderChart) {
+                return $q(function (resolve) {
+                    $timeout.cancel(quarterChangedId);
+                    quarterChangedId = $timeout(function () {
+                        $scope.$settings.isLoading = true;
+                        var params = {
+                            fiscalYear: $fwDateService.convertYearToBritish($scope.$settings.formSearch.fiscalYear),
+                            quarterNo: $scope.$settings.formSearch.quarterNo
+                        }
+                        $customHttp.formPost('@Url.Action("GetReportPercentTarget", "Dashboard")', params).then(function (res) {
+                            $scope.$settings.reportedPercentTarget = res.data || {};
+                            if (isRenderChart || undefined == isRenderChart)
+                                renderAllChart();
+                            resolve({});
+                            $scope.$settings.isLoading = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                            resolve({});
+                        });
+                    }, 300);
+                });
+            };
+            // เมื่อเขตพื้นที่เปลี่ยนแปลง
+            var areaChangedId = null;
+            $scope.areaChanged = function (defaultDepId) {
+                $timeout.cancel(areaChangedId);
+                areaChangedId = $timeout(function () {
+                    $scope.$settings.departments = [];
+                    $scope.$settings.formSearch.depId = 'empty';
+
+                    var areaIdStr = ('' + $scope.$settings.formSearch.areaId).replace(/[^\d]/g, '');
+                    if (areaIdStr.length > 0) {
+                        $scope.$settings.isDepartmentLoading = true;
+                        $customHttp.formPost('@Url.Action("GetDepartmentBy", "Helper")', { areaId: areaIdStr }).then(function (res) {
+                            $scope.$settings.departments = res.data || [];
+                            $scope.$settings.formSearch.depId = '' + (defaultDepId || 'empty');
+                            $scope.$settings.isDepartmentLoading = false;
+                            $scope.submitSearch();
+                        }, function () {
+                            $scope.$settings.isDepartmentLoading = false;
+                        });
+                        return;
+                    }
+
+                    $scope.submitSearch();
+                }, 300);
+            };
+            // ส่งคำร้องขอข้อมูล
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    $scope.$settings.isLoading = true;
+
+                    var params = $.extend(true, {}, $scope.$settings.formSearch);
+                    params.fiscalYear = $fwDateService.convertYearToBritish(params.fiscalYear);
+                    params.areaId = ('' + params.areaId).replace(/[^\d]/g, '');
+                    params.depId = ('' + params.depId).replace(/[^\d]/g, '');
+                    $customHttp.formPost('@Url.Action("Retrieve", "Dashboard")', params).then(function (res) {
+                        $scope.$settings.formView = res.data.data || {};
+                        if (null != res.data.errorText)
+                            $fwDialogService.dangerDialog(null, res.data.errorText);
+                        else
+                            renderAllChart();
+                        console.log($scope.$settings.formView);
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                    });
+                }, 300);
+            };
+
+
+            function renderAllChart() {
+                var data = $scope.$settings.formView;
+                var targetConfigs = $scope.$settings.reportedPercentTarget;
+                var qtrIndex = +$scope.$settings.formSearch.quarterNo;
+                renderGauge('#chart-overallPercentTarget', [
+                    { minValue: 0, maxValue: targetConfigs.Overall.TARGET_PERCENT_QTR1, code: "#ff0000" },
+                    { minValue: targetConfigs.Overall.TARGET_PERCENT_QTR1, maxValue: targetConfigs.Overall.TARGET_PERCENT_QTR2, code: (qtrIndex >= 2 ? "#ff0000" : "#00ff00") },
+                    { minValue: targetConfigs.Overall.TARGET_PERCENT_QTR2, maxValue: targetConfigs.Overall.TARGET_PERCENT_QTR3, code: (qtrIndex >= 3 ? "#ff0000" : "#00ff00") },
+                    { minValue: targetConfigs.Overall.TARGET_PERCENT_QTR3, maxValue: targetConfigs.Overall.TARGET_PERCENT_QTR4, code: (qtrIndex >= 4 ? "#ff0000" : "#00ff00") }
+                ], data.ReportOverallPercentTargetVal, "เป้าหมายภาพรวม", data.ReportOverallPercentTargetVal);
+                renderGauge('#chart-expensesPercentTarget', [
+                    { minValue: 0, maxValue: targetConfigs.Expenses.TARGET_PERCENT_QTR1, code: "#ff0000" },
+                    { minValue: targetConfigs.Expenses.TARGET_PERCENT_QTR1, maxValue: targetConfigs.Expenses.TARGET_PERCENT_QTR2, code: (qtrIndex >= 2 ? "#ff0000" : "#00ff00") },
+                    { minValue: targetConfigs.Expenses.TARGET_PERCENT_QTR2, maxValue: targetConfigs.Expenses.TARGET_PERCENT_QTR3, code: (qtrIndex >= 3 ? "#ff0000" : "#00ff00") },
+                    { minValue: targetConfigs.Expenses.TARGET_PERCENT_QTR3, maxValue: targetConfigs.Expenses.TARGET_PERCENT_QTR4, code: (qtrIndex >= 4 ? "#ff0000" : "#00ff00") }
+                ], data.ReportExpensesPercentTargetVal, "เป้าหมายรายจ่ายประจำ", data.ReportOverallPercentTargetVal);
+                renderGauge('#chart-investmentPercentTarget', [
+                    { minValue: 0, maxValue: targetConfigs.Investment.TARGET_PERCENT_QTR1, code: "#ff0000" },
+                    { minValue: targetConfigs.Investment.TARGET_PERCENT_QTR1, maxValue: targetConfigs.Investment.TARGET_PERCENT_QTR2, code: (qtrIndex >= 2 ? "#ff0000" : "#00ff00") },
+                    { minValue: targetConfigs.Investment.TARGET_PERCENT_QTR2, maxValue: targetConfigs.Investment.TARGET_PERCENT_QTR3, code: (qtrIndex >= 3 ? "#ff0000" : "#00ff00") },
+                    { minValue: targetConfigs.Investment.TARGET_PERCENT_QTR3, maxValue: targetConfigs.Investment.TARGET_PERCENT_QTR4, code: (qtrIndex >= 4 ? "#ff0000" : "#00ff00") }
+                ], data.ReportInvestmentPercentTargetVal, "เป้าหมายงบลงทุน", data.ReportOverallPercentTargetVal);
+
+                // สัดส่วนการใช้งบประมาณ
+                var colors = { 1: '#8700E7', 2: '#1100E7', 3: '#F100A7', 4: '#D2009E', 5: '#FF5500' };
+                renderPie3d('#chart-proportionBudget', 'สัดส่วนงบประมาณ', data.BudgetProportionPercent.map(function (item) {
+                    return $.extend(item, { color: colors[item.KeyId] || null });
+                }));
+
+                
+                // กราฟแท่งแยกตามประเภทรายจ่าย (ภาพรวม รายจ่ายประจำ งบลงทุน)
+                var categories = [{ label: "ภาพรวม" }, { label: "รายจ่ายประจำ" }, { label: "รายจ่ายลงทุน" }];
+                var dataset = [
+                    {
+                        dataset: [
+                            {
+                                seriesname: 'จัดสรร', color: '#0000FF',
+                                data: data.ChartColumnsOverall.Receive[0].Values
+                            },
+                            {
+                                seriesname: 'กันเงิน', color: '#5757FF',
+                                data: data.ChartColumnsOverall.Receive[1].Values
+                            }
+                        ]
+                    },
+                    {
+                        dataset: [
+                            {
+                                seriesname: 'จัดสรร', color: '#00FF00',
+                                data: data.ChartColumnsOverall.Payment[0].Values
+                            },
+                            {
+                                seriesname: 'กันเงิน', color: '#82FF82',
+                                data: data.ChartColumnsOverall.Payment[1].Values
+                            }
+                        ]
+                    },
+                    {
+                        dataset: [
+                            {
+                                seriesname: 'จัดสรร', color: '#FF8C00',
+                                data: data.ChartColumnsOverall.Balance[0].Values
+                            },
+                            {
+                                seriesname: 'กันเงิน', color: '#FFC782',
+                                data: data.ChartColumnsOverall.Balance[1].Values
+                            }
+                        ]
+                    }
+                ];
+                renderChartColumnStack("#chart-columnstack1", "", categories, dataset);
+
+                // กราฟแท่งแยกตามงบรายจ่าย
+                categories = [];
+                angular.forEach(data.BudgetProportionPercent, function (item) {
+                    categories.push({ label: item.label });
+                });
+                dataset = [
+                    {
+                        dataset: [
+                            {
+                                seriesname: 'จัดสรร', color: '#0000FF',
+                                data: data.ChartColumnsBudgetType.Receive[0].Values
+                            },
+                            {
+                                seriesname: 'กันเงิน', color: '#5757FF',
+                                data: data.ChartColumnsBudgetType.Receive[1].Values
+                            }
+                        ]
+                    },
+                    {
+                        dataset: [
+                            {
+                                seriesname: 'จัดสรร', color: '#00FF00',
+                                data: data.ChartColumnsBudgetType.Payment[0].Values
+                            },
+                            {
+                                seriesname: 'กันเงิน', color: '#82FF82',
+                                data: data.ChartColumnsBudgetType.Payment[1].Values
+                            }
+                        ]
+                    },
+                    {
+                        dataset: [
+                            {
+                                seriesname: 'จัดสรร', color: '#FF8C00',
+                                data: data.ChartColumnsBudgetType.Balance[0].Values
+                            },
+                            {
+                                seriesname: 'กันเงิน', color: '#FFC782',
+                                data: data.ChartColumnsBudgetType.Balance[1].Values
+                            }
+                        ]
+                    }
+                ]
+                renderChartColumnStack("#chart-columnstack2", "", categories, dataset);
+            };
+
+
+            var baseFontNames = "CSChatThai, Roboto, Montserrat, Lato, Raleway";
+            var globalSettings = {
+                chart: {
+                    baseFont: baseFontNames,
+                    baseFontSize: "13",
+                    // Font คำอธิบายกราฟ
+                    captionFont: baseFontNames,
+                    captionFontSize: "16",
+                    // Font Legend
+                    legendItemFont: baseFontNames,
+                    legendItemFontSize: "12",
+                    showLegend: "0", // ไม่ต้องแสดง Legend
+                    //// Font คำอธิบายแกน Y
+                    xAxisNameFont: baseFontNames,
+                    ////xAxisNameFontSize: "10",
+                    //// Font คำอธิบายแกน Y
+                    yAxisNameFont: baseFontNames,
+                    ////yAxisNameFontSize: "10",
+                    //// Font Label ในแกน X
+                    labelFont: baseFontNames,
+                    ////labelFontSize: "14",
+                    "outCnvBaseFont": baseFontNames,
+                    theme: "fusion", //"candy",
+                    caption: "",
+                    subCaption: "",
+                    showTickMarks: "1",
+                    captionPadding: "23",
+                    numbersuffix: ""
+                }
+            };
+            // Render กราฟ Gauge
+            function renderGauge(containerId, colorRangeConfigs, percentTargetVal, captionText, tooltipText) {
+                // ตย. การสร้างเส้น Trend
+                // https://www.fusioncharts.com/charts/gauges/gauge-with-trend?framework=javascript
+                var trendPoints = [];
+                angular.forEach(colorRangeConfigs, function (item) {
+                    trendPoints.push({
+                        startvalue: item.maxValue,
+                        displayvalue: item.maxValue,
+                        thickness: "2",
+                        color: "#484848",
+                        usemarker: "1",
+                        markerbordercolor: "#484848",
+                        markertooltext: item.maxValue + "%"
+                    });
+                });
+
+                var dataSource = $.extend(true, {
+                    trendpoints: {
+                        point: trendPoints
+                    },
+                    colorrange: {
+                        color: colorRangeConfigs || []
+                    },
+                    dials: {
+                        dial: [
+                            {
+                                value: '' + (percentTargetVal || 0),
+                                tooltext: tooltipText || ''
+                            }
+                        ]
+                    }
+                }, globalSettings);
+                dataSource.chart.caption = captionText;
+                dataSource.chart.showTickMarks = "0";
+                //dataSource.chart.theme = 'candy';
+                dataSource.chart.numbersuffix = '%';
+                $(containerId).insertFusionCharts({
+                    type: "angulargauge",
+                    width: "100%",
+                    height: "220",
+                    dataFormat: "json",
+                    dataSource
+                });
+            }
+            // Render Graph Pie3d
+            function renderPie3d(containerId, captionText, datas) {
+                var totalValue = 0;
+                angular.forEach(datas, function (item) { totalValue += (+item.value); });
+                var dataSource = {
+                    chart: $.extend($.extend(true, {}, globalSettings.chart), {
+                        showvalues: "1",
+                        showpercentintooltip: "0",
+                        defaultCenterLabel: $filter('displayDecimal')(totalValue, 2) + ' บาท',
+                        //numberprefix: "$",
+                        plottooltext: "<b> $label </b>: <b>$dataValue&nbsp;บาท</b>",
+                        formatnumberscale: "0",
+                        formatnumber: "1",
+                        labelFontSize: "14",
+                        caption: captionText,
+                        //theme: 'umber'
+                    }),
+                    data: datas
+                };
+                $(containerId).insertFusionCharts({
+                    type: "doughnut2d",
+                    width: "100%",
+                    height: "404",
+                    dataFormat: "json",
+                    dataSource
+                });
+            }
+            // Render chart column stack
+            function renderChartColumnStack(containerId, captionText, categories, dataset) {
+                var dataSource = {
+                    chart: $.extend($.extend(true, {}, globalSettings.chart), {
+                        plottooltext: "<b>$seriesName</b> $label จำนวน <b>$dataValue</b> บาท",
+                        showsum: "0",
+                        formatnumberscale: "1",
+                        formatnumber: "1",
+                        caption: captionText,
+                        showLegend: "0",
+                        yAxisMinValue: "-100000"
+                    }),
+                    categories: [
+                        {
+                            category: categories || []
+                        }
+                    ],
+                    dataset: dataset || []
+                };
+                $(containerId).insertFusionCharts({
+                    type: "msstackedcolumn2d",
+                    width: "100%",
+                    height: "350",
+                    dataFormat: "json",
+                    dataSource
+                });
+            }
+
+
+            // จัดเตรียมแบบฟอร์ม
+            $scope.quarterChanged(false).then(function () {
+                $scope.areaChanged('@ViewBag.DepartmentId');
+            });
+        });
+    </script>
+}
+

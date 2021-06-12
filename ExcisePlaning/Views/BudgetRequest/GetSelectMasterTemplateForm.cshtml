@@ -1,0 +1,49 @@
+﻿<md-dialog flex="99" flex-gt-sm="75">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์มกำหนด Template หลักของคำของบประมาณ</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <span class="text-danger ml-2 float-md-right f-w-900">จำนวน {{$settings.formData.templates.length|number:0}} รายการ</span>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th style="width:70px;max-width:90px;min-width:90px"></th>
+                        <th style="min-width:190px" class="text-left">ชื่อ Template</th>
+                        <th style="width:150px;min-width:150px;max-width:150px;" class="text-left">แผนงาน</th>
+                        <th style="width:150px;min-width:150px;max-width:150px;" class="text-left">ผลผลิต</th>
+                        <th style="width:150px;min-width:150px;max-width:150px;" class="text-left">กิจกรรม</th>
+                        <th style="width:150px;min-width:150px;max-width:150px;" class="text-left">งบรายจ่าย</th>
+                        <th style="width:150px;min-width:150px;max-width:150px;" class="text-left">หมวดค่าใช้จ่าย</th>
+                    </tr>
+                    <tr ng-repeat="row in $settings.formData.templates" ng-class="{'f-w-900 text-primary': row.TEMPLATE_ID==$settings.formData.selectedTemplateId}">
+                        <td class="text-center bg-light"><a href="javascript:void(0)" ng-click="$settings.formData.selectedTemplateId=row.TEMPLATE_ID" class="text-primary f-w-900">เลือก</a></td>
+                        <td class="text-left word-wrap">{{row.TEMPLATE_NAME}}<span ng-if="row.TEMPLATE_ID==$settings.formData.selectedTemplateId" class="ml-2 ion-checkmark f-w-900"></span></td>
+                        <td class="text-left word-wrap">{{row.PLAN_NAME}}</td>
+                        <td class="text-left word-wrap">{{row.PRODUCE_NAME}}</td>
+                        <td class="text-left word-wrap">{{row.ACTIVITY_NAME}}</td>
+                        <td class="text-left word-wrap">{{row.BUDGET_TYPE_NAME}}</td>
+                        <td class="text-left word-wrap">{{row.EXPENSES_GROUP_NAME}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div>
+            <span class="text-danger f-w-900 animated fadeIn">โปรดเลือก Template หลักในการจัดทำคำขอเงินงบประมาณ ระบบจะใช้ข้อมูล แผนงาน ผลผลิต กิจกรรม งบรายจ่าย หมวดค่าใช้จ่าย เป็นข้อมูลหลักของคำขอ</span>
+        </div>
+        <span flex></span>
+        <fw-execute-button text="ตกลง" css-class="btn btn-primary btn-sm mr-md-1 mb-1 mb-md-0"
+                           ng-disabled="$settings.isLoading||$settings.formData.selectedTemplateId==null"
+                           css-icon-class="ion-ios-checkmark"
+                           ng-click="ok($event)"></fw-execute-button>
+        <fw-execute-button text="ยกเลิก" css-class="btn btn-danger btn-sm"
+                   ng-disabled="$settings.isLoading"
+                   css-icon-class="ion-close-round"
+                   ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

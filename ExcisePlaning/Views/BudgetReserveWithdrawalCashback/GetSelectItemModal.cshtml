@@ -1,0 +1,67 @@
+﻿<md-dialog flex="98" flex-gt-sm="85">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์มเลือกรายการเบิกจ่ายเพื่อทำรายการ</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="col-12">
+                    <span class="ml-3 float-md-right text-danger f-w-900 f-14">จำนวน {{$settings.withdrawals.length|displayDecimal:0}} รายการ</span>
+                    <div class="table-responsive overflow-auto" style="height:320px;min-height:320px;max-height:320px;">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th rowspan="2" style="width:60px;min-width:60px;max-width:60px"></th>
+                                <th rowspan="2" style="min-width:123px;max-width:123px;width:123px;" class="text-center">เลขที่กันเงิน</th>
+                                <th rowspan="2" style="min-width:200px;" class="text-left">หน่วยงานภายใน</th>
+                                <th class="text-center" colspan="5">ข้อมูลการเบิกจ่าย</th>
+                            </tr>
+                            <tr>
+                                <th class="text-left" style="width:150px;min-width:150px;max-width:150px;">จำนวน (บาท)</th>
+                                <th class="text-left" style="width:132px;min-width:132px;max-width:132px;">วันที่</th>
+                                <th class="text-left" style="width:152px;min-width:152px;max-width:152px;">ผู้ทำรายการ</th>
+                                <th class="text-left" style="width:170px;min-width:170px;max-width:170px;">วันที่ทำรายการ</th>
+                                <th class="text-left" style="width:202px;min-width:202px;max-width:202px;">รายละเอียด</th>
+                            </tr>
+
+                            <tr ng-if="$settings.withdrawals.length == 0 && !$settings.isLoading">
+                                <th colspan="11" class="text-center text-danger">--- ไม่พบข้อมูล ---</th>
+                            </tr>
+
+                            <tr ng-repeat="row in $settings.withdrawals">
+                                <td style="width:60px;min-width:60px;max-width:60px" class="text-center">
+                                    <a href="javascript:void(0)" ng-click="ok(row)" class="f-w-900 text-primary">เลือก</a>
+                                </td>
+                                <td style="min-width:123px;max-width:123px;width:123px;" class="text-center">{{row.RESERVE_ID}}</td>
+                                <td style="min-width:200px;" class="text-left word-wrap">{{row.DEP_NAME}}</td>
+                                <td style="min-width:150px;max-width:150px;width:150px;" class="text-right">{{row.WITHDRAWAL_AMOUNT|displayDecimal:2}}</td>
+                                <td style="width:132px;min-width:132px;max-width:132px;" class="text-left">{{row.WITHDRAWAL_DATE|sqlDate:'':null:false}}</td>
+                                <td style="width:152px;min-width:152px;max-width:152px;" class="text-left word-wrap">{{row.CREATED_NAME}}</td>
+                                <td style="width:170px;min-width:170px;max-width:170px;" class="text-left">{{row.CREATED_DATETIME|sqlDate:'':null:true}}</td>
+                                <td style="width:202px;min-width:202px;max-width:202px;" class="text-left word-wrap">{{row.REMARK_TEXT}}</td>
+                            </tr>
+
+                            <tr ng-if="$settings.withdrawals.length > 0 && !$settings.isLoading" class="bg-primary">
+                                <th colspan="3" class="text-right">รวมทั้งสิ้น (บาท)</th>
+                                <th class="text-right">{{$settings.withdrawals|fwSimpleSummary:['WITHDRAWAL_AMOUNT']:2}}</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span class="text-danger f-14">เลือกรายการเบิกจ่ายที่ต้องการทำรายการ</span>
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

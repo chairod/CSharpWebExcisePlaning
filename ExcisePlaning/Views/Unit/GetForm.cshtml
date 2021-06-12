@@ -1,0 +1,155 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-controller="AppController">
+    <div class="container-fluid shadow-sm m-0 mb-2 rounded-bottom">
+        <div class="form-row">
+            <div class="form-group col-12 offset-md-3 col-md-4">
+                <label>ชื่อหน่วยนับ</label>
+                <input type="text" class="form-control" ng-model="$settings.formSearch.unitName" 
+                       ng-change="unitNameChanged()"/>
+            </div>
+            <div class="form-group col-12 col-md-4">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <fw-execute-button text="สร้างใหม่"
+                                   css-class="btn btn-primary btn-sm mb-1 d-inline-block"
+                                   css-icon-class="ion-plus"
+                                   ng-click="createNew($event)"
+                                   ng-disabled="$settings.isLoading"></fw-execute-button>
+            </div>
+        </div>
+    </div>
+    <div class="card card-block borderless-card shadown-sm">
+        <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                              ng-disabled="$settings.isLoading"
+                              row-click-callback="rowClick($event, $row, $columnConfig)"
+                              route-url="@Url.Action("Retrieve", "Unit")"></fw-simple-data-table>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController',
+            function ($scope, $fwDialogService, $fwModalService, $timeout, $customHttp, $q, $filter) {
+                $scope.$settings = {
+                    isLoading: false,
+                    formSearch: { levelName: '' },
+                    tableConfigs: {
+                        columns: [
+                            { label: 'No.', className: 'text-center word-wrap', type: 'rowNumber', style: 'min-width:50px;max-width:50px;width:50px;' },
+                            {
+                                label: 'ชื่อหน่วยนับ', className: 'text-left word-wrap',
+                                params: 'BTN_EDIT',
+                                type: 'html',
+                                field: '<a href="javascript:void(0)" class="text-primary f-w-900">{{row.UNIT_TEXT}}<sup class="ml-1 ti-new-window f-w-900"></sup></a>',
+                                style: 'min-width:200px'
+                            },
+                            {
+                                label: '', className: 'text-center word-wrap', type: 'html', params: 'BTN_DELETE',
+                                field: '<a href="javascript:void(0)" class="text-danger f-w-900">ยกเลิก</a>',
+                                style: 'min-width:100px;max-width:100px;width:100px;'
+                            },
+                        ]
+                    }
+                };
+
+                // แบบฟอร์มการบันทึกหน่วยนับ
+                $scope.createNew = function (event, row) {
+                    $fwModalService.getModal('@Url.Action("GetModalForm", "Unit")', { $formData: row || {} },
+                        function ($scope, $mdDialog, $customHttp, $fwDialogService, $formData, $timeout) {
+                            $scope.$settings = {
+                                isLoading: false,
+                                formErrors: {},
+                                formData: {}
+                            };
+
+                            // จัดเตรียมแบบฟอร์ม
+                            $scope.init = function () {
+                                $scope.$settings.formData = {
+                                    UnitId: $formData.UNIT_ID || null,
+                                    UnitName: $formData.UNIT_TEXT || null
+                                };
+
+                                $timeout(function () {
+                                    $('#unitName').focus();
+                                }, 500);
+                            };
+                            // ส่งคำขอบันทึก
+                            $scope.submitSave = function (event) {
+                                $scope.$settings.isLoading = true;
+                                var params = $.extend(true, {}, $scope.$settings.formData);
+                                $customHttp.formPost('@Url.Action("SubmitSave", "Unit")', params).then(function (res) {
+                                    $scope.$settings.formErrors = res.data.errors || {};
+                                    if (null != res.data.errorText)
+                                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                                    else if (null == res.data.errors)
+                                        $fwDialogService.alertDialog(event, 'บันทึกข้อมูลเรียบร้อยแล้ว').then(function () {
+                                            if (null == $scope.$settings.formData.UnitId)
+                                                $scope.init();
+                                            else
+                                                $mdDialog.hide();
+                                        });
+
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+
+                            $scope.close = function () {
+                                $mdDialog.hide();
+                            };
+
+                            $scope.init();
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        }, function () { });
+                };
+                // เมื่อคลิกที่แถวข้อมูลในตาราง
+                $scope.rowClick = function (event, row, columnConfig) {
+                    if (columnConfig.params == 'BTN_DELETE') {
+                        $fwDialogService.confirmDialog(event, 'ยืนยัน!! การยกเลิกหน่วยนับ นี้').then(function () {
+                            $scope.$settings.isLoading = true;
+                            $customHttp.formPost('@Url.Action("SubmitDelete", "Unit")', {
+                                unitId: row.UNIT_ID
+                            }).then(function () {
+                                $scope.$settings.isLoading = false;
+                                $scope.submitSearch();
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        });
+                    } else if (columnConfig.params == 'BTN_EDIT') {
+                        $scope.createNew(event, row);
+                    }
+
+                    // fwSimpleDataTable บังคับให้ Return promise
+                    return $q(function (resolve) {
+                        resolve({ row: row });
+                    });
+                };
+
+                var timeoutId = null;
+                $scope.submitSearch = function () {
+                    $timeout.cancel(timeoutId);
+                    timeoutId = $timeout(function () {
+                        var params = $.extend(true, {}, $scope.$settings.formSearch);
+                        $scope.$broadcast('fwSimpleDataTable.paramsChanged', params);
+                    }, 300);
+                };
+                // เมื่อชื่อหน่วยนับเปลี่ยนแปลง
+                var unitNameChangedId = null;
+                $scope.unitNameChanged = function () {
+                    $timeout.cancel(unitNameChangedId);
+                    unitNameChangedId = $timeout(function () {
+                        $scope.submitSearch();
+                    }, 300);
+                };
+
+
+                // โหลดข้อมูลหน่วยนับ
+                $scope.submitSearch();
+            });
+    </script>
+}

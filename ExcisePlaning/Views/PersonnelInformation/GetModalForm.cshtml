@@ -1,0 +1,176 @@
+﻿<md-dialog flex="100" flex-gt-sm="50">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ฟอร์มบันทึกข้อมูลพนักงาน</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">รหัสพนักงาน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.PersonCode.ErrorMessages"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" id="personCode" maxlength="5" ng-model="$settings.formData.PersonCode" ng-disabled="$settings.isLoading" />
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">เลขบัตรประชาชน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.CardNumber.ErrorMessages"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" maxlength="13" ng-model="$settings.formData.CardNumber" ng-disabled="$settings.isLoading" />
+                    <span class="text-danger f-12">สำหรับเชื่อมต่อกับระบบ SSO</span>
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">ประเภทพนักงาน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.PersonTypeId.ErrorMessages"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.PersonTypeId" ng-disabled="$settings.isLoading" fw-select2>
+                        <option value="empty">--- ประเภทพนักงาน ---</option>
+                        @foreach (var personTypeItem in ViewBag.PersonnelTypes)
+                        {
+                            <option value="@personTypeItem.PERSON_TYPE_ID">@personTypeItem.PERSON_TYPE_NAME</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">คำนำหน้า<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.PrefixName.ErrorMessages"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.PrefixName" ng-disabled="$settings.isLoading" fw-select2>
+                        <option value="empty">--- คำนำหน้า ---</option>
+                        @foreach (var item in ViewBag.PersonnelPrefixs)
+                        {
+                            <option value="@item.PREFIX_NAME">@item.PREFIX_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">ชื่อพนักงาน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.FirstName.ErrorMessages"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" maxlength="100" ng-model="$settings.formData.FirstName" ng-disabled="$settings.isLoading" />
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">นามสกุลพนักงาน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.LastName.ErrorMessages"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" maxlength="100" ng-model="$settings.formData.LastName" ng-disabled="$settings.isLoading" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">ตำแหน่งงาน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.PositionId.ErrorMessages"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.PositionId" ng-disabled="$settings.isLoading" fw-select2>
+                        <option value="empty">--- ตำแหน่งงาน ---</option>
+                        @foreach (var posItem in ViewBag.Positions)
+                        {
+                            <option value="@posItem.POSITION_ID">@posItem.POSITION_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">เพศ<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.SexType.ErrorMessages"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.SexType" ng-disabled="$settings.isLoading">
+                        <option value="F">หญิง</option>
+                        <option value="M">ชาย</option>
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">พื้นที่รับผิดชอบ<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.AreaId.ErrorMessages"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.AreaId" 
+                            ng-change="areaChanged()"
+                            ng-disabled="$settings.isLoading" fw-select2>
+                        <option value="empty">--- พื้นที่รับผิดชอบ ---</option>
+                        @foreach (var AreaName in ViewBag.AreaName)
+                        {
+                            <option value="@AreaName.AREA_ID">@AreaName.AREA_NAME</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-row border-bottom">
+                <div class="form-group col-12 col-md-8">
+                    <label class="require-field">หน่วยงาน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.DepId.ErrorMessages"></fw-validate-error-output><span class="ml-1 rotate-refresh ti-reload" ng-if="$settings.isDepartmentLoading"></span></label>
+                    <select class="form-control" ng-model="$settings.formData.DepId"
+                            ng-change="departmentChanged()"
+                            ng-disabled="$settings.isLoading||$settings.departments.length==0" fw-select2>
+                        <option value="empty">--- หน่วยงาน ---</option>
+                        <option ng-repeat="item in $settings.departments" value="{{item.DEP_ID}}">{{item.DEP_NAME}}</option>
+                    </select>
+                </div>
+                @*<div class="form-group col-12 col-md-4">
+                    <label>หน่วยงานภายใน<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.SubDepId.ErrorMessages"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.SubDepId"
+                            ng-disabled="$settings.isLoading||$settings.subDepartments.length==0" fw-select2>
+                        <option value="empty">--- หน่วยงานภายใน ---</option>
+                        <option ng-repeat="item in $settings.subDepartments" value="{{item.SUB_DEP_ID}}">{{item.SUB_DEP_NAME}}</option>
+                    </select>
+                </div>*@
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">อีเมล์<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.EmailAddr.ErrorMessages"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" ng-model="$settings.formData.EmailAddr" ng-disabled="$settings.isLoading" />
+                    <span class="text-danger f-12">สำหรับใช้ในกรณีที่เข้าสู่ระบบผ่าน SSO ไม่ได้</span>
+                </div>
+            </div>
+
+
+
+            <div class="form-row mt-0 mt-md-3">
+                <div class="form-group col-12 col-md-4">
+                    <label>เลขที่ตั้ง/อาคาร</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="$settings.formData.Address" ng-disabled="$settings.isLoading" />
+                    </div>
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label>ถนน</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="$settings.formData.Street" ng-disabled="$settings.isLoading" />
+                    </div>
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label>หมู่บ้าน</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="$settings.formData.Village" ng-disabled="$settings.isLoading" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12 col-md-3">
+                    <label>ตำบล</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="$settings.formData.Distinct" ng-disabled="$settings.isLoading" />
+                    </div>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>อำเภอ</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="$settings.formData.Prefexture" ng-disabled="$settings.isLoading" />
+                    </div>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label class="required-field">จังหวัด<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.ProvinceName.ErrorMessages"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.ProvinceName" ng-disabled="$settings.isLoading" fw-select2>
+                        <option value="empty">--- จังหวัด ---</option>
+                        @foreach (var Province in ViewBag.Province)
+                        {
+                            <option value="@Province.PROVINCE_NAME">@Province.PROVINCE_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>รหัสไปรษณี</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="$settings.formData.PostCode" ng-disabled="$settings.isLoading" maxlength="10" />
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div class="text-danger f-12">ผู้ใช้งานที่เพิ่มเข้าไปใหม่ในระบบจะ <span class="f-w-900">กำหนดรหัสผ่านเริ่มต้นเป็น 1234</span></div>
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           on-loading="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="submitSave($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

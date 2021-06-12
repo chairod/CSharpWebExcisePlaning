@@ -1,0 +1,237 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-1">
+        <div class="form-row border-bottom">
+            <div class="form-group col-12 col-md-3 mb-1">
+                <label>เขตพื้นที่</label>
+                <select ng-model="$settings.formSearch.areaId" ng-disabled="$settings.isLoading"
+                        ng-change="submitSearch()" fw-select2>
+                    <option value="empty">--- เขตพื้นที่ ---</option>
+                    @foreach (var item in ViewBag.Areas)
+                    {
+                        <option value="@item.AREA_ID">@item.AREA_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ชื่อหน่วยงาน</label>
+                <input type="text" class="form-control" ng-model="$settings.formSearch.depName"
+                       ng-change="depNameChanged()" maxlength="200" placeholder="ระบุบางส่วนของชื่อ" />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>รหัสหน่วยรับงบประมาณ</label>
+                <input type="text" class="form-control" ng-model="$settings.formSearch.depCode"
+                       ng-change="depCodeChanged()" maxlength="20" placeholder="ระบุบางส่วนของรหัส" />
+            </div>
+            <div class="form-group col-12 col-md-3">
+               <label class="d-none d-md-block">&nbsp;</label>
+                <fw-execute-button text="สร้างใหม่" css-class="btn btn-primary btn-sm"
+                                   css-icon-class="ion-plus"
+                                   ng-click="createNew($event)"
+                                   ng-disabled="$settings.isLoading"></fw-execute-button>
+            </div>
+        </div>
+
+        <fw-simple-data-table columns="$settings.tableConfigs.columns" disabled="$settings.isLoading"
+                              auto-load="false"
+                              row-click-callback="rowClick($event, $row, $columnConfig)"
+                              route-url="@Url.Action("Retrieve", "Department")"></fw-simple-data-table>
+    </div>
+</div>
+
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")}
+@section Scripts{
+    @Scripts.Render("~/bundle/select2");
+    @Scripts.Render("~/bundle/inputnumber")
+    <script type="text/javascript">
+        angular.module("leaveApp").controller('AppController', function ($scope, $customHttp, $timeout, $q, $fwDateService, $fwDialogService, $fwModalService) {
+            $scope.$settings = {
+                isLoading: false, isDepartmentLoading: false,
+                departments: [],
+                expensesGroups: [], expenses: [],
+                tableConfigs: {
+                    columns: [
+                        { label: 'รหัสหน่วยงาน', className: 'text-left word-wrap', type: 'field', field: 'DEP_ID', style: 'min-width:115px;max-width:115px;width:115px;' },
+                        { label: 'รหัสหน่วยรับงบประมาณ', className: 'text-left word-wrap', type: 'field', field: 'DEP_CODE', style: 'min-width:125px;max-width:125px;width:125px;' },
+                        {
+                            label: 'ชื่อหน่วยงาน', className: 'text-left word-wrap', type: 'html', params: 'BTN_EDIT',
+                            field: '<a href="javascript:void(0)" class="text-primary f-w-900">{{row.DEP_NAME}}<sup class="ml-2 ti-new-window"></sup></a>', style: 'width:auto;min-width:200px;'
+                        },
+                        { label: 'เขตพื้นที่', className: 'text-left word-wrap', type: 'field', field: 'AREA_NAME', style: 'min-width:150px;max-width:150px;width:150px;' },
+                        { label: 'หน่วยงานกลาง', className: 'text-center word-wrap', type: 'html', field: '<span class="f-w-900" ng-class="{\'text-primary ion-checkmark-circled\': row.DEP_AUTHORIZE==1}"></span>', style: 'min-width:110px;max-width:110px;width:110px;' },
+                        { label: 'ลำดับการจัดเรียง', className: 'text-center word-wrap', type: 'field', field: 'ORDER_SEQ', style: 'min-width:110px;max-width:110px;width:110px;' },
+                        { label: 'คำของบประมาณ<div class="text-danger f-10">หน่วยงานสามารถส่งคำของบประมาณได้หรือไม่</div>', className: 'text-center word-wrap', type: 'html', field: '<span class="f-w-900" ng-class="{\'text-primary ion-checkmark-circled\': row.CAN_REQUEST_BUDGET, \'text-danger ion-close-circled\': !row.CAN_REQUEST_BUDGET}" title="{{row.CAN_REQUEST_BUDGET?\'สามารถทำคำขอเงินงบประมาณได้\':\'ไม่สามารถทำคำขอเงินงบประมาณได้\'}}">&nbsp;</span>', style: 'min-width:130px;max-width:130px;width:130px;' },
+                        {
+                            label: '', className: 'text-center word-wrap', type: 'html', params: 'BTN_DELETE',
+                            field: '<a href="javascript:void(0)" class="text-danger f-w-900">ยกเลิก</a>', style: 'min-width:80px;max-width:80px;width:80px;'
+                        }
+                    ]
+                },
+                formSearch: {
+                    areaId: 'empty', depName: ''
+                }
+            };
+
+            // ส่งคำร้องค้นหา
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    var params = $.extend(true, {}, $scope.$settings.formSearch);
+                    params.areaId = ('' + params.areaId).replace(/[^\d]/g, '');
+                    $scope.$broadcast('fwSimpleDataTable.paramsChanged', params);
+                }, 300);
+            };
+            // เมื่อชื่อหน่วยงานเปลี่ยนแปลง
+            var depNameChangedId = null;
+            $scope.depNameChanged = function () {
+                $timeout.cancel(depNameChangedId);
+                depNameChangedId = $timeout(function () {
+                        $scope.submitSearch();
+                }, 300);
+            };
+            // เมื่อรหัสหน่วยรับเปลี่ยนแปลง
+            var depCodeChangedId = null;
+            $scope.depCodeChanged = function () {
+                $timeout.cancel(depCodeChangedId);
+                depCodeChangedId = $timeout(function () {
+                    $scope.submitSearch();
+                }, 300);
+            };
+            // เมื่อคลิกที่แถวของ fwSimpleDataTable
+            $scope.rowClick = function (event, row, columnConfigs) {
+                var elName = event.target.tagName.toUpperCase();
+                if ('A' == elName) {
+                    if (columnConfigs.params == 'BTN_EDIT')
+                        $scope.createNew(event, row);
+                    else if (columnConfigs.params == 'BTN_DELETE')
+                        $fwDialogService.confirmDialog(event, 'ยืนยัน!! การยกเลิกหน่วยงาน').then(function () {
+                            $scope.$settings.isLoading = true;
+                            $customHttp.formPost('@Url.Action("SubmitReject", "Department")', { depId: row.DEP_ID }).then(function (res) {
+                                if (null != res.data.errorText)
+                                    $fwDialogService.dangerDialog(event, res.data.errorText);
+                                else
+                                    $scope.submitSearch();
+                                $scope.$settings.isLoading = false;
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        }, function () { });
+                }
+
+                return $q(function (resolve) {
+                    resolve({ event: event, row: row, columnConfigs: columnConfigs });
+                });
+            };
+            // เมื่อกดสร้างหน่วยงานใหม่
+            $scope.createNew = function (event, row) {
+                $fwModalService.getModal('@Url.Action("GetModalForm", "Department")', { $row: row || {} }, function ($scope, $row, $timeout, $customHttp, $mdDialog, $fwDialogService) {
+                    $scope.$settings = {
+                        isLoading: false, isSaving: false,
+                        checkedAll: false,
+                        departments: [],
+                        formErrors: {},
+                        formData: { } // init func
+                    };
+
+                    // จัดเตรียมหน้าฟอร์ม
+                    $scope.init = function () {
+                        $scope.$settings.checkedAll = false;
+                        $scope.$settings.formErrors = {};
+                        $scope.$settings.formData = {
+                            AreaId: '' + ($row.AREA_ID || 'empty'),
+                            DepId: $row.DEP_ID || null,
+                            DepName: $row.DEP_NAME || '',
+                            DepShortName: $row.DEP_SHORT_NAME || '',
+                            DepCode: $row.DEP_CODE || '',
+                            DepAuthorize: $row.DEP_AUTHORIZE || 2, // 1 = หน่วยงานกลาง, 2 = หน่วยงานทั่วไป
+                            OrderSeq: $row.ORDER_SEQ || null,
+                            CanRequestBudget: 0,
+                            AuthorizeDepIds: []
+                        }
+                        if ($row.CAN_REQUEST_BUDGET == true)
+                            $scope.$settings.formData.CanRequestBudget = 1;
+                        if ($row.ORDER_SEQ == undefined)
+                            $scope.$settings.formData.OrderSeq = 999;
+
+                        // โหลดหน่วยงาน
+                        $scope.$settings.departments = [];
+                        $customHttp.formPost('@Url.Action("GetAuthorizeDepartment", "Department")', { currDepId: $row.DEP_ID || null }).then(function (res) {
+                            var allDepartments = res.data.allDepartments || [];
+                            var authorizeDepIds = res.data.authorizeDepartmentIds || [];
+                            $.each(allDepartments, function (index, row) {
+                                allDepartments[index] = $.extend(true, {
+                                    checked: authorizeDepIds.indexOf(row.DEP_ID) > -1
+                                }, row);
+                            });
+
+                            $scope.$settings.departments = allDepartments;
+                            $scope.$settings.formData.AuthorizeDepIds = authorizeDepIds;
+                        }, function () { });
+                    };
+                    // เลือกทุกหน่วยงาน
+                    var checkAllDepIds = null;
+                    $scope.selectAll = function () {
+                        $timeout.cancel(checkAllDepIds);
+                        checkAllDepIds = $timeout(function () {
+                            var checkedAll = $scope.$settings.checkedAll;
+                            angular.forEach($scope.$settings.departments, function (dep) {
+                                dep.checked = checkedAll;
+                            });
+                        }, 300);
+                    };
+                    // กดปุ่มบันทึก
+                    $scope.save = function (event) {
+                        $scope.$settings.isLoading = true;
+                        $scope.$settings.isSaving = true;
+                        $scope.$settings.formErrors = {};
+                        var params = $.extend(true, {}, $scope.$settings.formData);
+                        params.AreaId = ('' + params.AreaId).replace(/[^\d]/g, '');
+                        params.AuthorizeDepIds = $scope.$settings.departments.filter(function (row) { return row.checked; })
+                            .map(function (row) { return row.DEP_ID; });
+                        $customHttp.formPost('@Url.Action("SubmitSave", "Department")', params).then(function (res) {
+                            $scope.$settings.formErrors = res.data.errors || {};
+                            if (null != res.data.errors)
+                                $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งก่อน');
+                            else
+                                $fwDialogService.alertDialog(event, 'บันทึกเรียบร้อยแล้ว').then(function () {
+                                    if ($scope.$settings.formData.DepId != null)
+                                        $mdDialog.hide();
+                                    else
+                                        $scope.init();
+                                });
+
+                            $scope.$settings.isLoading = false;
+                            $scope.$settings.isSaving = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                            $scope.$settings.isSaving = false;
+                        });
+                    };
+                    // กดปิดหน้าต่าง
+                    $scope.close = function () {
+                        $mdDialog.cancel();
+                    };
+
+
+                    $timeout(function () {
+                        $scope.init();
+                    }, 300);
+                }, event).then(function (res) {
+                    $scope.submitSearch();
+                }, function () { });
+            };
+
+
+            // ค้นหาข้อมูลเมื่อโหลดหน้าเว็บเสร็จ
+            $scope.submitSearch();
+        });
+    </script>
+}

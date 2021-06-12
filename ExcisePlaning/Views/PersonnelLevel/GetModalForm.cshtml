@@ -1,0 +1,53 @@
+﻿
+<md-dialog flex="98" flex-gt-sm="45">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ฟอร์มบันทึกระดับ C ของบุคลากร</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="row">
+                <div class="col-12 col-md-5 border-right">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label class="required-field">ชื่อระดับ C <fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.LevelName.ErrorMessages"></fw-validate-error-output></label>
+                            <input type="text" class="form-control" id="personLevelName" ng-model="$settings.formData.LevelName" ng-disabled="$settings.isLoading" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-7">
+                    <h4 class="border-bottom mb-1 pb-1 f-w-900 f-16">รายการค่าใช้จ่ายที่ใช้ระดับ C นี้ได้</h4>
+                    <fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.ExpensesIds.ErrorMessages"></fw-validate-error-output>
+                    <input type="text" class="w-100 p-1 ml-n1" ng-model="filterExpensesName" ng-disabled="$settings.isLoading" placeholder="ระบุชื่อ คชจ. เพื่อค้นหา" />
+                    <div class="table-responsive overflow-auto" style="min-height:400px;max-height:400px;height:400px;">
+                        <table class="table table-bordered table-hover m-0">
+                            <tr>
+                                <th style="width:60px;min-width:60px;max-width:60px;"><input type="checkbox" ng-model="checkAll" ng-click="setCheckAll()" ng-disabled="$settings.isLoading||filterExpensesName!=''" /></th>
+                                <th style="width:auto;min-width:180px;max-width:200px" class="text-left word-wrap">รายการค่าใช้จ่าย</th>
+                            </tr>
+                            <tr ng-repeat="item in $settings.formView.expenses|filter:{EXPENSES_NAME:filterExpensesName}">
+                                <th style="width:60px;min-width:60px;max-width:60px;">
+                                    <input type="checkbox" ng-model="item.checked" ng-disabled="$settings.isLoading" />
+                                </th>
+                                <th style="width:auto;min-width:180px;max-width:200px" class="text-left word-wrap">{{item.EXPENSES_NAME+' [' + item.EXPENSES_GROUP_NAME + ']'}}</th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="text-danger f-w-900 float-md-right">จำนวน: {{$settings.formView.expenses|countSelected}} รายการ</div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="submitSave($event)"></fw-execute-button>
+        <fw-execute-button text="ยกเลิก" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

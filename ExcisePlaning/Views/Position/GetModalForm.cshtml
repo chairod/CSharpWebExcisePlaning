@@ -1,0 +1,66 @@
+﻿<md-dialog flex="100" flex-gt-sm="45">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ฟอร์มบันทึกตำแหน่งงาน</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="row">
+                <div class="col-12 col-md-5 border-right">
+                    <div class="form-row">
+                        <div class="form-group col-12 ">
+                            <label class="required-field">ประเภทบุคลากร<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.PersonTypeId.ErrorMessages"></fw-validate-error-output></label>
+                            <select class="form-control" ng-model="$settings.formData.PersonTypeId" ng-disabled="$settings.isLoading" fw-select2>
+                                <option value="empty">--- ประเภทบุคลากร ---</option>
+                                @foreach (var item in ViewBag.PersonTypes)
+                                {
+                                    <option value="@item.PERSON_TYPE_ID">@item.PERSON_TYPE_NAME</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-12">
+                            <label class="required-field">ชื่อตำแหน่งงาน <fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.PositionName.ErrorMessages"></fw-validate-error-output></label>
+                            <input type="text" class="form-control" ng-model="$settings.formData.PositionName" id="positionName" ng-disabled="$settings.isLoading" />
+                        </div>
+                        <div class="form-group col-12 ">
+                            <label>หมายเหตุ <fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.RemarkText.ErrorMessages"></fw-validate-error-output></label>
+                            <textarea class="form-control textarea-noresize" ng-model="$settings.formData.RemarkText" ng-disabled="$settings.isLoading" rows="5"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-7">
+                    <h4 class="f-16 border-bottom mb-1 pb-1">เลือกรายการค่าใช้จ่ายที่ใช้ตำแหน่งงานนี้</h4>
+                    <fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.ExpensesIds.ErrorMessages"></fw-validate-error-output>
+                    <input type="text" class="w-100 p-1" ng-model="filterExpensesName" ng-disabled="$settings.isLoading" placeholder="ระบุชื่อ คชจ. เพื่อค้นหา" />
+                    <div class="table-responsive overflow-auto" style="min-height:400px;max-height:400px;height:400px;">
+                        <table class="table table-bordered table-hover m-0">
+                            <tr>
+                                <th style="width:60px;min-width:60px;max-width:60px;"><input type="checkbox" ng-model="checkAll" ng-click="setCheckAll()" ng-disabled="$settings.isLoading||filterExpensesName!=''" /></th>
+                                <th style="width:auto;min-width:180px;max-width:200px" class="text-left word-wrap">รายการค่าใช้จ่าย</th>
+                            </tr>
+                            <tr ng-repeat="item in $settings.formView.expenses|filter:{EXPENSES_NAME:filterExpensesName}">
+                                <th style="width:60px;min-width:60px;max-width:60px;">
+                                    <input type="checkbox" ng-model="item.checked" ng-disabled="$settings.isLoading" />
+                                </th>
+                                <th style="width:auto;min-width:180px;max-width:200px" class="text-left word-wrap">{{item.EXPENSES_NAME+' [' + item.EXPENSES_GROUP_NAME + ']'}}</th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="text-danger f-w-900 float-md-right">จำนวน: {{$settings.formView.expenses|countSelected}} รายการ</div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึกข้อมูล" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="submitSave($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

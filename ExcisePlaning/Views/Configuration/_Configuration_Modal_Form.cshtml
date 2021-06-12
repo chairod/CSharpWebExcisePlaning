@@ -1,0 +1,59 @@
+﻿<md-dialog flex="100" flex-gt-sm="60">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>กำหนดค่าคงที่ในระบบ</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-6">
+                    <label class="require-field">ค่าคงที่ในระบบ <fw-validate-error-output error-messages="$settings.formError.ConfigId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.ConfigId" ng-disabled="$settings.isLoading">
+                        <option>--- ค่าคงที่ในระบบ ---</option>
+                        @foreach (ExcisePlaning.Entity.T_CONFIGURATION configuration in ViewBag.Configurations)
+                        {
+                            <option value="@configuration.CONFIG_ID">@configuration.CONFIG_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-6">
+                    <label class="require-field">ค่าคงที่<sup class="f-w-900 ml-1">(1)</sup> <fw-validate-error-output error-messages="$settings.formError.ItemValue1.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" ng-model="$settings.formData.ItemValue1" ng-disabled="$settings.isLoading" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12 col-md-6">
+                    <label>ค่าคงที่<sup class="f-w-900 ml-1">(2)</sup> <fw-validate-error-output error-messages="$settings.formError.ItemValue2.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" ng-model="$settings.formData.ItemValue2" ng-disabled="$settings.isLoading" />
+                </div>
+                <div class="form-group col-12 col-md-6">
+                    <label>ค่าคงที่<sup class="f-w-900 ml-1">(3)</sup> <fw-validate-error-output error-messages="$settings.formError.ItemValue3.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" ng-model="$settings.formData.ItemValue3" ng-disabled="$settings.isLoading" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12 col-md-6">
+                    <label class="required-field">วันที่มีผลบังคับใช้<span class="ml-1" ng-if="$settings.isFindEffectiveDate"><i class="ti-reload rotate-refresh"></i></span><fw-validate-error-output error-messages="$settings.formError.EffectiveDate.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <fw-date-range model="$settings.formData.EffectiveDate" disabled="$settings.isLoading" single-date-picker="true"></fw-date-range>
+                    @*<fw-date-dropper ng-model="$settings.formData.EffectiveDate" ng-disabled="$settings.isLoading"></fw-date-dropper>*@
+                </div>
+                <div class="form-group col-12 col-md-6">
+                    <label>หมายเหตุเพิ่มเติม <fw-validate-error-output error-messages="$settings.formError.RemarkText.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <textarea class="form-control" ng-model="$settings.formData.RemarkText" ng-disabled="$settings.isLoading"></textarea>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-2"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="save($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

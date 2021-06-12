@@ -1,0 +1,317 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="d-block shadow-sm m-0 mb-2 p-3">
+        <div class="form-row">
+            <div class="form-group col-12 col-md-4">
+                <label>ปี งปม. (พ.ศ.)</label>
+                <fw-input-mask model="$settings.formSearch.fiscalYear" mask="9999"
+                               change="fiscalYearChanged()" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+            </div>
+            <div class="form-group col-12 col-md-4">
+                <label>เขตพื้นที่</label>
+                <select class="form-control" ng-model="$settings.formSearch.areaId" ng-disabled="$settings.isLoading"
+                        ng-change="areaChanged()" fw-select2>
+                    <option value="empty">--- เขตพื้นที่ ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.AreaShortFieldProperty item in ViewBag.Areas)
+                    {
+                        <option value="@item.AREA_ID">@item.AREA_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-4">
+                <label>หน่วยงาน</label>
+                <select class="form-control" ng-model="$settings.formSearch.depId"
+                        ng-disabled="$settings.isLoading||$settings.departments.length==0"
+                        ng-change="submitSearch()" fw-select2>
+                    <option value="empty">--- หน่วยงาน ---</option>
+                    <option ng-repeat="item in $settings.departments" value="{{item.DEP_ID}}">{{item.DEP_NAME}}</option>
+                </select>
+            </div>
+        </div>
+        @*<div class="form-row">
+            <div class="form-group col-12 col-md-6 text-md-right pr-md-4">
+                <md-checkbox ng-model="$settings.formSearch.budgetTypeFlag" class="mb-0"
+                             ng-click="submitSearch()"
+                             ng-true-value="1">คำขอต้นปี</md-checkbox>
+                <md-checkbox ng-model="$settings.formSearch.budgetTypeFlag" class="mb-0"
+                             ng-click="submitSearch()"
+                             ng-true-value="2">คำขอเพิ่มเติม</md-checkbox>
+            </div>
+            <div class="form-group col-12 col-md-6 text-md-left border-left pl-md-4">
+                <md-checkbox ng-model="$settings.formSearch.searchType" class="mb-0"
+                             ng-click="submitSearch()"
+                             ng-true-value="1" ng-false-value="0">ค้นหาเพื่อแก้ไข</md-checkbox>
+            </div>
+        </div>*@
+    </div>
+
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <span class="text-danger f-14">แสดงเฉพาะคำของบประมาณเพิ่มเติมจากหน่วยงานภายนอก</span>
+        <fw-simple-data-table columns="$settings.tableConfigs.columns" disabled="$settings.isLoading"
+                              auto-load="false"
+                              row-click-callback="rowClick($event, $row, $columnConfig)"
+                              route-url="@Url.Action("Retrieve", "BudgetAllocate")"></fw-simple-data-table>
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/inputnumber")
+    @Scripts.Render("~/bundle/select2")
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $q, $customHttp, $filter, $fwModalService, $fwDateService, $fwDialogService, $timeout) {
+            $scope.$settings = {
+                isLoading: false,
+                departments: [],
+                formSearch: {
+                    fiscalYear: $fwDateService.convertYearToBuddhist('@ViewBag.DefaultYear'),
+                    areaId: '@ViewBag.DefaultAreaId',
+                    depId: 'empty',
+                    budgetTypeFlag: null, // 1 = คำขอต้นปี, 2 = คำขอเพิ่มเติม
+                    searchType: 0 // 1 = ค้นหารายการที่ จัดสรรไปแล้ว เพื่อแก้ไขรายการ
+                },
+                tableConfigs: {
+                    columns: [
+                        {
+                            label: '', className: 'text-center word-wrap', type: 'html', params: "BTN_DECLINE",
+                            field: '<a href="javascript:void(0)" class="text-danger" ng-if="row.PROCESS_STATUS==0">ไม่จัดสรร</a>', style: 'min-width:70px;max-width:70px;width:70px;'
+                        },
+                        {
+                            label: 'เลขที่รายการ', className: 'text-center word-wrap', type: 'html', params: 'BTN_VIEW',
+                            field: '<a href="javascript:void(0)" class="text-primary">{{row.REQ_ID}}<sup class="ml-2 ti-new-window"></sup></a>',
+                            style: 'min-width:143px;max-width:143px;width:143px;'
+                        },
+                        {
+                            label: 'ประเภท', className: 'text-center word-wrap', type: 'html',
+                            field: '<div ng-if="row.REQ_TYPE==1" class="text-success">คำขอต้นปี</div>' +
+                                '<div ng-if="row.REQ_TYPE==2">คำขอเพิ่มเติม<span class="d-block f-12 text-danger">(ครั้งที่: {{row.REQ_COUNT|number:0}})</span></div>',
+                            style: 'min-width:110px;max-width:110px;width:110px;'
+                        },
+                        { label: 'จำนวน (บาท)', className: 'text-right word-wrap', type: 'expression', field: '{{row.TOTAL_REQUEST_BUDGET|number:2}}', style: 'min-width:120px;max-width:120px;width:120px;' },
+                        {
+                            label: 'ประเภทงบ', className: 'text-left word-wrap', type: 'html',
+                            field: '<span ng-if="row.BUDGET_TYPE==1">เงินงบประมาณ</span>' +
+                                '<span ng-if="row.BUDGET_TYPE==2" class="text-warning">เงินนอกงบประมาณ</span>',
+                            style: 'min-width:90px;max-width:90px;width:90px;'
+                        },
+                        { label: 'เขตพื้นที่', className: 'text-left word-wrap', type: 'field', field: 'AREA_NAME', style: 'min-width:126px;max-width:126px;width:126px;' },
+                        { label: 'หน่วยงาน', className: 'text-left word-wrap', type: 'field', field: 'DEP_NAME', style: 'min-width:140px;max-width:140px;width:140px;' },
+                        { label: 'ผู้ทำคำขอ', className: 'text-left word-wrap', type: 'field', field: 'CREATED_NAME', style: 'min-width:145px;max-width:145px;width:145px;' },
+                        { label: 'วันที่ทำคำขอ', className: 'text-center word-wrap', type: 'html', field: '<span>{{row.CREATED_DATETIME|sqlDate:\'dd/MM/yyyy HH:mm:ss\':null:true}}</span>', style: 'min-width:127px;max-width:127px;width:127px;' },
+                        { label: 'หมายเหตุ', className: 'text-left word-wrap', type: 'field', field: 'REMARK_TEXT', style: 'min-width:127px;max-width:127px;width:127px;' }
+                    ]
+                }
+            };
+
+            // ส่งคำร้องค้นหาข้อมูล
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    var params = $.extend(true, {}, $scope.$settings.formSearch);
+                    params.fiscalYear = ('' + params.fiscalYear).replace(/[^\d]/g, '');
+                    params.fiscalYear = $fwDateService.convertYearToBritish(params.fiscalYear);
+                    params.areaId = ('' + $scope.$settings.formSearch.areaId).replace(/[^\d]/g, '');
+                    params.depId = ('' + $scope.$settings.formSearch.depId).replace(/[^\d]/g, '');
+                    params.budgetTypeFlag = params.budgetTypeFlag === false ? null : params.budgetTypeFlag;
+                    $scope.$broadcast('fwSimpleDataTable.paramsChanged', params);
+                }, 300);
+            };
+            // เมื่อปีเปลี่ยนแปลง
+            var fiscalYearChangedId = null;
+            $scope.fiscalYearChanged = function () {
+                $timeout.cancel(fiscalYearChangedId);
+                fiscalYearChangedId = $timeout(function () {
+                    var fiscalYear = ('' + $scope.$settings.formSearch.fiscalYear).replace(/[^\d]/g, '');
+                    if (fiscalYear.length == 4)
+                        $scope.submitSearch();
+                }, 300);
+            };
+            // เมื่อเขตพื้นที่เปลี่ยนแปลง
+            var areaChangedId = null;
+            $scope.areaChanged = function (defaultDepId) {
+                $timeout.cancel(areaChangedId);
+                areaChangedId = $timeout(function () {
+                    $scope.$settings.departments = [];
+                    $scope.$settings.formSearch.depId = '' + (defaultDepId || 'empty');
+
+                    var areaId = ('' + $scope.$settings.formSearch.areaId).replace(/[^\d]/g, '');
+                    if ('' != areaId)
+                        $customHttp.formPost('@Url.Action("GetDepartmentBy", "Helper")', { areaId: areaId }).then(function (res) {
+                            $scope.$settings.departments = res.data || [];
+                        }, function () { });
+
+                    $scope.submitSearch();
+                }, 300);
+            };
+            // คลิกที่แถวข้อมูลในตาราง
+            $scope.rowClick = function (event, row, columnConfig) {
+                var tagName = event.target.tagName; // upper;
+                if (columnConfig.params == 'BTN_DECLINE' && tagName == 'A') {
+                    $fwDialogService.confirmDialog(event, 'ไม่จัดสรร คำของบประมาณนี้ ใช่หรือไม่').then(function () {
+                        $scope.$settings.isLoading = true;
+                        $customHttp.formPost('@Url.Action("SubmitDecline", "BudgetAllocate")', { reqId: row.REQ_ID }).then(function (res) {
+                            if (null != res.data.errorText)
+                                $fwDialogService.dangerDialog(event, res.data.errorText);
+                            else
+                                $scope.submitSearch();
+                            $scope.$settings.isLoading = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                        });
+                    }, function () { });
+                } else if (columnConfig.params == 'BTN_VIEW' && tagName == 'A') {
+                    $fwModalService.getModal('@Url.Action("GetAllocateModalForm", "BudgetAllocate")', { $row: row }, function ($scope, $mdDialog, $customHttp, $row, $fwDialogService, $fwModalService, $timeout) {
+                        $scope.$settings = {
+                            isLoading: true, isSaving: false,
+                            formErrors: {},
+                            formView: $.extend(true, { rows: [] }, $row),
+                            formData: {
+                                ReqId: $row.REQ_ID,
+                                AllocateBudgetTypeFlag: 1, // 1 = จัดสรรด้วยเงินงบประมาณ, 2 = จัดสรรด้วยเงินนอก งปม.
+                                Expenses: []
+                            }
+                        };
+
+                        // ส่งคำขอข้อมูลรายการค่าใช้จ่ายที่รอจัดสรร
+                        $customHttp.formPost('@Url.Action("RetrieveRequestBudgetExpenses", "BudgetAllocate")', { reqId: $row.REQ_ID }).then(function (res) {
+                            $scope.$settings.formView.rows = res.data || [];
+                            $scope.$settings.isLoading = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                        });
+                        // เมื่อคลิกประเภทงบประมาณ ที่จะจัดสรร (เงินงบ เงินนอกงบ)
+                        var allocateBudgetClickId = null;
+                        $scope.allocateBudgetTypeClick = function () {
+                            $timeout.cancel(allocateBudgetClickId);
+                            allocateBudgetClickId = $timeout(function () {
+                                $scope.$settings.formErrors = {};
+                                angular.forEach($scope.$settings.formView.rows, function (row) {
+                                    angular.forEach(row.Expenses, function (expensesItem) {
+                                        if (expensesItem.Projects != undefined) { // โครงการจะขึ้นกับเงินงบ หรือ นอกงบ
+                                            expensesItem.NewAllocateAmounts = null;
+                                            delete expensesItem.Projects;
+                                        }
+                                    });
+                                });
+                            }, 100);
+                        };
+                        // กดปุ่ม โครงการ แสดงรายชื่อโครงการที่ต้องการจัดสรรให้หน่วยงาน
+                        $scope.allocateByProject = function (event, expensesItem, projectErrors) {
+                            $fwModalService.getModal('@Url.Action("GetAllocateModalProjectForm", "BudgetAllocate")', { $expensesItem: expensesItem, $allocateBudgetTypeFlag: $scope.$settings.formData.AllocateBudgetTypeFlag, $projectErrors: projectErrors || [] }, function ($scope, $customHttp, $expensesItem, $mdDialog, $allocateBudgetTypeFlag, $projectErrors) {
+                                $scope.$settings = {
+                                    isLoading: true,
+                                    formView: $.extend(true, {
+                                        allocateBudgetTypeFlag: $allocateBudgetTypeFlag
+                                    }, $expensesItem),
+                                    projectErrors: $projectErrors, // array[]
+                                    formData: {
+                                        projects: []
+                                    }
+                                };
+
+                                // โหลดข้อมูลโครงการ ของรายการ คชจ.
+                                $customHttp.formPost('@Url.Action("GetAllocateExpensesProjectBudgetToDepartment", "BudgetAllocate")', {
+                                    depId: $expensesItem.DEP_ID,
+                                    fiscalYear: $expensesItem.YR,
+                                    planId: $expensesItem.PLAN_ID,
+                                    produceId: $expensesItem.PRODUCE_ID,
+                                    activityId: $expensesItem.ACTIVITY_ID,
+                                    budgetTypeId: $expensesItem.BUDGET_TYPE_ID,
+                                    expensesGroupId: $expensesItem.EXPENSES_GROUP_ID,
+                                    expensesId: $expensesItem.EXPENSES_ID,
+                                    budgetType: $allocateBudgetTypeFlag // 1 = งบประมาณ, 2 = นอกงบประมาณ
+                                }).then(function (res) {
+                                    var expensesProjects = $expensesItem.Projects || [];
+                                    var newExpensesProjects = res.data || [];
+                                    angular.forEach(newExpensesProjects, function (newItem) {
+                                        var findProject = expensesProjects.filter(function (item) { return item.PROJECT_ID == newItem.PROJECT_ID; });
+                                        newItem.NewAllocateAmounts = null;
+                                        newItem.RemarkText = null;
+                                        if (findProject.length > 0) {
+                                            newItem.NewAllocateAmounts = findProject[0].NewAllocateAmounts;
+                                            newItem.RemarkText = findProject[0].RemarkText;
+                                        }
+                                    });
+
+                                    $scope.$settings.formData.projects = newExpensesProjects;
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                                // กดตกลง
+                                $scope.ok = function () {
+                                    $mdDialog.hide($scope.$settings.formData.projects);
+                                };
+                                // กดปิดหน้าต่าง
+                                $scope.close = function () {
+                                    $mdDialog.cancel({});
+                                };
+                            }, event).then(function (projects) {
+                                if (expensesItem.Projects == undefined)
+                                    expensesItem.Projects = [];
+                                expensesItem.Projects = projects;
+                                expensesItem.NewAllocateAmounts = projects.map(function (item) {
+                                    return +item.NewAllocateAmounts || 0;
+                                }).reduce(function (firstVal, currVal) {
+                                    return firstVal + currVal;
+                                });
+                            }, function () { });
+                        };
+                        // ส่งค่าไปบันทึก
+                        $scope.ok = function (event) {
+                            $scope.$settings.isLoading = true;
+                            $scope.$settings.isSaving = true;
+                            $scope.$settings.formErrors = {};
+
+                            var params = $.extend(true, {}, $scope.$settings.formData);
+                            params.Expenses = [];
+                            angular.forEach($scope.$settings.formView.rows, function (row) {
+                                params.Expenses = params.Expenses.concat(row.Expenses);
+                            });
+                            $customHttp.formPost('@Url.Action("SubmitSave", "BudgetAllocate")', params).then(function (res) {
+                                $scope.$settings.formErrors = res.data.errors || {};
+                                if (null != res.data.errorText)
+                                    $fwDialogService.dangerDialog(event, res.data.errorText);
+                                else if (null != res.data.errors)
+                                    $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งให้เรียบร้อยก่อน');
+                                else 
+                                    $fwDialogService.alertDialog(event, 'จัดสรรงบประมาณตามคำขอของหน่วยงานเรียบร้อยแล้ว').then(function () {
+                                        $mdDialog.hide({});
+                                    }, function () { });
+
+                                $scope.$settings.isLoading = false;
+                                $scope.$settings.isSaving = false;
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                                $scope.$settings.isSaving = false;
+                            });
+                        };
+                        // ปิดหน้าต่าง
+                        $scope.close = function () {
+                            $mdDialog.cancel();
+                        };
+                    }, event).then(function () {
+                        $scope.submitSearch();
+                    }, function () { });
+                }
+
+                return $q(function (resolve) {
+                    resolve({ row: row });
+                });
+            }
+
+
+            // จัดเตรียมข้อมูลในหน้าฟอร์ม
+            $scope.areaChanged('@ViewBag.DefaultDepartmentId');
+        });
+    </script>
+}

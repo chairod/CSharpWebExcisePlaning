@@ -1,0 +1,221 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="d-block shadow-sm m-0 mb-2 p-3">
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label class="require-field">ปี งปม. (พ.ศ.)<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.FiscalYear.ErrorMessages"></fw-validate-error-output></label>
+                <fw-input-mask model="$settings.formData.FiscalYear" mask="9999" change="fiscalYearChanged()" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="require-field">ประจำเดือน<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ReceivePeriod.ErrorMessages"></fw-validate-error-output></label>
+                <select class="form-control" ng-model="$settings.formData.ReceiveMonthNo" ng-disabled="$settings.isLoading">
+                    @*<option value="empty">--- ประจำเดือน ---</option>*@
+                    <option ng-repeat="monthNo in [1,2,3,4,5,6,7,8,9,10,11,12]" value="{{monthNo}}">{{monthNo|toMonthLabel}}</option>
+                </select>
+                @*<fw-input-mask model="$settings.formData.ReceivePeriod" ng-disabled="$settings.isLoading" mask="99/9999" placeholder="เดือน/ปี (พ.ศ.)"></fw-input-mask>*@
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="require-field">รายได้ประจำงวด<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ReceiveAmounts.ErrorMessages"></fw-validate-error-output></label>
+                <fw-input-number-mask ng-model="$settings.formData.ReceiveAmounts" ng-disabled="$settings.isLoading" min-value="0.00" max-value="999999999999999.99" placeholder="จำนวนเงิน (บาท)"></fw-input-number-mask>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <div class="d-flex float-md-right">
+                    <fw-execute-button text="บันทึก" css-icon-class="ti-save"
+                                       css-class="btn btn-primary btn-sm mr-1"
+                                       ng-click="submitSave($event)"
+                                       ng-disabled="$settings.isLoading"
+                                       on-loading="$settings.isSaving"></fw-execute-button>
+                    <fw-execute-button text="ยกเลิก" css-icon-class="ion-close-circled"
+                                       css-class="btn btn-danger btn-sm"
+                                       ng-disabled="$settings.isLoading"
+                                       ng-click="submitSearch()"></fw-execute-button>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-6">
+                <label>หมายเหตุ<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.RemarkText.ErrorMessages"></fw-validate-error-output></label>
+                <textarea class="form-control textarea-noresize" ng-model="$settings.formData.RemarkText" ng-disabled="$settings.isLoading" rows="5"></textarea>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <tr class="bg-primary">
+                            <th style="width:80px;max-width:80px;min-width:80px" class="text-center word-wrap"></th>
+                            <th style="width:80px;max-width:80px;min-width:80px" class="text-center word-wrap">งวดที่</th>
+                            <th style="width:120px;max-width:120px;min-width:120px" class="text-center">ประจำเดือน</th>
+                            <th style="width:160px;max-width:160px;min-width:160px" class="text-right">จำนวน (บาท)</th>
+                            <th style="width:130px;max-width:130px;min-width:130px" class="text-left word-wrap">ผู้ทำรายการ</th>
+                            <th style="width:130px;max-width:130px;min-width:130px" class="text-left word-wrap">วันที่ทำรายการ</th>
+                            <th style="width:130px;max-width:130px;min-width:130px" class="text-left word-wrap">ผู้ยกเลิก</th>
+                            <th style="width:130px;max-width:130px;min-width:130px" class="text-left word-wrap">วันที่ยกเลิก</th>
+                            <th style="width:150px;max-width:150px;min-width:150px" class="text-left">หมายเหตุ</th>
+                        </tr>
+
+                        <tr ng-if="$settings.formView.histories.length == 0 && !$settings.isLoading">
+                            <th colspan="9" class="text-center text-danger">--- ยังไม่มีประวัติการจัดเก็บรายได้เงินนอกงบ ---</th>
+                        </tr>
+
+                        <tr ng-repeat="row in $settings.formView.histories">
+                            <td style="width:80px;max-width:80px;min-width:80px" class="text-center"><a href="javascript:void(0)" ng-if="row.ACTIVE==1" ng-click="reject($event, row)" class="text-danger f-w-900">ยกเลิก</a></td>
+                            <td style="width:80px;max-width:80px;min-width:80px" class="text-center">{{row.SEQ_NO}}</td>
+                            <td style="width:120px;max-width:120px;min-width:120px" class="text-center">{{row.PERIOD_MN+'/'+(row.PERIOD_YR|convertYearToBuddhist)}}</td>
+                            <td style="width:160px;max-width:160px;min-width:160px" class="text-right bg-light" ng-class="{'text-danger f-w-900': row.ACTIVE==-1}">
+                                {{row.BUDGET_AMOUNT|displayDecimal:2}}
+                                <div class="text-danger f-10 f-w-900" ng-if="row.ACTIVE==-1">[ยกเลิกรายการจัดเก็บรายได้]</div>
+                            </td>
+                            <td style="width:130px;max-width:130px;min-width:130px" class="text-left word-wrap">{{row.PERSON.PREFIX_NAME+row.PERSON.FIRST_NAME+' '+row.PERSON.LAST_NAME}}</td>
+                            <td style="width:130px;max-width:130px;min-width:130px" class="text-left word-wrap">{{row.CREATED_DATETIME|sqlDate:'':null:true}}</td>
+                            <td style="width:130px;max-width:130px;min-width:130px" class="text-left word-wrap">{{row.PERSON_DELETE.PREFIX_NAME+row.PERSON_DELETE.FIRST_NAME+' '+row.PERSON_DELETE.LAST_NAME}}</td>
+                            <td style="width:130px;max-width:130px;min-width:130px" class="text-left word-wrap">{{row.DELETED_DATETIME|sqlDate:'':null:true}}</td>
+                            <td style="width:150px;max-width:150px;min-width:150px" class="text-left word-wrap">{{row.REMARK_TEXT}}</td>
+                        </tr>
+
+                        <tr ng-if="$settings.formView.histories.length > 0 && !$settings.isLoading" class="bg-primary">
+                            <th colspan="3" class="text-center animated fadeIn">รวมทั้งสิ้น (บาท)</th>
+                            <th class="text-right animated fadeIn">{{$settings.formView.histories|fwSimpleSummary:['BUDGET_AMOUNT']:2:'{"ACTIVE": 1}'}}</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/inputnumber")
+    @Scripts.Render("~/bundle/select2")
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $fwModalService, $fwDialogService, $customHttp, $timeout, $fwDateService, $filter) {
+            $scope.$settings = {
+                isLoading: false, isSaving: false,
+                formErrors: {},
+                formView: { histories: [] }, // init func
+                formData: {} // init func
+            };
+
+            // จัดเตรียมหน้าฟอร์ม
+            $scope.init = function () {
+                var monthNoStr = new Date().getMonth() + 1;
+                if (monthNoStr < 10)
+                    monthNoStr = '0' + monthNoStr;
+
+                $scope.$settings.formView.histories = [];
+                $scope.$settings.formData = {
+                    FiscalYear: $fwDateService.convertYearToBuddhist('@ViewBag.FiscalYear'),
+                    ReceivePeriod: $filter('textFormat')('{0}/{1}', monthNoStr, $fwDateService.convertYearToBuddhist('@ViewBag.FiscalYear')),
+                    ReceiveMonthNo: ''+(+monthNoStr),
+                    ReceiveAmounts: null,
+                    RemarkText: null
+                };
+            };
+            // เมื่อปีเปลี่ยนแปลง
+            var fiscalYearChagedId = null;
+            $scope.fiscalYearChanged = function () {
+                $timeout.cancel(fiscalYearChagedId);
+                fiscalYearChagedId = $timeout(function () {
+                    var fiscalYear = ('' + $scope.$settings.formData.FiscalYear).replace(/[^\d]/g, '');
+                    if (fiscalYear.length == 4)
+                        $scope.submitSearch();
+                }, 500);
+            };
+            // ส่งคำขอข้อมูล
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    $scope.$settings.isLoading = true;
+                    var fiscalYear = $fwDateService.convertYearToBritish($scope.$settings.formData.FiscalYear);
+                    $customHttp.formPost('@Url.Action("Retrieve", "OffBudgetIncome")', { fiscalYear: fiscalYear }).then(function (res) {
+                        $scope.$settings.formView.histories = res.data || [];
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                    });
+                }, 300);
+            };
+            // กดยกเลิก รายการที่จัดเก็บรายได้
+            $scope.reject = function (event, row) {
+                if ($scope.$settings.isLoading)
+                    return;
+
+                $fwDialogService.confirmDialog(event, 'ยืนยันการยกเลิก การจัดเก็บรายได้').then(function () {
+                    $scope.$settings.isLoading = true;
+                    $customHttp.formPost('@Url.Action("SubmitReject", "OffBudgetIncome")', { seqNo: row.SEQ_NO, fiscalYear: row.YR }).then(function (res) {
+                        if (null != res.data.errorText)
+                            $fwDialogService.dangerDialog(event, res.data.errorText);
+                        else
+                            $fwDialogService.alertDialog(event, 'ยกเลิกการรับเงินประจำงวด เรียบร้อยแล้ว').then(function () {
+                                $scope.submitSearch();
+                            }, function () { });
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                    });
+                }, function () { });
+            };
+            // บันทึกรายการจัดสรร งปม.
+            $scope.submitSave = function (event) {
+                $scope.$settings.isLoading = true;
+                $scope.$settings.isSaving = true;
+
+                var params = $.extend(true, {}, $scope.$settings.formData);
+                params.FiscalYear = $fwDateService.convertYearToBritish(params.FiscalYear);
+
+                // แปลงเป็นปี ค.ศ.
+                //var parts = ('' + params.ReceivePeriod).split('/').filter(function (val) { return !(/[^\d]/g).test(val); });
+                //params.ReceivePeriod = '';
+                //if (parts.length == 2)
+                //    params.ReceivePeriod = $filter('textFormat')('{0}/{1}', parts[0], $fwDateService.convertYearToBritish(parts[1]));
+                params.ReceivePeriod = $filter('textFormat')('{0}/{1}', params.ReceiveMonthNo, params.FiscalYear);
+
+                // ส่งคำขอบันทึกรายการ
+                $scope.$settings.formErrors = {};
+                $customHttp.formPost('@Url.Action("SubmitSave", "OffBudgetIncome")', params).then(function (res) {
+                    $scope.$settings.formErrors = res.data.errors || {}
+                    if (null != res.data.errorText)
+                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                    else if (null != res.data.errors)
+                        $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งให้เรียบร้อยก่อน');
+                    else
+                        $fwDialogService.alertDialog(event, 'รับเงินประจำงวด เรียบร้อยแล้ว').then(function () {
+                            $scope.init();
+                            $scope.submitSearch();
+                        });
+
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                });
+            };
+
+
+            // โหลดข้อมูลตั้งตนของฟอร์ม
+            $scope.init();
+            $scope.submitSearch();
+        });
+    </script>
+}

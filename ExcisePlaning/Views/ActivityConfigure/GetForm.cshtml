@@ -1,0 +1,163 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card card-block borderless-card shadow-sm" ng-controller="AppController">
+    <div class="form-row">
+        <div class="form-group col-12 col-md-3">
+            <label>ผลผลิต</label>
+            <select class="form-control" ng-model="$settings.formSearch.produceId" ng-disabled="$settings.isLoading"
+                    fw-select2 ng-change="submitSearch()">
+                <option value="empty">--- ผลผลิต ---</option>
+                @foreach (var item in ViewBag.Produces)
+                {
+                    <option value="@item.PRODUCE_ID">@item.PRODUCE_NAME</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label>ชื่อกิจกรรม</label>
+            <div class="input-group">
+                <input type="text" class="form-control" ng-model="$settings.formSearch.activityName"
+                       ng-change="ActivityNameChanged()" />
+            </div>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label class="d-none d-md-block">&nbsp;</label>
+            <fw-execute-button text="สร้างใหม่" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round" ng-disabled="$settings.isLoading" ng-click="createNew($event)"></fw-execute-button>
+        </div>
+    </div>
+    <fw-simple-data-table columns="$settings.tableConfigs.columns" disabled="$settings.isLoading"
+                          auto-load="false"
+                          row-click-callback="rowClick($event, $row, $columnConfig)"
+                          route-url="@Url.Action("Retrieve", "ActivityConfigure")"></fw-simple-data-table>
+</div>
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")}
+@section Scripts{
+    @Scripts.Render("~/bundle/select2");
+    @Scripts.Render("~/bundle/inputnumber");
+    <script type="text/javascript">
+        angular.module("leaveApp").controller('AppController',
+            function ($scope, $customHttp, $timeout, $q, $fwDialogService, $fwModalService) {
+                $scope.$settings = {
+                    isLoading: false,
+                    formSearch: {
+                        produceId : 'empty',
+                        activityName: ''
+                    },
+                    tableConfigs: {
+                        columns: [
+                            { label: 'ID', className: 'text-center word-wrap', type: 'field', field: 'ACTIVITY_ID', style: 'min-width:50px;max-width:50px;width:50px;' },
+                            {
+                                label: 'ชื่อกิจกรรม', className: 'text-left word-wrap', type: 'html', params: 'BTN_EDIT',
+                                field: '<a href="javascript:void(0)" class="text-primary f-w-900">{{row.ACTIVITY_NAME}}<sup class="ml-1 ti-new-window"></sup></a>', style: 'width:auto;min-width:220px'
+                            },
+                            { label: 'ชื่อย่อ', className: 'text-left word-wrap', type: 'field', field: 'SHORT_NAME', style: 'min-width:150px;max-width:150px;width:150px;' },
+                            { label: 'ผลผลิต', className: 'text-left word-wrap', type: 'field', field: 'PRODUCE_NAME', style: 'min-width:200px;max-width:200px;width:200px;' },
+                            { label: 'ลำดับการเรียงข้อมูล', className: 'text-center word-wrap', type: 'field', field: 'ORDER_SEQ', style: 'min-width:100px;max-width:100px;width:100px;' },
+                            { label: '', className: 'text-center word-wrap', params: 'BTN_DELETE', type: 'html', field: '<a href="javascript:void(0)" class="text-danger f-14 f-w-900">ยกเลิก</a>', style: 'min-width:80px;max-width:80px;width:80px;' }
+                        ]
+                    }
+                };
+
+                $scope.createNew = function (event, formData) {
+                    $fwModalService.getModal('@Url.Action("GetModalForm", "ActivityConfigure", new { })', {  $formData: (formData || {}) },
+                        function ($scope, $customHttp, $mdDialog, $fwDialogService, $timeout, $fwModalHelperService, $formData) {
+                            $scope.$settings = {
+                                isLoading: false,
+                                formData: {},
+                                formErrors: {}
+                            };
+
+                            // กำหนดค่าเริ่มต้น
+                            $scope.init = function () {
+                                $scope.$settings.formError = {};
+                                $scope.$settings.formData = {
+                                    ProduceId: '' + ($formData.PRODUCE_ID || 'empty'),
+                                    ActivityID: $formData.ACTIVITY_ID || null,
+                                    ActivityCode: $formData.ACTIVITY_CODE || '',
+                                    ActivityName: $formData.ACTIVITY_NAME || '',
+                                    OrderSeq: $formData.ORDER_SEQ || null,
+                                    ShortName: $formData.SHORT_NAME || ''
+                                };
+                            };
+                            // ส่งคำขอบันทึกข้อมูล
+                            $scope.save = function (event) {
+                                $scope.$settings.isLoading = true;
+                                $scope.$settings.formErrors = {};
+
+                                var params = $.extend(true, {}, $scope.$settings.formData);
+                                params.ProduceId = ('' + params.ProduceId).replace(/[^\d]/ig, '');
+                                $customHttp.formPost('@Url.Action("SubmitSave", "ActivityConfigure")', params).then(function (res) {
+                                    $scope.$settings.formErrors = res.data.errors || {};
+                                    if (res.data.errors == null)
+                                        $fwDialogService.alertDialog(event, 'บันทึกเรียบร้อยแล้ว').then(function () {
+                                            if (null == $scope.$settings.formData.ActivityID)
+                                                $scope.init();
+                                            else
+                                                $scope.close();
+                                        });
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+                            // ปิดหน้าต่าง
+                            $scope.close = function () {
+                                $mdDialog.hide();
+                            };
+
+
+                            $scope.init();
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        });
+                };
+                $scope.rowClick = function (event, row, columnConfig) {
+                    if (columnConfig.params == 'BTN_DELETE') {
+                        $fwDialogService.confirmDialog(event, 'ยืนยัน!! การยกเลิก').then(function () {
+                            $scope.$settings.isLoading = true;
+                            $customHttp.formPost('@Url.Action("SubmitDelete", "ActivityConfigure")', { ActivityID: row.ACTIVITY_ID }).then(function () {
+                                $scope.submitSearch();
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        });
+                    } else if (columnConfig.params == 'BTN_EDIT') {
+                        $scope.createNew(event, row);
+                    }
+
+                    return $q(function (resolve) {
+                        resolve({ row: row });
+                    });
+                };
+
+
+                var timeoutId = null;
+                $scope.submitSearch = function () {
+                    $timeout.cancel(timeoutId);
+                    timeoutId = $timeout(function () {
+                        var params = $.extend(true, {}, $scope.$settings.formSearch);
+                        params.produceId = ('' + params.produceId).replace(/[^\d]/ig, '');
+                        $scope.$broadcast('fwSimpleDataTable.paramsChanged', params);
+                    }, 300);
+                };
+
+                // เมื่อตัวกรอง ชื่อกลุ่มผู้ใช้งานเปลี่ยนแปลง
+                var ActivityNameChangedId = null
+                $scope.ActivityNameChanged = function () {
+                    $timeout.cancel(ActivityNameChangedId);
+                    ActivityNameChangedId = $timeout(function () {
+                        $scope.submitSearch();
+                    }, 300);
+                };
+
+
+                $scope.submitSearch();
+        });
+    </script>
+}

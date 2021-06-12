@@ -1,0 +1,57 @@
+﻿<md-dialog flex="99" flex-gt-sm="85">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์มปรับปรุงการเบิกจ่าย</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="table-responsive animated fadeIn">
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th style="width:90px;max-width:90px;min-width:90px;" rowspan="2" class="text-center word-wrap">ประเภทรายการ</th>
+                        <th colspan="3" class="text-center">เบิกจ่าย(บาท)</th>
+                        <th style="width:90px;max-width:90px;min-width:90px;" rowspan="2" class="text-center word-wrap">ครั้งที่ปรับปรุง</th>
+                        <th style="width:125px;max-width:125px;min-width:125px;" rowspan="2" class="text-left word-wrap">ผู้ปรับปรุง</th>
+                        <th style="width:125px;max-width:125px;min-width:125px;" rowspan="2" class="text-left word-wrap">วันที่ปรับปรุง</th>
+                        <th style="width:115px;min-width:115px;max-width:115px;" rowspan="2" class="text-left">เลขที่เอกสาร</th>
+                        <th style="width:145px;min-width:145px;max-width:145px;" rowspan="2" class="text-left">หมายเหตุ</th>
+                    </tr>
+                    <tr>
+                        <th style="width:155px;max-width:155px;min-width:155px;" class="text-right word-wrap">เบิกจ่าย (ก่อนปรับปรุง)</th>
+                        <th style="width:150px;max-width:150px;min-width:150px;" class="text-right word-wrap">ปรับปรุง</th>
+                        <th style="width:155px;max-width:155px;min-width:155px;" class="text-right word-wrap bg-light">เบิกจ่ายสุทธิ</th>
+                    </tr>
+
+                    <tr ng-if="$settings.histories.length==0&&!$settings.isLoading">
+                        <th colspan="8" class="text-center text-danger animated fadeIn">--- ยังไม่มีรายการประวัติการปรับปรุงการเบิกจ่าย ---</th>
+                    </tr>
+
+                    <tr ng-repeat="row in $settings.histories">
+                        <td class="text-center">
+                            <span ng-if="row.TRAN_TYPE==1" class="text-primary">เบิกจ่าย</span>
+                            <span ng-if="row.TRAN_TYPE==2" class="text-danger">เบิกเกินส่งคืน</span>
+                            <span ng-if="row.TRAN_TYPE==3" class="text-danger">ปรับปรุงบัญชี</span>
+                        </td>
+                        <td class="text-right">{{row.CURR_WITHDRAWAL_AMOUNT|displayDecimal:2}}</td>
+                        <td class="text-right"><span ng-if="row.TRAN_TYPE==2||row.TRAN_TYPE==3" class="text-danger mr-1 f-14 f-w-900">(-)</span>{{row.ADJUSTMENT_AMOUNT|displayDecimal:2}}</td>
+                        <td class="text-right">{{row.BALANCE_AMOUNT|displayDecimal:2}}</td>
+                        <td class="text-center"><span ng-if="row.TRAN_TYPE==2||row.TRAN_TYPE==3">{{row.SEQ_NO-1}}</span></td>
+                        <td class="text-left word-wrap">{{row.CREATED_NAME}}</td>
+                        <td class="text-left">{{row.CREATED_DATETIME|sqlDate:'':null:true}}</td>
+                        <td class="text-left">{{row.REFER_DOC_CODE}}</td>
+                        <td class="text-left word-wrap">{{row.REMARK_TEXT}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

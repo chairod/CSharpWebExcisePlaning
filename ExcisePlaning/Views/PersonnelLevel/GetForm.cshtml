@@ -1,0 +1,199 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-controller="AppController">
+    <div class="container-fluid shadow-sm m-0 mb-2 rounded-bottom">
+        <div class="form-row">
+            <div class="form-group col-12 offset-md-3 col-md-4">
+                <label>ชื่อระดับ C</label>
+                <input type="text" class="form-control" ng-model="$settings.formSearch.levelName" />
+            </div>
+            <div class="form-group col-12 col-md-4">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <fw-execute-button text="สร้างใหม่"
+                                   css-class="btn btn-primary btn-sm mb-1 d-inline-block"
+                                   css-icon-class="ion-plus"
+                                   ng-click="createNew($event)"
+                                   ng-disabled="$settings.isLoading"></fw-execute-button>
+            </div>
+        </div>
+    </div>
+    <div class="card card-block borderless-card shadown-sm">
+        <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                              ng-disabled="$settings.isLoading"
+                              row-click-callback="rowClick($event, $row, $columnConfig)"
+                              route-url="@Url.Action("Retrieve", "PersonnelLevel")"></fw-simple-data-table>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController',
+            function ($scope, $fwDialogService, $fwModalService, $timeout, $customHttp, $q, $filter) {
+                $scope.$settings = {
+                    isLoading: false,
+                    formSearch: { levelName: '' },
+                    tableConfigs: {
+                        columns: [
+                            { label: 'No.', className: 'text-center word-wrap', type: 'rowNumber', style: 'min-width:50px;max-width:50px;width:50px;' },
+                            {
+                                label: 'ชื่อระดับ C', className: 'text-left word-wrap',
+                                params: 'BTN_EDIT',
+                                type: 'html',
+                                field: '<a href="javascript:void(0)" class="text-primary f-w-900">{{row.LEVEL_NAME}}<sup class="ml-1 ti-new-window f-w-900"></sup></a>',
+                                style: 'min-width:200px'
+                            },
+                            //{ label: 'ใช้กับรายการค่าใช้จ่าย', className: 'text-center word-wrap', type: 'expression', field: '<span ng-class="{\'text-danger\': row.EXPENSES_FLAG==2}">{{row.EXPENSES_FLAG==1?\'ทุก คชจ.\':\'เฉพาะบาง คชจ.\'}}</span>', style: 'min-width:130px;max-width:130px;width:130px;' },
+                            {
+                                label: '', className: 'text-center word-wrap', type: 'html', params: 'BTN_DELETE',
+                                field: '<a href="javascript:void(0)" class="text-danger f-w-900">ยกเลิก</a>',
+                                style: 'min-width:100px;max-width:100px;width:100px;'
+                            },
+                        ]
+                    }
+                };
+
+                $scope.createNew = function (event, row) {
+                    $fwModalService.getModal('@Url.Action("GetModalForm", "PersonnelLevel")', { $formData: row || {} },
+                        function ($scope, $mdDialog, $customHttp, $fwDialogService, $formData, $timeout) {
+                            $scope.filterExpensesName = '';
+                            $scope.$settings = {
+                                isLoading: false,
+                                formErrors: {},
+                                formView: { expenses: [] },
+                                formData: {},
+                                expenses: []
+                            };
+
+                            // จัดเตรียมแบบฟอร์ม
+                            $scope.init = function () {
+                                $scope.$settings.formData = {
+                                    LevelId: $formData.LEVEL_ID || null,
+                                    LevelName: $formData.LEVEL_NAME || null,
+                                    ExpensesIds: []
+                                };
+
+                                // โหลดรายการ คชจ. ที่กำหนดให้สามารถใช้ระดับ C ของบุคลากรได้
+                                if (null != $scope.$settings.formData.LevelId) {
+                                    $scope.$settings.isLoading = true;
+                                    $customHttp.formPost('@Url.Action("RetrieveAuthorizeExpenses", "PersonnelLevel")', { levelId: $scope.$settings.formData.LevelId }).then(function (res) {
+                                        $scope.$settings.formData.ExpensesIds = res.data || [];
+
+                                        // โหลดข้อมูลรายการ คชจ. เพื่อให้กำหนดนสิทธิ์ใช้งานระดับ C
+                                        $scope.getAllExpenses($scope.$settings.formData.ExpensesIds);
+                                        $scope.$settings.isLoading = false;
+                                    }, function () {
+                                        $scope.$settings.isLoading = false;
+                                    });
+                                } else {
+                                    // โหลดข้อมูลรายการ คชจ. เพื่อให้กำหนดนสิทธิ์ใช้งานระดับ C
+                                    $scope.getAllExpenses([]);
+                                }
+
+                                $timeout(function () {
+                                    $('#personLevelName').focus();
+                                }, 500);
+                            };
+                            // ค้นหารายการค่าใช้จ่าย เพื่อกำหนดสิทธิ์การใช้งานระดับ C
+                            $scope.getAllExpenses = function (selectedIds) {
+                                $customHttp.formPost("@Url.Action("RetrieveAllExpenses", "Helper")", {}).then(function (res) {
+                                    var expenses = res.data || [];
+                                    $.each(expenses, function (index, item) {
+                                        expenses[index] = $.extend(true, {
+                                            checked: selectedIds.indexOf(item.EXPENSES_ID) > -1
+                                        }, item);
+                                    });
+                                    $scope.$settings.formView.expenses = expenses;
+                                }, function () { });
+                            };
+                            // กรณีกดเลือกทั้งหมด
+                            $scope.setCheckAll = function () {
+                                $timeout(function () {
+                                    angular.forEach($scope.$settings.formView.expenses, function (item) {
+                                        item.checked = $scope.checkAll;
+                                    });
+                                }, 200);
+                            };
+                            // ส่งคำขอบันทึก
+                            $scope.submitSave = function (event) {
+                                $scope.$settings.isLoading = true;
+                                var params = $.extend(true, {}, $scope.$settings.formData);
+                                params.ExpensesIds = $scope.$settings.formView.expenses.filter(function (item) { return item.checked; }).map(function (item) { return item.EXPENSES_ID; });
+
+                                $customHttp.formPost('@Url.Action("SubmitSave", "PersonnelLevel")', params).then(function (res) {
+                                    $scope.$settings.formErrors = res.data.errors || {};
+                                    if (null != res.data.errorText)
+                                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                                    else if (null == res.data.errors)
+                                        $fwDialogService.alertDialog(event, 'บันทึกข้อมูลเรียบร้อยแล้ว').then(function () {
+                                            if (null == $scope.$settings.formData.LevelId)
+                                                $scope.init();
+                                            else
+                                                $mdDialog.hide();
+                                        });
+
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+
+                            $scope.close = function () {
+                                $mdDialog.hide();
+                            };
+
+                            $scope.init();
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        }, function () { });
+                };
+
+                $scope.rowClick = function (event, row, columnConfig) {
+                    if (columnConfig.params == 'BTN_DELETE') {
+                        $fwDialogService.confirmDialog(event, 'ยืนยัน!! การยกเลิกระดับ C นี้').then(function () {
+                            $scope.$settings.isLoading = true;
+                            $customHttp.formPost('@Url.Action("SubmitDelete", "PersonnelType")', {
+                                levelId: row.LEVEL_ID
+                            }).then(function () {
+                                $scope.$settings.isLoading = false;
+                                $scope.submitSearch();
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        });
+                    } else if (columnConfig.params == 'BTN_EDIT') {
+                        $scope.createNew(event, row);
+                    }
+
+                    // fwSimpleDataTable บังคับให้ Return promise
+                    return $q(function (resolve) {
+                        resolve({ row: row });
+                    });
+                };
+
+                var timeoutId = null;
+                $scope.submitSearch = function () {
+                    $timeout.cancel(timeoutId);
+                    timeoutId = $timeout(function () {
+                        $scope.$broadcast('fwSimpleDataTable.paramsChanged', {
+                            levelName: $scope.$settings.formSearch.levelName
+                        });
+                    }, 300);
+                };
+
+                // Watch
+                var levelNameChangedId = null;
+                $scope.$watch('$settings.formSearch.levelName', function () {
+                    $timeout.cancel(levelNameChangedId);
+                    levelNameChangedId = $timeout(function () {
+                        $scope.submitSearch();
+                    }, 500);
+                });
+            }).filter('countSelected', function () {
+                return function (items) {
+                    return items.filter(function (item) { return item.checked }).length;
+                };
+            });
+    </script>
+}

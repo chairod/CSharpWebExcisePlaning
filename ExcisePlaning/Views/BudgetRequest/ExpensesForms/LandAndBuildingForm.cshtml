@@ -1,0 +1,85 @@
+﻿<md-dialog flex="99" flex-gt-sm="65">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์ม{{$settings.expensesName}}</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <fw-execute-button text="เพิ่มรายการ" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round"
+                               ng-click="addItem($event)" ng-disabled="$settings.isLoading"></fw-execute-button>
+            <span class="text-danger ml-2 float-md-right f-w-900">จำนวน {{$settings.formData.rows.length|number:0}} รายการ</span>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th style="width:75px;min-width:75px;max-width:75px;" class="text-center">ลำดับ</th>
+                        <th style="width:230px;min-width:230px;max-width:230px" class="text-left">รายการ</th>
+                        <th style="width:160px;min-width:160px;max-width:160px;" class="text-right">จำนวนเงิน (บาท)</th>
+                        <th style="width:200px;min-width:200px;max-width:200px;" class="text-left">หมายเหตุ</th>
+                        <th style="width:75px;min-width:75px;max-width:75px;" class="text-center">ไฟล์แนบ</th>
+                        <th style="width:60px;min-width:60px;max-width:60px;"></th>
+                    </tr>
+
+                    <tr ng-if="$settings.formData.rows.length==0&&!$settings.isLoading">
+                        <th colspan="6" class="text-center text-danger animated fadeIn">--- โปรดกดที่ปุ่ม "เพิ่มรายการ" ---</th>
+                    </tr>
+
+                    <tr ng-repeat="row in $settings.formData.rows">
+                        <td style="width:75px;min-width:75px;max-width:75px;" class="text-center">{{$index + 1}}</td>
+                        <td style="width:230px;min-width:230px;max-width:230px" class="text-left">
+                            <select class="form-control" ng-model="row.AssetId"
+                                    ng-change="assetChanged(row.AssetId, $settings.assets, row)"
+                                    ng-disabled="$settings.isLoading" fw-select2>
+                                <option value="empty">--- ที่ดินและสิ่งก่อสร้าง ---</option>
+                                <option ng-repeat="item in $settings.assets" value="{{item.ASSET_ID}}">{{item.ASSET_NAME}}</option>
+                            </select>
+                            <input type="text" class="d-block w-100 p-1 mt-1" ng-model="row.AssetOtherName" title="{{row.AssetOtherName}}"
+                                   ng-if="row.AssetOtherFlag==true||row.AssetOtherFlag=='true'"
+                                   ng-disabled="$settings.isLoading" placeholder="ไม่เกิน 200 ตัวอักษร" maxlength="200" />
+                            <fw-validate-error-output css-class="mt-1 d-block text-left" error-messages="$settings.formErrors[$index].ErrorMessages"></fw-validate-error-output>
+                        </td>
+                        <td style="width:160px;min-width:160px;max-width:160px;" class="text-right">
+                            <fw-input-number-mask ng-model="row.TotalPrice" css-class="text-right"
+                                                  ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999999.00"></fw-input-number-mask>
+                        </td>
+                        <td style="width:200px;min-width:200px;max-width:200px;" class="text-left">
+                            <input type="text" class="form-control" ng-model="row.RemarkText" title="{{row.RemarkText}}" ng-disabled="$settings.isLoading" />
+                        </td>
+                        <td style="width:75px;min-width:75px;max-width:75px;" class="text-center">
+                            <fw-file-upload callback="uploadCallback($res, $params)"
+                                            params="{index: $index}" icon="true"
+                                            upload-url="@Url.Action("SubmitUploadDocument", "Resource", new { uploadType = "BudgetRequest" })"></fw-file-upload>
+                            <a href="@Url.Action("GetFile", "Resource", new { groupType = "BudgetRequest" })&filename={{row.AttachFilename}}" class="d-block mt-1 f-12 text-danger" ng-if="row.AttachFilename!=null"><span class="animated fadeIn">ไฟล์แนบ</span></a>
+                        </td>
+                        <td style="width:60px;min-width:60px;max-width:60px;" class="text-center align-middle">
+                            <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="delete($index, row)">ยกเลิก</a>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="$settings.formData.rows.length > 0" class="bg-primary">
+                        <th colspan="2" class="text-right animated fadeIn">รวมทั้งสิ้น</th>
+                        <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['TotalPrice']:2}}</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div ng-if="$settings.isLoading">
+            <span class="text-danger f-w-900 animated fadeIn">กำลังจัดเตรียมแบบฟอร์ม ...</span>
+        </div>
+        <span flex></span>
+        <fw-execute-button text="ตกลง" css-class="btn btn-primary btn-sm mr-md-1 mb-1 mb-md-0"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-ios-checkmark"
+                           ng-click="privateOk()"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

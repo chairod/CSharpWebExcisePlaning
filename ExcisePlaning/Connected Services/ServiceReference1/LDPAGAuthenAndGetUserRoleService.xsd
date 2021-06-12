@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:tns="http://dexsrvint.excise.go.th/schema/LdapUserBase" elementFormDefault="qualified" targetNamespace="http://dexsrvint.excise.go.th/schema/LdapUserBase" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:complexType name="UserInfoBase">
+    <xsd:sequence>
+      <xsd:element name="userThaiId" type="xsd:string" />
+      <xsd:element name="userThaiName" type="xsd:string" />
+      <xsd:element name="userThaiSurname" type="xsd:string" />
+      <xsd:element name="userEngName" type="xsd:string" />
+      <xsd:element name="userEngSurname" type="xsd:string" />
+      <xsd:element name="title" type="xsd:string" />
+      <xsd:element name="userId" type="xsd:string" />
+      <xsd:element name="email" type="xsd:string" />
+      <xsd:element name="cnName" type="xsd:string" />
+      <xsd:element name="telephoneNo" type="xsd:string" />
+      <xsd:element name="officeId" type="xsd:string" />
+      <xsd:element name="accessAttr" type="xsd:string" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RoleBase">
+    <xsd:sequence>
+      <xsd:element name="roleName" type="xsd:string" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RolesBase">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" maxOccurs="unbounded" name="role" type="tns:RoleBase" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="MessageBase">
+    <xsd:sequence>
+      <xsd:element name="success" type="xsd:boolean" />
+      <xsd:element name="code" type="xsd:string" />
+      <xsd:element name="description" type="xsd:string" />
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

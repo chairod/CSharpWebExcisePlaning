@@ -1,0 +1,252 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-1">
+        <div class="form-row">
+            <div class="col-12 col-md-3">
+                <div class="input-group">
+                    <div class="input-group-append">
+                        <input type="text" class="form-control text-primary" id="withdrawalCode" ng-model="$settings.formSearch.withdrawalCode"
+                               ng-change="withdrawalCodeChanged()" placeholder="เลขที่ขอเบิก 10 หลัก" maxlength="10" />
+                        <fw-execute-button text="ค้นหา" css-icon-class="ti-search"
+                                           ng-disabled="$settings.isLoading"
+                                           ng-click="searchModal($event)"></fw-execute-button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-9 mt-1 mt-md-0">
+                <fw-execute-button text="บันทึกข้อมูล" css-icon-class="ti-save"
+                                   css-class="btn btn-primary btn-sm float-md-right mr-1 mt-1 mt-md-0"
+                                   ng-disabled="$settings.isLoading||!$settings.formView.RESERVE_ID"
+                                   on-loading="$settings.isSaving"
+                                   ng-click="submitSave($event)"></fw-execute-button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-block borderless-card shadow-sm m-0 mb-1 position-relative">
+        <div class="row border-bottom mb-2 mr-2">
+            <div class="col-12 col-md-4 border-right">
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label class="require-field">เลขที่เบิกเกินส่งคืน<fw-validate-error-output error-messages="$settings.formErrors.AdjustmentCode.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <input type="text" class="form-control" ng-model="$settings.formData.AdjustmentCode"
+                               ng-disabled="$settings.isLoading||!$settings.formView.RESERVE_ID" maxlength="10" placeholder="จำนวน 10 หลัก" />
+                    </div>
+                    <div class="form-group col-12">
+                        <md-checkbox ng-model="$settings.formData.AdjustmentType"
+                                     ng-disabled="$settings.isLoading||!$settings.formView.RESERVE_ID"
+                                     ng-click="$settings.formData.AdjustmentAmount=$settings.formView.WITHDRAWAL_AMOUNT"
+                                     ng-true-value="1" class="mb-0">ส่งคืนเต็มจำนวน</md-checkbox>
+                    </div>
+                    <div class="form-group col-12">
+                        <label class="require-field">ยอดส่งคืน<fw-validate-error-output error-messages="$settings.formErrors.AdjustmentAmount.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <fw-input-number-mask ng-model="$settings.formData.AdjustmentAmount"
+                                              ng-disabled="$settings.isLoading||$settings.formData.AdjustmentType==1||!$settings.formView.RESERVE_ID"
+                                              min-value="0" max-value="9999999999.99"></fw-input-number-mask>
+                    </div>
+                    <div class="form-group col-12">
+                        <label class="text-danger f-w-900">จำนวนที่เบิกจ่าย</label>
+                        <h3 class="text-danger f-28 f-w-900 text-left">{{$settings.formView.WITHDRAWAL_AMOUNT|displayDecimal:2}}&nbsp;บาท</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-8">
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label class="require-field">รายละเอียด<fw-validate-error-output error-messages="$settings.formErrors.RemarkText.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <textarea class="form-control textarea-noresize" ng-model="$settings.formData.RemarkText" rows="11" ng-disabled="$settings.isLoading||!$settings.formView.RESERVE_ID" placeholder="ระบุรายละเอียดเพิ่มเติม ความยาวไม่เกิน 100 ตัวอักษร"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>ปีงบประมาณ</label>
+                <input type="text" class="form-control" value="{{$settings.formView.YR|convertYearToBuddhist}}" readonly />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>หน่วยงานภายใน</label>
+                <input type="text" class="form-control" value="{{$settings.formView.DEP_NAME}}" title="{{$settings.formView.DEP_NAME}}" readonly />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ผู้ทำรายการเบิกจ่าย</label>
+                <input type="text" class="form-control" value="{{$settings.formView.CREATED_NAME}}" readonly />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>วันที่เบิกจ่าย</label>
+                <input type="text" class="form-control" value="{{$settings.formView.WITHDRAWAL_DATE|sqlDate:'':null:false}}" readonly />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>แผนงาน</label>
+                <input type="text" class="form-control" value="{{$settings.formView.PLAN_NAME}}" title="{{$settings.formView.PLAN_NAME}}" readonly />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ผลผลิต</label>
+                <input type="text" class="form-control" value="{{$settings.formView.PRODUCE_NAME}}" title="{{$settings.formView.PRODUCE_NAME}}" readonly />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>กิจกรรม</label>
+                <input type="text" class="form-control" value="{{$settings.formView.ACTIVITY_NAME}}" title="{{$settings.formView.ACTIVITY_NAME}}" readonly />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>งบรายจ่าย</label>
+                <input type="text" class="form-control" value="{{$settings.formView.BUDGET_TYPE_NAME}}" title="{{$settings.formView.BUDGET_TYPE_NAME}}" readonly />
+            </div>
+        </div>
+        <div class="form-row border-bottom mb-2">
+            <div class="form-group col-12 col-md-3">
+                <label>หมวดค่าใช้จ่าย</label>
+                <input type="text" class="form-control" value="{{$settings.formView.EXPENSES_GROUP_NAME}}" title="{{$settings.formView.EXPENSES_GROUP_NAME}}" readonly />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ค่าใช้จ่าย</label>
+                <input type="text" class="form-control" value="{{$settings.formView.EXPENSES_NAME}}" title="{{$settings.formView.EXPENSES_NAME}}" readonly />
+            </div>
+            <div class="form-group col-12 col-md-3" ng-if="$settings.formView.PROJECT_NAME">
+                <label>โครงการ</label>
+                <input type="text" class="form-control" value="{{$settings.formView.PROJECT_NAME}}" title="{{$settings.formView.PROJECT_NAME}}" readonly />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/select2")
+    @Scripts.Render("~/bundle/inputnumber")
+<script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $q, $customHttp, $fwModalHelperService, $fwModalService, $fwDialogService, $timeout) {
+            $scope.$settings = {
+                isLoading: false, isSaving: false,
+                formView: {},
+                formSearch: {
+                    withdrawalCode: ''
+                },
+                formData: {} // Initial by init
+            };
+
+            // จัดเตรียมค่าสำหรับฟอร์ม
+            $scope.init = function () {
+                $scope.$settings.formErrors = {};
+                $scope.$settings.formView = {};
+
+                $scope.$settings.formData = {
+                    WithdrawalCode: null,
+                    ReserveId: null,
+                    AdjustmentCode: null, // เลขที่เบิกเกินส่งคืน
+                    AdjustmentAmount: null,
+                    AdjustmentType: null,
+                    RemarkText: null
+                };
+            };
+            // กดค้นหาเลขที่ใบกันเงิน
+            $scope.searchModal = function (event) {
+                $fwModalHelperService.getWithdrawalReserveBudgetSelectOneModal(event, null, null, 1).then(function (selectedItem) {
+                    $scope.$settings.formSearch.withdrawalCode = selectedItem.WITHDRAWAL_CODE;
+                    $scope.submitSearch();
+                }, function () { });
+            };
+            // ส่งคำขอค้นหา
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    $scope.$settings.isLoading = true;
+                    $customHttp.formPost('@Url.Action("Retrieve", "BudgetReserveWithdrawalCashback")', { withdrawalCode: $scope.$settings.formSearch.withdrawalCode }).then(function (res) {
+                        $scope.init();
+                        if (res.data.withdrawals.length == 0)
+                            $fwDialogService.dangerDialog(null, 'ไม่พบข้อมูลเบิกจ่าย').then(function () {
+                                $scope.$settings.formSearch.withdrawalCode = '';
+                            });
+                        else {
+                            var rows = res.data.withdrawals || [];
+                            $q(function (resolve, reject) {
+                                if (rows.length == 1) {
+                                    resolve(rows[0]);
+                                    return;
+                                }
+
+                                $fwModalService.getModal('@Url.Action("GetSelectItemModal", "BudgetReserveWithdrawalCashback")', { $rows: rows }, function ($scope, $mdDialog, $rows) {
+                                    $scope.$settings = { withdrawals: $rows };
+                                    $scope.ok = function (row) {
+                                        $mdDialog.hide(row);
+                                    };
+                                    $scope.close = function () {
+                                        $mdDialog.cancel({});
+                                    };
+                                }).then(function (row) {
+                                    resolve(row);
+                                }, function () {
+                                    reject({});
+                                });
+                            }).then(function (row) {
+                                $scope.$settings.formView = row || {};
+                            }, function () {
+                                $scope.$settings.formView = {};
+                                $scope.$settings.formSearch.withdrawalCode = '';
+                            });
+                        }
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                    });
+                }, 300);
+            };
+            // เลขที่ใบกันเปลี่ยนแปลง
+            var withdrawalCodeChangedId = null;
+            $scope.withdrawalCodeChanged = function () {
+                $timeout.cancel(withdrawalCodeChangedId);
+                withdrawalCodeChangedId = $timeout(function () {
+                    $scope.init();
+
+                    var withdrawalCode = $.trim($scope.$settings.formSearch.withdrawalCode);
+                    if (withdrawalCode.length == 10)
+                        $scope.submitSearch();
+                }, 500);
+            };
+            // ส่งคำขอเพื่อบันทึก
+            $scope.submitSave = function (event) {
+                $scope.$settings.isLoading = true;
+                $scope.$settings.isSaving = true;
+
+                var params = $.extend(true, {}, $scope.$settings.formData, {
+                    WithdrawalCode: $scope.$settings.formView.WITHDRAWAL_CODE,
+                    ReserveId: $scope.$settings.formView.RESERVE_ID,
+                });
+                $customHttp.formPost('@Url.Action("SubmitSave", "BudgetReserveWithdrawalCashback")', params).then(function (res) {
+                    $scope.$settings.formErrors = res.data.errors || {};
+                    if (null != res.data.errorText)
+                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                    else if (null != res.data.errors)
+                        $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งให้เรียบร้อยก่อน');
+                    else
+                        $fwDialogService.alertDialog(event, 'ทำรายการเบิกเกินส่งคืนเรียบร้อยแล้ว').then(function () {
+                            $scope.init();
+                            $scope.$settings.formSearch.withdrawalCode = '';
+                        });
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                });
+            };
+
+
+            // เตรียมค่าเริ่มต้นของฟอร์ม
+            $scope.init();
+            $timeout(function () {
+                $('#withdrawalCode').focus();
+            }, 200);
+        });
+</script>
+}

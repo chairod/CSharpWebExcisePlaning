@@ -1,0 +1,98 @@
+﻿<md-dialog flex="99" flex-gt-sm="85">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>สรุปรายการค่าใช้จ่ายที่ส่งคำขอ งปม.</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="row mb-2 border-bottom pb-2">
+                <div class="col-12 col-md-3"><input type="text" class="form-control border-0" value="{{$settings.formView.YR|convertYearToBuddhist}}" readonly /></div>
+                <div class="col-12 col-md-3"><input type="text" class="form-control border-0" value="{{$settings.formView.AREA_NAME}}" title="{{$settings.formView.AREA_NAME}}" readonly /></div>
+                <div class="col-12 col-md-3"><input type="text" class="form-control border-0" value="{{$settings.formView.DEP_NAME}}" title="{{$settings.formView.DEP_NAME}}" readonly /></div>
+                <div class="col-12 col-md-3"><input type="text" class="form-control border-0" value="วันที่ขอ: {{$settings.formView.CREATED_DATETIME|sqlDate:'':null:true}}" title="{{$settings.formView.CREATED_DATETIME|sqlDate:'':null:true}}" readonly /></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-12 col-md-3">
+                    <input type="text" class="form-control border-0" ng-class="{'text-warning': $settings.formView.PROCESS_STATUS==0, 'text-danger': $settings.formView.PROCESS_STATUS==-1, 'text-primary': $settings.formView.PROCESS_STATUS==1}" value="{{$settings.formView.statusText}}" readonly />
+                </div>
+                <div class="col-12 col-md-3"><input type="text" class="form-control border-0 text-warning" value="คำขอ: {{$settings.expenses|budgetRequestSummaryAmounts:['TOTAL_REQUEST_BUDGET']}} บาท" title="คำขอ: {{$settings.expenses|budgetRequestSummaryAmounts:['TOTAL_REQUEST_BUDGET']}} บาท" readonly /></div>
+                <div class="col-12 col-md-3"><input type="text" class="form-control border-0 text-success f-w-900" value="จัดสรร: {{$settings.expenses|budgetRequestSummaryAmounts:['ALLOCATE_BUDGET_AMOUNT', 'ALLOCATE_OFF_BUDGET_AMOUNT']}} บาท" title="จัดสรร: {{$settings.expenses|budgetRequestSummaryAmounts:['ALLOCATE_BUDGET_AMOUNT', 'ALLOCATE_OFF_BUDGET_AMOUNT']}} บาท" readonly /></div>
+                <div class="col-12 col-md-3"><input type="text" class="form-control border-0 f-w-900" value="ขอจาก: {{$settings.formView.BUDGET_TYPE==1?'เงินงบประมาณ':'เงินนอกงบประมาณ'}}" title="ขอจาก: {{$settings.formView.BUDGET_TYPE==1?'เงินงบประมาณ':'เงินนอกงบประมาณ'}}" readonly /></div>
+            </div>
+
+            @*รายการค่าใช้จ่าย ที่อยู่ในคำขอ งปม.*@
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    @*<tr>
+                        <th style="width:60px;min-width:60px;max-width:60px;" class="align-middle"></th>
+                        <th style="width:auto;min-width:160px" class="text-left word-wrap">แผนงาน</th>
+                        <th style="width:auto;min-width:160px" class="text-left word-wrap">ผลผลิต</th>
+                        <th style="width:auto;min-width:160px" class="text-left word-wrap">กิจกรรม</th>
+                        <th style="width:auto;min-width:160px" class="text-left word-wrap">งบรายจ่าย</th>
+                        <th style="width:auto;min-width:160px" class="text-left word-wrap">หมวด คชจ.</th>
+                    </tr>*@
+                    <tr ng-repeat-start="(groupIndex, group) in $settings.expenses" class="bg-primary">
+                        <td style="width:60px;min-width:60px;max-width:60px;" class="text-center">{{groupIndex+1}}</td>
+                        <td style="width:auto;min-width:160px" class="text-left word-wrap"><div class="border-bottom mb-1 pb-1 f-w-900 f-16">แผนงาน</div>{{group.GroupBy.PLAN_NAME||'-'}}</td>
+                        <td style="width:auto;min-width:160px" class="text-left word-wrap"><div class="border-bottom mb-1 pb-1 f-w-900 f-16">ผลผลิต</div>{{group.GroupBy.PRODUCE_NAME||'-'}}</td>
+                        <td style="width:auto;min-width:160px" class="text-left word-wrap"><div class="border-bottom mb-1 pb-1 f-w-900 f-16">กิจกรรม</div>{{group.GroupBy.ACTIVITY_NAME||'-'}}</td>
+                        <td style="width:160px;min-width:160px;max-width:160px" class="text-left word-wrap"><div class="border-bottom mb-1 pb-1 f-w-900 f-16">งบรายจ่าย</div>{{group.GroupBy.BUDGET_TYPE_NAME}}</td>
+                        <td style="width:160px;min-width:160px;max-width:160px" class="text-left word-wrap"><div class="border-bottom mb-1 pb-1 f-w-900 f-16">หมวดค่าใช้จ่าย</div>{{group.GroupBy.EXPENSES_GROUP_NAME}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" class="p-0">
+                            <table class="table table-striped m-0">
+                                <tr class="bg-secondary text-white">
+                                    <th rowspan="2" style="width:60px;min-width:60px;max-width:60px;"></th>
+                                    <th rowspan="2" style="width:auto;min-width:200px" class="text-left">รายการค่าใช้จ่าย</th>
+                                    <th rowspan="2" style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">คำขอ (บาท)</th>
+                                    <th colspan="2" class="text-center">ยอดจัดสรรงบประมาณ (บาท)</th>
+                                    <th colspan="2" class="text-center">ยอดส่งคืน (บาท)</th>
+                                </tr>
+                                <tr class="bg-secondary text-white">
+                                    <th style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">เงินงบประมาณ</th>
+                                    <th style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">เงินนอกงบประมาณ</th>
+                                    <th style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">เงินงบประมาณ</th>
+                                    <th style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">เงินนอกงบประมาณ</th>
+                                </tr>
+                                <tr ng-repeat="(itemIndex, row) in group.Expenses" ng-class="{'text-success': row.ALLOCATE_BUDGET_AMOUNT > 0 || row.ALLOCATE_OFF_BUDGET_AMOUNT > 0, 'text-warning': row.CASHBACK_BUDGET_AMOUNT > 0 || row.CASHBACK_OFF_BUDGET_AMOUNT > 0}">
+                                    <td style="width:60px;min-width:60px;max-width:60px;" class="text-center">{{groupIndex + 1}}.{{itemIndex + 1}}</td>
+                                    <td style="width:auto;min-width:200px" class="text-left word-wrap">{{row.EXPENSES_NAME}}</td>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">{{row.TOTAL_REQUEST_BUDGET|displayDecimal:2}}</td>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">{{row.ALLOCATE_BUDGET_AMOUNT|displayDecimal:2}}</td>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">{{row.ALLOCATE_OFF_BUDGET_AMOUNT|displayDecimal:2}}</td>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">{{row.CASHBACK_BUDGET_AMOUNT|displayDecimal:2}}</td>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">{{row.CASHBACK_OFF_BUDGET_AMOUNT|displayDecimal:2}}</td>
+                                </tr>
+                                <tr class="bg-secondary text-white">
+                                    <th colspan="2" class="text-right">รวม (บาท)</th>
+                                    <th class="text-right word-wrap">{{group.Expenses|fwSimpleSummary:['TOTAL_REQUEST_BUDGET']:2}}</th>
+                                    <th class="text-right word-wrap">{{group.Expenses|fwSimpleSummary:['ALLOCATE_BUDGET_AMOUNT']:2}}</th>
+                                    <th class="text-right word-wrap">{{group.Expenses|fwSimpleSummary:['ALLOCATE_OFF_BUDGET_AMOUNT']:2}}</th>
+                                    <th class="text-right word-wrap">{{group.Expenses|fwSimpleSummary:['CASHBACK_BUDGET_AMOUNT']:2}}</th>
+                                    <th class="text-right word-wrap">{{group.Expenses|fwSimpleSummary:['CASHBACK_OFF_BUDGET_AMOUNT']:2}}</th>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr ng-repeat-end></tr>
+                </table>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div>
+            <strong class="text-danger f-w-900">เลขที่คำขอ: {{$settings.formView.REQ_ID}}</strong>
+            <strong class="text-danger f-w-900 ml-1" ng-if="$settings.formView.REQ_TYPE==1">[คำขอต้นปี]</strong>
+            <strong class="text-danger f-w-900 ml-1" ng-if="$settings.formView.REQ_TYPE==2">[คำขอเพิ่มเติม]</strong>
+            <strong class="text-danger f-w-900 ml-1" ng-if="$settings.formView.REFER_REQ_ID!=null">, [เลขที่หนังสือ: {{$settings.formView.REFER_REQ_ID}}]</strong>
+        </div>
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

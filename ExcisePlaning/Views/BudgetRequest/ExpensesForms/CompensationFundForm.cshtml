@@ -1,0 +1,82 @@
+﻿<md-dialog flex="99" flex-gt-sm="75">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์ม{{$settings.expensesName}}</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="d-block pb-2 mb-2 f-14 text-primary">
+                หักเข้ากองทุนเงินทดแทนร้อยละ {{$const.salaryPercentRate|number:2}}
+            </div>
+            <fw-execute-button text="เพิ่มรายการ" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round"
+                               ng-click="addItem($event)" ng-disabled="$settings.isLoading"></fw-execute-button>
+            <span class="text-danger ml-2 float-md-right f-w-900">จำนวน {{$settings.formData.rows.length|number:0}} รายการ</span>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th rowspan="2" style="width:75px;min-width:75px;max-width:75px;" class="text-center align-middle">ลำดับ</th>
+                        <th rowspan="2" style="min-width:190px" class="text-left align-middle">ชื่อ - นามสกุล</th>
+                        <th rowspan="2" style="width:270px;min-width:270px;max-width:270px;" class="text-left align-middle">ตำแหน่ง</th>
+                        <th rowspan="2" style="width:130px;min-width:130px;max-width:130px;" class="text-right align-middle">อัตราเงินเดือน</th>
+                        <th colspan="2" class="text-center bg-light">อัตรา (บาท)</th>
+                        <th rowspan="2" style="width:60px;min-width:60px;max-width:60px;"></th>
+                    </tr>
+                    <tr>
+                        <th style="width:130px;min-width:130px;max-width:130px;" class="text-center bg-light">ต่อเดือน</th>
+                        <th style="width:130px;min-width:130px;max-width:130px;" class="text-center bg-light">ต่อปี</th>
+                    </tr>
+
+                    <tr ng-if="$settings.formData.rows.length==0&&!$settings.isLoading">
+                        <th colspan="8" class="text-center text-danger animated fadeIn">--- โปรดกดที่ปุ่ม "เพิ่มรายการ" ---</th>
+                    </tr>
+
+                    <tr ng-repeat="row in $settings.formData.rows">
+                        <td style="width:75px;min-width:75px;max-width:75px;" class="text-center">{{$index + 1}}</td>
+                        <td style="min-width:190px" class="text-left bg-light">
+                            <input type="text" class="form-control" maxlength="200" ng-model="row.PersonName" ng-disabled="$settings.isLoading" placeholder="ระบุชื่อ - นามสกุล" />
+                        </td>
+                        <td style="width:270px;min-width:270px;max-width:270px;" class="text-left bg-light">
+                            <select class="form-control" ng-model="row.PositionId" ng-disabled="$settings.isLoading" fw-select2>
+                                <option value="empty">--- ตำแหน่งงาน ---</option>
+                                <option ng-repeat="item in $settings.positions" value="{{item.POSITION_ID}}">{{item.POSITION_NAME}}</option>
+                            </select>
+                        </td>
+                        <td style="width:130px;min-width:130px;max-width:130px;" class="text-center bg-light">
+                            <fw-input-number-mask ng-model="row.Salary" css-class="text-center"
+                                                  ng-change="salaryValueChanged(row)"
+                                                  ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999.00" placholder="เงินเดือนของพนักงาน"></fw-input-number-mask>
+                        </td>
+                        <td style="width:130px;min-width:130px;max-width:130px;" class="text-center word-wrap">{{row.MonthlyRateVal|number:2}}</td>
+                        <td style="width:130px;min-width:130px;max-width:130px;" class="text-center word-wrap">{{row.YearlyRateVal|number:2}}</td>
+                        <td style="width:60px;min-width:60px;max-width:60px;" class="text-center">
+                            <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.rows.splice($index, 1)">ยกเลิก</a>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="$settings.formData.rows.length > 0" class="bg-primary">
+                        <th colspan="4" class="text-right animated fadeIn">รวมทั้งสิ้น</th>
+                        <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['MonthlyRateVal']:2}}</th>
+                        <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['YearlyRateVal']:2}}</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div ng-if="$settings.isLoading">
+            <span class="text-danger f-w-900 animated fadeIn">กำลังจัดเตรียมแบบฟอร์ม ...</span>
+        </div>
+        <span flex></span>
+        <fw-execute-button text="ตกลง" css-class="btn btn-primary btn-sm mr-md-1 mb-1 mb-md-0"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-ios-checkmark"
+                           ng-click="ok()"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

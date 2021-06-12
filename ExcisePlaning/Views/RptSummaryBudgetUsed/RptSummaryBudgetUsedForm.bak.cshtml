@@ -1,0 +1,309 @@
+﻿
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-controller="AppController">
+    <div class="d-block shadow-sm m-0 mb-2 p-3">
+        <div class="form-row">
+            <div class="col-12 col-md-1 hide">
+                <label>ปี งปม. (พ.ศ.) </label>
+                <fw-input-mask model="$settings.formData.Yr" mask="9999" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+            </div>
+            <div class="col-12 col-md-2">
+                <label class="required-field">วันที่เริ่มต้น</label>
+                <fw-date-range model="$settings.formView.StartDate" single-date-picker="true"></fw-date-range>
+
+            </div>
+            <div class="col-12 col-md-2">
+                <label class="required-field">วันที่เริ่มสิ้นสุด</label>
+                <fw-date-range model="$settings.formView.EndDate" single-date-picker="true"></fw-date-range>
+
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <div class="d-flex float-md-left">
+                    <fw-execute-button text="แสดงข้อมูล" css-icon-class="icofont icofont-search"
+                                       css-class="btn btn-primary btn-sm mr-1"
+                                       ng-click="submitSearch($event)"
+                                       ng-disabled="$settings.isLoading"
+                                       on-loading="$settings.isLoading"></fw-execute-button>
+                    <fw-execute-button text="พิมพ์" css-icon-class="icofont icofont-printer"
+                                       css-class="btn btn-info btn-sm"
+                                       ng-disabled="$settings.isLoading"
+                                       ng-click="ExportExcel($event)"></fw-execute-button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                @*1 รายงาน*@
+                <tr>
+                    <th class="text-center bg-info" style="width:150px;max-width:150px;min-width:150px">รายการ</th>
+                    <th class="text-center bg-info" style="width:100px;max-width:100px;min-width:100px">เงินประจำงวด</th>
+                    <th class="text-center bg-info" style="width:100px;max-width:100px;min-width:100px">ผูกพัน</th>
+                    <th class="text-center bg-info" style="width:100px;max-width:100px;min-width:100px">เบิกจ่ายสะสม</th>
+                    <th class="text-center bg-info" style="width:100px;max-width:100px;min-width:100px">คงเหลือ</th>
+                    <th class="text-center bg-info" style="width:100px;max-width:100px;min-width:100px">ร้อยละเบิกจ่าย</th>
+                </tr>
+                <tr>
+                    <th class="text-left" style="width:150px;max-width:150px;min-width:150px">กรมสรรพสามิต</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.BudgetMoneyAmount+$settings.formView.BudgetOffMoneyAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.CenterBudgetBindingAmount+$settings.formView.CenterOffBudgetBindingAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.BudgetMoneyWithdrawAmount+$settings.formView.BudgetOffMoneyWithdrawAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.ExciseDepartmentRemain|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{CalPercentage($settings.formView.BudgetMoneyAmount+$settings.formView.BudgetOffMoneyAmount,$settings.formView.BudgetMoneyWithdrawAmount+$settings.formView.BudgetOffMoneyWithdrawAmount)|number:2}}</th>
+                </tr>
+                <tr>
+                    <th class="text-left" style="width:150px;max-width:150px;min-width:150px">เงินงบประมาณ</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.BudgetMoneyAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.CenterBudgetBindingAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.BudgetMoneyWithdrawAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.BudgetMoneyAmountRemain|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{CalPercentage($settings.formView.BudgetMoneyAmount , $settings.formView.BudgetMoneyWithdrawAmount)|number:2}}</th>
+                </tr>
+                <tr>
+                    <th class="text-left" style="width:150px;max-width:150px;min-width:150px">เงินนอกงบประมาณ</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.BudgetOffMoneyAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.CenterOffBudgetBindingAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.BudgetOffMoneyWithdrawAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.BudgetOffMoneyAmountRemain|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{CalPercentage($settings.formView.BudgetOffMoneyAmount , $settings.formView.BudgetOffMoneyWithdrawAmount)|number:2}}</th>
+                </tr>
+                <tr>
+                    <th class="text-left" style="width:150px;max-width:150px;min-width:150px">ส่วนกลาง (เงินงบประมาณ)</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.BudgetMoneyAmount - $settings.formView.RegionBudgetAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.CenterBudgetBindingAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.CenterBudgetWithdrawAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.CenterBudgetOffMoneyAmountRemain|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{CalPercentage( $settings.formView.BudgetMoneyAmount - $settings.formView.RegionBudgetAmount, $settings.formView.CenterBudgetWithdrawAmount)|number:2}}</th>
+                </tr>
+                <tr>
+                    <th class="text-left" style="width:150px;max-width:150px;min-width:150px">ส่วนกลาง (เงินนอกงบประมาณ)</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.BudgetOffMoneyAmount - $settings.formView.RegionOffBudgetAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.CenterOffBudgetBindingAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.CenterOffBudgetWithdrawAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.CenterOffBudgetOffMoneyAmountRemain|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{CalPercentage($settings.formView.BudgetOffMoneyAmount - $settings.formView.RegionOffBudgetAmount , $settings.formView.CenterOffBudgetWithdrawAmount)|number:2}}</th>
+                </tr>
+                <tr>
+                    <th class="text-left  bg-dark" style="width:150px;max-width:150px;min-width:150px">รวมทั้งสิ้น</th>
+                    <th class="text-right bg-dark" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.TotalAmount1|number:2}}</th>
+                    <th class="text-right bg-dark" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.CenterBudgetBindingAmount+$settings.formView.CenterOffBudgetBindingAmount|number:2}}</th>
+                    <th class="text-right bg-dark" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.CenterBudgetWithdrawAmount+$settings.formView.CenterOffBudgetWithdrawAmount|number:2}}</th>
+                    <th class="text-right bg-dark" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.TotalRemain1|number:2}}</th>
+                    <th class="text-right bg-dark" " style="width:100px;max-width:100px;min-width:100px">{{CalPercentage($settings.formView.TotalAmount1 , $settings.formView.CenterBudgetWithdrawAmount+$settings.formView.CenterOffBudgetWithdrawAmount)|number:2}}</th>
+                </tr>
+                <tr>
+                    <th class="text-left" style="width:150px;max-width:150px;min-width:150px">ส่วนภูมิภาค (เงินงบประมาณ)</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.RegionBudgetAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{0|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.RegionBudgetWithdrawAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.RegionBudgetAmountRemain|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{CalPercentage($settings.formView.RegionBudgetAmount , $settings.formView.RegionBudgetWithdrawAmount)|number:2}}</th>
+                </tr>
+                <tr>
+                    <th class="text-left" style="width:150px;max-width:150px;min-width:150px">ส่วนภูมิภาค (เงินนอกงบประมาณ)</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.RegionOffBudgetAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{0|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.RegionOffBudgetWithdrawAmount|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.RegionOffBudgetAmountRemain|number:2}}</th>
+                    <th class="text-right" style="width:100px;max-width:100px;min-width:100px">{{CalPercentage($settings.formView.RegionOffBudgetAmount , $settings.formView.RegionOffBudgetWithdrawAmount)|number:2}}</th>
+                </tr>
+                <tr>
+                    <th class="text-left  bg-dark" style="width:150px;max-width:150px;min-width:150px">รวมทั้งสิ้น</th>
+                    <th class="text-right bg-dark" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.RegionBudgetAmount + $settings.formView.RegionOffBudgetAmount |number:2}}</th>
+                    <th class="text-right bg-dark" style="width:100px;max-width:100px;min-width:100px">{{0|number:2}}</th>
+                    <th class="text-right bg-dark" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.RegionBudgetWithdrawAmount + $settings.formView.RegionOffBudgetWithdrawAmount|number:2}}</th>
+                    <th class="text-right bg-dark" style="width:100px;max-width:100px;min-width:100px">{{$settings.formView.TotalRemain2|number:2}}</th>
+                    <th class="text-right bg-dark" " style="width:100px;max-width:100px;min-width:100px">{{CalPercentage($settings.formView.RegionBudgetAmount + $settings.formView.RegionOffBudgetAmount , $settings.formView.RegionBudgetWithdrawAmount + $settings.formView.RegionOffBudgetWithdrawAmount)|number:2}}</th>
+                </tr>
+
+            </table>
+
+
+        </div>
+    </div>
+
+
+
+
+
+</div>
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+    @Styles.Render("~/content/datepickerrange")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/select2")
+    @Scripts.Render("~/bundle/datepickerrange")
+    <script type="text/javascript">
+        angular.module("leaveApp").controller('AppController',
+            function ($scope, $filter, $customHttp, $timeout, $q, $fwDialogService, $fwModalService, $fwDateService) {
+                $scope.$settings = {
+                    isLoading: false,
+                    formData: {
+                        Yr: $fwDateService.convertYearToBuddhist('@ViewBag.FiscalYear')
+                    },
+                    formView: {
+                        BudgetMoneyAmount: 0,
+                        BudgetOffMoneyAmount: 0,
+                        RegionBudgetAmount: 0,
+                        RegionOffBudgetAmount: 0,
+                        TotalAmount1: 0,
+                        CenterBudgetBindingAmount: 0,
+                        CenterOffBudgetBindingAmount: 0,
+                        CenterBudgetWithdrawAmount: 0,
+                        CenterOffBudgetWithdrawAmount: 0,
+                        RegionBudgetWithdrawAmount: 0,
+                        RegionOffBudgetWithdrawAmount: 0,
+                        BudgetMoneyWithdrawAmount: 0,
+                        BudgetOffMoneyWithdrawAmount: 0,
+                        ExciseDepartmentRemain: 0,
+                        BudgetMoneyAmountRemain: 0,
+                        BudgetOffMoneyAmountRemain: 0,
+                        CenterBudgetOffMoneyAmountRemain: 0,
+                        CenterOffBudgetOffMoneyAmountRemain: 0,
+                        TotalRemain1: 0,
+                        RegionBudgetAmountRemain: 0,
+                        RegionOffBudgetAmountRemain: 0,
+                        TotalRemain2: 0,
+                        BudgetReserveMoneyAmount:0,
+                        StartDate: '01/11/2563',
+                        EndDate: '30/11/2563'
+
+
+
+                    }
+                };
+
+                $scope.submitSearch = function () {
+                    $scope.$settings.isLoading = true;
+                    $customHttp.formPost('@Url.Action("ShowData", "RptSummaryBudgetUsed")', {
+                        Yr: $scope.$settings.formData.Yr
+                    }).then(function (res) {
+                        $scope.$settings.formView.BudgetMoneyAmount = res.data.BudgetMoneyAmount || 0;
+                        $scope.$settings.formView.BudgetOffMoneyAmount = res.data.BudgetOffMoneyAmount || 0;
+                        $scope.$settings.formView.BudgetReserveMoneyAmount = res.data.BudgetReserveMoneyAmount || 0;
+
+<<<<<<< .mine
+=======
+
+
+>>>>>>> .r83
+                        $scope.$settings.formView.RegionBudgetAmount = res.data.RegionBudgetAmount || 0;
+                        $scope.$settings.formView.RegionOffBudgetAmount = res.data.RegionOffBudgetAmount || 0;
+
+                        $scope.$settings.formView.CenterBudgetBindingAmount = res.data.CenterBudgetBindingAmount || 0;
+                        $scope.$settings.formView.CenterOffBudgetBindingAmount = res.data.CenterOffBudgetBindingAmount || 0;
+
+                        $scope.$settings.formView.CenterBudgetWithdrawAmount = res.data.CenterBudgetWithdrawAmount || 0;
+                        $scope.$settings.formView.CenterOffBudgetWithdrawAmount = res.data.CenterOffBudgetWithdrawAmount || 0;
+
+                        $scope.$settings.formView.RegionBudgetWithdrawAmount = res.data.RegionBudgetWithdrawAmount || 0;
+                        $scope.$settings.formView.RegionOffBudgetWithdrawAmount = res.data.RegionOffBudgetWithdrawAmount || 0;
+
+                        $scope.$settings.formView.BudgetMoneyWithdrawAmount = (res.data.CenterBudgetWithdrawAmount + res.data.RegionBudgetWithdrawAmount) || 0;
+                        $scope.$settings.formView.BudgetOffMoneyWithdrawAmount = (res.data.CenterOffBudgetWithdrawAmount + res.data.RegionOffBudgetWithdrawAmount) || 0;
+
+                        $scope.$settings.formView.TotalAmount1 = ($scope.$settings.formView.BudgetMoneyAmount - $scope.$settings.formView.RegionBudgetAmount) +
+                            ($scope.$settings.formView.BudgetOffMoneyAmount - $scope.$settings.formView.RegionOffBudgetAmount);
+
+                        //คงเหลือ กรมมสรรพ
+                        $scope.$settings.formView.ExciseDepartmentRemain = ($scope.$settings.formView.BudgetMoneyAmount + $scope.$settings.formView.BudgetOffMoneyAmount) -
+                            ($scope.$settings.formView.CenterBudgetBindingAmount + $scope.$settings.formView.CenterOffBudgetBindingAmount) -
+                            ($scope.$settings.formView.BudgetMoneyWithdrawAmount + $scope.$settings.formView.BudgetOffMoneyWithdrawAmount);
+
+                        //คงเหลือ เงินงบประมาณ
+                        $scope.$settings.formView.BudgetMoneyAmountRemain = ($scope.$settings.formView.BudgetMoneyAmount) - ($scope.$settings.formView.CenterBudgetBindingAmount) - ($scope.$settings.formView.BudgetMoneyWithdrawAmount);
+                        $scope.$settings.isLoading = false;
+
+                        //คงเหลือ เงินนอกงบประมาณ
+                        $scope.$settings.formView.BudgetOffMoneyAmountRemain = ($scope.$settings.formView.BudgetOffMoneyAmount) - ($scope.$settings.formView.CenterOffBudgetBindingAmount) -
+                            ($scope.$settings.formView.BudgetOffMoneyWithdrawAmount);
+
+                        //คงเหลือส่วนกลาง (เงินงบประมาณ)
+                        $scope.$settings.formView.CenterBudgetOffMoneyAmountRemain = ($scope.$settings.formView.BudgetMoneyAmount - $scope.$settings.formView.RegionBudgetAmount) -
+                            ($scope.$settings.formView.CenterBudgetBindingAmount) -
+                            ($scope.$settings.formView.CenterBudgetWithdrawAmount);
+
+                        //คงเหลือ ส่วนกลาง (เงินนอกงบประมาณ)
+                        $scope.$settings.formView.CenterOffBudgetOffMoneyAmountRemain = ($scope.$settings.formView.BudgetOffMoneyAmount - $scope.$settings.formView.RegionOffBudgetAmount) -
+                            ($scope.$settings.formView.CenterOffBudgetBindingAmount) -
+                            ($scope.$settings.formView.CenterOffBudgetWithdrawAmount);
+
+                        //คงเหลือ รวมทั้งสิ้น 1
+                        $scope.$settings.formView.TotalRemain1 = ($scope.$settings.formView.TotalAmount1) -
+                            ($scope.$settings.formView.CenterBudgetBindingAmount + $scope.$settings.formView.CenterOffBudgetBindingAmount) -
+                            ($scope.$settings.formView.CenterBudgetWithdrawAmount + $scope.$settings.formView.CenterOffBudgetWithdrawAmount)
+
+                        //คงเหลือ ส่วนภมิภาค (เงินงบประมาณ)
+                        $scope.$settings.formView.RegionBudgetAmountRemain = $scope.$settings.formView.RegionBudgetAmount - $scope.$settings.formView.RegionBudgetWithdrawAmount;
+
+                        //คงเหลือ ส่วนภูมิภาค (เงินนอกงบประมาณ)
+                        $scope.$settings.formView.RegionOffBudgetAmountRemain = $scope.$settings.formView.RegionOffBudgetAmount - $scope.$settings.formView.RegionOffBudgetWithdrawAmount;
+
+                        //คงเหลือ รวมทั้งสิ้น 2
+                        $scope.$settings.formView.TotalRemain2 = ($scope.$settings.formView.RegionBudgetAmount + $scope.$settings.formView.RegionOffBudgetAmount) -
+                            ($scope.$settings.formView.RegionBudgetWithdrawAmount + $scope.$settings.formView.RegionOffBudgetWithdrawAmount);
+
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                    });
+                };
+
+                var ahref = $('<a href="javascript:void(0);" target="_blank" />');
+
+                $scope.ExportExcel = function () {
+                    $scope.$settings.isLoading = true;
+                    $customHttp.formPost('@Url.Action("ExportExcel", "RptSummaryBudgetUsed")', {
+                        CenterBudget: $scope.$settings.formView.BudgetMoneyAmount - $scope.$settings.formView.RegionBudgetAmount,
+                        CenterBudgetBindingAmount: $scope.$settings.formView.CenterBudgetBindingAmount,
+                        CenterBudgetWithdrawAmount: $scope.$settings.formView.CenterBudgetWithdrawAmount,
+                        CenterOffBudget: $scope.$settings.formView.BudgetOffMoneyAmount - $scope.$settings.formView.RegionOffBudgetAmount,
+                        CenterOffBudgetBindingAmount: $scope.$settings.formView.CenterOffBudgetBindingAmount,
+                        CenterOffBudgetWithdrawAmount: $scope.$settings.formView.CenterOffBudgetWithdrawAmount,
+                        RegionBudgetAmount: $scope.$settings.formView.RegionBudgetAmount,
+                        RegionBudgetWithdrawAmount: $scope.$settings.formView.RegionBudgetWithdrawAmount,
+                        RegionOffBudgetAmount: $scope.$settings.formView.RegionOffBudgetAmount,
+                        RegionOffBudgetWithdrawAmount: $scope.$settings.formView.RegionOffBudgetWithdrawAmount
+                    }).then(function (res) {
+
+                    $scope.$settings.isLoading = false;
+
+                    ahref.attr('href', $filter('textFormat')('@Url.Action("GetFile", "RptSummaryBudgetUsed")?filename={0}&resultFilename={1}&deleteFlag=Y', res.data.filename || '', res.data.resultFilename || ''));
+                    ahref[0].click();
+                    }
+                    );
+                };
+
+                $scope.CalPercentage = function (BudgetAmount, PayAmount) {
+                    if (BudgetAmount == 0) {
+                        return 0;
+                    }
+                    else {
+                        return (PayAmount / BudgetAmount) * 100;
+                    }
+
+                }
+
+                //แสดงข้อมูลเริ่มต้น
+                $scope.submitSearch();
+
+            });
+    </script>
+
+
+
+
+}

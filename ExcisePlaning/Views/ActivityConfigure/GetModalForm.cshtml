@@ -1,0 +1,48 @@
+﻿<md-dialog flex="98" flex-gt-sm="35">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์มกำหนดกิจกรรม</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="required-field">ผลผลิต<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ProduceId.ErrorMessages"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.ProduceId" ng-disabled="$settings.isLoading" fw-select2>
+                        <option value="empty">--- ผลผลิต ---</option>
+                        @foreach (var item in ViewBag.Produces)
+                        {
+                            <option value="@item.PRODUCE_ID">@item.PRODUCE_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12">
+                    <label class="required-field">ชื่อกิจกรรม<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ActivityName.ErrorMessages"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" ng-model="$settings.formData.ActivityName" title="{{$settings.formData.ActivityName}}" maxlength="200" />
+                </div>
+                <div class="form-group col-12">
+                    <label class="required-field">ชื่อย่อ<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ShortName.ErrorMessages"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" ng-model="$settings.formData.ShortName" maxlength="100" placeholder="ไม่เกิน 100 ตัวอักษร" />
+                    <span class="text-danger f-12">ชื่อย่อนี้ ระบบจะใช้ตั้งเป็นชื่อ Sheet ใน Excel เช่น ขั้นตอนการดาวน์โหลดแบบฟอร์มจัดสรรงบประมาณ เป็นต้น</span>
+                </div>
+                <div class="form-group col-12">
+                    <label class="required-field">ลำดับการจัดเรียงข้อมูล (0-9 เท่านั้น)<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.OrderSeq.ErrorMessages"></fw-validate-error-output></label>
+                    <fw-input-number-mask ng-model="$settings.formData.OrderSeq" min-value="0" max-value="9" ng-disabled="$settings.isLoading"></fw-input-number-mask>
+                    <span class="text-danger f-12">ค่านี้จะใช้เป็นส่วนหนึ่งของการสร้างรหัสกันเงิน</span>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-2"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="save($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

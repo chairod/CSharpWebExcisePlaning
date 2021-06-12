@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@ViewBag.Title - ระบบบริหารจัดการงบประมาณ</title>
+    <!-- HTML5 Shim and Respond.js IE9 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <![endif]-->
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Favicon icon -->
+    <link rel="icon" href="~/Third_Party/assets/images/favicon.ico" type="image/x-icon">
+    <title></title>
+
+    <!-- Google font-->
+    @*<link href="https://fonts.googleapis.com/css?family=Mada:300,400,500,600,700" rel="stylesheet">*@
+    @*<link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Raleway&display=swap" rel="stylesheet">*@
+    <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Raleway|Roboto&display=swap" rel="stylesheet">
+    @Styles.Render("~/content/css")
+    @Styles.Render("~/Contents/fonts")
+
+    @* Other style sheet *@
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+
+    <!-- Pre-loader start -->
+    <div class="theme-loader">
+        <div class="ball-scale">
+            <div></div>
+        </div>
+    </div>
+    <!-- Pre-loader end -->
+
+    <div id="pcoded" class="pcoded">
+        <div class="pcoded-overlay-box"></div>
+        <div class="pcoded-container navbar-wrapper">
+
+
+            <!-- Page Menu & Content -->
+            <div class="pcoded-main-container">
+                <div class="pcoded-wrapper">
+
+                    @*แสดงให้เลือกเมนูในอุปกรณ์ขนาดเล็ก*@
+                    <nav class="navbar header-navbar d-block d-md-none">
+                        <div class="pcoded-wrapper">
+                            <div class="mt-0 mb-2" style="background-color:#ffffff;min-height:55px;height:auto;">
+                                <a class="mobile-menu position-absolute" style="top:20px;left:30px;color:#5b5b5b" id="mobile-collapse" href="#!">
+                                    <i class="ti-menu"></i>
+                                </a>
+                                <h4 class="text-center position-absolute" style="left:30%;top:20px;color:#5b5b5b">ระบบบริหารจัดการงบประมาณ</h4>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <nav class="pcoded-navbar">
+                        <div class="sidebar_toggle"><a href="#"><i class="icon-close icons"></i></a></div>
+                        <div class="pcoded-inner-navbar main-menu">
+                            @Html.Partial("~/Views/Shared/_AppMenu.cshtml")
+                        </div>
+                    </nav>
+                    <div class="pcoded-content">
+                        <div class="pcoded-inner-content">
+
+                            @*แสดงเมนูส่วนด้านบนของเว็บไซด์*@
+                            <div class="fixed-top position-fixed p-3 shadow-sm d-none d-md-block" style="z-index:1;background-color:#96C8FD;">
+                                @*เนื้อหาของเมนูส่วนบน*@
+                                <div style="margin-left:250px;margin-right:70px;">
+                                    <div class="float-left"><h4 class="f-w-900 f-18 m-0 p-0 pr-1">ระบบบริหารจัดการงบประมาณ</h4></div>
+                                    <div class="float-right default-font-color">
+                                        <!--<div class="d-inline-block">-->
+                                            @*js script เขียนอยู่ในไฟล์ third_party/assets/js/demo-12.js*@
+                                            <!--<i class="ti-bell f-w-900 cursor-pointer" id="bell-alert"></i><sup class="f-16 f-w-900" style="color:#FDE496">3</sup>
+                                            <div id="bell-alert-menu" class="position-absolute shadow-sm p-2 d-none" style="top:50px;background-color:#96C8FD;width:auto;min-width:240px;">
+                                                <ul>
+                                                    <li class="mb-2 pb-1">
+                                                        <h5>คำของบประมาณ</h5>
+                                                        <span class="f-12">หน่วยงาน A คำขอ งปม. 50 ล้านบาท</span>
+                                                        <div class="f-12 f-w-900">1 นาทีที่แล้ว</div>
+                                                    </li>
+                                                    <li class="mb-2">
+                                                        <h5>คำของบประมาณ</h5>
+                                                        <span class="f-12">หน่วยงาน B คำขอ งปม. 4.9 ล้านบาท</span>
+                                                        <div class="f-12 f-w-900">34 นาทีที่แล้ว</div>
+                                                    </li>
+                                                    <li class="mb-2">
+                                                        <h5>คำของบประมาณ</h5>
+                                                        <span class="f-12">หน่วยงาน C คำขอ งปม. 2.5 ล้านบาท</span>
+                                                        <div class="f-12 f-w-900">2 วันที่ผ่านมา</div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>-->
+                                        <div class="d-inline-block ml-3">@ViewBag.LoginName</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+
+                            @*แสดงเนื้อหาของเว็บไซด์*@
+                            <div class="main-body mt-md-4">
+                                <div class="page-wrapper">
+                                    <div class="page-header">
+                                        @Html.Partial("~/Views/Shared/_AppBreadcrumb.cshtml")
+                                    </div>
+                                    <div class="page-body" ng-app="leaveApp">
+                                        @RenderBody()
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Page Menu & Content -->
+        </div>
+    </div>
+
+
+    @Scripts.Render("~/bundle/jquery")
+    @* Require javascript libraries *@
+    @Scripts.Render("~/bundle/required")
+
+    @* Custom js *@
+    @Scripts.Render("~/bundle/custom")
+
+    @* Render required library ของ Angular App ซึ่งจำเป็นต้องโหลดก่อน *@
+    @RenderSection("ScriptsAngularAppRequired", required: false)
+
+    @* Angular *@
+    @Scripts.Render("~/bundle/angular")
+
+    @* Other javascript code *@
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

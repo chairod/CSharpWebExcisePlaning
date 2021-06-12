@@ -1,0 +1,165 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // ค่าคงที่ในระบบ
+}
+<div class="card card-block borderless-card shadow-sm" ng-controller="AppController">
+    <div class="form-row">
+        <div class="form-group col-12 col-md-4">
+            <label>ค่าคงที่ในระบบ</label>
+            <div class="input-group">
+                <select class="form-control" ng-model="$settings.formData.configId"
+                        ng-change="submitSearch()"
+                        ng-disabled="$settings.isLoading" fw-select2>
+                    <option value="empty">--- ทั้งหมด ---</option>
+                    @foreach (ExcisePlaning.Entity.T_CONFIGURATION configItem in ViewBag.Configurations)
+                    {
+                        <option value="@configItem.CONFIG_ID">@configItem.CONFIG_NAME</option>
+                    }
+                </select>
+                <div class="input-group-append">
+                    <span class="input-group-text">
+                        <input type="checkbox" ng-model="$settings.formData.useFlag" ng-change="submitSearch()" ng-true-value="'Y'" ng-false-value="'N'" ng-disabled="$settings.isLoading" />&nbsp;เฉพาะที่ใช้
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-12 col-md-8">
+            <label class="d-none d-md-block">&nbsp;</label>
+            <fw-execute-button text="ตั้งค่าใหม่" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round" ng-disabled="$settings.isLoading" ng-click="createNew($event)"></fw-execute-button>
+        </div>
+    </div>
+    <fw-simple-data-table columns="$settings.tableConfigs.columns" disabled="$settings.isLoading"
+                          params="{configId: null, useFlag: $settings.formData.useFlag}"
+                          row-click-callback="rowClickCallback($event, $row, $columnConfig)"
+                          route-url="@Url.Action("RetrieveConfig", "Configuration")"></fw-simple-data-table>
+</div>
+
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+    @Styles.Render("~/content/datepickerrange")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/select2")
+    @Scripts.Render("~/bundle/datepickerrange")
+    <script type="text/javascript">
+        angular.module("leaveApp").controller('AppController',
+            function ($scope, $customHttp, $timeout, $q, $fwDialogService, $fwModalService) {
+                $scope.$settings = {
+                    isLoading: false,
+                    formData: {
+                        configId: 'empty',
+                        useFlag: 'A' // A = All, Y = Only Active
+                    },
+                    tableConfigs: {
+                        columns: [
+                            { label: 'No.', className: 'text-center word-wrap', type: 'rowNumber', style: 'min-width:50px;max-width:50px;width:50px;' },
+                            {
+                                label: 'ค่าคงที่', className: 'text-left word-wrap', type: 'html',
+                                field: '<span ng-class="{\'text-success\': row.USING_FLAG==1}">{{row.CONFIG_NAME}}</span><sup class="ml-1 f-w-900 text-success ion-checkmark-round" ng-if="row.USING_FLAG==1"></sup><div class="text-danger f-12">{{row.CONFIG_DESCRIPTION}}</div>', style: 'min-width:220px'
+                            },
+                            { label: 'ค่าที่ 1', className: 'text-left word-wrap', type: 'field', field: 'ITEM_VALUE', style: 'min-width:120px;max-width:120px;width:120px;' },
+                            { label: 'ค่าที่ 2', className: 'text-left word-wrap', type: 'field', field: 'ITEM_VALUE2', style: 'min-width:120px;max-width:120px;width:120px;' },
+                            { label: 'ค่าที่ 3', className: 'text-left word-wrap', type: 'field', field: 'ITEM_VALUE3', style: 'min-width:120px;max-width:120px;width:120px;' },
+                            { label: 'วันที่มีผลบังคับใช้', className: 'text-center word-wrap', type: 'html', field: '<span>{{row.EFFECTIVE_DATE|sqlDate:\'dd/MM/yyyy\'}}</span>', style: 'min-width:130px;max-width:130px;width:130px;' },
+                            { label: 'วันที่หมดอายุ', className: 'text-center word-wrap', type: 'html', field: '<span ng-if="row.EXPIRE_DATE!=null">{{row.EXPIRE_DATE|sqlDate:\'dd/MM/yyyy\'}}</span>', style: 'min-width:130px;max-width:130px;width:130px;' },
+                            { label: 'วันที่สร้าง', className: 'text-center word-wrap', type: 'html', field: '<span>{{row.CREATED_DATETIME|sqlDate:\'dd/MM/yyyy HH:mm:ss\'}}</span>', style: 'min-width:165px;max-width:165px;width:165px;' },
+                            { label: '...', className: 'text-center word-wrap', params: 'BTN_DELETE', type: 'html', field: '<a href="javascript:void(0)" class="text-danger ti-trash f-26 text-decoration-none" ng-if="\'Y\'==row.CAN_DELETE_FLAG"></a>', style: 'min-width:60px;max-width:60px;width:60px;' }
+                        ]
+                    }
+                };
+
+                $scope.createNew = function (event) {
+                    $fwModalService.getModal('@Url.Action("GetModalResource", "Configuration", new { })', {},
+                        function ($scope, $customHttp, $mdDialog, $fwDialogService, $timeout, $filter) {
+                            $scope.$settings = {
+                                isLoading: false,
+                                isFindEffectiveDate: false,
+                                formData: {},
+                                formError: {}
+                            };
+
+                            $scope.init = function () {
+                                $scope.$settings.formError = {};
+                                $scope.$settings.formData = {
+                                    ConfigId: null,
+                                    ItemValue1: null, ItemValue2: null, ItemValue3: null,
+                                    RemarkText: null,
+                                    EffectiveDate: null
+                                };
+                            };
+                            $scope.init();
+
+                            // Watch
+                            var timeoutId = null;
+                            $scope.$watch('$settings.formData.ConfigId', function (configId) {
+                                if (null != configId) {
+                                    $timeout.cancel(timeoutId);
+                                    timeoutId = $timeout(function () {
+                                        $scope.$settings.isFindEffectiveDate = true;
+                                        $customHttp.formPost('@Url.Action("GetEffectiveDate", "Configuration")', { configId: configId }).then(function (res) {
+                                            $scope.$settings.formData.EffectiveDate = $filter('sqlDate')(res.data.EffectiveDate);
+                                            $scope.$settings.isFindEffectiveDate = false;
+                                        }, function () {
+                                            $scope.$settings.isFindEffectiveDate = false;
+                                        });
+                                    }, 500);
+                                }
+                            });
+
+                            $scope.save = function (event) {
+                                $scope.$settings.isLoading = true;
+                                $scope.$settings.formError = {};
+                                $customHttp.formPost('@Url.Action("SubmitSave", "Configuration")', $scope.$settings.formData).then(function (res) {
+                                    $scope.$settings.formError = res.data.errors || {};
+                                    if (res.data.errors == null) {
+                                        $fwDialogService.alertDialog(event, 'บันทึกค่าคงที่เรียบร้อยแล้ว');
+                                        $scope.init();
+                                    }
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+                            $scope.close = function () {
+                                $mdDialog.hide();
+                            };
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        });
+                };
+                $scope.rowClickCallback = function ($event, $row, $columnConfig) {
+                    return $q(function (resolve) {
+                        if ($columnConfig.params == 'BTN_DELETE' && 'Y' == $row.CAN_DELETE_FLAG) {
+                            $fwDialogService.confirmDialog($event, 'ยืนยันการลบการตั้งค่านี้').then(function () {
+                                $scope.$settings.isLoading = true;
+                                $customHttp.formPost('@Url.Action("SubmitDelete", "Configuration")', { configDetailId: $row.CONFIG_DETAIL_ID }).then(function (res) {
+                                    $scope.submitSearch();
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            });
+                        }
+
+                        resolve({ row: $row });
+                    });
+                };
+
+
+                var timeoutId = null;
+                $scope.submitSearch = function () {
+                    $timeout.cancel(timeoutId);
+                    timeoutId = $timeout(function () {
+                        $scope.$broadcast('fwSimpleDataTable.paramsChanged', {
+                            configId: ('' + $scope.$settings.formData.configId).replace(/[^\d]/g, ''),
+                            useFlag: $scope.$settings.formData.useFlag
+                        });
+                    }, 300);
+                };
+        });
+    </script>
+}

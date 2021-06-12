@@ -1,0 +1,159 @@
+﻿<md-dialog flex="98" flex-gt-sm="60">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Template คำขอเงินงบประมาณ</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row border-bottom mb-2 mb-md-3">
+                <div class="col-12 col-md-6 border-right">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label class="require-field">ชื่อ Template <fw-validate-error-output error-messages="$settings.formErrors.TemplateName.ErrorMessages" class="ml-1"></fw-validate-error-output></label>
+                            <input type="text" class="form-control" id="templateName" ng-model="$settings.formData.TemplateName" ng-disabled="$settings.isLoading" maxlength="200" />
+                        </div>
+                        <div class="form-group col-12">
+                            <label>แผนงาน<fw-validate-error-output error-messages="$settings.formErrors.PlanId.ErrorMessages" class="ml-1"></fw-validate-error-output></label>
+                            <select class="form-control" fw-select2
+                                    ng-model="$settings.formData.PlanId" ng-disabled="$settings.isLoading">
+                                <option value="empty">--- แผนงาน ---</option>
+                                @foreach (ExcisePlaning.Classes.Mappers.PlanShortFieldProperty item in ViewBag.Plans)
+                                {
+                                    <option value="@item.PLAN_ID">@item.PLAN_NAME</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-12">
+                            <label>ผลผลิต<fw-validate-error-output error-messages="$settings.formErrors.ProduceId.ErrorMessages" class="ml-1"></fw-validate-error-output></label>
+                            <select class="form-control" fw-select2
+                                    ng-model="$settings.formData.ProduceId" ng-disabled="$settings.isLoading">
+                                <option value="empty">--- ผลผลิต ---</option>
+                                @foreach (ExcisePlaning.Classes.Mappers.ProduceShortFieldProperty item in ViewBag.Produces)
+                                {
+                                    <option value="@item.PRODUCE_ID">@item.PRODUCE_NAME</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-12">
+                            <label>กิจกรรม<fw-validate-error-output error-messages="$settings.formErrors.ActivityId.ErrorMessages" class="ml-1"></fw-validate-error-output></label>
+                            <select class="form-control" fw-select2
+                                    ng-model="$settings.formData.ActivityId" ng-disabled="$settings.isLoading">
+                                <option value="empty">--- กิจกรรม ---</option>
+                                @foreach (ExcisePlaning.Classes.Mappers.ActivityShortFieldProperty item in ViewBag.Activities)
+                                {
+                                    <option value="@item.ACTIVITY_ID">@item.ACTIVITY_NAME</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label class="required-field">งบรายจ่าย<fw-validate-error-output error-messages="$settings.formErrors.BudgetTypeId.ErrorMessages" class="ml-1"></fw-validate-error-output></label>
+                            <select class="form-control" fw-select2
+                                    ng-model="$settings.formData.BudgetTypeId"
+                                    ng-change="budgetTypeChanged()" ng-disabled="$settings.isLoading">
+                                <option value="empty">--- งบรายจ่าย ---</option>
+                                @foreach (ExcisePlaning.Classes.Mappers.BudgetTypeShortFieldProperty item in ViewBag.BudgetTypes)
+                                {
+                                    <option value="@item.BUDGET_TYPE_ID">@item.BUDGET_TYPE_NAME</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-12">
+                            <label class="required-field">หมวด คชจ. <span ng-if="$settings.isLoadExpensesGroup" class="ml-2"><i class="animated rotate-refresh ti-reload"></i></span><fw-validate-error-output error-messages="$settings.formErrors.ExpensesGroupId.ErrorMessages" class="ml-1"></fw-validate-error-output></label>
+                            <select class="form-control" fw-select2
+                                    ng-change="expensesGroupChanged()"
+                                    ng-model="$settings.formData.ExpensesGroupId" ng-disabled="$settings.isLoading||$settings.expensesGroups.length==0">
+                                <option value="empty">--- หมวด คชจ. ---</option>
+                                <option ng-repeat="item in $settings.expensesGroups" value="{{item.EXPENSES_GROUP_ID}}">{{item.EXPENSES_GROUP_NAME}}</option>
+                            </select>
+                        </div>
+
+                        @*ข้อมูลรายการ คชจ. ที่ต้องเลือก*@
+                        <div class="form-group col-12">
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses.ErrorMessages" class="d-block"></fw-validate-error-output>
+                            <div class="table-responsive overflow-auto" style="height:200px;max-height:200px;min-height:200px;">
+                                <table class="table table-bordered table-striped mt-0">
+                                    <tr>
+                                        <th style="width:70px;max-width:70px;min-width:70px;" class="text-center">
+                                            <input type="checkbox" ng-model="$settings.checkAll" ng-click="selectAll()" ng-disabled="$settings.isLoading||$settings.expenses.length==0" />
+                                        </th>
+                                        <th style="min-width:150px;">รายการค่าใช้จ่าย<span class="ml-2" ng-if="$settings.isLoadExpenses"><i class="animated fadeIn ti-reload rotate-refresh"></i></span></th>
+                                    </tr>
+                                    <tr><th colspan="2" ng-if="$settings.expenses.length==0&&!$settings.isLoadExpenses" class="text-center text-danger f-w-900">--- โปรดเลือกหมวด คชจ. ---</th></tr>
+                                    <tr ng-repeat="item in $settings.expenses">
+                                        <td style="width:70px;max-width:70px;min-width:70px;" class="text-center"><input type="checkbox" ng-model="item.checked" ng-disabled="$settings.isLoading" /></td>
+                                        <td style="min-width:150px;">{{item.EXPENSES_NAME}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h4 class="text-primary f-w-900 f-16">สิทธิ์การใช้งาน Template</h4>
+            <div class="form-row">
+                <div class="col-12 col-md-6 border-right">
+                    <fw-execute-button text="เลือกหน่วยงาน" css-class="btn btn-primary btn-sm" css-icon-class="ti-search"
+                                       ng-disabled="$settings.isLoading||$settings.formData.SharedDepartment==1"
+                                       ng-click="selectDepartment($event)"></fw-execute-button>
+                    <md-checkbox ng-model="$settings.formData.SharedDepartment" ng-true-value="1" ng-false-value="2" ng-disabled="$settings.isLoading">ใช้ทุกหน่วยงาน</md-checkbox>
+                    <fw-validate-error-output error-messages="$settings.formErrors.Departments.ErrorMessages" class="d-inline-block ml-1"></fw-validate-error-output>
+                    <div class="table-responsive overflow-auto" style="height:200px;max-height:200px;min-height:200px;">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th style="width:70px;max-width:70px;min-width:70px;"></th>
+                                <th style="min-width:170px;">ชื่อหน่วยงาน</th>
+                            </tr>
+                            <tr><th colspan="2" ng-if="$settings.formData.Departments.length==0" class="text-center text-danger f-w-900">--- โปรดเลือกหน่วยงานที่ต้องการจำกัดการใช้ Template ---</th></tr>
+                            <tr ng-repeat="row in $settings.formData.Departments">
+                                <td style="width:70px;max-width:70px;min-width:70px;" class="text-center">
+                                    <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.Departments.splice($index, 1)">ยกเลิก</a>
+                                </td>
+                                <td style="min-width:170px;">{{row.DEP_NAME}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <a href="javascript:void(0)" ng-click="$settings.formData.Departments = []" class="d-block text-danger f-w-900 text-md-right"><i class="ion-close mr-1"></i>ยกเลิกทั้งหมด</a>
+                </div>
+                <div class="col-12 col-md-6">
+                    <fw-execute-button text="เพิ่ม" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round"
+                                       ng-disabled="$settings.isLoading||$settings.formData.SharedYear==1"
+                                       ng-click="$settings.formData.Years.push({year: null})"></fw-execute-button>
+                    <md-checkbox ng-model="$settings.formData.SharedYear" ng-true-value="1" ng-false-value="2" ng-disabled="$settings.isLoading">ใช้ทุกปี งปม.</md-checkbox>
+                    <fw-validate-error-output error-messages="$settings.formErrors.Years.ErrorMessages" class="d-inline-block ml-1"></fw-validate-error-output>
+                    <div class="table-responsive overflow-auto" style="height:200px;max-height:200px;min-height:200px;">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th style="width:70px;max-width:70px;min-width:70px;"></th>
+                                <th style="min-width:170px;">ปีงบประมาณ (พ.ศ.)</th>
+                            </tr>
+                            <tr><th colspan="2" ng-if="$settings.formData.Years.length==0" class="text-center text-danger f-w-900">--- โปรดระบุปี งปม. ที่ต้องการจำกัดการใช้ Template ---</th></tr>
+                            <tr ng-repeat="row in $settings.formData.Years">
+                                <td style="width: 70px; max-width: 70px; min-width: 70px;" class="text-center">
+                                    <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.Years.splice($index, 1)">ยกเลิก</a>
+                                </td>
+                                <td style="min-width:170px;"><fw-input-mask model="row.year" disabled="$settings.isLoading" mask="9999" placeholder="ระบุปี พ.ศ."></fw-input-mask></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <a href="javascript:void(0)" ng-click="$settings.formData.Years = []" class="d-block text-danger f-w-900 text-md-right"><i class="ion-close mr-1"></i>ยกเลิกทั้งหมด</a>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="submitSave()"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

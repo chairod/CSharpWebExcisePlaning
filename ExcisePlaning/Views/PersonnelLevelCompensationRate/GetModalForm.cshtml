@@ -1,0 +1,71 @@
+﻿<md-dialog flex="98" flex-gt-sm="45">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ฟอร์มกำหนดอัตราค่าตอบแทน</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="row">
+                <div class="col-12 col-md-6 border-right">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label class="required-field">ประเภทค่าตอบแทน<fw-validate-error-output error-messages="$settings.formErrors.CompensationTypeId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                            <select class="form-control" ng-model="$settings.formData.CompensationTypeId" 
+                                    ng-change="getCompensationRate()"
+                                    ng-disabled="$settings.isLoading||$settings.isEdit" fw-select2>
+                                <option value="empty">--- ประเภทค่าตอบแทน ---</option>
+                                @foreach (var CompensationType in ViewBag.CompensationType)
+                                {
+                                    <option value="@CompensationType.COMPENSATION_TYPE_ID">@CompensationType.COMPENSATION_TYPE_NAME</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-12">
+                            <label class="required-field">ระดับ C ของบุลคลากร<fw-validate-error-output error-messages="$settings.formErrors.LevelId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                            <select class="form-control" ng-model="$settings.formData.LevelId" 
+                                    ng-change="getCompensationRate()"
+                                    ng-disabled="$settings.isLoading||$settings.isEdit" fw-select2>
+                                <option value="empty">--- ระดับ C ของบุลคลากร ---</option>
+                                @foreach (var LevelID in ViewBag.LevelID)
+                                {
+                                    <option value="@LevelID.LEVEL_ID">@LevelID.LEVEL_NAME</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label class="required-field">การให้ค่าตอบแทน<fw-validate-error-output error-messages="$settings.formErrors.RateType.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                            <select class="form-control" ng-model="$settings.formData.RateType" ng-disabled="$settings.isLoading||true" fw-select2>
+                                <option value="1">ต่อ เดือน</option>
+                                <option value="2">ต่อ ชม.</option>
+                                <option value="3">ต่อ วัน</option>
+                            </select>
+                            <span class="text-danger f-10">ค่าตอบแทนที่ให้คิดเป็นแบบใด เช่น รายชั่วโมง รายวัน หรือ รายเดือน</span>
+                        </div>
+                        <div class="form-group col-12">
+                            <label class="required-field">อัตรา (บาท)<span ng-if="$settings.isCompensationRateLoading" class="rotate-refresh ti-reload"></span><fw-validate-error-output error-messages="$settings.formErrors.RateAmount.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                            <fw-input-number-mask ng-model="$settings.formData.RateAmount" css-class="text-right"
+                                                  ng-disabled="$settings.isLoading" min-value="0.00" max-value="999999999.99"
+                                                  placeholder="จำนวนเงิน (บาท)"></fw-input-number-mask>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-2"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="save($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

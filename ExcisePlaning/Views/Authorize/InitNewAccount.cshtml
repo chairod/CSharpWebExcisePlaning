@@ -1,0 +1,193 @@
+﻿
+@{
+    ViewBag.Title = "InitNewAccount";
+    Layout = "~/Views/Shared/_LayoutFullContent.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card m-0 mb-2 shadow-sm">
+        <div class="row mb-1 pb-2 border-bottom">
+            <div class="col-12">
+                <h4 class="d-none d-md-inline f-w-900 f-16 m-0 text-primary">โปรดระบุข้อมูลเบื้องต้นสำหรับการใช้งานระบบ เฉพาะเข้าใช้งานในครั้งแรก</h4>
+                <fw-execute-button text="บันทึก" ng-disabled="$settings.isLoading" on-loading="$settings.isSaving"
+                                   ng-click="submitSave($event)" css-class="btn btn-primary btn-sm float-md-right"
+                                   css-icon-class="ti-save"></fw-execute-button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 border-right">
+                <div class="form-row">
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">เพศ<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.SexType.ErrorMessages"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.SexType" ng-disabled="$settings.isLoading" fw-select2>
+                            <option value="empty">--- เพศ ---</option>
+                            <option value="M">ชาย</option>
+                            <option value="F">หญิง</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">คำนำหน้า<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.PrefixName.ErrorMessages"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.PrefixName" ng-disabled="$settings.isLoading" fw-select2>
+                            <option value="empty">--- คำนำหน้า ---</option>
+                            @foreach (var item in ViewBag.PrefixNames)
+                            {
+                                <option value="@item.PREFIX_NAME">@item.PREFIX_NAME</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">ชื่อ<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.FirstName.ErrorMessages"></fw-validate-error-output></label>
+                        <input type="text" class="form-control" ng-model="$settings.formData.FirstName" ng-disabed="$settings.isLoading" maxlength="100" />
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">นามสกุล<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.LastName.ErrorMessages"></fw-validate-error-output></label>
+                        <input type="text" class="form-control" ng-model="$settings.formData.LastName" ng-disabed="$settings.isLoading" maxlength="100" />
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">ประเภทพนักงาน<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.PersonTypeId.ErrorMessages"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.PersonTypeId" ng-disabled="$settings.isLoading" fw-select2>
+                            <option value="empty">--- ประเภทพนักงาน ---</option>
+                            @foreach (var item in ViewBag.PersonTypes)
+                            {
+                                <option value="@item.PERSON_TYPE_ID">@item.PERSON_TYPE_NAME</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">ระดับ<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.LevelId.ErrorMessages"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.LevelId" ng-disabled="$settings.isLoading" fw-select2>
+                            <option value="empty">--- ระดับ ---</option>
+                            @foreach (var item in ViewBag.PersonLevels)
+                            {
+                                <option value="@item.LEVEL_ID">@item.LEVEL_NAME</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">ตำแหน่งงาน<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.PositionId.ErrorMessages"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.PositionId" ng-disabled="$settings.isLoading" fw-select2>
+                            <option value="empty">--- ตำแหน่งงาน ---</option>
+                            @foreach (var item in ViewBag.Positions)
+                            {
+                                <option value="@item.POSITION_ID">@item.POSITION_NAME</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-row">
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">เขตพื้นที่<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.AreaId.ErrorMessages"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.AreaId" ng-disabled="$settings.isLoading" fw-select2
+                                ng-change="areaChanged()">
+                            <option value="empty">--- เขตพื้นที่ ---</option>
+                            @foreach (var item in ViewBag.Areas)
+                            {
+                                <option value="@item.AREA_ID">@item.AREA_NAME</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">หน่วยงาน<span class="ml-1 ti-reload rotate-refresh" ng-if="$settings.isDepartmentLoading"></span><fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.DepId.ErrorMessages"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.DepId" ng-disabled="$settings.isLoading||$settings.departments.length==0" fw-select2>
+                            <option value="empty">--- หน่วยงาน ---</option>
+                            <option ng-repeat="item in $settings.departments" value="{{item.DEP_ID}}">{{item.DEP_NAME}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">จังหวัด<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ProvinceName.ErrorMessages"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.ProvinceName" ng-disabled="$settings.isLoading" fw-select2>
+                            <option value="empty">--- จังหวัด ---</option>
+                            @foreach (var item in ViewBag.Provinces)
+                            {
+                                <option value="@item.PROVINCE_NAME">@item.PROVINCE_NAME</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundle/select2")
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $customHttp, $fwDialogService, $timeout, $window, $filter) {
+            $scope.$settings = {
+                isLoading: false, isSaving: false, isDepartmentLoading: false,
+                departments: [],
+                formErrors: {},
+                formData: {
+                    SexType: 'empty', PrefixName: 'empty',
+                    FirstName: '@ViewBag.FirstName', LastName: '@ViewBag.LastName',
+                    PersonTypeId: 'empty', PositionId: 'empty', LevelId: 'empty',
+                    AreaId: 'empty', DepId: 'empty', CardNumber: '@ViewBag.CardNumber',
+                    ProvinceName: 'empty'
+                }
+            };
+
+            // งบรายจ่ายเปลี่ยนแปลง
+            var areaChangedId = null;
+            $scope.areaChanged = function () {
+                $timeout.cancel(areaChangedId);
+                areaChangedId = $timeout(function () {
+                    $scope.$settings.departments = [];
+                    $scope.$settings.formData.DepId = 'empty';
+
+                    var areaId = ('' + $scope.$settings.formData.AreaId).replace(/[^\d]/g, '');
+                    if (areaId.length == 0)
+                        return;
+
+                    $scope.$settings.isDepartmentLoading = true;
+                    $customHttp.formPost('@Url.Action("GetDepartmentBy", "Helper")', { areaId: areaId }).then(function (res) {
+                        $scope.$settings.departments = res.data || [];
+                        $scope.$settings.isDepartmentLoading = false;
+                    }, function () {
+                        $scope.$settings.isDepartmentLoading = false;
+                    });
+                }, 300);
+            };
+            // ส่งค่าไปบันทึก
+            $scope.submitSave = function (event) {
+                $scope.$settings.isLoading = true;
+                $scope.$settings.isSaving = true;
+
+                var params = $.extend(true, {}, $scope.$settings.formData);
+                params.SexType = ('' + params.SexType).replace('empty', '');
+                params.PrefixName = ('' + params.PrefixName).replace('empty', '');
+                params.PersonTypeId = ('' + params.PersonTypeId).replace('empty', '');
+                params.PositionId = ('' + params.PositionId).replace('empty', '');
+                params.LevelId = ('' + params.LevelId).replace('empty', '');
+                params.AreaId = ('' + params.AreaId).replace('empty', '');
+                params.DepId = ('' + params.DepId).replace('empty', '');
+                params.ProvinceName = ('' + params.ProvinceName).replace('empty', '');
+                $customHttp.formPost('@Url.Action("SubmitSave", "Authorize")', params).then(function (res) {
+                    $scope.$settings.formErrors = res.data.errors;
+                    if (null != res.data.errors)
+                        $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งให้เรียบร้อยก่อน');
+                    else if (null != res.data.errorText)
+                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                    else
+                        $fwDialogService.alertDialog(event, 'ปรับปรุงข้อมูลเรียบร้อยแล้ว').then(function () {
+                            $window.location.href = $filter('textFormat')('@Url.Action("CheckPermission", "Authorize")?empCode={0}&accessToken={1}', res.data.empCode, res.data.accessToken);
+                        });
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                });
+            };
+        });
+    </script>
+}
+

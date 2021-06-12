@@ -1,0 +1,227 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="container-fluid shadow-sm m-0 mb-2 rounded-bottom">
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>ประเภทบุคลากร</label>
+                <select class="form-control" ng-model="$settings.formSearch.personTypeId" ng-disabled="$settings.isLoading" fw-select2
+                        ng-change="submitSearch()">
+                    <option value="empty">--- ประเภทบุคลากร ---</option>
+                    @foreach (var item in ViewBag.PersonTypes)
+                    {
+                        <option value="@item.PERSON_TYPE_ID">@item.PERSON_TYPE_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ชื่อตำแหน่งงาน</label>
+                <input type="text" class="form-control" ng-model="$settings.formSearch.positionName"
+                       ng-change="positionNameChanged()" placeholder="ระบุบางส่วนของชื่อตำแหน่งงาน" />
+            </div>
+            <div class="form-group col-12 col-md-6">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <fw-execute-button text="สร้างใหม่"
+                                   css-class="btn btn-primary btn-sm mb-1 d-inline-block"
+                                   css-icon-class="ion-plus"
+                                   ng-click="createNew($event)"
+                                   ng-disabled="$settings.isLoading"></fw-execute-button>
+            </div>
+        </div>
+    </div>
+    <div class="card card-block borderless-card shadown-sm">
+        <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                              auto-load="false"
+                              ng-disabled="$settings.isLoading"
+                              row-click-callback="rowClick($event, $row, $columnConfig)"
+                              route-url="@Url.Action("Retrieve", "Position")"></fw-simple-data-table>
+    </div>
+</div>
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/select2")
+<script type="text/javascript">
+        angular.module('leaveApp').controller('AppController',
+            function ($scope, $fwDialogService, $fwModalService, $timeout, $customHttp, $q, $filter) {
+                $scope.$settings = {
+                    isLoading: false,
+                    formSearch: {
+                        personTypeId: 'empty', positionName: ''
+                    },
+                    tableConfigs: {
+                        columns: [
+                            { label: 'No.', className: 'text-center word-wrap', type: 'rowNumber', style: 'min-width:50px;max-width:50px;width:50px;' },
+                            {
+                                label: 'ตำแหน่งงาน', className: 'text-left word-wrap',
+                                params: 'BTN_EDIT',
+                                type: 'html',
+                                field: '<a href="javascript:void(0)" class="text-primary f-w-900">{{row.POSITION_NAME}}<sup class="ml-1 ti-new-window f-w-900"></sup></a><span class="d-block text-danger f-12">{{row.ITEM_DESCRIPTION}}</span>',
+                                style: 'min-width:220px;width:auto'
+                            },
+                            //{ label: 'ใช้กับรายการค่าใช้จ่าย', className: 'text-center word-wrap', type: 'expression', field: '<span ng-class="{\'text-danger\': row.EXPENSES_FLAG==2}">{{row.EXPENSES_FLAG==1?\'ทุก คชจ.\':\'เฉพาะบาง คชจ.\'}}</span>', style: 'min-width:130px;max-width:130px;width:130px;' },
+                            { label: 'ประเภทบุคลากร', className: 'text-left word-wrap bg-light', type: 'field', field: 'PERSON_TYPE_NAME', style: 'min-width:160px;max-width:160px;width:160px;' },
+                            { label: 'วันที่สร้าง', className: 'text-center word-wrap', type: 'expression', field: '{{row.CREATED_DATETIME|sqlDate:\'\':null:true}}', style: 'min-width:160px;max-width:160px;width:160px;' },
+                            {
+                                label: '', className: 'text-center word-wrap', params: 'BTN_DELETE', type: 'html',
+                                field: '<a href="javascript:void(0)" class="text-danger mr-1 f-w-900">ยกเลิก</a>',
+                                style: 'min-width:80px;max-width:80px;width:80px;'
+                            }
+                        ]
+                    }
+                };
+
+                $scope.createNew = function (event, row) {
+                    $fwModalService.getModal('@Url.Action("GetModalForm", "Position")', { $formData: row || {} },
+                        function ($scope, $mdDialog, $customHttp, $fwDialogService, $formData, $timeout) {
+                            $scope.filterExpensesName = '';
+                            $scope.$settings = {
+                                isLoading: false,
+                                formErrors: {},
+                                formView: { expenses: [] },
+                                formData: {}
+                            };
+
+                            // จัดเตรียมแบบฟอร์ม
+                            $scope.init = function () {
+                                var formData = $formData || {};
+                                $scope.$settings.formData = {
+                                    PersonTypeId: '' + (formData.PERSON_TYPE_ID || 'empty'),
+                                    PositionId: formData.POSITION_ID || null,
+                                    PositionName: formData.POSITION_NAME || null,
+                                    RemarkText: formData.ITEM_DESCRIPTION || null,
+                                    ExpensesIds: []
+                                };
+
+                                // โหลดรายการ คชจ. ที่กำหนดให้สามารถใช้ระดับ C ของบุคลากรได้
+                                if (null != $scope.$settings.formData.PositionId) {
+                                    $scope.$settings.isLoading = true;
+                                    $customHttp.formPost('@Url.Action("RetrieveAuthorizeExpenses", "Position")', { positionId: $scope.$settings.formData.PositionId }).then(function (res) {
+                                        $scope.$settings.formData.ExpensesIds = res.data || [];
+
+                                        // โหลดข้อมูลรายการ คชจ. เพื่อให้กำหนดนสิทธิ์ใช้งานตำแหน่งงาน
+                                        $scope.getAllExpenses($scope.$settings.formData.ExpensesIds);
+                                        $scope.$settings.isLoading = false;
+                                    }, function () {
+                                        $scope.$settings.isLoading = false;
+                                    });
+                                } else {
+                                    $scope.getAllExpenses([]);
+                                }
+
+                                $timeout(function () {
+                                    $('#positionName').focus();
+                                }, 500);
+                            };
+                            // ค้นหารายการค่าใช้จ่าย เพื่อกำหนดสิทธิ์การใช้งานตำแหน่งงาน
+                            $scope.getAllExpenses = function (selectedIds) {
+                                $customHttp.formPost("@Url.Action("RetrieveAllExpenses", "Helper")", {}).then(function (res) {
+                                    var expenses = res.data || [];
+                                    $.each(expenses, function (index, item) {
+                                        expenses[index] = $.extend(true, {
+                                            checked: selectedIds.indexOf(item.EXPENSES_ID) > -1
+                                        }, item);
+                                    });
+                                    $scope.$settings.formView.expenses = expenses;
+                                }, function () { });
+                            };
+                            // กรณีกดเลือกทั้งหมด
+                            $scope.setCheckAll = function () {
+                                $timeout(function () {
+                                    angular.forEach($scope.$settings.formView.expenses, function (item) {
+                                        item.checked = $scope.checkAll;
+                                    });
+                                }, 200);
+                            };
+                            // ส่งคำขอบันทึก
+                            $scope.submitSave = function (event) {
+                                $scope.$settings.isLoading = true;
+                                var params = $.extend(true, {}, $scope.$settings.formData);
+                                params.PersonTypeId = ('' + params.PersonTypeId).replace(/[^\d]/g, '');
+                                params.ExpensesIds = $scope.$settings.formView.expenses.filter(function (item) { return item.checked; }).map(function (item) { return item.EXPENSES_ID; });
+
+                                $customHttp.formPost('@Url.Action("SubmitSave", "Position")', params).then(function (res) {
+                                    $scope.$settings.formErrors = res.data.errors || {};
+                                    if (res.data.errors == null)
+                                        $fwDialogService.alertDialog(event, 'บันทึกข้อมูลเรียบร้อยแล้ว').then(function () {
+                                            if (null == $scope.$settings.formData.PositionId) {
+                                                var oldPersonTypeId = $scope.$settings.formData.PersonTypeId;
+                                                $scope.init();
+                                                $scope.$settings.formData.PersonTypeId = oldPersonTypeId;
+                                            }else
+                                                $scope.close();
+                                        });
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+                            // เปิดหน้าต่าง
+                            $scope.close = function () {
+                                $mdDialog.hide({ behavior: true });
+                            };
+
+                            $scope.init();
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        });
+                };
+
+                $scope.rowClick = function (event, row, columnConfig) {
+                    if (columnConfig.params == 'BTN_DELETE') {
+                        var confirmMsg = 'ยืนยัน!! การยกเลิกตำแหน่งงาน';
+                        if (row.COUNT_USED > 0)
+                            confirmMsg = $filter('textFormat')('ตำแหน่งงานนี้กำหนดให้กับบุคลากรไปแล้วจำนวน {0} คน ยืนยัน!! การยกเลิกตำแหน่งงาน', row.COUNT_USED);
+                        $fwDialogService.confirmDialog(event, confirmMsg).then(function () {
+                            $scope.$settings.isLoading = true;
+                            $customHttp.formPost('@Url.Action("SubmitDelete", "Position")', {
+                                positionId: row.POSITION_ID
+                            }).then(function (res) {
+                                $scope.$settings.isLoading = false;
+                                $scope.submitSearch();
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        });
+                    } else if (columnConfig.params == 'BTN_EDIT') {
+                        $scope.createNew(event, row);
+                    }
+
+                    // fwSimpleDataTable บังคับให้ Return promise
+                    return $q(function (resolve) {
+                        resolve({ row: row });
+                    });
+                };
+                // ส่งคำขอค้นหา
+                var timeoutId = null;
+                $scope.submitSearch = function () {
+                    $timeout.cancel(timeoutId);
+                    timeoutId = $timeout(function () {
+                        $scope.$broadcast('fwSimpleDataTable.paramsChanged', {
+                            personTypeId: ('' + $scope.$settings.formSearch.personTypeId).replace(/[^\d]/g, ''),
+                            positionName: $scope.$settings.formSearch.positionName
+                        });
+                    }, 300);
+                };
+                // เมื่อชื่อตำแหน่งงานเปลี่ยนแปลง
+                var positionNameChangeId = null;
+                $scope.positionNameChanged =  function () {
+                    $timeout.cancel(positionNameChangeId);
+                    positionNameChangeId = $timeout(function () {
+                        $scope.submitSearch();
+                    }, 300);
+                };
+
+
+                $scope.submitSearch();
+            }).filter('countSelected', function () {
+                return function (items) {
+                    return items.filter(function (item) { return item.checked }).length;
+                };
+            });
+</script>
+}

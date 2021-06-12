@@ -1,0 +1,11 @@
+{
+  "PersonName": null,
+  "PositionId": "empty",
+  "PositionName": null,
+  "LevelId": "empty",
+  "LevelName": null,
+  "Salary": 0,
+  "RentPriceRate": null,
+  "RentMonthlyRateVal": null,
+  "RentYearRateVal": null
+}

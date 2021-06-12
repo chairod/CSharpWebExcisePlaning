@@ -1,0 +1,17 @@
+{
+  "PersonName": null,
+  "PositionId": "empty",
+  "PositionName": null,
+
+  "WorkingAmountDays": null,
+  "WorkingAmountHoursPerDay": null,
+  "WorkingCompensationPerHour": null,
+  "TotalCompensationWorkingPrice": null,
+
+  "HolidayAmountDays": null,
+  "HolidayAmountHoursPerDay": null,
+  "HolidayCompensationPerHour": null,
+  "TotalCompensationHolidayPrice": null,
+
+  "NetCompensationPrice": null
+}

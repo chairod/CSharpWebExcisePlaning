@@ -1,0 +1,41 @@
+﻿<md-dialog flex="98" flex-gt-sm="40">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ค้นหาข้อมูลบุคลากร</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="container-fluid shadow-sm m-0 mb-2 rounded-bottom">
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label>ชื่อเมนู</label>
+                        <input type="text" ng-model="$settings.formSearch.menuName"
+                               ng-change="menuNameChanged()"
+                               class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                                  title="ข้อมูลเมนูในระบบ"
+                                  event-name="fwSimpleDataTable.menu.modal.paramsChanged"
+                                  auto-load="false"
+                                  disabled="$settings.isLoading"
+                                  search-done-callback="searchDone($res)"
+                                  column-click-callback="columnClick($event, $rows, $columnConfig)"
+                                  row-click-callback="rowClick($event, $row, $columnConfig)"
+                                  route-url="@Url.Action("RetrieveMenu", "Helper")"></fw-simple-data-table>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="ตกลง" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-checkmark-circled"
+                           ng-click="ok()"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

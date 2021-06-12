@@ -1,0 +1,316 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2 p-3">
+        <div class="row border-bottom mb-3">
+            <div class="col-12 col-md-5 border-right pb-1">
+                <h4 class="m-0 pb-2 mb-2 f-16 border-bottom">ดาวน์โหลดแบบฟอร์มจัดสรรงบประมาณ</h4>
+                <div class="form-row">
+                    <div class="form-group col-12 col-md-4 mb-1">
+                        <label>ปีงบประมาณ (พ.ศ.)</label>
+                        <input type="text" class="form-control" value="{{$settings.formData.FiscalYear|convertYearToBuddhist}}" readonly />
+                    </div>
+                    <div class="form-group col-12 col-md-4 mb-1">
+                        <label>ประเภทคำขอ</label>
+                        <div>
+                            <md-checkbox ng-model="$settings.formData.RequestType"
+                                         ng-click="getRequestStartYearSummary()"
+                                         ng-disabled="$settings.isLoading"
+                                         class="m-0"
+                                         ng-true-value="1" ng-false-value="2">คำขอต้นปี</md-checkbox>
+                            <md-checkbox ng-model="$settings.formData.RequestType"
+                                         ng-click="getRequestStartYearSummary()"
+                                         ng-disabled="$settings.isLoading"
+                                         class="m-0"
+                                         ng-true-value="2" ng-false-value="1">คำขอเพิ่มเติม</md-checkbox>
+                        </div>
+                    </div>
+                    <div class="form-group col-12 col-md-4">
+                        <label>จัดสรรจาก</label>
+                        <div>
+                            <md-checkbox ng-model="$settings.formData.AllocateType"
+                                         ng-disabled="$settings.isLoading"
+                                         class="m-0"
+                                         ng-true-value="1" ng-false-value="2">เงินงบประมาณ</md-checkbox>
+                            <md-checkbox ng-model="$settings.formData.AllocateType"
+                                         ng-disabled="$settings.isLoading"
+                                         class="m-0"
+                                         ng-true-value="2" ng-false-value="1">เงินนอกงบประมาณ</md-checkbox>
+                        </div>
+                    </div>
+                </div>
+
+                <fw-execute-button text="ดาวน์โหลดแบบฟอร์ม" css-class="btn btn-primary btn-sm float-md-right"
+                                   css-icon-class="ti-download"
+                                   on-loading="$settings.isDownloading"
+                                   ng-disabled="$settings.isLoading"
+                                   ng-click="submitDownload($event)"></fw-execute-button>
+            </div>
+            <div class="col-12 col-md-7">
+                <h4 class="m-0 pb-2 f-16 mb-2 border-bottom">อัพโหลดแบบฟอร์มจัดสรรงบประมาณ</h4>
+                <fw-file-upload upload-url="@Url.Action("SubmitUploadDocument", "Resource", new { uploadType = "Temporary" })"
+                                accept-filetypes="xls,xlsx"
+                                ng-disabled="$settings.isLoading"
+                                callback="uploadDone($res)"></fw-file-upload>
+
+                <div ng-if="$settings.uploadDocumentStatusText!=''">
+                    <span class="animated fadeIn text-danger f-w-900">{{$settings.uploadDocumentStatusText}}</span><i class="ml-1 ti-reload rotate-refresh"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-md-5">
+                <input type="text" class="w-100 p-1 border border-dark" ng-model="areaFilterText" ng-disabled="$settings.isLoading" placeholder="ค้นหาชื่อ เขตพื้นที่" />
+                <div class="table-responsive overflow-auto" style="height:290px;min-height:290px;max-height:290px">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th colspan="2" style="width:auto;min-width:200px;">เขตพื้นที่</th>
+                        </tr>
+                        <tr ng-repeat="row in $settings.areas|filter:{AREA_NAME: areaFilterText}">
+                            <td style="width:60px;min-width:60px;max-width:60px;" class="text-center">
+                                <input type="checkbox" ng-model="row.checked" ng-disabled="$settings.isLoading" />
+                            </td>
+                            <td style="width:auto;min-width:200px;">{{row.AREA_NAME}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col-12 col-md-7">
+                <input type="text" class="w-100 p-1 border border-dark" ng-model="$settings.filterText" ng-disabled="$settings.isLoading" placeholder="ค้นหาชื่อ เขตพื้นที่ หรือ หน่วยงาน" />
+                <div class="table-responsive overflow-auto mb-3" style="height:245px;min-height:245px;max-height:245px">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width:60px;min-width:60px;max-width:60px;" class="text-center"><input type="checkbox" ng-model="$settings.checkedAll" ng-disabled="$settings.isLoading" ng-click="checkedAll()" /></th>
+                            <th style="width:100px;min-width:100px;max-width:100px">เขตพื้นที่</th>
+                            <th style="width:auto;max-width:200px">หน่วยงาน</th>
+                        </tr>
+
+                        <tr ng-if="$settings.departments.length == 0">
+                            <th colspan="2" class="text-center text-danger">--- ไม่พบข้อมูลหน่วยงาน ---</th>
+                        </tr>
+                        <tr ng-repeat="row in $settings.departments|customFilter:$settings.filterText:$settings.onlySelected:$settings.areas">
+                            <td style="width:60px;min-width:60px;max-width:60px;" class="text-center">
+                                <input type="checkbox" ng-model="row.checked" ng-disabled="$settings.isLoading" />
+                            </td>
+                            <td style="width:100px;min-width:100px;max-width:100px" class="text-left word-wrap">{{row.AREA_NAME}}</td>
+                            <td style="width:auto;max-width:200px" class="text-left word-wrap">{{row.DEP_NAME}}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="float-md-left"><span class="f-w-900 f-14 text-danger">ระบุหน่วยงานที่ต้องการนำออกในแบบฟอร์มจัดสรร (ไม่เลือก = ทั้งหมด)</span></div>
+                <div class="float-md-right">
+                    <md-checkbox ng-model="$settings.onlySelected" ng-true-value="1" ng-false-value="0"
+                                 ng-disabled="$settings.isLoading">แสดงเฉพาะหน่วยงานที่เลือก</md-checkbox>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Styles{
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/inputnumber")
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $filter, $customHttp, $fwDialogService, $fwModalService, $timeout, $window, $fwDateService, $fwUtils) {
+            $scope.$settings = {
+                isLoading: false, isDownloading: false, isGettingSummary: false,
+                departments: $fwUtils.parseJson('@Html.Raw(Json.Encode(ViewBag.Departments))'),
+                areas: $fwUtils.parseJson('@Html.Raw(Json.Encode(ViewBag.Areas))'),
+                checkedAll: false, filterText: '',
+                uploadDocumentStatusText: '',
+                formView: {},
+                formData: {}
+            };
+
+
+            // จัดเตรียมหน้าฟอร์ม
+            $scope.init = function () {
+                $scope.$settings.formView = {
+                    signoffAmounts: null, signoffBudgetAmounts: null,
+                    unsignoffAmounts: null, unsignoffBudgetAmounts: null,
+                    noTransactionAmounts: null
+                };
+
+                $scope.$settings.formData = {
+                    FiscalYear: '@ViewBag.FiscalYear',
+                    RequestType: 1, // คำขอต้นปี
+                    AllocateType: 1, // เงินงบประมาณ
+                };
+
+                $scope.$settings.uploadDocumentStatusText = '';
+            };
+            // เลือกทุกหน่วยงาน
+            var checkAllId = null;
+            $scope.checkedAll = function () {
+                $timeout.cancel(checkAllId);
+                checkAllId = $timeout(function () {
+                    var departments = $filter('customFilter')($scope.$settings.departments, $scope.$settings.filterText, 0, $scope.$settings.areas);
+                    var depIds = $scope.$settings.departments.map(function (depItem) { return depItem.DEP_ID; });
+                    angular.forEach(departments, function (depItem) {
+                        var foundIndex = depIds.indexOf(depItem.DEP_ID);
+                        if (foundIndex > -1)
+                            $scope.$settings.departments[foundIndex].checked = $scope.$settings.checkedAll;
+                    });
+                }, 300);
+            };
+            // กดดาวน์โหลดแบบฟอร์มจัดสรรงบประมาณ
+            $scope.submitDownload = function (event) {
+                $scope.$settings.isLoading = true;
+                $scope.$settings.isDownloading = true;
+
+                var selectedDepartments = $filter('customFilter')($scope.$settings.departments, "", 1, $scope.$settings.areas);
+                var params = $.extend(true, {
+                    depIds: selectedDepartments.map(function (item) { return item.DEP_ID; })
+                }, $scope.$settings.formData);
+                $customHttp.formPost('@Url.Action("GetDownloadAllocateForm", "BudgetAllocateDepartmentGroup")', params).then(function (res) {
+                    if (null != res.data.errorText)
+                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                    else {
+                        var resultFilename = "แบบฟอร์มจัดสรรงบประมาณ_" + ($scope.$settings.formData.RequestType == '1' ? "ต้นปี" : "เพิ่มเติม");
+                        resultFilename += "_ประจำปี_" + $fwDateService.convertYearToBuddhist($scope.$settings.formData.FiscalYear);
+                        resultFilename = $fwUtils.urlEncoded(resultFilename);
+                        $window.location.href = '@Url.Action("GetFile", "Resource", new { groupType = "Temporary" })&filename=' + res.data.filename + '&resultFilename=' + resultFilename + '&deleteFlag=Y';
+                    }
+
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isDownloading = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isDownloading = false;
+                });
+            };
+            // แสดงภาพรวม ของคำขอต้นปี
+            var requestStartYearSummaryId = null;
+            $scope.getRequestStartYearSummary = function () {
+
+                $scope.$settings.formView.signoffAmounts = null;
+                $scope.$settings.formView.signoffBudgetAmounts = null;
+                $scope.$settings.formView.unsignoffAmounts = null;
+                $scope.$settings.formView.unsignoffBudgetAmounts = null;
+                $scope.$settings.formView.noTransactionAmounts = null;
+
+                $timeout.cancel(requestStartYearSummaryId);
+                requestStartYearSummaryId = $timeout(function () {
+                    if ($scope.$settings.formData.RequestType == '1') {
+                        $scope.$settings.isGettingSummary = true;
+                        $customHttp.formPost('@Url.Action("GetRequestStartYearSummary", "BudgetAllocateDepartmentGroup")', { fiscalYear: $scope.$settings.formData.FiscalYear }).then(function (res) {
+                            $scope.$settings.formView.signoffAmounts = res.data.signoffAmounts || null;
+                            $scope.$settings.formView.signoffBudgetAmounts = res.data.signoffBudgetAmounts || null;
+                            $scope.$settings.formView.unsignoffAmounts = res.data.unsignoffAmounts || null;
+                            $scope.$settings.formView.unsignoffBudgetAmounts = res.data.unsignoffBudgetAmounts || null;
+                            $scope.$settings.formView.noTransactionAmounts = res.data.noTransactionAmounts || null;
+
+                            $scope.$settings.isGettingSummary = false;
+                        }, function () {
+                            $scope.$settings.isGettingSummary = false;
+                        });
+                    }
+                }, 300);
+            };
+            // เมื่ออัพโหลดเอกสารเสร็จ
+            $scope.uploadDone = function (res) {
+                $scope.$settings.uploadDocumentStatusText = '';
+                if (null == res.data.errorText) {
+                    $scope.$settings.isLoading = true;
+                    $scope.$settings.uploadDocumentStatusText = 'กำลังตรวจสอบเอกสารที่อัพโหลด ...';
+
+                    var params = { filename: res.data.filename, referDocNo: "", actionType: "VERIFY" };
+                    $customHttp.formPost('@Url.Action("VerifyDocument", "BudgetAllocateDepartmentGroup")', params).then(function (res) {
+                        if (null != res.data.errorText)
+                            $fwDialogService.dangerDialog(null, res.data.errorText).then(function () {
+                                $window.location.href = '@Url.Action("GetFile", "Resource", new { groupType = "Temporary" })&filename=' + res.data.filename + '&resultFilename=' + res.data.filename + '&deleteFlag=Y';
+                            });
+                        else
+                            $fwModalService.getModal('@Url.Action("GetVerifyModalForm", "BudgetAllocateDepartmentGroup")', { $filename: res.data.uploadFilename, $verifyDepartments: res.data.verifyDepartments, $periodCode: res.data.periodCode }, function ($scope, $customHttp, $mdDialog, $filename, $verifyDepartments, $periodCode) {
+                                $scope.$settings = {
+                                    isLoading: false,
+                                    formErrors: {}, 
+                                    formData: {
+                                        ReferDocNo: null
+                                    },
+                                    formView: {
+                                        rows: $verifyDepartments,
+                                        periodCode: $periodCode
+                                    }
+                                };
+
+                                // ยืนยันการจัดสรร
+                                $scope.submitSave = function (event) {
+                                    $scope.$settings.isLoading = true;
+                                    var params = { filename: $filename, referDocNo: $scope.$settings.formData.ReferDocNo, actionType: "COMMIT" };
+                                    $customHttp.formPost('@Url.Action("VerifyDocument", "BudgetAllocateDepartmentGroup")', params).then(function (res) {
+                                        $scope.$settings.formErrors = res.data.errors || {};
+                                        if (null != res.data.errors)
+                                            $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งให้เรียบร้อยก่อน!!');
+                                        else if  (null != res.data.errorText)
+                                            $fwDialogService.dangerDialog(event, res.data.errorText).then(function () {
+                                                $mdDialog.hide();
+                                                // ดาวน์โหลดผลลัพธ์การ อัพโหลดไฟล์
+                                                $window.location.href = '@Url.Action("GetFile", "Resource", new { groupType = "Temporary" })&filename=' + res.data.filename + '&resultFilename=' + res.data.filename + '&deleteFlag=Y';
+                                            });
+                                        else
+                                            $fwDialogService.alertDialog(event, 'จัดสรรงบประมาณตามแบบฟอร์มที่อัพโหลดเรียบร้อยแล้ว').then(function () {
+                                                $mdDialog.hide();
+                                                // ดาวน์โหลดผลลัพธ์การ อัพโหลดไฟล์
+                                                $window.location.href = '@Url.Action("GetFile", "Resource", new { groupType = "Temporary" })&filename=' + res.data.filename + '&resultFilename=' + res.data.filename + '&deleteFlag=Y';
+                                            });
+                                        $scope.$settings.isLoading = false;
+                                    }, function () {
+                                        $scope.$settings.isLoading = false;
+                                    });
+                                };
+                                // ยกเลิกการจัดสรร
+                                $scope.submitReject = function (event) {
+                                    $scope.$settings.isLoading = true;
+                                    $customHttp.formPost('@Url.Action("DeleteUploadFile", "BudgetAllocateDepartmentGroup")', { filename: $filename }).then(function () {
+                                        $scope.$settings.isLoading = false;
+                                        $timeout(function () {
+                                            $mdDialog.hide();
+                                        }, 100);
+                                    }, function () {
+                                        $scope.$settings.isLoading = false;
+                                    });
+                                };
+                            });
+                            //$fwDialogService.alertDialog(null, 'จัดสรรงบประมาณตามแบบฟอร์มที่อัพโหลดเรียบร้อยแล้ว');
+
+                        // ดาวน์โหลดผลลัพธ์การ อัพโหลดไฟล์
+                        //$window.location.href = '@Url.Action("GetFile", "Resource", new { groupType = "Temporary" })&filename=' + res.data.filename + '&resultFilename=' + res.data.filename + '&deleteFlag=Y';
+                        $scope.$settings.uploadDocumentStatusText = '';
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                        $scope.$settings.uploadDocumentStatusText = '';
+                    });
+                }
+            };
+
+            $scope.init();
+            $scope.getRequestStartYearSummary();
+        }).filter('customFilter', function () {
+            return function (rows, filterText, onlySelectedFlag, areas) {
+                if (null == rows || undefined == rows)
+                    return rows || [];
+
+                var areaIds = (areas || []).filter(function (item) { return item.checked; }).map(function (item) { return item.AREA_ID; });
+                if (areaIds.length == 0)
+                    return [];
+                rows = rows.filter(function (item) { return areaIds.indexOf(item.AREA_ID) > -1; });
+                if ($.trim(filterText) != '')
+                    rows = rows.filter(function (item) { return item.AREA_NAME.indexOf(filterText) > -1 || item.DEP_NAME.indexOf(filterText) > -1; });
+                if (onlySelectedFlag == 1)
+                    rows = rows.filter(function (item) { return item.checked; });
+
+                return rows;
+            };
+        });
+    </script>
+}

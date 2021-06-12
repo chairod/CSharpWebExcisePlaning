@@ -1,0 +1,17 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutStandalone.cshtml";
+}
+
+<h2>ก่อนจัดสรรงบประมาณต้นปี โปรดตรวจสอบข้อมูลดังต่อไปนี้</h2>
+<div style="color:white;">
+    @foreach (var causeMessage in ViewBag.CauseMessages)
+    {
+        <div style="margin-left:5px;">=> @causeMessage</div>
+    }
+    @*<div style="margin-left:5px;">=> ปีงบประมาณปัจจุบัน มีการจัดสรรงบประมาณ</div>
+    <div style="margin-left:5px;">=> ปีงบประมาณปัจจุบัน มีการจัดเก็บรายได้มาแล้ว หรือยอดจัดเก็บรายได้ต้องไม่เท่ากับศูนย์ (เงินงบประมาณกรมสรรพสามิต และ เงินนอกงบประมาณกรมสรรพสามิต)</div>
+    <div style="margin-left:5px;">=> ปีงบประมาณปัจจุบัน หน่วยงานภายนอก ทำคำของบประมาณต้นปี อย่างน้อย 1 หน่วยงาน <strong>และสถานะเป็นรอจัดสรร</strong></div>
+    <div style="margin-left:5px;">=> ปีงบประมาณปัจจุบัน เปิดใช้เงินงบประมาณกรมสรรพสามิต หรือ เงินนอกงบประมาณกรมสรรพสามิต</div>*@
+</div>
+

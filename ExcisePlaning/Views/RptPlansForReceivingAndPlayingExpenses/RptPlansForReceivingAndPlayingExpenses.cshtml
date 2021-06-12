@@ -1,0 +1,315 @@
+﻿
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-controller="AppController">
+    <div class="d-block shadow-sm m-0 mb-2 p-3">
+        <div class="form-row">
+            <div class="col-12 col-md-1">
+                <label>ปี งปม. (พ.ศ.) </label>
+                <fw-input-mask model="$settings.formData.Yr" mask="9999" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <div class="d-flex float-md-left">
+                    <fw-execute-button text="แสดงข้อมูล" css-icon-class="icofont icofont-search"
+                                       css-class="btn btn-primary btn-sm mr-1"
+                                       ng-click="submitSearch($event)"
+                                       on-loading="$settings.isSaving"></fw-execute-button>
+                    <fw-execute-button text="พิมพ์" css-icon-class="icofont icofont-printer"
+                                       css-class="btn btn-info btn-sm"
+                                       ng-click="ExportExcel()"></fw-execute-button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <tr>
+                    <th style="width:50px;max-width:50px;min-width:50px" class="text-left">ลำดับ</th>
+                    <th colspan="3" class="text-center">รายการ</th>
+                    <th style="width:100px;max-width:100px;min-width:100px">ปี @ViewBag.FiscalYearThai</th>
+                </tr>
+                @*1 ค่าจ้างลูกจ้างชั่วคราว*@
+                <tr>
+                    <th class="text-left bg-info">1</th>
+                    <th colspan="3" class="text-left bg-info">ค่าจ้างลูกจ้างชั่วคราว</th>
+                    <th class="text-right bg-info">{{0|number:2}}</th>
+                </tr>
+                <tr>
+                    <th class="text-left"></th>
+                    <th class="text-left"></th>
+                    <th class="text-left"></th>
+                    <th class="text-left"></th>
+                    <th class="text-right"></th>
+                </tr>
+                <tr>
+                    <th class="text-left"></th>
+                    <th colspan="3" class="text-center">รวม</th>
+                    <th class="text-right">{{0|number:2}}</th>
+                </tr>
+                @*2ค่าตอบแทน ใช้สอยและวัสดุ*@
+                <tr>
+                    <th class="text-left bg-info">2</th>
+                    <th colspan="3" class="text-left bg-info">ค่าตอบแทน ใช้สอยและวัสดุ</th>
+                    <th class="text-right bg-info">{{$settings.formView.TotalCompensationCost|number:2}}</th>
+                </tr>
+                <tr ng-repeat="row in $settings.formView.Compensation">
+                    <td class="text-left"></td>
+                    <td class="text-left" style="width:50px;max-width:50px;min-width:50px">2.{{$index + 1}}</td>
+                    <td colspan="2" class="text-primary">
+                        <div class="row mb-12">
+                            <div class="col-12 col-md-12 table-responsive">
+                                <div class="col-12 col-md-4">
+                                    {{row.EXPENSES_NAME}}
+                                </div>
+                                <div class="col-12 col-md-12">
+                                    @*Detail ค่าตอบแทน ใช้สอยและวัสดุ*@
+                                    <table class="table table-bordered">
+                                        <tr ng-repeat="rowdetail in row.ExpensesItems">
+                                            <td>{{rowdetail.PROJECT_NAME}}</td>
+                                            <td style="width:150px;max-width:150px;min-width:150px">{{rowdetail.OFF_BUDGET_AMOUNT|number:2}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </td>
+
+                    <td class="text-right">{{row.OFF_BUDGET_AMOUNT|number:2}}</td>
+                </tr>
+                <tr>
+                    <th class="text-left"></th>
+                    <th colspan="3" class="text-center">รวม</th>
+                    <th class="text-right">{{$settings.formView.TotalCompensationCost|number:2}}</th>
+                </tr>
+
+                @*3 ค่าครุภัณฑ์*@
+                <tr>
+                    <th class="text-left bg-info">3</th>
+                    <th colspan="3" class="text-left bg-info">ค่าครุภัณฑ์</th>
+                    <th class="text-right bg-info">{{$settings.formView.TotalEquipment|number:2}}</th>
+                </tr>
+                <tr ng-repeat="row in $settings.formView.EquipmentOffice">
+                    <td class="text-left"></td>
+                    <td class="text-left" style="width:50px;max-width:50px;min-width:50px">3.{{$index + 1}}</td>
+                    <td colspan="2" class="text-primary">
+                        <div class="row mb-12">
+                            <div class="col-12 col-md-12 table-responsive">
+                                <div class="col-12 col-md-4">
+                                    {{row.EXPENSES_NAME}}
+                                </div>
+                                <div class="col-12 col-md-12">
+                                    @*Detail *@
+                                    <table class="table table-bordered">
+                                        <tr ng-repeat="rowdetail in row.EquipmentOfficeItems">
+                                            <td>{{rowdetail.PROJECT_NAME}}</td>
+                                            <td style="width:150px;max-width:150px;min-width:150px">{{rowdetail.OFF_BUDGET_AMOUNT|number:2}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </td>
+
+                    <td class="text-right">{{row.OFF_BUDGET_AMOUNT|number:2}}</td>
+                </tr>
+                <tr>
+                    <th class="text-left"></th>
+                    <th colspan="3" class="text-center">รวม</th>
+                    <th class="text-right">{{$settings.formView.TotalEquipment|number:2}}</th>
+                </tr>
+
+                @*4 ค่าที่ดินและสิ่งก่อสร้าง*@
+                <tr>
+                    <th class="text-left bg-info">4</th>
+                    <th colspan="3" class="text-left bg-info">ค่าที่ดินและสิ่งก่อสร้าง</th>
+                    <th class="text-right bg-info">{{$settings.formView.TotalLandAndBuilding|number:2}}</th>
+                </tr>
+                <tr ng-repeat="row in $settings.formView.LandAndBuilding">
+                    <td class="text-left"></td>
+                    <td class="text-left" style="width:50px;max-width:50px;min-width:50px">4.{{$index + 1}}</td>
+                    <td colspan="2" class="text-primary">
+                        <div class="row mb-12">
+                            <div class="col-12 col-md-12 table-responsive">
+                                <div class="col-12 col-md-4">
+                                    {{row.EXPENSES_NAME}}
+                                </div>
+                                <div class="col-12 col-md-12">
+                                    @*Detail *@
+                                    <table class="table table-bordered">
+                                        <tr ng-repeat="rowdetail in row.LandAndBuildingItems">
+                                            <td>{{rowdetail.PROJECT_NAME}}</td>
+                                            <td style="width:150px;max-width:150px;min-width:150px">{{rowdetail.OFF_BUDGET_AMOUNT|number:2}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </td>
+
+                    <td class="text-right">{{row.OFF_BUDGET_AMOUNT|number:2}}</td>
+                </tr>
+                <tr>
+                    <th class="text-left"></th>
+                    <th colspan="3" class="text-center">รวม</th>
+                    <th class="text-right">{{$settings.formView.TotalLandAndBuilding|number:2}}</th>
+                </tr>
+
+                @*5 หมวดรายจ่ายอื่น*@
+                <tr>
+                    <th class="text-left bg-info">5</th>
+                    <th colspan="3" class="text-left bg-info">หมวดรายจ่ายอื่น</th>
+                    <th class="text-right bg-info">{{$settings.formView.TotalOtherExpense|number:2}}</th>
+                </tr>
+                <tr ng-repeat="row in $settings.formView.OtherExpense">
+                    <td class="text-left"></td>
+                    <td class="text-left" style="width:50px;max-width:50px;min-width:50px">4.{{$index + 1}}</td>
+                    <td colspan="2" class="text-primary">
+                        <div class="row mb-12">
+                            <div class="col-12 col-md-12 table-responsive">
+                                <div class="col-12 col-md-4">
+                                    {{row.EXPENSES_NAME}}
+                                </div>
+                                <div class="col-12 col-md-12">
+                                    @*Detail *@
+                                    <table class="table table-bordered">
+                                        <tr ng-repeat="rowdetail in row.OtherExpenseItems">
+                                            <td>{{rowdetail.PROJECT_NAME}}</td>
+                                            <td style="width:150px;max-width:150px;min-width:150px">{{rowdetail.OFF_BUDGET_AMOUNT|number:2}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </td>
+
+                    <td class="text-right">{{row.OFF_BUDGET_AMOUNT|number:2}}</td>
+                </tr>
+                <tr>
+                    <th class="text-left"></th>
+                    <th colspan="3" class="text-center">รวม</th>
+                    <th class="text-right">{{$settings.formView.TotalOtherExpense|number:2}}</th>
+                </tr>
+
+                @*1 โอนให้กระทรวงการคลังและหน่วยงานในสังกัดกระทรวงการคลัง*@
+                <tr>
+                    <th class="text-left bg-info">6</th>
+                    <th colspan="3" class="text-left bg-info">โอนให้กระทรวงการคลังและหน่วยงานในสังกัดกระทรวงการคลัง</th>
+                    <th class="text-right bg-info">{{0|number:2}}</th>
+                </tr>
+                <tr>
+                    <th class="text-left"></th>
+                    <th class="text-left"></th>
+                    <th class="text-left"></th>
+                    <th class="text-left"></th>
+                    <th class="text-right"></th>
+                </tr>
+                <tr>
+                    <th class="text-left"></th>
+                    <th colspan="3" class="text-center">รวม</th>
+                    <th class="text-right">{{0|number:2}}</th>
+                </tr>
+
+            </table>
+
+            
+        </div>
+    </div>
+
+
+
+
+
+</div>
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/select2")
+    @Scripts.Render("~/bundle/fusionChart")
+<script type="text/javascript">
+        angular.module("leaveApp").controller('AppController',
+            function ($scope, $filter, $customHttp, $timeout, $q, $fwDialogService, $fwModalService, $fwDateService) {
+                $scope.$settings = {
+                    isLoading: false,
+                    formData: {
+                        Yr: $fwDateService.convertYearToBuddhist('@ViewBag.FiscalYear')
+                    },
+                    formView: {
+                        TotalCompensationCost: 0,
+                        TotalEquipment: 0,
+                        TotalLandAndBuilding: 0,
+                        TotalOtherExpense :0,
+                        Compensation: [],
+                        EquipmentOffice: [],
+                        LandAndBuilding: [],
+                        OtherExpense:[]
+                    }
+                };
+
+                $scope.submitSearch = function () {
+                    $customHttp.formPost('@Url.Action("ShowData", "RptPlansForReceivingAndPlayingExpenses")', {
+                        Yr: $scope.$settings.formData.Yr
+                    }).then(function (res) {
+                        $scope.$settings.formView.TotalCompensationCost = res.data.TotalCompensationCost || 0;
+                        $scope.$settings.formView.Compensation = res.data.Compensation || [];
+
+                        $scope.$settings.formView.TotalEquipment = res.data.TotalEquipment || 0;
+                        $scope.$settings.formView.EquipmentOffice = res.data.EquipmentOffice || [];
+
+                        $scope.$settings.formView.TotalLandAndBuilding = res.data.TotalLandAndBuilding || 0;
+                        $scope.$settings.formView.LandAndBuilding = res.data.LandAndBuilding || [];
+
+                        $scope.$settings.formView.TotalOtherExpense = res.data.TotalOtherExpense || 0;
+                        $scope.$settings.formView.OtherExpense = res.data.OtherExpense || [];
+
+
+                        $scope.$settings.isLoading = false;
+                    }
+                    );
+                };
+
+                var ahref = $('<a href="javascript:void(0);" target="_blank" />');
+
+                $scope.ExportExcel = function () {
+                    $scope.$settings.isLoading = true;
+                    $customHttp.formPost('@Url.Action("ExportExcel", "RptPlansForReceivingAndPlayingExpenses")', {
+                        Yr: $scope.$settings.formData.Yr
+                    }).then(function (res) {
+
+                    $scope.$settings.isLoading = false;
+
+                    ahref.attr('href', $filter('textFormat')('@Url.Action("GetFile", "RptPlansForReceivingAndPlayingExpenses")?filename={0}&resultFilename={1}&deleteFlag=Y', res.data.filename || '', res.data.resultFilename || ''));
+                    ahref[0].click();
+                    }
+                    );
+                };
+
+                //แสดงข้อมูลเริ่มต้น
+                $scope.submitSearch();
+
+            });
+</script>
+
+
+
+
+}

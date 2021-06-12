@@ -1,0 +1,109 @@
+﻿<md-dialog flex="98" flex-gt-sm="70">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>กำหนดกลุ่มผู้ใช้งาน</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-3">
+                    <label class="required-field">ชื่อกลุ่มผู้ใช้งาน<fw-validate-error-output error-messages="$settings.formError.RoleName.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" ng-model="$settings.formData.RoleName" ng-disabled="$settings.isLoading" maxlength="100" />
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label class="required-field">ค่าคงที่<fw-validate-error-output error-messages="$settings.formError.RoleConst.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.RoleConst" ng-disabled="$settings.isLoading">
+                        <option value="General">--- ไม่ระบุ/อื่นๆ ---</option>
+                        <option value="Admin">Admin : กลุ่มผู้ใช้งานที่เข้าถึงการตั้งค่าระบบ</option>
+                        <option value="Manager1">Manager1 : กลุ่มผู้ใช้งานทั่วไป 1</option>
+                        <option value="Manager2">Manager2 : กลุ่มผู้ใช้งานทั่วไป 2</option>
+                        <option value="Manager3">Manager3 : กลุ่มผู้ใช้งานทั่วไป 3</option>
+                        <option value="Manager4">Manager4 : กลุ่มผู้ใช้งานทั่วไป 4</option>
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-6">
+                    <label>หมายเหตุ/อื่นๆ<fw-validate-error-output error-messages="$settings.formError.RoleRemark.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <textarea class="form-control textarea-noresize" maxlength="120" placeholder="ความยาวไม่เกิน 120 ตัวอักษร" ng-model="$settings.formData.RoleRemark" ng-disabled="$settings.isLoading" style="height:70px;"></textarea>
+                </div>
+            </div>
+
+            <h5 class="mt-2 pb-2 mb-2 border-bottom">คุณสมบัติอื่นๆ</h5>
+            <div class="row">
+                <div class="col-12 col-md-5">
+                    <div class="text-danger f-14">สิทธิ์การเข้าถึงเมนูของกลุ่มผู้ใช้งานนี้ <span class="f-w-900">จำนวน [{{$settings.menus.length|number:0}}] เมนู</span></div>
+                    <fw-execute-button text="เลือกเมนู" css-class="btn btn-primary btn-sm"
+                                       css-icon-class="ion-plus-round"
+                                       ng-click="getMenu($event)" ng-disabled="$settings.isLoading"></fw-execute-button>
+                    <div class="table-responsive overflow-auto" style="min-height:280px;max-height:280px;height:280px;">
+                        <table class="table table-bordered table-striped border-bottom-0">
+                            <tr>
+                                <th style="width:60px;min-width:60px;max-width:60px;" class="text-center">...</th>
+                                <th style="min-width:160px;" class="text-left">ชื่อเมนู</th>
+                                <th style="width:90px;min-width:90px;max-width:90px;" class="text-center">...</th>
+                            </tr>
+
+                            <tr ng-if="$settings.menus.length == 0">
+                                <td colspan="3" class="text-center text-danger f-w-900">--- กดที่ปุ่ม "เลือกเมนู" เพื่อระบุเมนูที่กลุ่มผู้ใช้งานนี้เข้าถึงได้ ---</td>
+                            </tr>
+
+                            <tr ng-repeat="item in $settings.menus">
+                                <td class="text-center">{{$index+1}}</td>
+                                <td class="text-left word-wrap">{{item.MENU_NAME}}</td>
+                                <td class="text-center">
+                                    <a href="javascript:void(0)" class="text-danger f-14 f-w-900" ng-click="$settings.menus.splice($index, 1)">ยกเลิก</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="text-right mt-1" ng-if="$settings.menus.length > 0">
+                        <a href="javascript:void(0)" class="text-danger animated fadeIn f-w-14" ng-click="$settings.menus = []">[ยกเลิกเมนูทั้งหมด]</a>
+                    </div>
+                </div>
+                <div class="col-12 col-md-7">
+                    <div class="text-danger f-14">รายชื่อบุคลากรที่อยู่ในกลุ่มผู้ใช้งานนี้ <span class="f-w-900">จำนวน [{{$settings.persons.length|number:0}}] คน</span></div>
+                    <fw-execute-button text="เลือกบุคลากร" css-class="btn btn-primary btn-sm"
+                                       css-icon-class="ion-person-stalker"
+                                       ng-click="getPerson($event)" ng-disabled="$settings.isLoading"></fw-execute-button>
+                    <div class="table-responsive overflow-auto" style="min-height:280px;max-height:280px;height:280px;">
+                        <table class="table table-bordered table-striped border-bottom-0">
+                            <tr>
+                                <th style="width:60px;min-width:60px;max-width:60px;" class="text-center">...</th>
+                                <th style="min-width:160px;" class="text-left">ชื่อ - สกุล</th>
+                                @*<th style="width:180px;min-width:180px;max-width:180px;" class="text-left">ตำแหน่งงาน</th>*@
+                                <th style="width:90px;min-width:90px;max-width:90px;" class="text-center">...</th>
+                            </tr>
+
+                            <tr ng-if="$settings.persons.length == 0">
+                                <td colspan="4" class="text-center text-danger f-w-900">--- กดที่ปุ่ม "เลือกบุคลากร" เพื่อระบุบุคลาการให้เข้ามาอยู่ในกลุ่มผู้ใช้งานนี้ ---</td>
+                            </tr>
+                            <tr ng-repeat="item in $settings.persons">
+                                <td class="text-center">{{$index+1}}</td>
+                                <td class="text-left word-wrap">{{item.FIRST_NAME+' '+item.LAST_NAME}}</td>
+                                @*<td class="text-left word-wrap">{{item.POSITION_NAME}}</td>*@
+                                <td class="text-center">
+                                    <a href="javascript:void(0)" class="text-danger f-14 f-w-900" ng-click="$settings.persons.splice($index, 1)">ยกเลิก</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="text-right mt-1" ng-if="$settings.persons.length > 0">
+                        <a href="javascript:void(0)" class="text-danger animated fadeIn f-w-14" ng-click="$settings.persons = []">[ยกเลิกบุคลาการทั้งหมด]</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-2"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="save($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,237 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-1">
+        @*<div class="form-row">
+                <div class="form-group col-9 col-md-2 mb-1">
+                    <label>เบิกจ่ายสะสม (บาท)</label>
+                    <h4 class="border-0 p-4 f-26 m-0 text-left text-primary">{{($settings.formData.Items|fwSimpleSummary:['WithdrawalAmount']:null:null:false) + ($settings.formView.histories|fwSimpleSummary:['WITHDRAWAL_AMOUNT']:null:null:false)|displayDecimal:2}}</h4>
+                </div>
+                <div class="form-group col-3 col-md-10 mb-1">
+                    <label class="d-none d-md-block">&nbsp;</label>
+                    <fw-execute-button text="บันทึก" ng-disabled="$settings.isLoading||$settings.formData.Items.length == 0"
+                                       on-loading="$settings.isSaving"
+                                       ng-click="submitSave($event)"
+                                       css-icon-class="ti-save" css-class="btn btn-primary btn-sm float-md-right ml-1"></fw-execute-button>
+                </div>
+            </div>*@
+        <div class="row border-bottom pb-1 mb-1">
+            <div class="col-12">
+                <fw-execute-button text="บันทึก" ng-disabled="$settings.isLoading||$settings.formData.Items.length == 0"
+                                   on-loading="$settings.isSaving"
+                                   ng-click="submitSave($event)"
+                                   css-icon-class="ti-save" css-class="btn btn-primary btn-sm float-md-right ml-1"></fw-execute-button>
+            </div>
+        </div>
+
+        <div class="row border-bottom mb-1">
+            <div class="col-12 col-md-4 border-right">
+                <div class="form-row">
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">เลขที่เบิกจ่าย<fw-validate-error-output error-messages="$settings.formErrors.WithdrawalCode.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <input type="text" class="form-control" ng-model="$settings.formData.WithdrawalCode"
+                               ng-change="withdrawalCodeChanged()"
+                               placeholder="เลขที่เบิกจ่าย 10 หลัก" maxlength="10" />
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">วันที่ขอเบิก<fw-validate-error-output error-messages="$settings.formErrors.WithdrawalDateStr.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <fw-date-range model="$settings.formData.WithdrawalDateStr" single-date-picker="true" disabled="$settings.isLoading" placeholder="วันที่เบิกจ่าย"></fw-date-range>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-8">
+                <div class="form-row">
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">หมายเหตุ<fw-validate-error-output error-messages="$settings.formErrors.RemarkText.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <textarea class="form-control textarea-noresize" ng-model="$settings.formData.RemarkText" ng-disabled="$settings.isLoading" maxlength="300" placeholder="ความยาวไม่เกิน 300 ตัวอักษร" style="height:118px;"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        @*รายการใบกันที่ขอเบิกจ่าย*@
+        <div class="row mb-2">
+            <div class="col-12">
+                <fw-execute-button text="ค้นหาใบกัน" ng-disabled="$settings.isLoading"
+                                   ng-click="browseReserve($event)"
+                                   css-icon-class="ti-search" css-class="btn btn-primary float-md-left btn-sm"></fw-execute-button>
+                <fw-validate-error-output error-messages="$settings.formErrors.Items.ErrorMessages" css-class="ml-1"></fw-validate-error-output>
+                <div class="table-responsive overflow-auto" style="height:240px;max-height:240px;min-height:240px;">
+                    <table class="table table-bordered table-striped">
+                        <tr>
+                            <th style="width:60px;min-width:60px;max-width:60px"></th>
+                            <th style="width:130px;min-width:130px;max-width:130px" class="text-center">เลขที่ใบกัน</th>
+                            <th style="min-width:200px;" class="text-left">หน่วยงาน</th>
+                            <th style="width:143px;min-width:143px;max-width:143px" class="text-center">ประเภทงบ</th>
+                            <th style="width:150px;min-width:150px;max-width:150px" class="text-right">คงเหลือ (บาท)</th>
+                            <th style="width:200px;min-width:200px;max-width:200px" class="text-right">จำนวนที่ขอเบิก (บาท)</th>
+                        </tr>
+
+                        <tr ng-if="$settings.formData.Items.length == 0 && !$settings.isLoading">
+                            <th class="text-center text-danger" colspan="6">--- กดที่ปุ่ม "ค้นหาใบกัน" เพื่อเลือกใบกันที่ต้องการเบิกจ่าย ---</th>
+                        </tr>
+
+                        <tr ng-repeat="row in $settings.formData.Items">
+                            <td style="width:60px;min-width:60px;max-width:60px" class="text-center">
+                                <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.Items.splice($index, 1)">ยกเลิก</a>
+                            </td>
+                            <td style="width:130px;min-width:130px;max-width:130px" class="text-center"><a href="@Url.Action("GetForm", "BudgetReserve")?reserveId={{row.RESERVE_ID}}" class="f-w-900 text-primary" target="_blank">{{row.RESERVE_ID}}<sup class="ml-1 ti-new-window"></sup></a></td>
+                            <td style="min-width:200px;" class="text-left word-wrap">{{row.DEP_NAME}}<fw-validate-error-output css-class="d-block" error-messages="$settings.formErrors.Items[$index].WithdrawalAmount.ErrorMessages"></fw-validate-error-output></td>
+                            <td style="width:143px;min-width:143px;max-width:143px" class="text-center word-wrap">{{row.BUDGET_TYPE==1?'เงินงบประมาณ':'เงินนอกงบประมาณ'}}</td>
+                            <td style="width:150px;min-width:150px;max-width:150px" class="text-right bg-light">{{row.REMAIN_AMOUNT|displayDecimal:2}}</td>
+                            <td style="width:200px;min-width:200px;max-width:200px" class="text-right">
+                                <fw-input-number-mask ng-model="row.WithdrawalAmount" ng-disabled="$settings.isLoading" min-value="0" max-value="99999999999999.99"
+                                                      css-class="text-right"
+                                                      placeholder="จำนวนเงินที่ขอเบิก (บาท)"></fw-input-number-mask>
+                            </td>
+                        </tr>
+                        @*<tr ng-if="$settings.formData.Items.length > 0">
+                                <th class="text-right" colspan="5">รวม (บาท)</th>
+                                <th class="text-right">{{$settings.formData.Items|fwSimpleSummary:['WithdrawalAmount']:2}}</th>
+                            </tr>*@
+                    </table>
+                </div>
+                <div class="text-right text-danger f-w-900">จำนวน {{$settings.formData.Items.length}} รายการ, รวม {{$settings.formData.Items|fwSimpleSummary:['WithdrawalAmount']:2}} บาท</div>
+            </div>
+        </div>
+
+
+        @*ประวัติการเบิกจ่าย*@
+        <div class="row">
+            <div class="col-12">
+                <h4 class="border-bottom pb-2 mb-2 f-w-900 f-20">ประวัติการเบิกจ่าย<span class="ml-1 ti-reload rotate-refresh" ng-if="$settings.isHistoryLoading"></span></h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <tr>
+                            <th rowspan="2" style="width:117px;min-width:117px;max-width:117px" class="text-center">เลขที่ใบกัน</th>
+                            <th rowspan="2" style="min-width:200px;" class="text-left">หน่วยงาน</th>
+                            <th rowspan="2" style="width:143px;min-width:143px;max-width:143px" class="text-center">ประเภทงบ</th>
+                            <th colspan="4" class="text-center">การเบิกจ่าย</th>
+                        </tr>
+                        <tr>
+                            <th style="width:180px;min-width:180px;max-width:180px" class="text-left">ผู้เบิกจ่าย</th>
+                            <th style="width:123px;min-width:123px;max-width:123px" class="text-center">วันที่</th>
+                            <th style="width:150px;min-width:150px;max-width:150px" class="text-center">วันที่ทำรายการ</th>
+                            <th style="width:150px;min-width:150px;max-width:150px" class="text-right">จำนวน (บาท)</th>
+                        </tr>
+
+                        <tr ng-if="$settings.formView.histories.length == 0">
+                            <th colspan="7" class="text-center text-danger">--- ยังไม่มีประวัติการเบิกจ่าย ---</th>
+                        </tr>
+
+                        <tr ng-repeat="row in $settings.formView.histories">
+                            <td style="width:117px;min-width:117px;max-width:117px" class="text-center bg-light">
+                                <a href="@Url.Action("GetForm", "BudgetReserve")?reserveId={{row.RESERVE_ID}}" class="f-w-900 text-primary" target="_blank">{{row.RESERVE_ID}}<sup class="ml-1 ti-new-window"></sup></a>
+                            </td>
+                            <td style="min-width:200px;" class="text-left word-wrap">{{row.DEP_NAME}}</td>
+                            <td style="width:143px;min-width:143px;max-width:143px" class="text-center word-wrap">{{row.BUDGET_TYPE==1?'เงินงบประมาณ':'เงินนอกงบประมาณ'}}</td>
+                            <td style="width:180px;min-width:180px;max-width:180px" class="text-left word-wrap">{{row.WITHDRAWAL_NAME}}</td>
+                            <td style="width:123px;min-width:123px;max-width:123px" class="text-center word-wrap">{{row.WITHDRAWAL_DATE|sqlDate:'':null:false}}</td>
+                            <td style="width:150px;min-width:150px;max-width:150px" class="text-center">{{row.CREATED_DATETIME|sqlDate:'':null:true}}</td>
+                            <td style="width:150px;min-width:150px;max-width:150px" class="text-right">{{row.WITHDRAWAL_AMOUNT|displayDecimal:2}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="text-right text-danger f-w-900">จำนวน {{$settings.formView.histories.length}} รายการ, รวม {{$settings.formView.histories|fwSimpleSummary:['WITHDRAWAL_AMOUNT']:2}} บาท</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+    @Styles.Render("~/content/datepickerrange")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/inputnumber")
+    @Scripts.Render("~/bundle/select2")
+    @Scripts.Render("~/bundle/datepickerrange")
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $customHttp, $fwDateService, $fwModalHelperService, $timeout, $fwDialogService) {
+            $scope.$settings = {
+                isLoading: false, isSaving: false, isHistoryLoading: false,
+                formData: {},
+                formView: {},
+                formErrors: {}
+            };
+
+            // จัดเตรียมแบบฟอร์ม
+            $scope.init = function () {
+                $scope.$settings.formErrors = {};
+                $scope.$settings.formView = { histories: [] };
+                $scope.$settings.formData = {
+                    WithdrawalCode: null,
+                    WithdrawalDateStr: $fwDateService.getCurrDate().toString(),
+                    RemarkText: '',
+                    Items: []
+                };
+            };
+            // ส่งคำขอค้นหาประวัติการเบิกจ่าย
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    $scope.$settings.isLoading = true;
+                    $scope.$settings.isHistoryLoading = true;
+                    $customHttp.formPost('@Url.Action("Retrieve", "BudgetReserveWithdrawalMulti")', { withdrawalCode: $scope.$settings.formData.WithdrawalCode }).then(function (res) {
+                        $scope.$settings.formView.histories = res.data || [];
+                        $scope.$settings.isLoading = false;
+                        $scope.$settings.isHistoryLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                        $scope.$settings.isHistoryLoading = false;
+                    });
+                }, 300);
+            };
+            // เมื่อเลขที่ขอเบิกเปลี่ยนแปลง
+            var withdrawalCodeChangedId = null;
+            $scope.withdrawalCodeChanged = function () {
+                $timeout.cancel(withdrawalCodeChangedId);
+                withdrawalCodeChangedId = $timeout(function () {
+                    $scope.$settings.formView.histories = [];
+                    var withdrawalCode = $.trim($scope.$settings.formData.WithdrawalCode);
+                    if (withdrawalCode.length == 10)
+                        $scope.submitSearch();
+                }, 300);
+            };
+            // ค้นหาเลขที่ใบกันเงิน
+            $scope.browseReserve = function (event) {
+                $fwModalHelperService.getReserveBudgetSelectMultipleModal(event, $scope.$settings.formData.Items, null, null, 1, 1).then(function (selectedItems) {
+                    $scope.$settings.formData.Items = selectedItems || [];
+                });
+            };
+            // ส่งคำขอบันทึกการเบิกจ่าย
+            $scope.submitSave = function (event) {
+                $scope.$settings.isLoading = true;
+                $scope.$settings.isSaving = true;
+
+                $customHttp.formPost('@Url.Action("SubmitSave", "BudgetReserveWithdrawalMulti")', $scope.$settings.formData).then(function (res) {
+                    $scope.$settings.formErrors = res.data.errors || {};
+                    if (null != res.data.errorText)
+                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                    else if (null != res.data.errors)
+                        $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งให้เรียบร้อยก่อน');
+                    else
+                        $fwDialogService.alertDialog(event, 'เบิกจ่ายเรียบร้อยแล้ว').then(function () {
+                            $scope.init();
+                        });
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                });
+            };
+
+
+            // จัดเตรียมหน้าฟอร์ม
+            $scope.init();
+        });
+    </script>
+}

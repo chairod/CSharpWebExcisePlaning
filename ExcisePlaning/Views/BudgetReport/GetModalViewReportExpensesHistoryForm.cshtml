@@ -1,0 +1,71 @@
+﻿
+<md-dialog flex="99" flex-gt-sm="65">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ประวัติการรายการผลการใช้จ่ายงบประมาณ ประจำเดือน {{$settings.formView.monthNo|toMonthLabel}}</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="row mb-2">
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="{{$settings.formView.groupBy.PLAN_NAME || '-'}}" title="{{$settings.formView.groupBy.PLAN_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="{{$settings.formView.groupBy.PRODUCE_NAME || '-'}}" title="{{$settings.formView.groupBy.PRODUCE_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="{{$settings.formView.groupBy.ACTIVITY_NAME || '-'}}" title="{{$settings.formView.groupBy.ACTIVITY_NAME}}" readonly /></div>
+            </div>
+            <div class="row mb-2 border-bottom pb-2">
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="{{$settings.formView.groupBy.BUDGET_TYPE_NAME}}" title="{{$settings.formView.groupBy.BUDGET_TYPE_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0" value="{{$settings.formView.groupBy.EXPENSES_GROUP_NAME}}" title="{{$settings.formView.groupBy.EXPENSES_GROUP_NAME}}" readonly /></div>
+                <div class="col-12 col-md-4"><input type="text" class="form-control border-0 text-primary f-w-900" value="{{$settings.formView.expensesItem.EXPENSES_NAME}}" title="{{$settings.formView.expensesItem.EXPENSES_NAME}}" readonly /></div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th style="width:60px;min-width:60px;max-width:60px;" class="text-center"></th>
+                                @*<th style="width:120px;min-width:120px;max-width:120px;" class="text-left">เดือน</th>*@
+                                <th style="width:150px;min-width:150px;max-width:150px;" class="text-left">วันที่ทำรายการ</th>
+                                <th style="width:150px;min-width:150px;max-width:150px;" class="text-left">ผู้ทำรายการ</th>
+                                <th style="width:170px;min-width:170px;max-width:170px;" class="text-right">จำนวนเงิน (บาท)</th>
+                                <th style="width:100px;min-width:100px;max-width:100px;" class="text-center">ประเภทงบ</th>
+                                <th style="width:200px;min-width:200px;max-width:200px;" class="text-center">เลขที่ขอเบิก GFMIS</th>
+                            </tr>
+
+                            <tr ng-if="$settings.formView.rows.length == 0 && !$settings.isLoading">
+                                <th colspan="7" class="text-danger text-center animated fadeIn">--- ไม่พบประวัติการรายงานผลการใช้จ่าย งปม. ---</th>
+                            </tr>
+
+                            <tr ng-repeat="row in $settings.formView.rows">
+                                <td class="text-center"><a href="javascript:void(0)" class="text-danger f-w-900" ng-click="submitReject($event, row)">ยกเลิก</a></td>
+                                @*<td class="text-center">{{row.MN|toMonthLabel}}</td>*@
+                                <td class="text-left">{{row.REPORTED_DATETIME|sqlDate:'':null:true}}</td>
+                                <td class="text-left">{{row.REPORTED_NAME}}</td>
+                                <td class="text-right">{{row.REPORT_BUDGET_AMOUNT|displayDecimal:2}}</td>
+                                <td class="text-center" ng-class="{'text-warning': row.BUDGET_TYPE==2, 'f-w-900': row.BUDGET_TYPE==1}">{{row.BUDGET_TYPE==1?'เงินงบประมาณ':'เงินนอกงบประมาณ'}}</td>
+                                <td class="text-center word-wrap">{{row.REPORT_CODE}}</td>
+                            </tr>
+                            <tr class="bg-primary">
+                                <th colspan="3" class="text-right">รวมทั้งสิ้น</th>
+                                <th class="text-right">{{$settings.formView.rows|fwSimpleSummary:['REPORT_BUDGET_AMOUNT']:2}}</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div class="text-danger">เรียงลำดับจากวันที่ทำรายการล่าสุด</div>
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+
+

@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AppSettingProperty>
+	<!--
+    Domain Name/IP Address สำหรับเชื่อมต่อกับ AD (Active Directory)
+  -->
+	<ActiveDirectoryDomain>LDAP://10.252.38.18</ActiveDirectoryDomain>
+  
+  <!-- รูปแบบการ Authen ของระบบ (SSO = ผ่าน Single Signon ของกรมสรรพสามิต, LOCAL = เข้าสู่ระบบด้วยตัวระบบเอง) -->
+  <LoginType>LOCAL</LoginType>
+  <SSOApplicationId>PCCApp</SSOApplicationId>
+
+  <!-- 
+  รหัสหน่วยงาน ที่สามารถกันเงิน ได้ อ้างอิง dep_id จากตาราง T_DEPARTMENT 
+  จะมีผลกับหน้าจอ กันเงิน
+  -->
+  <AreaIdsCanReserveBudgetStr>11</AreaIdsCanReserveBudgetStr>
+
+  <!-- 
+  Role ที่ใช้สำหรับบุคลากรใหม่ ที่เคยเข้าสู่ระบบเป็นครั้งแรก จะให้ Default ไปที่ใด
+  -->
+  <DefaultRoleIdForNewAccountStr>5</DefaultRoleIdForNewAccountStr>
+
+  <!-- 
+  รหัสรายการค่าใช้จ่าย ที่สงวนไว้ ไม่สามารถเลือกได้
+  ในการบันทึกรายการค่าใช้จ่ายปิโตรเลียม
+  เนื่องจาก: ค่าปิโตรเลียมจะเป็นการรวม แต่ละรายการค่าใช้จ่ายมาบันทึกข้อมูล
+  -->
+  <ExpensesIdsReserveForPetoluem>68,69,70</ExpensesIdsReserveForPetoluem>
+  
+  <!--
+  พาร์ทสำหรับเขียน Output file ของระบบ อาทิเช่น รายงาน เป็นต้น
+  -->
+	<TemporaryPath>D:\Temp\resources\excisePlaning\temp</TemporaryPath>
+
+  <!---
+  พาร์ทสำหรับเขียนไฟล์ที่อัพโหลดจากหน้า คำขอเงินงบประมาณ
+  -->
+  <BudgetRequestAttachFilePath>D:\Temp\resources\excisePlaning\budgetRequest</BudgetRequestAttachFilePath>
+  
+	<!--
+  พาร์ทที่เก็บไฟล์ Template ของรายงานแต่ละตัวไว้
+  -->
+	<ReportTemplatePath>D:\Environment_Owner\Developments\C#\ASP.NET\Planing-กรมสรรพสามิต\SourceCode\ExcisePlaning\Contents\ReportTemplates</ReportTemplatePath>
+  <ReportDefaultFontName>TH SarabunPSK</ReportDefaultFontName>
+  <ReportDefaultFontSize>14</ReportDefaultFontSize>
+  
+	<!-- 
+  พาร์ทสำหรับ เขียน/ลบ ไฟล์โปรไฟล์ผู้ใช้งานที่ผ่านการตรวจสอบสิทธิ์การเข้าสู่ระบบแล้ว
+  ระบบจะเขียนข้อมูลโปรไฟล์ที่จำเป็นต้องใช้งาน ลง Cache file และลบออกเมื่อ Logout หรือเกิด Timeout
+  -->
+	<UserAuthorizeCachePath>D:\Temp\resources\excisePlaning\authorize</UserAuthorizeCachePath>
+
+	<!--
+  กำหนดพาร์ทสำหรับเขียน Error ของระบบลงไป
+  จะเขียนด้วยชื่อไฟล์ App-Error.log หากขนาดของไฟล์มากกว่า 10M จะถูกย้ายไปยัง Archives folder
+  -->
+	<ErrorLogPath>D:\Temp\resources\excisePlaning\errors</ErrorLogPath>
+
+	<!--Token ที่ใช้สำหรับในกรณีที่ต้องการเข้าสู่ระบบด้วย รหัสพนักงาน-->
+	<AccessToken>exciseExternalAuthorize</AccessToken>
+
+	<!-- Mime-Type ที่ระบบยอมให้อัพโหลด 
+    gif,pdf,jpeg,jpg,png
+    docx,xlsx,xls,
+    หมายเหตุ: ระหว่าง Comma ไม่แนะนำให้เว้นช่องว่าง
+  -->
+	<AcceptMimeTypeValues>image/gif,image/png,image/jpeg,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel</AcceptMimeTypeValues>
+
+	<!-- ขนาดไฟล์ไฟล์ที่อัพโหลดไม่เกิน 3M (3145728), 2M (2097152‬) , 1M (1048576)‬ 
+    -1 ไม่จำกัดขนาดของไฟล์
+  -->
+	<LimitedFileSizeBytesValue>2097152‬</LimitedFileSizeBytesValue>
+</AppSettingProperty>

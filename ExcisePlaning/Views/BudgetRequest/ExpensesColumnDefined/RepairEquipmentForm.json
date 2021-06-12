@@ -1,0 +1,10 @@
+{
+  "EquipmentId":  "empty",
+  "EquipmentName": null,
+  "EquipmentOtherFlag":  null,
+  "EquipmentOtherName":  null,
+  "StockAmounts": null,
+  "RepairAmounts": null,
+  "RepairPricePerItem": null,
+  "RepairTotalPrice": null
+}

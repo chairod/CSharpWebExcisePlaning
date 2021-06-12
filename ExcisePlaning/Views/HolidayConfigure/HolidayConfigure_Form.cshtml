@@ -1,0 +1,236 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card card-block borderless-card shadow-sm" ng-controller="AppController">
+    <div class="form-row border-bottom border-bottom-default mb-2">
+        <div class="form-group col-12 col-md-3">
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text">ปี (พ.ศ.)</span></div>
+                <input type="text" class="form-control" ng-model="$settings.formData.year" 
+                       ng-disabled="$settings.isLoading" />
+            </div>
+        </div>
+        <div class="form-group col-12 col-md-9">
+            <fw-execute-button text="ค้นหา"
+                               css-class="btn btn-warning btn-sm"
+                               css-icon-class="ti-search"
+                               ng-click="submitSearch($event)"
+                               on-loading="$settings.isGetCalendar"
+                               ng-disabled="$settings.isLoading"></fw-execute-button>
+            <fw-execute-button text="บันทึกการเปลี่ยนแปลง"
+                               css-class="btn btn-primary btn-sm"
+                               css-icon-class="ti-save"
+                               ng-click="submitSave($event)"
+                               on-loading="$settings.isSaving"
+                               ng-disabled="$settings.isLoading||!$settings.formData.canEdit"></fw-execute-button>
+            <a href="javascript:void(0)" ng-click="openWarning($event)" class="text-primary f-w-900 f-26 float-md-right"><i class="ion-help-circled"></i></a>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <!-- ปฏิทินประจำปี -->
+        <div class="form-group col-12 col-md-9">
+            <div class="row">
+                <div class="col-12 col-md-6" ng-repeat="monthCalendar in $settings.monthsCalendar">
+                    <div class="table-responsive">
+                        <table class="table table-bordered bg-white f-10">
+                            <tr><th colspan="7" class="text-center bg-primary text-white f-w-900 f-12">{{monthCalendar.Label}}</th></tr>
+                            <tr>
+                                <th class="text-center bg-light text-black-50 f-w-900">อา.</th>
+                                <th class="text-center">จ.</th>
+                                <th class="text-center">อ.</th>
+                                <th class="text-center">พ.</th>
+                                <th class="text-center">พฤ.</th>
+                                <th class="text-center">ศ.</th>
+                                <th class="text-center bg-light text-black-50 f-w-900">ส.</th>
+                            </tr>
+                            <tr ng-repeat="(key, dayItem) in monthCalendar.Weeks">
+                                <td class="text-center bg-light text-black-50 f-w-900 "
+                                    ng-class="{'text-primary': dayItem[0].IsCurrentDay}">
+                                    {{dayItem[0].DayOfMonth}}
+                                </td>
+                                <td class="text-center "
+                                    ng-class="{'cursor-pointer': $settings.formData.canEdit, 'bg-danger text-white f-w-900': dayItem[1].IsHolidayDate, 'text-primary f-w-900': dayItem[1].IsCurrentDay}"
+                                    ng-click="toggleHolidayDate(dayItem[1].DateStr)">
+                                    {{dayItem[1].DayOfMonth}}
+                                </td>
+                                <td class="text-center "
+                                    ng-class="{'cursor-pointer': $settings.formData.canEdit, 'bg-danger text-white f-w-900': dayItem[2].IsHolidayDate, 'text-primary f-w-900': dayItem[2].IsCurrentDay}"
+                                    ng-click="toggleHolidayDate(dayItem[2].DateStr)">
+                                    {{dayItem[2].DayOfMonth}}
+                                </td>
+                                <td class="text-center "
+                                    ng-class="{'cursor-pointer': $settings.formData.canEdit, 'bg-danger text-white f-w-900': dayItem[3].IsHolidayDate, 'text-primary f-w-900': dayItem[3].IsCurrentDay}"
+                                    ng-click="toggleHolidayDate(dayItem[3].DateStr)">
+                                    {{dayItem[3].DayOfMonth}}
+                                </td>
+                                <td class="text-center "
+                                    ng-class="{'cursor-pointer': $settings.formData.canEdit, 'bg-danger text-white f-w-900': dayItem[4].IsHolidayDate, 'text-primary f-w-900': dayItem[4].IsCurrentDay}"
+                                    ng-click="toggleHolidayDate(dayItem[4].DateStr)">
+                                    {{dayItem[4].DayOfMonth}}
+                                </td>
+                                <td class="text-center "
+                                    ng-class="{'cursor-pointer': $settings.formData.canEdit, 'bg-danger text-white f-w-900': dayItem[5].IsHolidayDate, 'text-primary f-w-900': dayItem[5].IsCurrentDay}"
+                                    ng-click="toggleHolidayDate(dayItem[5].DateStr)">
+                                    {{dayItem[5].DayOfMonth}}
+                                </td>
+                                <td class="text-center bg-light text-black-50 f-w-900 "
+                                    ng-class="{'text-primary': dayItem[6].IsCurrentDay}">
+                                    {{dayItem[6].DayOfMonth}}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- รายการวันหยุดประจำปี -->
+        <div class="form-group col-md-3 d-none d-md-inline">
+            <input type="text" class="form-control rounded-0 f-10" ng-model="filterHolidayDateText" ng-disabled="$settings.isLoading" placeholder="ระบุวันหยุดที่ต้องการค้นหา" />
+            <div class="table-responsive rounded-0">
+                <table class="table table-bordered table-striped f-10">
+                    <tr>
+                        <th class="f-12">วันหยุด</th>
+                        <th class="f-12 bg-light text-center" style="min-width:50px;max-width:50px;width:50px;">...</th>
+                    </tr>
+                    <tr ng-repeat="holidayDate in $settings.formData.holidayDates|filter:filterHolidayDateText">
+                        <td class="f-12">{{holidayDate|dateStrToLocale}}</td>
+                        <td class="bg-light text-center">
+                            <a href="javascript:void(0)" ng-if="$settings.formData.canEdit" ng-click="toggleHolidayDate(holidayDate)"><span class="f-12 text-danger f-w-900">ยกเลิก</span></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController',
+            function ($scope, $customHttp, $fwDialogService, $fwModalService, $timeout, $q) {
+                var currYear = new Date().getFullYear();
+                $scope.$settings = {
+                    isLoading: false,
+                    isGetCalendar: false,
+                    monthsCalendar: [], // ปฏิทินในแต่ละเดือนของปี
+                    formData: {
+                        holidayDates: [], // วันหยุดทั้งหมดของปี
+                        canEdit: false,
+                        year: currYear + 543,
+                        isChanged: false
+                    }
+                };
+
+
+                $scope.submitSearch = function (event) {
+                    $q(function (resolve, reject) {
+                        if (!$scope.$settings.formData.isChanged) {
+                            resolve({ behavior: true });
+                            return;
+                        }
+
+                        $fwDialogService.confirmDialog(event, 'มีการเปลี่ยนแปลงวันหยุดประจำปี การค้นหาจะยกเลิกการเปลี่ยนแปลงทั้งหมด ต้องการค้นหาหรือไม่?').then(function () {
+                            resolve({ behavior: true });
+                        }, function () {
+                            reject({ behavior: false });
+                        });
+                    }).then(function () {
+                        $scope.$settings.isLoading = true;
+                        $scope.$settings.isGetCalendar = true;
+
+                        var yearVal = +$scope.$settings.formData.year;
+                        yearVal -= 543;
+                        $customHttp.formGet('@Url.Action("GetCalendar", "HolidayConfigure")', { year: yearVal }).then(function (res) {
+                            $scope.$settings.formData.holidayDates = res.data.HolidayDates || [];
+                            $scope.$settings.monthsCalendar = res.data.MonthsCalendar || [];
+
+                            var userYear = +$scope.$settings.formData.year;
+                            $scope.$settings.formData.canEdit = userYear >= currYear;
+                            $scope.$settings.formData.isChanged = false;
+
+                            $scope.$settings.isLoading = false;
+                            $scope.$settings.isGetCalendar = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                            $scope.$settings.isGetCalendar = false;
+                        });
+                    });
+                };
+
+                $scope.submitSave = function (event) {
+                    if (!$scope.$settings.formData.canEdit)
+                        return;
+
+                    $fwDialogService.confirmDialog(event, 'ยืนยันการบันทึกการเปลี่ยนแปลง').then(function () {
+                        $scope.$settings.isLoading = true;
+                        $scope.$settings.isSaving = true;
+
+                        var yearVal = +$scope.$settings.formData.year;
+                        yearVal -= 543;
+                        $customHttp.formPost('@Url.Action("SubmitSave", "HolidayConfigure")', { holidayDates: $scope.$settings.formData.holidayDates, year: yearVal }).then(function (res) {
+                            $fwDialogService.alertDialog(event, 'บันทึกการเปลี่ยนแปลงเรียบร้อยแล้ว').then(function () {
+                                $scope.submitSearch();
+                            });
+                            $scope.$settings.formData.isChanged = false; // หลังจากบันทึกเสร็จ ให้ยกเลิก Flag การเปลี่ยนแปลง
+                            $scope.$settings.isLoading = false;
+                            $scope.$settings.isSaving = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                            $scope.$settings.isSaving = false;
+                        });
+                    });
+                };
+
+                $scope.toggleHolidayDate = function (holidayDate) {
+                    if (!$scope.$settings.formData.canEdit || $.trim(holidayDate) == '')
+                        return;
+
+                    // Mark Flag ว่ามีการเปลี่ยนแปลง (เพิ่ม/ลด) วันหยุดประจำปี
+                    $scope.$settings.formData.isChanged = true;
+
+                    // เปลี่ยนแปลงค่าใน Calendar
+                    var dateParts = holidayDate.split('/');
+                    var monthNo = +dateParts[1] - 1;
+                    var date = new Date(+dateParts[2], monthNo, +dateParts[0]);
+                    var dayOfWeek = date.getDay(); // Day of week (0-6)
+                    var calendar = $scope.$settings.monthsCalendar[monthNo];
+                    var weekKey = '';
+                    $.each(calendar.Weeks, function (key, days) {
+                        if (days.filter(function (dayItem) {
+                            return dayItem.DateStr == holidayDate;
+                        }).length > 0) {
+                            weekKey = key;
+                            return false;
+                        }
+                    });
+                    calendar.Weeks[weekKey][dayOfWeek].IsHolidayDate = !calendar.Weeks[weekKey][dayOfWeek].IsHolidayDate;
+
+                    // เปลี่ยนแปลงค่าใน Holiday Dates
+                    var findIndex = $scope.$settings.formData.holidayDates.indexOf(holidayDate);
+                    if (findIndex > -1)
+                        $scope.$settings.formData.holidayDates.splice(findIndex, 1);
+                    else
+                        $scope.$settings.formData.holidayDates.push(holidayDate);
+                };
+
+
+                $scope.openWarning = function (event) {
+                    $fwModalService.getModal('@Url.Action("GetPartialResource", "Resource", new { partialName="Holiday_Configure_Warning" })', {},
+                        function ($scope, $mdDialog) {
+                            $scope.close = function () {
+                                $mdDialog.hide({ behavior: true });
+                            };
+                        });
+                };
+
+                // โหลดข้อมูลปฏิทิน ตามปีปัจจุบัน
+                $timeout(function () {
+                    $scope.submitSearch();
+                }, 300);
+            });
+    </script>
+}

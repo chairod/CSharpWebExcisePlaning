@@ -1,0 +1,249 @@
+﻿<md-dialog flex="99" flex-gt-sm="95">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์ม{{$settings.expensesName}}</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <fw-execute-button text="เพิ่มรายการ" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round"
+                               ng-click="addItem($event)" ng-disabled="$settings.isLoading"></fw-execute-button>
+            <span class="text-danger ml-2 float-md-right f-w-900">จำนวน {{$settings.formData.rows.length|number:0}} รายการ</span>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <!--<tr>
+                        <th rowspan="2" style="width:75px;min-width:75px;max-width:75px;" class="text-center align-middle">ลำดับ</th>
+                        <th rowspan="2" style="width:180px;min-width:180px;max-width:180px;" class="text-left align-middle">ระดับ</th>
+                        <th rowspan="2" style="width:120px;min-width:120px;max-width:120px;" class="text-center align-middle">ครั้ง</th>
+                        <th colspan="4" class="text-center">ค่าเบี้ยเลี้ยง</th>
+                        <th colspan="4" class="text-center">ค่าเช่าที่พัก</th>
+                        <th rowspan="2" style="width:140px;min-width:140px;max-width:140px;" class="text-right align-middle word-wrap">ค่าพาหนะและค่าน้ำมัน</th>
+                        <th rowspan="2" style="width:170px;min-width:170px;max-width:170px;" class="text-right align-middle word-wrap">รวมทั้งสิ้น (บาท)</th>
+                        <th rowspan="2" style="width:60px;min-width:60px;max-width:60px;"></th>
+                    </tr>
+                    <tr>-->
+                    @*ค่าเบี้ยเลี้ยง*@
+                    <!--<th style="width:130px;min-width:130px;max-width:130px;" class="text-center">คน</th>
+                    <th style="width:130px;min-width:130px;max-width:130px;" class="text-center">วัน</th>
+                    <th style="width:130px;min-width:130px;max-width:130px;" class="text-center word-wrap">อัตรา (บาท)</th>
+                    <th style="width:150px;min-width:150px;max-width:150px;" class="text-center">รวม (บาท)</th>-->
+                    @*ค่าเช่าที่พัก*@
+                    <!--<th style="width:130px;min-width:130px;max-width:130px;" class="text-center">คน</th>
+                        <th style="width:130px;min-width:130px;max-width:130px;" class="text-center">คืน</th>
+                        <th style="width:130px;min-width:130px;max-width:130px;" class="text-center word-wrap">อัตรา (บาท)</th>
+                        <th style="width:150px;min-width:150px;max-width:150px;" class="text-center">รวม (บาท)</th>
+                    </tr>-->
+
+                    <tr ng-if="$settings.formData.rows.length==0&&!$settings.isLoading">
+                        <th colspan="3" class="text-center text-danger animated fadeIn">--- โปรดกดที่ปุ่ม "เพิ่มรายการ" ---</th>
+                    </tr>
+
+                    <tr ng-repeat-start="row in $settings.formData.rows">
+                        <td rowspan="{{row.Items.length+1}}" style="width:75px;min-width:75px;max-width:75px;" class="text-center f-w-900 f-16 bg-primary">{{$index + 1}}</td>
+                        <td class="text-left">
+                            <div class="input-group">
+                                <input type="text" class="form-control" style="max-width:480px;" ng-model="row.ItemText" ng-disabled="$settings.isLoading" placeholder="คำอธิบายรายการ เช่น เดินทางไปประชุม เป็นต้น" />
+                                <div class="input-group-append">
+                                    <fw-execute-button text="เพิ่มรายละเอียด" css-class="btn btn-primary btn-sm"
+                                                       css-icon-class="ion-plus-round"
+                                                       ng-click="addDetail(row)"></fw-execute-button>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center bg-light" style="width:60px;min-width:60px;max-width:60px;">
+                            <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.rows.splice($index, 1)">ยกเลิก</a>
+                        </td>
+                    </tr>
+
+                    @*ส่วนรายละเอียด*@
+                    <tr>
+                        <td colspan="3" class="m-0 p-0">
+                            <table class="table m-0">
+                                <tr ng-repeat-start="item in row.Items" ng-if="false"></tr>
+
+                                <tr class="bg-secondary text-white">
+                                    <th rowspan="2" style="width:250px;min-width:250px;max-width:250px;" class="text-left align-middle">ระดับ</th>
+                                    <th rowspan="2" style="width:120px;min-width:120px;max-width:120px;" class="text-center align-middle">ครั้ง</th>
+                                    <th colspan="4" class="text-center">ค่าเบี้ยเลี้ยง</th>
+                                    <th rowspan="2" style="width:170px;min-width:170px;max-width:170px;" class="text-right align-middle word-wrap">ค่าพาหนะและค่าน้ำมัน</th>
+                                    <th rowspan="2" style="width:145px;min-width:145px;max-width:145px;" class="text-right align-middle word-wrap">รวมทั้งสิ้น (บาท)</th>
+                                    <th rowspan="2" style="width:60px;min-width:60px;max-width:60px;"></th>
+                                </tr>
+                                <tr class="bg-secondary text-white">
+                                    <th style="width:130px;min-width:130px;max-width:130px;" class="text-center">คน</th>
+                                    <th style="width:130px;min-width:130px;max-width:130px;" class="text-center">วัน</th>
+                                    <th style="width:130px;min-width:130px;max-width:130px;" class="text-center word-wrap">อัตรา (บาท)</th>
+                                    <th style="width:150px;min-width:150px;max-width:150px;" class="text-center">รวม (บาท)</th>
+                                </tr>
+                                <tr>
+                                    <td rowspan="4" style="width:250px;min-width:250px;max-width:250px;" class="text-left">
+                                        <select class="form-control" ng-model="item.LevelId" ng-disabled="$settings.isLoading" fw-select2
+                                                ng-change="getCompensationRate(item)">
+                                            <option value="empty">--- ระดับ ---</option>
+                                            <option ng-repeat="item in $settings.personnelLevels" value="{{item.LEVEL_ID}}">{{item.LEVEL_NAME}}</option>
+                                        </select>
+                                    </td>
+                                    <td rowspan="4" style="width:120px;min-width:120px;max-width:120px;" class="text-center">
+                                        <fw-input-number-mask ng-model="item.TimeAmounts" css-class="text-center"
+                                                              ng-change="calCompensationPrice(item)"
+                                                              ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวนครั้ง"></fw-input-number-mask>
+                                    </td>
+
+                                    @*ค่าเบี้ยเลี้ยง*@
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-center">
+                                        <fw-input-number-mask ng-model="item.AllowancePersonAmounts" css-class="text-center"
+                                                              ng-change="calCompensationPrice(item)"
+                                                              ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="ระบุจำนวนคน"></fw-input-number-mask>
+                                    </td>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-center">
+                                        <fw-input-number-mask ng-model="item.AllowanceAmountDays" css-class="text-center"
+                                                              ng-change="calCompensationPrice(item)"
+                                                              ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="ระบุจำนวนวัน"></fw-input-number-mask>
+                                    </td>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.AllowanceCompensationRatePrice|displayDecimal:2}}</td>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.AllowanceTotalCompensationPrice|displayDecimal:2}}</td>
+                                    <td rowspan="4" style="width:170px;min-width:170px;max-width:170px;" class="text-center">
+                                        <fw-input-number-mask ng-model="item.VehicleAndOilPrice" css-class="text-center"
+                                                              ng-change="calCompensationPrice(item)"
+                                                              ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999.99" placeholder="ระบุจำนวนเงิน"></fw-input-number-mask>
+                                    </td>
+                                    <td rowspan="4" style="width:145px;min-width:145px;max-width:145px;" class="text-right bg-light">{{item.NetExpensesPrice|displayDecimal:2}}</td>
+                                    <td rowspan="4" class="text-center bg-light" style="width:60px;min-width:60px;max-width:60px;">
+                                        <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="row.Items.splice($index, 1)">ยกเลิก</a>
+                                    </td>
+                                </tr>
+
+                                @*ค่าเช่าที่พัก*@
+                                <tr class="bg-secondary text-white">
+                                    <th colspan="4" class="text-center">ค่าเช่าที่พัก</th>
+                                </tr>
+                                <tr>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-center">
+                                        <fw-input-number-mask ng-model="item.RentRoomPersonAmounts" css-class="text-center"
+                                                              ng-change="calCompensationPrice(item)"
+                                                              ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="ระบุจำนวนคน"></fw-input-number-mask>
+                                    </td>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-center">
+                                        <fw-input-number-mask ng-model="item.RentRoomAmountDays" css-class="text-center"
+                                                              ng-change="calCompensationPrice(item)"
+                                                              ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="ระบุจำนวนวัน"></fw-input-number-mask>
+                                    </td>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.RentRoomCompensationRatePrice|displayDecimal:2}}</td>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.RentRoomTotalCompensationPrice|displayDecimal:2}}</td>
+                                </tr>
+                                <tr ng-repeat-end></tr>
+                            </table>
+                        </td>
+                    </tr>
+
+
+
+                    @*<tr ng-repeat="item in row.Items">
+                            <td style="width:180px;min-width:180px;max-width:180px;" class="text-left">
+                                <select class="form-control" ng-model="item.LevelId" ng-disabled="$settings.isLoading" fw-select2
+                                        ng-change="getCompensationRate(item)">
+                                    <option value="empty">--- ระดับ ---</option>
+                                    <option ng-repeat="item in $settings.personnelLevels" value="{{item.LEVEL_ID}}">{{item.LEVEL_NAME}}</option>
+                                </select>
+                            </td>
+                            <td style="width:120px;min-width:120px;max-width:120px;" class="text-center">
+                                <fw-input-number-mask ng-model="item.TimeAmounts" css-class="text-center"
+                                                      ng-change="calCompensationPrice(item)"
+                                                      ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวนครั้ง"></fw-input-number-mask>
+                            </td>
+
+                            ค่าเบี้ยเลี้ยง
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-center">
+                                <fw-input-number-mask ng-model="item.AllowancePersonAmounts" css-class="text-center"
+                                                      ng-change="calCompensationPrice(item)"
+                                                      ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="ระบุจำนวนคน"></fw-input-number-mask>
+                            </td>
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-center">
+                                <fw-input-number-mask ng-model="item.AllowanceAmountDays" css-class="text-center"
+                                                      ng-change="calCompensationPrice(item)"
+                                                      ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="ระบุจำนวนวัน"></fw-input-number-mask>
+                            </td>
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.AllowanceCompensationRatePrice|number:2}}</td>
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.AllowanceTotalCompensationPrice|number:2}}</td>
+
+                            ค่าเช่าที่พัก
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-center">
+                                <fw-input-number-mask ng-model="item.RentRoomPersonAmounts" css-class="text-center"
+                                                      ng-change="calCompensationPrice(item)"
+                                                      ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="ระบุจำนวนคน"></fw-input-number-mask>
+                            </td>
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-center">
+                                <fw-input-number-mask ng-model="item.RentRoomAmountDays" css-class="text-center"
+                                                      ng-change="calCompensationPrice(item)"
+                                                      ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="ระบุจำนวนวัน"></fw-input-number-mask>
+                            </td>
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.RentRoomCompensationRatePrice|number:2}}</td>
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.RentRoomTotalCompensationPrice|number:2}}</td>
+
+
+                            <td style="width:140px;min-width:140px;max-width:140px;" class="text-center">
+                                <fw-input-number-mask ng-model="item.VehicleAndOilPrice" css-class="text-center"
+                                                      ng-change="calCompensationPrice(item)"
+                                                      ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999.99" placeholder="ระบุจำนวนเงิน"></fw-input-number-mask>
+                            </td>
+                            <td style="width:170px;min-width:170px;max-width:170px;" class="text-right bg-light align-middle">{{item.NetExpensesPrice|number:2}}</td>
+                            <td class="text-center bg-light" style="width:60px;min-width:60px;max-width:60px;">
+                                <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="row.Items.splice($index, 1)">ยกเลิก</a>
+                            </td>
+                        </tr>*@
+
+                    @*รวมทุกรายการ*@
+                    <!--<tr ng-if="row.Items.length > 0" class="bg-light">
+                        <th colspan="2" class="text-right animated fadeIn">รวม</th>
+                        <th class="text-center animated fadeIn">{{row.Items|fwSimpleSummary:['TimeAmounts']:0}}</th>
+                        <th class="text-center animated fadeIn">{{row.Items|fwSimpleSummary:['AllowancePersonAmounts']:0}}</th>
+                        <th class="text-center animated fadeIn">{{row.Items|fwSimpleSummary:['AllowanceAmountDays']:0}}</th>
+                        <th>&nbsp;</th>
+                        <th class="text-right animated fadeIn">{{row.Items|fwSimpleSummary:['AllowanceTotalCompensationPrice']:2}}</th>
+                        <th class="text-center animated fadeIn">{{row.Items|fwSimpleSummary:['RentRoomPersonAmounts']:0}}</th>
+                        <th class="text-center animated fadeIn">{{row.Items|fwSimpleSummary:['RentRoomAmountDays']:0}}</th>
+                        <th>&nbsp;</th>
+                        <th class="text-right animated fadeIn">{{row.Items|fwSimpleSummary:['RentRoomTotalCompensationPrice']:2}}</th>
+                        <th class="text-right animated fadeIn">{{row.Items|fwSimpleSummary:['VehicleAndOilPrice']:2}}</th>
+                        <th class="text-right animated fadeIn">{{row.Items|fwSimpleSummary:['NetExpensesPrice']:2}}</th>
+                        <th>&nbsp;</th>
+                    </tr>-->
+                    <tr ng-repeat-end></tr>
+
+
+                    @*รวมทุกรายการ*@
+                    @*<tr ng-if="$settings.formData.rows.length > 0" class="bg-primary">
+                        <th colspan="2" class="text-right animated fadeIn">รวมทั้งสิ้น</th>
+                        <th class="text-center animated fadeIn">{{$formView.timeAmounts|number:0}}</th>
+                        <th class="text-center animated fadeIn">{{$formView.allowancePersonAmounts|number:0}}</th>
+                        <th class="text-center animated fadeIn">{{$formView.allowanceAmountDays|number:0}}</th>
+                        <th>&nbsp;</th>
+                        <th class="text-right animated fadeIn">{{$formView.allowanceTotalCompensationPrice|number:2}}</th>
+                        <th class="text-center animated fadeIn">{{$formView.rentRoomPersonAmounts|number:0}}</th>
+                        <th class="text-center animated fadeIn">{{$formView.rentRoomAmountDays|number:0}}</th>
+                        <th>&nbsp;</th>
+                        <th class="text-right animated fadeIn">{{$formView.rentRoomTotalCompensationPrice|number:2}}</th>
+                        <th class="text-right animated fadeIn">{{$formView.vehicleAndOilPrice|number:2}}</th>
+                        <th class="text-right animated fadeIn">{{$formView.netExpensesPrice|number:2}}</th>
+                        <th>&nbsp;</th>
+                    </tr>*@
+                </table>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div ng-if="$settings.isLoading">
+            <span class="text-danger f-w-900 animated fadeIn">กำลังจัดเตรียมแบบฟอร์ม ...</span>
+        </div>
+        <span flex></span>
+        <fw-execute-button text="ตกลง" css-class="btn btn-primary btn-sm mr-md-1 mb-1 mb-md-0"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-ios-checkmark"
+                           ng-click="ok()"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

@@ -1,0 +1,328 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section ng-controller="AppController">
+    <div class="container-fluid shadow-sm m-0 mb-2 rounded-bottom">
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>พื้นที่รับผิดชอบ</label>
+                <select class="form-control" ng-model="$settings.formSearch.areaId"
+                        ng-change="areaChanged()"
+                        ng-disabled="$settings.isLoading" fw-select2>
+                    <option value="empty">--- พื้นที่รับผิดชอบ ---</option>
+                    @foreach (var AreaName in ViewBag.AreaName)
+                    {
+                        <option value="@AreaName.AREA_ID">@AreaName.AREA_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>หน่วยงาน<span class="ml-1 rotate-refresh ti-reload" ng-if="$settings.isLoadingDepartment"></span></label>
+                <select class="form-control" ng-model="$settings.formSearch.depId"
+                        ng-change="submitSearch()"
+                        ng-disabled="$settings.isLoading||$settings.departments.length==0" fw-select2>
+                    <option value="empty">--- หน่วยงาน ---</option>
+                    <option ng-repeat="item in $settings.departments" value="{{item.DEP_ID}}">{{item.DEP_NAME}}</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ตำแหน่งงาน</label>
+                <select class="form-control" ng-model="$settings.formSearch.positionId"
+                        ng-change="submitSearch()"
+                        ng-disabled="$settings.isLoading" fw-select2>
+                    <option value="empty">--- ตำแหน่งงาน ---</option>
+                    @foreach (var posItem in ViewBag.Positions)
+                    {
+                        <option value="@posItem.POSITION_ID">@posItem.POSITION_NAME</option>
+                    }
+                </select>
+            </div>
+
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>ประเภทบุคลากร</label>
+                <select class="form-control" ng-model="$settings.formSearch.personTypeId"
+                        ng-change="submitSearch()"
+                        ng-disabled="$settings.isLoading" fw-select2>
+                    <option value="empty">--- ประเภทบุคลากร ---</option>
+                    @foreach (var personTypeItem in ViewBag.PersonnelTypes)
+                    {
+                        <option value="@personTypeItem.PERSON_TYPE_ID">@personTypeItem.PERSON_TYPE_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>รหัสพนักงาน</label>
+                <input type="text" class="form-control" ng-model="$settings.formSearch.personCode"
+                       ng-change="personCodeChanged()" />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ชื่อ - นามสกุลพนักงาน</label>
+                <input type="text" class="form-control" ng-model="$settings.formSearch.personName"
+                       ng-change="personNameChanged()" />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <fw-execute-button text="สร้างใหม่" css-class="btn btn-primary btn-sm"
+                                   css-icon-class="ion-plus"
+                                   ng-click="createNew($event)"
+                                   ng-disabled="$settings.isLoading"></fw-execute-button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-block borderless-card shadow-sm">
+        <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                              route-url="@Url.Action("Retrieve", "PersonnelInformation")"
+                              disabled="$settings.isLoading"
+                              row-click-callback="rowClick($event, $row, $columnConfig)"></fw-simple-data-table>
+    </div>
+</section>
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/select2")
+<script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $customHttp, $timeout, $q, $fwModalService) {
+            $scope.$settings = {
+                isLoading: false, isLoadingDepartment: false,
+                departments: [],
+                formSearch: {
+                    areaId: 'empty', depId: 'empty', positionId: 'empty',
+                    peronCode: '', personName: '', personTypeId: 'empty',
+                    periodId: 'empty'
+                },
+                tableConfigs: {
+                    columns: [
+                        { label: 'รหัสพนักงาน', className: 'text-center word-wrap', type: 'field', field: 'PERSON_CODE', style: 'min-width:100px;max-width:100px;width:100px;' },
+                        { label: 'ชื่อ - นามสกุล', className: 'text-left word-wrap bg-light f-w-900', type: 'html', params: 'BTN_VIEW', field: '<a href="javascript:void(0)"><span class="text-primary">{{row.FIRST_NAME}} {{row.LAST_NAME}}<sup class="ml-1 ti-new-window"></sup></span></a><div class="text-danger f-12 f-w-900">[เข้าสู่ระบบครั้งล่าสุด: {{row.LAST_LOGIN_DATETIME|sqlDate:\'dd/MM/yyyy HH:mm:ss\':null:true}}]</div>', style: 'min-width:180px;' },
+                        { label: 'เลขบัตรประชาชน', className: 'text-left word-wrap', type: 'field', field: 'CARD_NUMBER', style: 'min-width:160px;max-width:160px;width:160px;' },
+                        { label: 'หน่วยงาน', className: 'text-left word-wrap', type: 'field', field: 'DEP_NAME', style: 'min-width:170px;max-width:170px;width:170px;' },
+                        //{ label: 'ส่วน/ฝ่าย', className: 'text-left word-wrap', type: 'field', field: 'SUB_DEP_NAME', style: 'min-width:170px;max-width:170px;width:170px;' },
+                        { label: 'ตำแหน่งงาน', className: 'text-left word-wrap', type: 'field', field: 'POSITION_NAME', style: 'min-width:170px;max-width:170px;width:170px;' },
+                        { label: 'ประเภทบุคลากร', className: 'text-left word-wrap', type: 'field', field: 'PERSON_TYPE_NAME', style: 'min-width:150px;max-width:150px;width:150px;' },
+                        { label: 'พื้นที่รับผิดชอบ', className: 'text-left word-wrap', type: 'field', field: 'AREA_NAME', style: 'min-width:100px;max-width:100px;width:100px;' },
+                        //{ label: 'วันที่บรรจุ', className: 'text-left word-wrap', type: 'expression', field: '{{row.REGISTER_DATE|sqlDate:\'dd/MM/yyyy\'}}', style: 'min-width:115px;max-width:115px;width:115px;' },
+                        //{ label: '...', className: 'text-center word-wrap', type: 'html', params: 'BTN_VIEW', field: '<a href="javascript:void(0)" class="ti-new-window text-primary f-w-900 f-18"></a>', style: 'min-width:50px;max-width:50px;width:50px;' }
+                    ]
+                }
+            };
+
+
+            // เขตพื้นที่เปลี่ยนแปลง
+            var areaChangedId = null;
+            $scope.areaChanged = function () {
+                $timeout.cancel(areaChangedId);
+                areaChangedId = $timeout(function () {
+                    $scope.$settings.formSearch.depId = 'empty';
+                    $scope.$settings.departments = [];
+                    var areaId = ('' + $scope.$settings.formSearch.areaId).replace(/[^\d]/g, '');
+                    if (areaId != ''){
+                        $scope.$settings.isLoadingDepartment = true;
+                        $customHttp.formPost('@Url.Action("GetDepartmentBy", "Helper")', { areaId: areaId }).then(function (res) {
+                            $scope.$settings.departments = res.data || [];
+                            $scope.$settings.isLoadingDepartment = false;
+                        }, function () { $scope.$settings.isLoadingDepartment = false; });
+                    }
+
+                    $scope.submitSearch();
+                }, 300);
+            };
+            // Search
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    $scope.$broadcast('fwSimpleDataTable.paramsChanged', {
+                        depId: ($scope.$settings.formSearch.depId || '').replace('empty', ''),
+                        positionId: ($scope.$settings.formSearch.positionId || '').replace('empty', ''),
+                        personCode: $scope.$settings.formSearch.personCode,
+                        personName: $scope.$settings.formSearch.personName,
+                        personTypeId: ($scope.$settings.formSearch.personTypeId || '').replace('empty', ''),
+                        periodId: ($scope.$settings.formSearch.periodId || '').replace('empty', ''),
+                        areaId: ($scope.$settings.formSearch.areaId || '').replace('empty', '')
+                    });
+                }, 100);
+            };
+            // รหัสพนักงานเปลี่ยนแปลง
+            var personCodeChangedId = null;
+            $scope.personCodeChanged = function () {
+                $timeout.cancel(personCodeChangedId);
+                personCodeChangedId = $timeout(function () {
+                    $scope.submitSearch();
+                }, 300);
+            };
+            // รหัสพนักงานเปลี่ยนแปลง
+            var personNameChangedId = null;
+            $scope.personNameChanged = function () {
+                $timeout.cancel(personNameChangedId);
+                personNameChangedId = $timeout(function () {
+                    $scope.submitSearch();
+                }, 300);
+            };
+            // สร้างบุคลากรใหม่
+            $scope.createNew = function (event, row) {
+                $fwModalService.getModal('@Url.Action("GetModalForm", "PersonnelInformation")', { $row: row || {} },
+                    function ($scope, $mdDialog, $timeout, $row, $fwDialogService, $customHttp, $row) {
+                        $scope.$settings = {
+                            isLoading: false, isDepartmentLoading: false,
+                            formErrors: {},
+                            departments: [], subDepartments: [],
+                            formData: {}
+                        };
+
+                        $scope.init = function () {
+                            $scope.$settings.formData = {
+                                PersonId: $row.PERSON_ID || null,
+                                DepId: '' + ($row.DEP_ID || 'empty'),
+                                SubDepId: '' + ($row.SUB_DEP_ID || 'empty'),
+                                PositionId: '' + ($row.POSITION_ID || 'empty'),
+                                PersonTypeId: '' + ($row.PERSON_TYPE_ID || 'empty'),
+                                CardNumber: $row.CARD_NUMBER || null,
+                                EmailAddr: $row.EMAIL_ADDR || null,
+                                OldEmailAddr: $row.EMAIL_ADDR || null,
+                                PrefixName: $row.PREFIX_NAME || 'empty',
+                                FirstName: $row.FIRST_NAME || null,
+                                LastName: $row.LAST_NAME || null,
+                                PersonCode: $row.PERSON_CODE || null,
+                                SexType: $row.SEX_TYPE || 'M',
+                                AccountType: $row.ACC_TYPE || '0',
+                                AreaId: '' + ($row.AREA_ID || 'empty'),
+                                Address: $row.ADDRESS || null,
+                                Street: $row.STREET || null,
+                                Village: $row.VILLAGE || null,
+                                Distinct: $row.DISTRICT || null,
+                                Prefexture: $row.PREFEXTURE || null,
+                                ProvinceName: $row.PROVINCE_NAME || 'empty',
+                                PostCode: $row.POST_CODE || null,
+                                CancelFlag: '0' // 1 = ยกเลิกออกจาระบบ, 0 = ไม่ต้องทำอะไร
+                            };
+
+                            // โหลดหน่วยงานภายใต้เขตพื้นที่
+                            if ($scope.$settings.formData.AreaId != 'empty')
+                                $scope.areaChanged().then(function () {
+                                    $scope.$settings.formData.DepId = '' + ($row.DEP_ID || 'empty');
+                                    $scope.departmentChanged().then(function () {
+                                        $scope.$settings.formData.SubDepId = '' + ($row.SUB_DEP_ID || 'empty');
+                                    });
+                                });
+                        };
+                        // บันทึกการเปลี่ยนแปลง
+                        $scope.submitSave = function (event) {
+                            $scope.$settings.isLoading = true;
+
+                            var params = $.extend(true, {}, $scope.$settings.formData);
+                            params.DepId = ('' + params.DepId).replace(/[^\d]/g, '');
+                            params.SubDepId = ('' + params.SubDepId).replace(/[^\d]/g, '');
+                            params.PositionId = ('' + params.PositionId).replace(/[^\d]/g, '');
+                            params.PersonTypeId = ('' + params.PersonTypeId).replace(/[^\d]/g, '');
+                            params.AreaId = ('' + params.AreaId).replace(/[^\d]/g, '');
+                            params.ProvinceName = ('' + params.ProvinceName).replace('empty', '');
+                            params.PrefixName = ('' + params.PrefixName).replace('empty', '');
+                            $customHttp.formPost('@Url.Action("SubmitSave", "PersonnelInformation")', params).then(function (res) {
+                                $scope.$settings.formErrors = res.data.errors || {};
+                                if (null != res.data.errorText)
+                                    $fwDialogService.dangerDialog(event, res.data.errorText);
+                                else if (null == res.data.errors)
+                                    $fwDialogService.alertDialog(event, 'บันทึกเรียบร้อยแล้ว').then(function () {
+                                        $scope.close();
+                                    });
+                                $scope.$settings.isLoading = false;
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        };
+                        // ปิดหน้าต่าง
+                        $scope.close = function () {
+                            $mdDialog.hide({ behavior: true });
+                        };
+                        // รหัสพนักงานเปลี่ยนแปลง
+                        var personCodeWatchId = null;
+                        $scope.$watch('$settings.formData.PersonCode', function (newVal) {
+                            $timeout.cancel(personCodeWatchId);
+                            personCodeWatchId = $timeout(function () {
+                                var regex = /[^\d]/ig;
+                                if (regex.test(newVal))
+                                    $scope.$settings.formData.PersonCode = newVal.replace(regex, '');
+                            }, 100);
+                        });
+                        // พื้นที่รับผิดชอบเปลี่ยนแปลง
+                        var areaChangedId = null;
+                        $scope.areaChanged = function () {
+                            return $q(function (resolve) {
+                                $timeout.cancel(areaChangedId);
+                                areaChangedId = $timeout(function () {
+                                    $scope.$settings.departments = [];
+                                    $scope.$settings.subDepartments = [];
+                                    $scope.$settings.formData.DepId = 'empty';
+                                    $scope.$settings.formData.SubDepId = 'empty';
+                                    var areaId = ('' + $scope.$settings.formData.AreaId).replace(/[^\d]/g, '');
+                                    if (areaId == '') {
+                                        resove({});
+                                        return;
+                                    }
+                                    $scope.$settings.isDepartmentLoading = true;
+                                    $customHttp.formPost('@Url.Action("GetDepartmentBy", "Helper")', { areaId: areaId }).then(function (res) {
+                                        $scope.$settings.departments = res.data || [];
+                                        resolve({});
+                                        $scope.$settings.isDepartmentLoading = false;
+                                    }, function () {
+                                        resolve({});
+                                        $scope.$settings.isDepartmentLoading = false;
+                                    });
+                                }, 300);
+                            });
+                        };
+                        // หน่วยงานเปลี่ยนแปลง
+                        var departmentChangedId = null;
+                        $scope.departmentChanged = function () {
+                            return $q(function (resolve) {
+                                $timeout.cancel(departmentChangedId);
+                                departmentChangedId = $timeout(function () {
+                                    $scope.$settings.subDepartments = [];
+                                    $scope.$settings.formData.SubDepId = 'empty';
+                                    var depId = ('' + $scope.$settings.formData.DepId).replace(/[^\d]/g, '');
+                                    if (depId == '') {
+                                        resove({});
+                                        return;
+                                    }
+                                    $customHttp.formPost('@Url.Action("GetSubDepartmentBy", "Helper")', { depId: depId }).then(function (res) {
+                                        $scope.$settings.subDepartments = res.data || [];
+                                        resolve({});
+                                    }, function () {
+                                        resolve({});
+                                    });
+                                }, 300);
+                            });
+                        };
+                        // กำหนดค่าเริ่มต้น
+                        $timeout(function () {
+                            $('#personCode').focus();
+                            $scope.init();
+                        }, 100);
+                    }, event).then(function () {
+                        $scope.submitSearch();
+                    });
+            };
+            // row click
+            $scope.rowClick = function (event, row, columnConfig) {
+                if (columnConfig.params == 'BTN_VIEW') {
+                    $scope.createNew(event, row);
+                }
+
+                // fwSimpleDataTable บังคับให้ตอบกลับ
+                return $q(function (resolve) {
+                    resolve({ row: row });
+                });
+            };
+
+        });
+</script>
+}
+

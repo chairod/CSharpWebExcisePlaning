@@ -1,0 +1,668 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-1 pb-2">
+        <div class="form-row border-bottom">
+            <div class="form-group col-12 col-md-2 mb-1">
+                <label>ปี งปม. (พ.ศ.)</label>
+                <fw-input-mask model="$settings.formSearch.fiscalYear" mask="9999"
+                               change="fiscalYearChanged()" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+            </div>
+            <div class="form-group col-12 col-md-4 mb-1">
+                <label>เขตพื้นที่</label>
+                <input type="text" class="form-control" value="@ViewBag.AreaName" title="@ViewBag.AreaName" readonly />
+            </div>
+            <div class="form-group col-12 col-md-4 mb-1">
+                <label>หน่วยงาน</label>
+                <input type="text" class="form-control" value="@ViewBag.DepartmentName" title="@ViewBag.DepartmentName" readonly />
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered mb-0">
+                <tr class="bg-primary">
+                    <th rowspan="2" style="width:120px;min-width:120px;max-width:120px" class="text-right">ได้รับจัดสรร (บาท)</th>
+                    <th rowspan="2" style="width:120px;min-width:120px;max-width:120px" class="text-right">เบิกจ่าย (บาท)</th>
+                    <th rowspan="2" style="width:120px;min-width:120px;max-width:120px" class="text-right">คงเหลือ (บาท)</th>
+                    <th colspan="2" class="text-center">รายงานผลครั้งล่าสุด</th>
+                </tr>
+                <tr class="bg-primary">
+                    <th style="width:150px;min-width:150px;max-width:150px" class="text-left">ผู้รายงาน</th>
+                    <th style="width:130px;min-width:130px;max-width:130px" class="text-center">วันที่</th>
+                </tr>
+                <tr class="bg-light">
+                    <th class="text-right f-20 text-primary">{{$settings.formView.summaries.DEP_NET_BUDGET_AMOUNT|displayDecimal:2}}</th>
+                    <th class="text-right f-20 text-warning">{{$settings.formView.summaries.DEP_NET_USE_BUDGET_AMOUNT|displayDecimal:2}}</th>
+                    <th class="text-right f-20 text-success">{{$settings.formView.summaries.DEP_NET_REMAIN_BUDGET_AMOUNT|displayDecimal:2}}</th>
+                    <td class="text-left f-20">{{$settings.formView.summaries.LATEST_REPORT_NAME}}</td>
+                    <td class="text-center f-20">{{$settings.formView.summaries.LATEST_REPORT_DATETIME|sqlDate:'':null:true}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="card card-block borderless-card shadow-sm">
+        @*ส่วนตัวกรองเพื่อค้นหา*@
+        <div class="form-row">
+            <div class="form-group col-12 col-md-4">
+                <label>แผนงาน</label>
+                <select class="form-control" ng-model="$settings.formSearch.planId" ng-disabled="$settings.isLoading" fw-select2
+                        ng-change="submitSearch()">
+                    <option value="empty">--- แผนงาน ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.PlanShortFieldProperty item in ViewBag.Plans)
+                    {
+                        <option value="@item.PLAN_ID">@item.PLAN_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-4">
+                <label>ผลผลิต</label>
+                <select class="form-control" ng-model="$settings.formSearch.produceId" ng-disabled="$settings.isLoading" fw-select2
+                        ng-change="submitSearch()">
+                    <option value="empty">--- ผลผลิต ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.ProduceShortFieldProperty item in ViewBag.Produces)
+                    {
+                        <option value="@item.PRODUCE_ID">@item.PRODUCE_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-4">
+                <label>กิจกรรม</label>
+                <select class="form-control" ng-model="$settings.formSearch.produceId" ng-disabled="$settings.isLoading" fw-select2
+                        ng-change="submitSearch()">
+                    <option value="empty">--- กิจกรรม ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.ActivityShortFieldProperty item in ViewBag.Activities)
+                    {
+                        <option value="@item.ACTIVITY_ID">@item.ACTIVITY_NAME</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-4">
+                <label>งบรายจ่าย</label>
+                <select class="form-control" ng-model="$settings.formSearch.budgetTypeId" ng-disabled="$settings.isLoading" fw-select2
+                        ng-change="budgetTypeChanged()">
+                    <option value="empty">--- งบรายจ่าย ---</option>
+                    @foreach (var item in ViewBag.BudgetTypes)
+                    {
+                        <option value="@item.BUDGET_TYPE_ID">@item.BUDGET_TYPE_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-4">
+                <label>หมวดค่าใช้จ่าย</label>
+                <select class="form-control" ng-model="$settings.formSearch.expensesGroupId"
+                        ng-disabled="$settings.isLoading||$settings.expensesGroups.length==0" fw-select2
+                        ng-change="expensesGroupChanged()">
+                    <option value="empty">--- หมวดค่าใช้จ่าย ---</option>
+                    <option ng-repeat="item in $settings.expensesGroups" value="{{item.EXPENSES_GROUP_ID}}">{{item.EXPENSES_GROUP_NAME}}</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-4">
+                <label>รายการค่าใช้จ่าย</label>
+                <select class="form-control" ng-model="$settings.formSearch.expensesId"
+                        ng-disabled="$settings.isLoading||$settings.expenses.length==0" fw-select2
+                        ng-change="submitSearch()">
+                    <option value="empty">--- รายการค่าใช้จ่าย ---</option>
+                    <option ng-repeat="item in $settings.expenses" value="{{item.EXPENSES_ID}}">{{item.EXPENSES_NAME}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-4">
+                <md-checkbox ng-model="$settings.formSearch.budgetType" class="mb-0"
+                             ng-click="submitSearch()"
+                             ng-true-value="1" ng-false-value="2">เงินงบประมาณ</md-checkbox>
+                <md-checkbox ng-model="$settings.formSearch.budgetType" class="mb-0"
+                             ng-click="submitSearch()"
+                             ng-true-value="2" ng-false-value="1">เงินนอกงบประมาณ</md-checkbox>
+                <div class="text-danger f-w-900 f-12">*** การบันทึกผลการใช้จ่ายงบประมาณ จำเป็นต้องเลือก แหล่งเงิน (เงินงบประมาณ, เงินนอกงบประมาณ) ก่อน เพื่อระบุการใช้จ่ายเงินจากแหล่งเงินใด ***</div>
+            </div>
+            <div class="form-group col-12 col-md-8">
+                <fw-execute-button text="ยกเลิก" css-class="btn btn-danger btn-sm float-md-right"
+                                   css-icon-class="ion-close"
+                                   ng-disabled="$settings.isLoading||$settings.formView.rows.length==0"
+                                   ng-click="submitCancel()"></fw-execute-button>
+                <fw-execute-button text="บันทึกผลการใช้จ่าย" css-class="btn btn-primary btn-sm float-md-right mr-1"
+                                   css-icon-class="ti-save"
+                                   ng-disabled="$settings.isLoading||$settings.formView.rows.length==0"
+                                   on-loading="$settings.isSaving"
+                                   ng-click="submitSave($event)"></fw-execute-button>
+            </div>
+        </div>
+
+
+        @*ส่วนบันทึกผลการใช้จ่ายงบประมาณ*@
+        <fw-validate-error-output error-message="$settings.formErrors.Expenses.ErrorMesssages"></fw-validate-error-output>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+
+                <tr ng-if="$settings.formView.rows.length==0 && !$settings.isLoading">
+                    <th colspan="12" class="text-center text-danger animated fadeIn">--- ไม่พบรายการค่าใช้จ่ายที่ได้รับจัดสรร ---</th>
+                </tr>
+
+                <tr ng-repeat-start="row in $settings.formView.rows"></tr>
+                @*ข้อมูลหมวดของรายการค่าใช้จ่าย*@
+                <tr class="bg-light">
+                    <th colspan="12">
+                        <div class="row mb-2 mb-md-0">
+                            <div class="col-12 col-md-4"><input type="text" class="form-control" value="{{row.GroupBy.PLAN_NAME==null?'แผนงาน: -':row.GroupBy.PLAN_NAME}}" title="{{row.GroupBy.PLAN_NAME}}" readonly /></div>
+                            <div class="col-12 col-md-4"><input type="text" class="form-control" value="{{row.GroupBy.BUDGET_TYPE_NAME}}" title="{{row.GroupBy.BUDGET_TYPE_NAME}}" readonly /></div>
+                            <div class="col-12 col-md-4">
+                                @*เงินงบประมาณ*@
+                                <div ng-if="$settings.formSearch.budgetType==1">
+                                    <input type="text" class="form-control text-primary f-w-900" value="{{'จัดสรร: '+ (row.GroupSummary.TOTAL_BUDGET_AMOUNT|displayDecimal:2) + ' บาท'}}" readonly />
+                                </div>
+                                @*เงินนอกงบประมาณ*@
+                                <div ng-if="$settings.formSearch.budgetType==2">
+                                    <input type="text" class="form-control text-primary f-w-900" value="{{'จัดสรร: '+ (row.GroupSummary.TOTAL_OFF_BUDGET_AMOUNT|displayDecimal:2) + ' บาท'}}" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-2 mb-md-0">
+                            <div class="col-12 col-md-4"><input type="text" class="form-control" value="{{row.GroupBy.PRODUCE_NAME==null?'ผลผลิต: -':row.GroupBy.PRODUCE_NAME}}" title="{{row.GroupBy.PRODUCE_NAME}}" readonly /></div>
+                            <div class="col-12 col-md-4"><input type="text" class="form-control" value="{{row.GroupBy.EXPENSES_GROUP_NAME}}" title="{{row.GroupBy.EXPENSES_GROUP_NAME}}" readonly /></div>
+                            <div class="col-12 col-md-4">
+                                @*เงินงบประมาณ*@
+                                <div ng-if="$settings.formSearch.budgetType==1">
+                                    <input type="text" class="form-control text-warning f-w-900" value="{{'เบิกจ่าย: '+ (row.GroupSummary.TOTAL_USE_BUDGET_AMOUNT|displayDecimal:2) + ' บาท'}}" readonly />
+                                </div>
+                                @*เงินนอกงบประมาณ*@
+                                <div ng-if="$settings.formSearch.budgetType==2">
+                                    <input type="text" class="form-control text-warning f-w-900" value="{{'เบิกจ่าย: '+ (row.GroupSummary.TOTAL_USE_OFF_BUDGET_AMOUNT|displayDecimal:2) + ' บาท'}}" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-2 mb-md-0">
+                            <div class="col-12 col-md-4"><input type="text" class="form-control" value="{{row.GroupBy.ACTIVITY_NAME==null?'กิจกรรม: -':row.GroupBy.ACTIVITY_NAME}}" title="{{row.GroupBy.ACTIVITY_NAME}}" readonly /></div>
+                            <div class="col-12 col-md-4">&nbsp;</div>
+                            <div class="col-12 col-md-4">
+                                @*เงินงบประมาณ*@
+                                <div ng-if="$settings.formSearch.budgetType==1">
+                                    <input type="text" class="form-control text-success f-w-900" value="{{'คงเหลือ: '+ (row.GroupSummary.TOTAL_REMAIN_BUDGET_AMOUNT|displayDecimal:2) + ' บาท'}}" readonly />
+                                </div>
+                                @*เงินนอกงบประมาณ*@
+                                <div ng-if="$settings.formSearch.budgetType==2">
+                                    <input type="text" class="form-control text-success f-w-900" value="{{'คงเหลือ: '+ (row.GroupSummary.TOTAL_REMAIN_OFF_BUDGET_AMOUNT|displayDecimal:2) + ' บาท'}}" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+
+                @*รายการค่าใช้จ่ายที่ต้องรายงานผล*@
+                <tr ng-repeat-start="expensesItem in row.Expenses" ng-init="$errorKey=((expensesItem.PLAN_ID||'')+'_'+(expensesItem.PRODUCE_ID||'')+'_'+(expensesItem.ACTIVITY_ID||'')+'_'+expensesItem.BUDGET_TYPE_ID+'_'+expensesItem.EXPENSES_GROUP_ID+'_'+expensesItem.EXPENSES_ID+'_'+(expensesItem.PROJECT_ID||''))"></tr>
+                <tr>
+                    <th colspan="7" class="text-left">
+                        <input type="text" class="form-control f-w-900 text-primary" ng-if="expensesItem.PROJECT_NAME==null" value="{{expensesItem.EXPENSES_NAME}}" title="{{expensesItem.EXPENSES_NAME}}" readonly style="font-size:16px!important;" />
+                        <input type="text" class="form-control f-w-900 text-primary" ng-if="expensesItem.PROJECT_NAME!=null" value="{{expensesItem.EXPENSES_NAME + ' [' + expensesItem.PROJECT_NAME + ']'}}" title="{{expensesItem.EXPENSES_NAME + ' (' + expensesItem.PRODUCE_NAME + ')'}}" readonly style="font-size:16px!important;" />
+                        <div class="text-danger f-w-900 f-12">*** กำลังบันทึกผลการใช้จ่ายจาก<span class="ml-1">[{{$settings.formSearch.budgetType==1?'เงินงบประมาณ':'เงินนอกงบประมาณ'}}]</span></div>
+                    </th>
+                    <th colspan="5" class="text-left bg-primary">
+                        @*เงินงบประมาณ*@
+                        <div ng-if="$settings.formSearch.budgetType==1">
+                            <div class="border-bottom mb-1 pb-2 animated fadeIn">
+                                จัดสรร: {{expensesItem.ALLOCATE_BUDGET_AMOUNT|number:2}} บาท
+                                <span ng-if="expensesItem.ALLOCATE_EXPENSES_GROUP_ID!=null" class="f-w-900 ml-1"> & [จัดสรรเป็นก้อนตามหมวดค่าใช้จ่าย]</span>
+                            </div>
+                            <div class="animated fadeIn">เบิกจ่าย: {{expensesItem.USE_BUDGET_AMOUNT|number:2}} บาท</div>
+                        </div>
+                        @*เงินนอกงบประมาณ*@
+                        <div ng-if="$settings.formSearch.budgetType==2">
+                            <div class="border-bottom mb-1 pb-2 animated fadeIn">
+                                จัดสรร: {{expensesItem.ALLOCATE_OFF_BUDGET_AMOUNT|number:2}} บาท
+                                <span ng-if="expensesItem.ALLOCATE_EXPENSES_GROUP_ID!=null" class="f-w-900 ml-1"> & [จัดสรรเป็นก้อนตามหมวดค่าใช้จ่าย]</span>
+                            </div>
+                            <div class="animated fadeIn">เบิกจ่าย: {{expensesItem.USE_OFF_BUDGET_AMOUNT|number:2}} บาท</div>
+                        </div>
+                    </th>
+                </tr>
+                <tr class="bg-secondary text-white">
+                    <th rowspan="2" style="width:50px;max-width:50px;min-width:50px">&nbsp;</th>
+                    <th colspan="2" class="text-center">ไตรมาส 1</th>
+                    <th rowspan="2" style="width:50px;max-width:50px;min-width:50px">&nbsp;</th>
+                    <th colspan="2" class="text-center">ไตรมาส 2</th>
+                    <th rowspan="2" style="width:50px;max-width:50px;min-width:50px">&nbsp;</th>
+                    <th colspan="2" class="text-center">ไตรมาส 3</th>
+                    <th rowspan="2" style="width:50px;max-width:50px;min-width:50px">&nbsp;</th>
+                    <th colspan="2" class="text-center">ไตรมาส 4</th>
+                </tr>
+                <tr class="bg-secondary text-white">
+                    <th style="width:108px;max-width:108px;min-width:108px;" class="text-right">เบิกจ่ายสะสม</th>
+                    <th style="width:135px;max-width:135px;min-width:135px;" class="text-right">เบิกจ่าย</th>
+                    <th style="width:108px;max-width:108px;min-width:108px;" class="text-right">เบิกจ่ายสะสม</th>
+                    <th style="width:135px;max-width:135px;min-width:135px;" class="text-right">เบิกจ่าย</th>
+                    <th style="width:108px;max-width:108px;min-width:108px;" class="text-right">เบิกจ่ายสะสม</th>
+                    <th style="width:135px;max-width:135px;min-width:135px;" class="text-right">เบิกจ่าย</th>
+                    <th style="width:108px;max-width:108px;min-width:108px;" class="text-right">เบิกจ่ายสะสม</th>
+                    <th style="width:135px;max-width:135px;min-width:135px;" class="text-right">เบิกจ่าย</th>
+                </tr>
+                <tr>
+                    <th class="bg-light text-center" style="width:50px;max-width:50px;min-width:50px">ต.ค.</th>
+                    <td class="text-right align-middle">
+                        {{expensesItem.REPORT_OCT|displayDecimal:2}}
+                        <div ng-if="(expensesItem.REPORT_OCT||0)>0"><a href="javascript:void(0)" class="f-12 f-w-900 text-danger" ng-click="viewReportHistoryByMonth(row.GroupBy, expensesItem, 10)">[ประวัติ]</a></div>
+                    </td>
+                    <td class="text-right" style="width:auto;max-width:134px;">
+                        <fw-input-number-mask ng-model="expensesItem.NewReportOctAmounts" ng-change="setChange()" ng-disabled="$settings.isLoading||$settings.canReportBudgetMonthsNo.indexOf(10)==-1" min-value="0.00" max-value="9999999999.99" css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                        <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].NewReportOctAmounts.ErrorMessages"></fw-validate-error-output>
+                        <div class="border-top pt-1 mt-1" ng-if="$settings.canReportBudgetMonthsNo.indexOf(10)>-1">
+                            <input type="text" class="p-1 border w-100 d-block" ng-model="expensesItem.ReportCodeOct" ng-disabled="$settings.isLoading" placeholder="เลขที่ขอเบิก GFMIS" maxlength="10" />
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].ReportCodeOct.ErrorMessages"></fw-validate-error-output>
+                        </div>
+                    </td>
+
+                    <th class="bg-light text-center" style="width:50px;max-width:50px;min-width:50px">ม.ค.</th>
+                    <td class="text-right align-middle">
+                        {{expensesItem.REPORT_JAN|displayDecimal:2}}
+                        <div ng-if="(expensesItem.REPORT_JAN||0)>0"><a href="javascript:void(0)" class="f-12 f-w-900 text-danger" ng-click="viewReportHistoryByMonth(row.GroupBy, expensesItem, 1)">[ประวัติ]</a></div>
+                    </td>
+                    <td class="text-right" style="width:auto;max-width:134px;">
+                        <fw-input-number-mask ng-model="expensesItem.NewReportJanAmounts" ng-change="setChange()" ng-disabled="$settings.isLoading||$settings.canReportBudgetMonthsNo.indexOf(1)==-1" min-value="0.00" max-value="9999999999.99" css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                        <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].NewReportJanAmounts.ErrorMessages"></fw-validate-error-output>
+                        <div class="border-top pt-1 mt-1" ng-if="$settings.canReportBudgetMonthsNo.indexOf(1)>-1">
+                            <input type="text" class="p-1 border w-100 d-block" ng-model="expensesItem.ReportCodeJan" ng-disabled="$settings.isLoading" placeholder="เลขที่ขอเบิก GFMIS" maxlength="10" />
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].ReportCodeJan.ErrorMessages"></fw-validate-error-output>
+                        </div>
+                    </td>
+
+                    <th class="bg-light text-center" style="width:50px;max-width:50px;min-width:50px">เม.ย.</th>
+                    <td class="text-right align-middle">
+                        {{expensesItem.REPORT_APR|displayDecimal:2}}
+                        <div ng-if="(expensesItem.REPORT_APR||0)>0"><a href="javascript:void(0)" class="f-12 f-w-900 text-danger" ng-click="viewReportHistoryByMonth(row.GroupBy, expensesItem, 4)">[ประวัติ]</a></div>
+                    </td>
+                    <td class="text-right" style="width:auto;max-width:134px;">
+                        <fw-input-number-mask ng-model="expensesItem.NewReportAprAmounts" ng-change="setChange()" ng-disabled="$settings.isLoading||$settings.canReportBudgetMonthsNo.indexOf(4)==-1" min-value="0.00" max-value="9999999999.99" css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                        <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].NewReportAprAmounts.ErrorMessages"></fw-validate-error-output>
+                        <div class="border-top pt-1 mt-1" ng-if="$settings.canReportBudgetMonthsNo.indexOf(4)>-1">
+                            <input type="text" class="p-1 border w-100 d-block" ng-model="expensesItem.ReportCodeApr" ng-disabled="$settings.isLoading" placeholder="เลขที่ขอเบิก GFMIS" maxlength="10" />
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].ReportCodeApr.ErrorMessages"></fw-validate-error-output>
+                        </div>
+                    </td>
+
+                    <th class="bg-light text-center" style="width:50px;max-width:50px;min-width:50px">ก.ค.</th>
+                    <td class="text-right align-middle">
+                        {{expensesItem.REPORT_JUL|displayDecimal:2}}
+                        <div ng-if="(expensesItem.REPORT_JUL||0)>0"><a href="javascript:void(0)" class="f-12 f-w-900 text-danger" ng-click="viewReportHistoryByMonth(row.GroupBy, expensesItem, 7)">[ประวัติ]</a></div>
+                    </td>
+                    <td class="text-right" style="width:auto;max-width:134px;">
+                        <fw-input-number-mask ng-model="expensesItem.NewReportJulAmounts" ng-change="setChange()" ng-disabled="$settings.isLoading||$settings.canReportBudgetMonthsNo.indexOf(7)==-1" min-value="0.00" max-value="9999999999.99" css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                        <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].NewReportJulAmounts.ErrorMessages"></fw-validate-error-output>
+                        <div class="border-top pt-1 mt-1" ng-if="$settings.canReportBudgetMonthsNo.indexOf(7)>-1">
+                            <input type="text" class="p-1 border w-100 d-block" ng-model="expensesItem.ReportCodeJul" ng-disabled="$settings.isLoading" placeholder="เลขที่ขอเบิก GFMIS" maxlength="10" />
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].ReportCodeJul.ErrorMessages"></fw-validate-error-output>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="bg-light text-center" style="width:50px;max-width:50px;min-width:50px">พ.ย.</th>
+                    <td class="text-right align-middle">
+                        {{expensesItem.REPORT_NOV|displayDecimal:2}}
+                        <div ng-if="(expensesItem.REPORT_NOV||0)>0"><a href="javascript:void(0)" class="f-12 f-w-900 text-danger" ng-click="viewReportHistoryByMonth(row.GroupBy, expensesItem, 11)">[ประวัติ]</a></div>
+                    </td>
+                    <td class="text-right" style="width:auto;max-width:134px;">
+                        <fw-input-number-mask ng-model="expensesItem.NewReportNovAmounts" ng-change="setChange()" ng-disabled="$settings.isLoading||$settings.canReportBudgetMonthsNo.indexOf(11)==-1" min-value="0.00" max-value="9999999999.99" css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                        <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].NewReportNovAmounts.ErrorMessages"></fw-validate-error-output>
+                        <div class="border-top pt-1 mt-1" ng-if="$settings.canReportBudgetMonthsNo.indexOf(11)>-1">
+                            <input type="text" class="p-1 border w-100 d-block" ng-model="expensesItem.ReportCodeNov" ng-disabled="$settings.isLoading" placeholder="เลขที่ขอเบิก GFMIS" maxlength="10" />
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].ReportCodeNov.ErrorMessages"></fw-validate-error-output>
+                        </div>
+                    </td>
+
+
+                    <th class="bg-light text-center" style="width:50px;max-width:50px;min-width:50px">ก.พ.</th>
+                    <td class="text-right align-middle">
+                        {{expensesItem.REPORT_FEB|displayDecimal:2}}
+                        <div ng-if="(expensesItem.REPORT_FEB||0)>0"><a href="javascript:void(0)" class="f-12 f-w-900 text-danger" ng-click="viewReportHistoryByMonth(row.GroupBy, expensesItem, 2)">[ประวัติ]</a></div>
+                    </td>
+                    <td class="text-right" style="width:auto;max-width:134px;">
+                        <fw-input-number-mask ng-model="expensesItem.NewReportFebAmounts" ng-change="setChange()" ng-disabled="$settings.isLoading||$settings.canReportBudgetMonthsNo.indexOf(2)==-1" min-value="0.00" max-value="9999999999.99" css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                        <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].NewReportFebAmounts.ErrorMessages"></fw-validate-error-output>
+                        <div class="border-top pt-1 mt-1" ng-if="$settings.canReportBudgetMonthsNo.indexOf(2)>-1">
+                            <input type="text" class="p-1 border w-100 d-block" ng-model="expensesItem.ReportCodeFeb" ng-disabled="$settings.isLoading" placeholder="เลขที่ขอเบิก GFMIS" maxlength="10" />
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].ReportCodeFeb.ErrorMessages"></fw-validate-error-output>
+                        </div>
+                    </td>
+
+                    <th class="bg-light text-center" style="width:50px;max-width:50px;min-width:50px">พ.ค.</th>
+                    <td class="text-right align-middle">
+                        {{expensesItem.REPORT_MAY|displayDecimal:2}}
+                        <div ng-if="(expensesItem.REPORT_MAY||0)>0"><a href="javascript:void(0)" class="f-12 f-w-900 text-danger" ng-click="viewReportHistoryByMonth(row.GroupBy, expensesItem, 5)">[ประวัติ]</a></div>
+                    </td>
+                    <td class="text-right" style="width:auto;max-width:134px;">
+                        <fw-input-number-mask ng-model="expensesItem.NewReportMayAmounts" ng-change="setChange()" ng-disabled="$settings.isLoading||$settings.canReportBudgetMonthsNo.indexOf(5)==-1" min-value="0.00" max-value="9999999999.99" css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                        <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].NewReportMayAmounts.ErrorMessages"></fw-validate-error-output>
+                        <div class="border-top pt-1 mt-1" ng-if="$settings.canReportBudgetMonthsNo.indexOf(5)>-1">
+                            <input type="text" class="p-1 border w-100 d-block" ng-model="expensesItem.ReportCodeMay" ng-disabled="$settings.isLoading" placeholder="เลขที่ขอเบิก GFMIS" maxlength="10" />
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].ReportCodeMay.ErrorMessages"></fw-validate-error-output>
+                        </div>
+                    </td>
+
+                    <th class="bg-light text-center" style="width:50px;max-width:50px;min-width:50px">ส.ค.</th>
+                    <td class="text-right align-middle">
+                        {{expensesItem.REPORT_AUG|displayDecimal:2}}
+                        <div ng-if="(expensesItem.REPORT_AUG||0)>0"><a href="javascript:void(0)" class="f-12 f-w-900 text-danger" ng-click="viewReportHistoryByMonth(row.GroupBy, expensesItem, 8)">[ประวัติ]</a></div>
+                    </td>
+                    <td class="text-right" style="width:auto;max-width:134px;">
+                        <fw-input-number-mask ng-model="expensesItem.NewReportAugAmounts" ng-change="setChange()" ng-disabled="$settings.isLoading||$settings.canReportBudgetMonthsNo.indexOf(8)==-1" min-value="0.00" max-value="9999999999.99" css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                        <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].NewReportAugAmounts.ErrorMessages"></fw-validate-error-output>
+                        <div class="border-top pt-1 mt-1" ng-if="$settings.canReportBudgetMonthsNo.indexOf(8)>-1">
+                            <input type="text" class="p-1 border w-100 d-block" ng-model="expensesItem.ReportCodeAug" ng-disabled="$settings.isLoading" placeholder="เลขที่ขอเบิก GFMIS" maxlength="10" />
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].ReportCodeAug.ErrorMessages"></fw-validate-error-output>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="bg-light text-center" style="width:50px;max-width:50px;min-width:50px">ธ.ค.</th>
+                    <td class="text-right align-middle">
+                        {{expensesItem.REPORT_DEC|displayDecimal:2}}
+                        <div ng-if="(expensesItem.REPORT_DEC||0)>0"><a href="javascript:void(0)" class="f-12 f-w-900 text-danger" ng-click="viewReportHistoryByMonth(row.GroupBy, expensesItem, 12)">[ประวัติ]</a></div>
+                    </td>
+                    <td class="text-right" style="width:auto;max-width:134px;">
+                        <fw-input-number-mask ng-model="expensesItem.NewReportDecAmounts" ng-change="setChange()" ng-disabled="$settings.isLoading||$settings.canReportBudgetMonthsNo.indexOf(12)==-1" min-value="0.00" max-value="9999999999.99" css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                        <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].NewReportDecAmounts.ErrorMessages"></fw-validate-error-output>
+                        <div class="border-top pt-1 mt-1" ng-if="$settings.canReportBudgetMonthsNo.indexOf(12)>-1">
+                            <input type="text" class="p-1 border w-100 d-block" ng-model="expensesItem.ReportCodeDec" ng-disabled="$settings.isLoading" placeholder="เลขที่ขอเบิก GFMIS" maxlength="10" />
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].ReportCodeDec.ErrorMessages"></fw-validate-error-output>
+                        </div>
+                    </td>
+
+
+                    <th class="bg-light text-center" style="width:50px;max-width:50px;min-width:50px">มี.ค.</th>
+                    <td class="text-right align-middle">
+                        {{expensesItem.REPORT_MAR|displayDecimal:2}}
+                        <div ng-if="(expensesItem.REPORT_MAR||0)>0"><a href="javascript:void(0)" class="f-12 f-w-900 text-danger" ng-click="viewReportHistoryByMonth(row.GroupBy, expensesItem, 3)">[ประวัติ]</a></div>
+                    </td>
+                    <td class="text-right" style="width:auto;max-width:134px;">
+                        <fw-input-number-mask ng-model="expensesItem.NewReportMarAmounts" ng-change="setChange()" ng-disabled="$settings.isLoading||$settings.canReportBudgetMonthsNo.indexOf(3)==-1" min-value="0.00" max-value="9999999999.99" css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                        <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].NewReportMarAmounts.ErrorMessages"></fw-validate-error-output>
+                        <div class="border-top pt-1 mt-1" ng-if="$settings.canReportBudgetMonthsNo.indexOf(3)>-1">
+                            <input type="text" class="p-1 border w-100 d-block" ng-model="expensesItem.ReportCodeMar" ng-disabled="$settings.isLoading" placeholder="เลขที่ขอเบิก GFMIS" maxlength="10" />
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].ReportCodeMar.ErrorMessages"></fw-validate-error-output>
+                        </div>
+                    </td>
+
+
+                    <th class="bg-light text-center" style="width:50px;max-width:50px;min-width:50px">มิ.ย.</th>
+                    <td class="text-right align-middle">
+                        {{expensesItem.REPORT_JUN|displayDecimal:2}}
+                        <div ng-if="(expensesItem.REPORT_JUN||0)>0"><a href="javascript:void(0)" class="f-12 f-w-900 text-danger" ng-click="viewReportHistoryByMonth(row.GroupBy, expensesItem, 6)">[ประวัติ]</a></div>
+                    </td>
+                    <td class="text-right" style="width:auto;max-width:134px;">
+                        <fw-input-number-mask ng-model="expensesItem.NewReportJunAmounts" ng-change="setChange()" ng-disabled="$settings.isLoading||$settings.canReportBudgetMonthsNo.indexOf(6)==-1" min-value="0.00" max-value="9999999999.99" css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                        <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].NewReportJunAmounts.ErrorMessages"></fw-validate-error-output>
+                        <div class="border-top pt-1 mt-1" ng-if="$settings.canReportBudgetMonthsNo.indexOf(6)>-1">
+                            <input type="text" class="p-1 border w-100 d-block" ng-model="expensesItem.ReportCodeJun" ng-disabled="$settings.isLoading" placeholder="เลขที่ขอเบิก GFMIS" maxlength="10" />
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].ReportCodeJun.ErrorMessages"></fw-validate-error-output>
+                        </div>
+                    </td>
+
+
+                    <th class="bg-light text-center" style="width:50px;max-width:50px;min-width:50px">ก.ย.</th>
+                    <td class="text-right align-middle">
+                        {{expensesItem.REPORT_SEP|displayDecimal:2}}
+                        <div ng-if="(expensesItem.REPORT_SEP||0)>0"><a href="javascript:void(0)" class="f-12 f-w-900 text-danger" ng-click="viewReportHistoryByMonth(row.GroupBy, expensesItem, 9)">[ประวัติ]</a></div>
+                    </td>
+                    <td class="text-right" style="width:auto;max-width:134px;">
+                        <fw-input-number-mask ng-model="expensesItem.NewReportSepAmounts" ng-change="setChange()" ng-disabled="$settings.isLoading||$settings.canReportBudgetMonthsNo.indexOf(9)==-1" min-value="0.00" max-value="9999999999.99" css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                        <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].NewReportSepAmounts.ErrorMessages"></fw-validate-error-output>
+                        <div class="border-top pt-1 mt-1" ng-if="$settings.canReportBudgetMonthsNo.indexOf(9)>-1">
+                            <input type="text" class="p-1 border w-100 d-block" ng-model="expensesItem.ReportCodeSep" ng-disabled="$settings.isLoading" placeholder="เลขที่ขอเบิก GFMIS" maxlength="10" />
+                            <fw-validate-error-output error-messages="$settings.formErrors.Expenses[$errorKey].ReportCodeSep.ErrorMessages"></fw-validate-error-output>
+                        </div>
+                    </td>
+                </tr>
+
+                @*รวมแต่ละไตรมาส*@
+                <tr class="bg-secondary text-white">
+                    <td>&nbsp;</td>
+                    <th class="text-right">{{(+expensesItem.REPORT_OCT) + (+expensesItem.REPORT_NOV) + (+expensesItem.REPORT_DEC)|displayDecimal:2}}</th>
+                    <td>&nbsp;</td>
+                    @*<th class="text-right">{{row.Expenses|fwSimpleSummary:['NewReportOctAmounts', 'NewReportNovAmounts', 'NewReportDecAmounts']:2}}</th>*@
+                    <td>&nbsp;</td>
+                    <th class="text-right">{{(+expensesItem.REPORT_JAN) + (expensesItem.REPORT_FEB) + (expensesItem.REPORT_MAR)|displayDecimal:2}}</th>
+                    <td>&nbsp;</td>
+                    @*<th class="text-right">{{row.Expenses|fwSimpleSummary:['NewReportJanAmounts', 'NewReportFebAmounts', 'NewReportMarAmounts']:2}}</th>*@
+                    <td>&nbsp;</td>
+                    <th class="text-right">{{(+expensesItem.REPORT_APR) + (+expensesItem.REPORT_MAY) + (+expensesItem.REPORT_JUN)|displayDecimal:2}}</th>
+                    <td>&nbsp;</td>
+                    @*<th class="text-right">{{row.Expenses|fwSimpleSummary:['NewReportAprAmounts', 'NewReportMayAmounts', 'NewReportJunAmounts']:2}}</th>*@
+                    <td>&nbsp;</td>
+                    <th class="text-right">{{(+expensesItem.REPORT_JUL) + (+expensesItem.REPORT_AUG) + (+expensesItem.REPORT_SEP)|displayDecimal:2}}</th>
+                    <td>&nbsp;</td>
+                    @*<th class="text-right">{{row.Expenses|fwSimpleSummary:['NewReportJulAmounts', 'NewReportAugAmounts', 'NewReportSepAmounts']:2}}</th>*@
+                </tr>
+                <tr ng-repeat-end></tr>
+
+                <tr ng-repeat-end></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/inputnumber")
+    @Scripts.Render("~/bundle/select2")
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $q, $customHttp, $fwDateService, $fwModalService, $fwDialogService, $timeout, $fwUtils) {
+            $scope.$settings = {
+                isLoading: false, isSaving: false, isInputReportAmount: false, // สำหรับตรวจสอบมีการคีย์ข้อมูลรายงานผลหรือไม่
+                //currentMonth: @ViewBag.CurrMonthNo,
+                canReportBudgetMonthsNo: $fwUtils.parseJson('@Html.Raw(Json.Encode(ViewBag.CanReportBudgetMonthsNo))'),
+                expensesGroups: [], expenses: [],
+                formView: {
+                    rows: [],
+                    summaries: {}
+                }, formErrors: {},
+                formSearch: {
+                    fiscalYear: $fwDateService.convertYearToBuddhist('@ViewBag.DefaultYear'),
+                    planId: 'empty', produceId: 'empty', activityId: 'empty', budgetTypeId: 'empty',
+                    expensesGroupId: 'empty', expensesId: 'empty', budgetType: 1
+                }
+            };
+
+            // งบรายจ่ายเปลี่ยนแปลง
+            var budgetTypeChangedId = null;
+            $scope.budgetTypeChanged = function () {
+                $timeout.cancel(budgetTypeChangedId);
+                budgetTypeChangedId = $timeout(function () {
+                    $scope.$settings.expensesGroups = [];
+                    $scope.$settings.expenses = [];
+                    $scope.$settings.formSearch.expensesGroupId = 'empty';
+                    $scope.$settings.formSearch.expensesId = 'empty';
+
+                    var budgetTypeId = ('' + $scope.$settings.formSearch.budgetTypeId).replace(/[^\d]/g, '');
+                    if (budgetTypeId != '')
+                        $customHttp.formPost('@Url.Action("RetrieveExpensesGroupByBudgetType", "Helper")', { budgetTypeId: budgetTypeId }).then(function (res) {
+                            $scope.$settings.expensesGroups = res.data || [];
+                        }, function () { });
+
+                    $scope.submitSearch();
+                }, 300);
+            };
+            // หมวดค่าใช้จ่ายเปลี่ยนแปลง
+            var expensesGroupChangedId = null;
+            $scope.expensesGroupChanged = function () {
+                $timeout.cancel(expensesGroupChangedId);
+                expensesGroupChangedId = $timeout(function () {
+                    $scope.$settings.expenses = [];
+                    $scope.$settings.formSearch.expensesId = 'empty';
+
+                    var expensesGroupId = ('' + $scope.$settings.formSearch.expensesGroupId).replace(/[^\d]/g, '');
+                    if (expensesGroupId != '')
+                        $customHttp.formPost('@Url.Action("RetrieveExpensesByExpensesGroup", "Helper")', { expensesGroupId: expensesGroupId }).then(function (res) {
+                            $scope.$settings.expenses = res.data || [];
+                        }, function () { });
+
+                    $scope.submitSearch();
+                }, 300);
+            };
+            // ปีเปลี่ยนแปลง
+            var fiscalYearChangedId = null;
+            $scope.fiscalYearChanged = function () {
+                $timeout.cancel(fiscalYearChangedId);
+                fiscalYearChangedId = $timeout(function () {
+                    var fiscalYear = ('' + $scope.$settings.formSearch.fiscalYear).replace(/[^\d]/g, '');
+                    if (fiscalYear.length == 4)
+                        $scope.submitSearch();
+                }, 300);
+            };
+            // ส่งคำขอค้นหาข้อมูล
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    $scope.isFormChanged().then(function () {
+                        $scope.$settings.isLoading = true;
+                        $scope.$settings.isInputReportAmount = false;
+                        $scope.$settings.formErrors = {};
+
+                        var params = $.extend(true, {}, $scope.$settings.formSearch);
+                        params.fiscalYear = $fwDateService.convertYearToBritish(params.fiscalYear);
+                        params.planId = ('' + params.planId).replace(/[^\d]+/g, '');
+                        params.produceId = ('' + params.produceId).replace(/[^\d]+/g, '');
+                        params.activityId = ('' + params.activityId).replace(/[^\d]+/g, '');
+                        params.budgetTypeId = ('' + params.budgetTypeId).replace(/[^\d]+/g, '');
+                        params.expensesGroupId = ('' + params.expensesGroupId).replace(/[^\d]+/g, '');
+                        params.expensesId = ('' + params.expensesId).replace(/[^\d]+/g, '');
+                        $customHttp.formPost('@Url.Action("Retrieve", "BudgetReport")', params).then(function (res) {
+                            $scope.$settings.formView.rows = res.data.rows || [];
+                            $scope.$settings.formView.summaries = res.data.summaries || {};
+                            $scope.$settings.isLoading = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                        });
+                    });
+                }, 300);
+            };
+            // Mark ค่าการรายงานผลการใช้จ่าย
+            $scope.setChange = function () {
+                $scope.$settings.isInputReportAmount = true;
+            };
+            // ตรวจสอบการเปลี่ยนแปลงค่า
+            $scope.isFormChanged = function () {
+                return $q(function (resolve) {
+                    if ($scope.$settings.isInputReportAmount)
+                        $fwDialogService.confirmDialog(null, 'มีการรายงานผลการใช้จ่ายงบประมาณ และยังไม่บันทึก ต้องการค้นหากดที่ปุ่ม "ยืนยัน"').then(function () {
+                            resolve({});
+                        }, function () { });
+                    else
+                        resolve({});
+                });
+            };
+            // แสดงประวัติรายงานผลการใช้จ่าย รายการ คชจ. & เดือน
+            $scope.viewReportHistoryByMonth = function (groupBy, expensesItem, monthNo) {
+                $fwModalService.getModal('@Url.Action("GetModalViewReportExpensesHistoryForm", "BudgetReport")', { $groupBy: groupBy, $expensesItem: expensesItem, $monthNo: monthNo, $budgetType: $scope.$settings.formSearch.budgetType }, function ($scope, $customHttp, $groupBy, $expensesItem, $monthNo, $budgetType, $fwDialogService, $timeout, $mdDialog) {
+                    $scope.$settings = {
+                        isLoading: false, isRejecting: false,
+                        formView: {
+                            groupBy: $groupBy,
+                            expensesItem: $expensesItem,
+                            monthNo: $monthNo,
+                            rows: []
+                        }
+                    };
+
+                    // โหลดประวัติการรายงานผล รายการค่าใช้จ่าย ของ เดือนนั้นๆ
+                    $scope.submitSearch = function () {
+                        $scope.$settings.isLoading = true;
+                        $customHttp.formPost('@Url.Action("RetrieveReportExpenseHistory", "BudgetReport")', {
+                            planId: $expensesItem.PLAN_ID,
+                            produceId: $expensesItem.PRODUCE_ID,
+                            activityId: $expensesItem.ACTIVITY_ID,
+                            budgetTypeId: $expensesItem.BUDGET_TYPE_ID,
+                            expensesGroupId: $expensesItem.EXPENSES_GROUP_ID,
+                            expensesId: $expensesItem.EXPENSES_ID,
+                            monthNo: $monthNo,
+                            yearNo: $expensesItem.YR,
+                            depId: $expensesItem.DEP_ID,
+                            budgetType: $budgetType // 1 = เงินงบ, 2 = เงินนอกงบ
+                        }).then(function (res) {
+                            $scope.$settings.formView.rows = res.data || [];
+                            $scope.$settings.isLoading = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                        });
+                    };
+                    // ยกเลิกการรายงานผล
+                    $scope.submitReject = function (event, row) {
+                        $scope.$settings.isRejecting = true;
+                        $fwDialogService.confirmDialog(event, 'ยืนยันการยกเลิกรายการ').then(function () {
+                            $customHttp.formPost('@Url.Action("SubmitRejectReportHistory", "BudgetReport")', { reportId: row.REPORT_ID }).then(function (res) {
+                                if (null != res.data.errorText)
+                                    $fwDialogService.dangerDialog(event, res.data.errorText);
+                                else
+                                    $scope.submitSearch();
+                                $scope.$settings.isRejecting = false;
+                            }, function () {
+                                $scope.$settings.isRejecting = false;
+                            })
+                        }, function () { });
+                    };
+                    // ปิดหน้าต่าง
+                    $scope.close = function () {
+                        $mdDialog.hide({});
+                    };
+                    // โหลดข้อมูลประวัติ
+                    $timeout(function () {
+                        $scope.submitSearch();
+                    }, 300);
+                }, null).then(function () {
+                    $scope.submitSearch();
+                }, function () { });
+            };
+            // ยกเลิกการบันทึกรายการค่าใช้จ่าย
+            $scope.submitCancel = function () {
+                $scope.$settings.isInputReportAmount = false;
+                $scope.submitSearch();
+            };
+            // ส่งคำขอบันทึกข้อมูล
+            $scope.submitSave = function (event) {
+                $scope.$settings.isLoading = true;
+                $scope.$settings.isSaving = true;
+                $scope.$settings.formErrors = {};
+
+                var params = {
+                    FiscalYear: $fwDateService.convertYearToBritish($scope.$settings.formSearch.fiscalYear),
+                    BudgetType: $scope.$settings.formSearch.budgetType, // เงินงบประมาณ หรือ เงินนอกงบประมาณ
+                    DepId: '@ViewBag.DefaultDepartmentId',
+                    Expenses: []
+                };
+                angular.forEach($scope.$settings.formView.rows, function (row) {
+                    params.Expenses = params.Expenses.concat(row.Expenses);
+                });
+                $customHttp.formPost('@Url.Action("SubmitSave", "BudgetReport")', params).then(function (res) {
+                    $scope.$settings.formErrors = res.data.errors || {};
+
+                    if (null != res.data.errorText)
+                        $fwDialogService.alertDialog(event, res.data.errorText);
+                    else if (null != res.data.errors)
+                        $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งให้เรียบร้อยก่อน');
+                    else
+                        $fwDialogService.alertDialog(event, 'บันทึกผลการใช้จ่ายงบประมาณเรียบร้อยแล้ว').then(function () {
+                            $scope.$settings.isInputReportAmount = false;
+                            $scope.submitSearch();
+                        });
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                });
+            };
+
+
+            // จัดเตรียมค่าเริ่มต้นให้กับฟอร์ม
+            $scope.submitSearch();
+        });
+    </script>
+}

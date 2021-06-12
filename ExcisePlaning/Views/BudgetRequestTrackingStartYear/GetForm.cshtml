@@ -1,0 +1,235 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="d-block shadow-sm m-0 mb-2 p-3">
+        <div class="form-row">
+            <div class="col-12 col-md-2">
+                <label>ปี งปม. (พ.ศ.) </label>
+                <fw-input-mask model="$settings.formSearch.fiscalYear" mask="9999" change="fiscalYearChanged()" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+            </div>
+            <div class="col-12 col-md-4">
+                <label>เขตพื้นที่</label>
+                <select class="form-control" ng-model="$settings.formSearch.areaId" fw-select2
+                        ng-change="areaChanged()" ng-disabled="$settings.isLoading@(ViewBag.DepAuthorize==2?"||true":"")">
+                    <option value="empty">--- เขตพื้นที่ ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.AreaShortFieldProperty item in ViewBag.Areas)
+                    {
+                        <option value="@item.AREA_ID">@item.AREA_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-md-4">
+                <label>หน่วยงาน</label>
+                <select class="form-control" ng-model="$settings.formSearch.depId" fw-select2
+                        ng-change="submitSearch()" ng-disabled="$settings.isLoading||$settings.departments.length==0@(!ViewBag.CanSelectDepartment?"||true":"")">
+                    <option value="empty">--- หน่วยงาน ---</option>
+                    <option ng-repeat="item in $settings.departments" value="{{item.DEP_ID}}">{{item.DEP_NAME}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <h4 class="f-w-900 f-16 text-primary">ภาพรวมคำของบประมาณต้นปี</h4>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <tr class="bg-primary">
+                    <th colspan="2" class="text-center">คำของบประมาณต้นปี</th>
+                    <th colspan="2" class="text-center">SignOff</th>
+                    <th colspan="2" class="text-center">รอ SignOff</th>
+                    <th rowspan="2" style="width:130px;min-width:130px;max-width:130px" class="text-center align-middle word-wrap">ยังไม่ทำคำขอต้นปี (หน่วยงาน)</th>
+                </tr>
+                <tr class="bg-primary">
+                    <th class="text-right">จำนวน (บาท)</th>
+                    <th class="text-center">หน่วยงาน</th>
+                    <th class="text-right">จำนวน (บาท)</th>
+                    <th class="text-center">หน่วยงาน</th>
+                    <th class="text-right">จำนวน (บาท)</th>
+                    <th class="text-center">หน่วยงาน</th>
+                </tr>
+                <tr>
+                    <td class="text-right">{{$settings.formView.summaryInfo.TotalBudgetRequestAmounts|number:2}}</td>
+                    <td class="text-center">{{$settings.formView.summaryInfo.CountDepartmentHasTransactionAmounts|number:0}}</td>
+                    <td class="text-right">{{$settings.formView.summaryInfo.TotalBudgetRequestSignOffAmounts|number:2}}</td>
+                    <td class="text-center">{{$settings.formView.summaryInfo.CountDepartmentSignOffAmounts|number:0}}</td>
+                    <td class="text-right">{{$settings.formView.summaryInfo.TotalBudgetRequestUnSignOffAmounts|number:2}}</td>
+                    <td class="text-center">{{$settings.formView.summaryInfo.CountDepartmentUnSignOffAmounts|number:0}}</td>
+                    <td class="text-center">{{$settings.formView.summaryInfo.CountDepartmentNoTransactionAmounts|number:0}}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="d-block pt-3 border-top">
+            <div class="text-danger float-md-left">จำนวน: {{$settings.formView.rows.length}} หน่วยงาน</div>
+            <div class="float-md-right">
+                <md-checkbox ng-model="$settings.formSearch.filterType"
+                             ng-change="submitSearch()"
+                             ng-true-value="-1">รอทำคำขอ</md-checkbox>
+                <md-checkbox ng-model="$settings.formSearch.filterType"
+                             ng-change="submitSearch()"
+                             ng-true-value="1">SignOff</md-checkbox>
+                <md-checkbox ng-model="$settings.formSearch.filterType"
+                             ng-change="submitSearch()"
+                             ng-true-value="0">รอ SignOff</md-checkbox>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <tr class="bg-secondary text-white">
+                    <th style="width:60px;max-width:60px;min-width:60px" class="text-center"></th>
+                    <th style="width:90px;max-width:90px;min-width:90px" class="text-left">สถานะ</th>
+                    <th style="width:130px;max-width:130px;min-width:130px">เขตพื้นที่</th>
+                    <th style="width:150px;max-width:150px;min-width:150px">หน่วยงาน</th>
+                    @*<th style="width:128px;max-width:128px;min-width:128px" class="text-center">เลขที่คำขอ</th>*@
+                    <th style="width:137px;max-width:137px;min-width:137px" class="text-right">จำนวน (บาท)</th>
+                    <th style="width:150px;max-width:150px;min-width:150px" class="text-left word-wrap">ผู้ทำรายการ</th>
+                    <th style="width:160px;max-width:160px;min-width:160px" class="text-left word-wrap">วันที่ทำรายการ</th>
+                    <th style="width:150px;max-width:150px;min-width:150px" class="text-left word-wrap">ผู้ SignOff</th>
+                    <th style="width:160px;max-width:160px;min-width:160px" class="text-left word-wrap">วันที่ SignOff</th>
+                </tr>
+
+                <tr ng-if="$settings.formView.rows.length == 0 && !$settings.isLoading">
+                    <th colspan="10" class="animated fadeIn text-danger text-center">--- ไม่พบข้อมูล ---</th>
+                </tr>
+                <tr ng-repeat="row in $settings.formView.rows">
+                    <th style="width:60px;max-width:60px;min-width:60px" class="text-center">
+                        @*แสดงปุ่มยกเลิกเฉพาะรายการที่ SignOff แล้ว*@
+                        <a href="javascript:void(0)" class="text-danger f-w-900"
+                           ng-if="row.REQ_ID!=null&&row.SIGNOFF_FLAG==true&&row.PROCESS_STATUS==0"
+                           ng-click="submitRejectSignOff($event, row)" title="ยกเลิกการ SignOff">ยกเลิก</a>
+                    </th>
+                    <td style="width:90px;max-width:90px;min-width:90px" class="text-left">
+                        <span ng-if="row.REQ_ID!=null&&row.SIGNOFF_FLAG==true" class="text-success">SignOff</span>
+                        <span ng-if="row.REQ_ID!=null&&row.SIGNOFF_FLAG==false" class="text-warning">รอ SignOff</span>
+                        <span ng-if="row.REQ_ID==null" class="text-danger">รอทำคำขอ</span>
+                        <div ng-if="row.PROCESS_STATUS==1" class="f-12 f-w-900 mt-1">[จัดสรรแล้ว]</div>
+                        <div ng-if="row.PROCESS_STATUS==0" class="f-12 f-w-900 mt-1">[รอจัดสรร]</div>
+                    </td>
+                    <td style="width:130px;max-width:130px;min-width:130px" class="word-wrap">{{row.AREA_NAME}}</td>
+                    <td style="width:150px;max-width:150px;min-width:150px" class="word-wrap">{{row.DEP_NAME}}</td>
+                    @*<td style="width:128px;max-width:128px;min-width:128px" class="text-center">{{row.REQ_ID}}</td>*@
+                    <td style="width:137px;max-width:137px;min-width:137px" class="text-right">{{row.TOTAL_REQUEST_BUDGET|number:2}}</td>
+                    <td style="width:150px;max-width:150px;min-width:150px" class="text-left word-wrap">{{row.CREATED_NAME}}</td>
+                    <td style="width:160px;max-width:160px;min-width:160px" class="text-left word-wrap">{{row.CREATED_DATETIME|sqlDate:'':null:true}}</td>
+                    <td style="width:150px;max-width:150px;min-width:150px" class="text-left word-wrap">{{row.SIGNOFF_NAME}}</td>
+                    <td style="width:160px;max-width:160px;min-width:160px" class="text-left word-wrap">{{row.SIGNOFF_DATETIME|sqlDate:'':null:true}}</td>
+                </tr>
+
+                <tr ng-if="$settings.formView.rows.length > 0 && !$settings.isLoading" class="bg-secondary text-white">
+                    <th colspan="4" class="text-right animated fadeIn">รวมทั้งสิ้น (บาท)</th>
+                    <th style="width:137px;max-width:137px;min-width:137px" class="text-right animated fadeIn">{{$settings.formView.rows|fwSimpleSummary:['TOTAL_REQUEST_BUDGET']:2}}</th>
+                    <th>&nbsp;</th>
+                    <th>&nbsp;</th>
+                    <th>&nbsp;</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/select2")
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $fwDialogService, $customHttp, $timeout, $fwDateService) {
+            var defaultAreaId = '@ViewBag.AreaId';
+            var defaultDepId = '@ViewBag.DepartmentId';
+
+            $scope.$settings = {
+                isLoading: false,
+                departments: [],
+                formSearch: {
+                    areaId: defaultAreaId,
+                    depId: 'empty',
+                    fiscalYear: $fwDateService.convertYearToBuddhist('@ViewBag.FiscalYear'),
+                    filterType: null
+                },
+                formView: {
+                    summaryInfo: {},
+                    rows: []
+                }
+            };
+
+            // ปีเปลี่ยนแปลง
+            var fiscalYearChangedId = null;
+            $scope.fiscalYearChanged = function () {
+                $timeout.cancel(fiscalYearChangedId);
+                fiscalYearChangedId = $timeout(function () {
+                    var fiscalYear = ('' + $scope.$settings.formSearch.fiscalYear).replace(/[^\d]/g, '');
+                    if (fiscalYear.length == 4)
+                        $scope.submitSearch();
+                }, 300);
+            };
+            // เขตพื้นที่เปลี่ยนแปลง
+            var areaIdChangedId = null;
+            $scope.areaChanged = function (defaultDepId) {
+                $timeout.cancel(areaIdChangedId);
+                areaIdChangedId = $timeout(function () {
+                    $scope.$settings.departments = [];
+                    $scope.$settings.formSearch.depId = 'empty';
+
+                    var areaId = ('' + $scope.$settings.formSearch.areaId).replace('empty', '');
+                    if (areaId.length == 0) {
+                        $scope.submitSearch();
+                        return;
+                    }
+
+                    $customHttp.formPost('@Url.Action("GetDepartmentAuthorizeBy", "Helper")', { areaId: areaId }).then(function (res) {
+                        $scope.$settings.departments = res.data || [];
+                        $scope.$settings.formSearch.depId = defaultDepId || 'empty';
+                        $scope.submitSearch();
+                    }, function () { });
+                }, 300);
+            };
+            // ส่งคำขอข้อมูล
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    $scope.$settings.isLoading = true;
+
+                    var fiscalYear = ('' + $scope.$settings.formSearch.fiscalYear).replace(/[^\d]/g, '');
+                    var params = $.extend(true, {}, $scope.$settings.formSearch);
+                    params.areaId = ('' + params.areaId).replace('empty', '');
+                    params.depId = ('' + params.depId).replace('empty', '');
+                    params.fiscalYear = $fwDateService.convertYearToBritish(fiscalYear);
+
+                    $customHttp.formPost('@Url.Action("Retrieve", "BudgetRequestTrackingStartYear")', params).then(function (res) {
+                        $scope.$settings.formView.summaryInfo = res.data.summaryInfo || {};
+                        $scope.$settings.formView.rows = res.data.rows || [];
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                    });
+                }, 500);
+            };
+            // ยกเลิก SignOff
+            $scope.submitRejectSignOff = function (event, row) {
+                $fwDialogService.confirmDialog(event, 'ยืนยันการยกเลิก SignOff').then(function () {
+                    $scope.$settings.isLoading = true;
+                    $customHttp.formPost('@Url.Action("SubmitRejectSignOff", "BudgetRequestTrackingStartYear")', { reqId: row.REQ_ID }).then(function (res) {
+                        if (null != res.data.errorText)
+                            $fwDialogService.dangerDialog(event, res.data.errorText);
+                        else
+                            $scope.submitSearch();
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                    });
+                }, function () { });
+            };
+
+
+            // จัดเตรียมหน้าเว็บ
+            $scope.areaChanged(defaultDepId);
+        });
+    </script>
+}

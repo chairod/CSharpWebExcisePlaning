@@ -1,0 +1,68 @@
+﻿<md-dialog flex="98" flex-gt-sm="55">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>รายละเอียดการขอลา</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                                  title="{{$settings.title}}"
+                                  event-name="fwSimpleDataTable.paramsChanged1"
+                                  auto-load="false"
+                                  disabled="$settings.isLoading"
+                                  visible-page-size="true"
+                                  visible-paging="true"
+                                  row-click-callback="rowClick($event, $row, $columnConfig)"
+                                  search-done-callback="searchDone($res)"
+                                  route-url="@Url.Action("RetireveDetail", "LeaveApprove")"></fw-simple-data-table>
+            
+            <h5 class="text-primary mt-3 mb-3 border-bottom pb-2">สถานที่ติดต่อ</h5>
+            <div class="form-group row animated fadeIn">
+                <label class="col-form-label col-12 col-md-2">สถานที่ติดต่อระหว่างการลา</label>
+                <div class="col-12 col-md-10">
+                    <textarea class="form-control bg-light text-mute textarea-noresize" readonly style="min-height:80px;">{{$settings.formData.contactInfo}}</textarea>
+                </div>
+            </div>
+
+            @*กรณีลาไปต่างประเทศ ให้แสดงข้อมูลเพิ่มเติม (ยกเว้น คำขอยกเลิกใบลา ไม่ต้องแสดง)*@
+            <section ng-if="$settings.formData.leaveTypeId==4 && $settings.formData.tranType==1">
+                <h5 class="text-primary mt-3 mb-3 border-bottom pb-2">ข้อมูลการลาไปต่างประเทศ</h5>
+                <div class="form-group row animated fadeIn">
+                    <label class="col-form-label col-12 col-md-2">รายชื่อประเทศ</label>
+                    <div class="col-12 col-md-10">
+                        <textarea class="form-control bg-light text-mute textarea-noresize" readonly style="min-height:80px;">{{$settings.formData.travelToCountries}}</textarea>
+                    </div>
+                </div>
+                <div class="form-group row animated fadeIn">
+                    <label class="col-form-label col-12 col-md-2">วันที่ออกเดินทาง</label>
+                    <div class="col-12 col-md-4">
+                        <input type="text" class="form-control bg-light text-mute" readonly value="{{$settings.formData.travelDate|sqlDate:'dd/MM/yyyy'}}" />
+                    </div>
+                    <label class="col-form-label col-12 col-md-2">วันที่เดินทางมาถึง</label>
+                    <div class="col-12 col-md-4">
+                        <input type="text" class="form-control bg-light text-mute" readonly value="{{$settings.formData.travelComebackDate|sqlDate:'dd/MM/yyyy'}}" />
+                    </div>
+                </div>
+                <div class="form-group row animated fadeIn">
+                    <label class="col-form-label col-12 col-md-2">เบอร์โทรศัพท์</label>
+                    <div class="col-12 col-md-4">
+                        <input type="text" class="form-control bg-light text-mute" readonly value="{{$settings.formData.mobileNo}}" />
+                    </div>
+                    <label class="col-form-label col-12 col-md-2">อีเมล์</label>
+                    <div class="col-12 col-md-4">
+                        <input type="text" class="form-control bg-light text-mute" readonly value="{{$settings.formData.emailAddr}}" />
+                    </div>
+                </div>
+            </section>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span class="text-danger f-w-800">{{$settings.footerText}}</span>
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

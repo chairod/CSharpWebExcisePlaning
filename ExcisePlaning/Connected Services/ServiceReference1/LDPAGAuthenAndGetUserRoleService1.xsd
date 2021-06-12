@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:tns="http://dexsrvint.excise.go.th/schema/AuthenAndGetUserRole" xmlns:ns0="http://dexsrvint.excise.go.th/schema/LdapUserBase" elementFormDefault="qualified" targetNamespace="http://dexsrvint.excise.go.th/schema/AuthenAndGetUserRole" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:import schemaLocation="http://192.168.3.92:5080/LDAPGateway/LDPAGAuthenAndGetUserRoleService?xsd=1" namespace="http://dexsrvint.excise.go.th/schema/LdapUserBase" />
+  <xsd:complexType name="AuthenAndGetUserRoleRequest">
+    <xsd:sequence>
+      <xsd:element name="userId" type="xsd:string" />
+      <xsd:element name="password" type="xsd:string" />
+      <xsd:element name="applicationId" type="xsd:string" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AuthenAndGetUserRoleResponse">
+    <xsd:complexContent mixed="false">
+      <xsd:extension xmlns:tns="http://dexsrvint.excise.go.th/schema/LdapUserBase" base="tns:UserInfoBase">
+        <xsd:sequence>
+          <xsd:element name="message" type="tns:MessageBase" />
+          <xsd:element name="roles" type="tns:RolesBase" />
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="RequestObj" type="tns:AuthenAndGetUserRoleRequest" />
+  <xsd:element name="ResponseObj" type="tns:AuthenAndGetUserRoleResponse" />
+</xsd:schema>

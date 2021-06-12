@@ -1,0 +1,230 @@
+﻿
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="card card-block borderless-card shadow-sm" ng-controller="AppController">
+    <div class="form-row">
+        <div class="form-group col-12 col-md-3">
+            <label>งบรายจ่าย</label>
+            <select class="form-control" ng-model="$settings.formSearch.budgetTypeId" ng-change="submitSearch()" ng-disabled="$settings.isLoading" fw-select2>
+                <option value="empty">--- งบรายจ่าย ---</option>
+                @foreach (var BudgetType in ViewBag.BudgetType)
+                {
+                    <option value="@BudgetType.BUDGET_TYPE_ID">@BudgetType.BUDGET_TYPE_NAME</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label>กลุ่มหมวดค่าใช้จ่าย</label>
+            <select class="form-control" ng-model="$settings.formSearch.masterId" ng-change="submitSearch()" ng-disabled="$settings.isLoading" fw-select2>
+                <option value="empty">--- กลุ่มหมวดค่าใช้จ่าย ---</option>
+                @foreach (var ExpensesMaster in ViewBag.ExpensesMaster)
+                {
+                    <option value="@ExpensesMaster.EXPENSES_MASTER_ID">@ExpensesMaster.EXPENSES_MASTER_NAME</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label>ชื่อหมวด คชจ.</label>
+            <div class="input-group">
+                <input type="text" class="form-control" ng-model="$settings.formSearch.expensesGroupName"
+                       ng-change="expensesGroupNameChanged()" />
+            </div>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label class="d-none d-md-block">&nbsp;</label>
+            <fw-execute-button text="สร้างใหม่" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round" ng-disabled="$settings.isLoading" ng-click="createNew($event)"></fw-execute-button>
+        </div>
+    </div>
+    <fw-simple-data-table columns="$settings.tableConfigs.columns" disabled="$settings.isLoading"
+                          auto-load="false"
+                          row-click-callback="rowClick($event, $row, $columnConfig)"
+                          route-url="@Url.Action("RetrieveForm", "ExpensesGroup")"></fw-simple-data-table>
+</div>
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")}
+@section Scripts{
+    @Scripts.Render("~/bundle/select2");
+    @Scripts.Render("~/bundle/inputnumber");
+    <script type="text/javascript">
+        angular.module("leaveApp").controller('AppController',
+            function ($scope, $customHttp, $timeout, $q, $fwDialogService, $fwModalService) {
+                $scope.$settings = {
+                    isLoading: false,
+                    formSearch: {
+                        masterId: 'empty',
+                        budgetTypeId: 'empty',
+                        expensesGroupName: ''
+                    },
+                    tableConfigs: {
+                        columns: [
+                            { label: 'ID', className: 'text-center word-wrap', type: 'field', field: 'EXPENSES_GROUP_ID', style: 'min-width:50px;max-width:50px;width:50px;' },
+                            { label: 'งบรายจ่าย', className: 'text-left word-wrap bg-light', type: 'field', field: 'BUDGET_TYPE_NAME', style: 'min-width:150px;max-width:150px;width:150px;' },
+                            {
+                                label: 'ชื่อหมวด คชจ.', className: 'text-left word-wrap', type: 'html', params: 'BTN_EDIT',
+                                field: '<a href="javascript:void(0)" class="text-primary f-w-900">{{row.EXPENSES_GROUP_NAME}}<sup class="ml-1 ti-new-window"></sup></a>', style: 'min-width:200px'
+                            },
+                            { label: 'กลุ่มหมวด คชจ.', className: 'text-left word-wrap', type: 'field', field: 'EXPENSES_MASTER_NAME', style: 'width:260px;max-width:260px;min-width:260px' },
+                            { label: 'ลำดับการเรียงข้อมูล', className: 'text-center word-wrap', type: 'field', field: 'ORDER_SEQ', style: 'min-width:100px;max-width:100px;width:100px;' },
+                            { label: 'เลขที่อ้างอิงแหล่งเงิน', className: 'text-left word-wrap', type: 'field', field: 'BUDGET_REFER_CODE', style: 'width:140px;max-width:140px;min-width:140px' },
+                            { label: 'ประเภทการจัดสรรงบประมาณ', className: 'text-center word-wrap', type: 'html', field: '<span ng-if="row.ALLOCATE_GROUP_FLAG==1" class="text-danger">จัดสรรเป็นก้อน</span>', style: 'width:100px;max-width:100px;min-width:100px' },
+                            { label: '', className: 'text-center word-wrap', params: 'BTN_DELETE', type: 'html', field: '<a href="javascript:void(0)" class="text-danger f-14 f-w-900">ยกเลิก</a>', style: 'min-width:80px;max-width:80px;width:80px;' }
+                        ]
+                    }
+                };
+
+                $scope.createNew = function (event, formData) {
+                    $fwModalService.getModal('@Url.Action("GetModalResource", "ExpensesGroup")', {
+                        $formData: (formData || {})
+                    },
+                        function ($scope, $customHttp, $mdDialog, $fwDialogService, $fwDateService, $fwModalHelperService, $formData) {
+                            $scope.$settings = {
+                                isLoading: false,
+                                formData: {},
+                                formErrors: {}
+                            };
+
+                            // กำหนดค่าเริ่มต้น
+                            $scope.init = function () {
+                                $scope.$settings.formError = {};
+                                $scope.$settings.formData = {
+                                    ExpensesGroupId: $formData.EXPENSES_GROUP_ID || null,
+                                    MasterId: '' + ($formData.EXPENSES_MASTER_ID || 'empty'),
+                                    BudgetTypeId: '' + ($formData.BUDGET_TYPE_ID || 'empty'),
+                                    ExpensesGroupName: $formData.EXPENSES_GROUP_NAME || '',
+                                    OrderSeq: $formData.ORDER_SEQ || null,
+                                    AllocateGroupFlag: $formData.ALLOCATE_GROUP_FLAG || '0',
+                                    ExpensesItems: [], // รายการค่าใช้จ่ายที่อยู่ภายใต้หมวดนี้
+                                    GovernmentRefers: [] // ข้อมูลอ้างอิงแหล่งงานของรัฐบาล
+                                };
+
+                                // โหลดรายการค่าใช้จ่าย
+                                if ($.trim($formData.EXPENSES_GROUP_ID) != '') {
+                                    $customHttp.formPost('@Url.Action("GetExpensesGroupInfo", "ExpensesGroup")', { expensesGroupId: $formData.EXPENSES_GROUP_ID }).then(function (res) {
+                                        $scope.$settings.formData.ExpensesItems = res.data.expenses || [];
+                                        $scope.$settings.formData.GovernmentRefers = res.data.governmentRefer || [];
+                                        angular.forEach($scope.$settings.formData.GovernmentRefers, function (item) {
+                                            item.Yr = $fwDateService.convertYearToBuddhist(item.Yr);
+                                        });
+                                    }, function () { });
+                                }
+                            };
+                            // กดปุ่ม ค้นหา รายการค่าใช้จ่าย
+                            $scope.browseExpenses = function (event) {
+                                var selectedItems = $scope.$settings.formData.ExpensesItems.map(function (item) {
+                                    return {
+                                        EXPENSES_ID: item.ExpensesId,
+                                        EXPENSES_NAME: item.ExpensesName
+                                    };
+                                });
+                                $fwModalHelperService.getExpensesSelectMultiModal(event, selectedItems).then(function (selectedItems) {
+                                    $scope.$settings.formData.ExpensesItems = selectedItems.map(function (item) {
+                                        return {
+                                            ExpensesId: item.EXPENSES_ID,
+                                            ExpensesName: item.EXPENSES_NAME
+                                        };
+                                    });
+                                }, function () { });
+                            };
+                            // กดปุ่มเพิ่มข้อมูลอ้างอิงแหล่งเงิน
+                            $scope.addGovernmentRefer = function () {
+                                $scope.$settings.formData.GovernmentRefers.push({
+                                    Yr: null, ReferCode: null, RemarkText: null
+                                });
+                            };
+                            // ส่งคำขอบันทึกข้อมูล
+                            $scope.save = function (event) {
+                                $scope.$settings.isLoading = true;
+                                $scope.$settings.formErrors = {};
+
+                                var params = $.extend(true, {}, $scope.$settings.formData);
+                                params.BudgetTypeId = ('' + params.BudgetTypeId).replace(/[^\d]/g, '');
+                                params.MasterId = ('' + params.MasterId).replace(/[^\d]/g, '');
+                                angular.forEach(params.GovernmentRefers, function (item) {
+                                    item.Yr = $fwDateService.convertYearToBritish(item.Yr);
+                                });
+                                $customHttp.formPost('@Url.Action("SubmitSave", "ExpensesGroup")', params).then(function (res) {
+                                    $scope.$settings.formErrors = res.data.errors || {};
+                                    if (null != res.data.errorText)
+                                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                                    else if (res.data.errors != null)
+                                        $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งให้เรียบร้อยก่อน');
+                                    else
+                                        $fwDialogService.alertDialog(event, 'บันทึกเรียบร้อยแล้ว').then(function () {
+                                            $mdDialog.hide();
+                                        });
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+                            // ปิดหน้าต่าง
+                            $scope.close = function () {
+                                $mdDialog.cancel();
+                            };
+
+
+                            $scope.init();
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        });
+                };
+                $scope.rowClick = function (event, row, columnConfig) {
+                    var clickElName = event.target.tagName; // Upper
+                    if ('A' != clickElName)
+                        return;
+
+                    if (columnConfig.params == 'BTN_DELETE') {
+                        $fwDialogService.confirmDialog(event, 'ยืนยัน!! การยกเลิกกลุ่มผู้ใช้งานนี้').then(function () {
+                            $scope.$settings.isLoading = true;
+                            $customHttp.formPost('@Url.Action("SubmitDelete", "ExpensesGroup")', { expensesGroupId: row.EXPENSES_GROUP_ID }).then(function () {
+                                $scope.submitSearch();
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        });
+                    } else if (columnConfig.params == 'BTN_EDIT') {
+                        $scope.createNew(event, row);
+                    }
+
+                    return $q(function (resolve) {
+                        resolve({ row: row });
+                    });
+                };
+                // ส่งคำขอค้นหาข้อมูล
+                var timeoutId = null;
+                $scope.submitSearch = function () {
+                    $timeout.cancel(timeoutId);
+                    timeoutId = $timeout(function () {
+                        $scope.$broadcast('fwSimpleDataTable.paramsChanged', {
+                            masterId: ('' + $scope.$settings.formSearch.masterId).replace('empty', ''),
+                            budgetTypeId: ('' + $scope.$settings.formSearch.budgetTypeId).replace('empty', ''),
+                            expensesGroupName: $scope.$settings.formSearch.expensesGroupName
+                        });
+                    }, 300);
+                };
+                // ชื่อหมวดค่าใช้จ่ายเปลี่ยนแปลง
+                var expensesGroupNameChangedId = null
+                $scope.expensesGroupNameChanged = function () {
+                    $timeout.cancel(expensesGroupNameChangedId);
+                    expensesGroupNameChangedId = $timeout(function () {
+                        $scope.submitSearch();
+                    }, 300);
+                };
+
+
+                $scope.submitSearch();
+        });
+    </script>
+
+}
+
+
+
+
+

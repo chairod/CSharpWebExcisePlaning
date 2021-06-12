@@ -1,0 +1,97 @@
+﻿<md-dialog flex="98" flex-gt-sm="{{$settings.pageType=='all' ? 95 : 90}}">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ฟอร์มบันทึกข้อมูลโครงการ: {{$settings.formView.EXPENSES_NAME}}</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="col-12">
+                    <fw-execute-button text="เพิ่มโครงการ" css-icon-class="ion-plus"
+                                       css-class="btn btn-primary btn-sm float-md-left" ng-disabled="$settings.isLoading"
+                                       ng-click="addNew()"></fw-execute-button>
+                    <span class="ml-3 text-danger f-w-900 float-md-right">จำนวน {{$settings.formData.projects.length|number:0}} รายการ</span>
+                    <div class="table-responsive overflow-auto" style="height:420px;min-height:420px;max-height:420px;">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th rowspan="2" style="width:60px;min-width:60px;max-width:60px"></th>
+                                <th rowspan="2" style="min-width:380px;max-width:380px;width:380px;" class="text-left">ชื่อโครงการ</th>
+                                <th colspan="4" class="text-center" ng-if="$settings.pageType=='all'||$settings.pageType=='budget'">เงินงบประมาณกรมสรรพสามิต (บาท)</th>
+                                <th colspan="4" class="text-center" ng-if="$settings.pageType=='all'||$settings.pageType=='off_budget'">เงินนอกงบประมาณกรมสรรพสามิต (บาท)</th>
+                                <th rowspan="2" style="width:70px;min-width:70px;max-width:70px"></th>
+                            </tr>
+                            <tr>
+                                <th style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='budget'">จัดสรร</th>
+                                <th style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='budget'">งบประมาณ</th>
+                                <th style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='budget'">จัดสรรให้หน่วยงาน</th>
+                                <th style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='budget'">คงเหลือสุทธิ</th>
+                                <th style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='off_budget'">แผนรายรับ/รายจ่าย</th>
+                                <th style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='off_budget'">จัดเก็บรายได้</th>
+                                <th style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='off_budget'">จัดสรรให้หน่วยงาน</th>
+                                <th style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='off_budget'">คงเหลือสุทธิ</th>
+                            </tr>
+
+                            <tr ng-if="$settings.formData.projects.length == 0 && !$settings.isLoading">
+                                <th colspan="11" class="text-center text-danger">--- กดปุ่ม "เพิ่มโครงการ" เพื่อเพิ่มรายการโครงการ ---</th>
+                            </tr>
+
+                            <tr ng-repeat="row in $settings.formData.projects">
+                                <td style="width:60px;min-width:60px;max-width:60px" class="text-center">{{$index + 1}}</td>
+                                <td style="min-width:380px;max-width:380px;width:380px;" class="text-left">
+                                    <textarea class="form-control textarea-noresize" 
+                                              ng-model="row.ProjectName" title="{{row.ProjectName}}" 
+                                              maxlength="200" 
+                                              rows="3"
+                                              placeholder="ความยาวไม่เกิน 200 ตัวอักษร"
+                                              ng-disabled="$settings.isLoading"></textarea>
+                                </td>
+
+                                <td style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='budget'">
+                                    <fw-input-number-mask ng-model="row.AllocateBudgetAmounts" css-class="text-right" ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999999999999.00" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                                </td>
+                                <td style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='budget'">{{row.ActualBudgetAmounts|displayDecimal:2}}</td>
+                                <td style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='budget'">{{row.UseBudgetAmounts|displayDecimal:2}}</td>
+                                <td style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='budget'">{{row.RemainBudgetAmounts|displayDecimal:2}}</td>
+                                <td style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='off_budget'">
+                                    <fw-input-number-mask ng-model="row.AllocateOffBudgetAmounts" css-class="text-right" ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999999999999.00" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+                                </td>
+                                <td style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='off_budget'">{{row.ActualOffBudgetAmounts|displayDecimal:2}}</td>
+                                <td style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='off_budget'">{{row.UseOffBudgetAmounts|displayDecimal:2}}</td>
+                                <td style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-if="$settings.pageType=='all'||$settings.pageType=='off_budget'">{{row.RemainOffBudgetAmounts|displayDecimal:2}}</td>
+
+                                <td style="width:70px;min-width:70px;max-width:70px" class="text-center">
+                                    <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="deleteProject(event, $index, row)">ยกเลิก</a>
+                                </td>
+                            </tr>
+
+                            <tr ng-if="$settings.formData.projects.length > 0 && !$settings.isLoading" class="bg-primary">
+                                <th colspan="2" class="text-right">รวมทั้งสิ้น (บาท)</th>
+                                <th ng-if="$settings.pageType=='all'||$settings.pageType=='budget'" class="text-right">{{$settings.formData.projects|fwSimpleSummary:['AllocateBudgetAmounts']:2}}</th>
+                                <th ng-if="$settings.pageType=='all'||$settings.pageType=='budget'" class="text-right">{{$settings.formData.projects|fwSimpleSummary:['ActualBudgetAmounts']:2}}</th>
+                                <th ng-if="$settings.pageType=='all'||$settings.pageType=='budget'" class="text-right">{{$settings.formData.projects|fwSimpleSummary:['UseBudgetAmounts']:2}}</th>
+                                <th ng-if="$settings.pageType=='all'||$settings.pageType=='budget'" class="text-right">{{$settings.formData.projects|fwSimpleSummary:['RemainBudgetAmounts']:2}}</th>
+                                <th ng-if="$settings.pageType=='all'||$settings.pageType=='off_budget'" class="text-right">{{$settings.formData.projects|fwSimpleSummary:['AllocateOffBudgetAmounts']:2}}</th>
+                                <th ng-if="$settings.pageType=='all'||$settings.pageType=='off_budget'" class="text-right">{{$settings.formData.projects|fwSimpleSummary:['ActualOffBudgetAmounts']:2}}</th>
+                                <th ng-if="$settings.pageType=='all'||$settings.pageType=='off_budget'" class="text-right">{{$settings.formData.projects|fwSimpleSummary:['UseOffBudgetAmounts']:2}}</th>
+                                <th ng-if="$settings.pageType=='all'||$settings.pageType=='off_budget'" class="text-right">{{$settings.formData.projects|fwSimpleSummary:['RemainOffBudgetAmounts']:2}}</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="ตกลง" css-class="btn btn-primary btn-sm mr-2"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-checkmark"
+                           ng-click="ok($event)"></fw-execute-button>
+        <fw-execute-button text="ยกเลิก" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

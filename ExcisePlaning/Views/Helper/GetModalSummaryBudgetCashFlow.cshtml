@@ -1,0 +1,59 @@
+﻿<md-dialog flex="99" flex-gt-sm="90">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>สรุปภาพรวม{{$settings.title}}</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="row">
+                <div class="col-12">
+                    <input type="text" class="border border-dark p-1 float-md-right" style="width:330px;" placeholder="ระบุชื่อหน่วยงาน" ng-model="$settings.filterText" 
+                           ng-change="calSummary()"/>
+                </div>
+            </div>
+
+            <div class="table-responsive overflow-auto" style="height:450px;min-height:450px;max-height:450px;">
+                <table class="table table-bordered">
+                    <tr class="bg-secondary text-white">
+                        <th style="width:60px;min-width:60px;max-width:60px;"></th>
+                        <th style="width:120px;min-width:120px;max-width:120px;">เขตพื้นที่</th>
+                        <th style="width:200px;min-width:200px;max-width:350px;">หน่วยงาน</th>
+                        <th style="width:145px;min-width:145px;max-width:145px;" class="text-right">ภาพรวม</th>
+                        <th style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-repeat="item in $settings.budgetTypes">{{item.BUDGET_TYPE_NAME}}</th>
+                    </tr>
+
+                    <tr ng-if="$settings.departments.length == 0 && !$settings.isLoading">
+                        <th colspan="100" class="text-center f-w-900 text-danger">--- ไม่พบข้อมูล ---</th>
+                    </tr>
+                    <tr ng-if="$settings.departments.length == 0 && $settings.isLoading">
+                        <th colspan="100" class="text-center f-w-900 text-danger animated fadeIn">กำลังโหลดข้อมูล...</th>
+                    </tr>
+
+                    <tr ng-repeat="row in $settings.departments|filter:{DEP_NAME: $settings.filterText}">
+                        <td style="width:60px;min-width:60px;max-width:60px;" class="text-center">{{$index + 1}}</td>
+                        <th style="width:120px;min-width:120px;max-width:120px;">{{row.AREA_NAME}}</th>
+                        <td style="width:200px;min-width:200px;max-width:350px;">{{row.DEP_NAME}}</td>
+                        <td style="width:145px;min-width:145px;max-width:145px;" class="text-right bg-light">{{row.NET_BUDGET_AMOUNT|displayDecimal:2}}</td>
+                        <td style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-repeat="item in row.BudgetTypes">{{item.BUDGET_AMOUNT|displayDecimal:2}}</td>
+                    </tr>
+
+                    <tr ng-if="$settings.departments.length > 0 && !$settings.isLoading" class="bg-secondary text-white">
+                        <th colspan="3" class="text-right">รวมทั้งสิ้น (บาท)</th>
+                        <th class="text-right">{{($settings.departments|filter:{DEP_NAME: $settings.filterText})|fwSimpleSummary:['NET_BUDGET_AMOUNT']:2}}</th>
+                        <th style="width:130px;min-width:130px;max-width:130px;" class="text-right" ng-repeat="item in $settings.budgetTypesSummaries">{{item.BUDGET_AMOUNT|displayDecimal:2}}</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div class="f-w-900 text-danger f-14" ng-if="$settings.isLoading"><span class="animated fadeIn">กำลังโหลดข้อมูล ...</span></div>
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

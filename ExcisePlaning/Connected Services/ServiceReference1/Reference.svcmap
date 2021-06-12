@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="61ead92f-13d6-4308-ae16-a04142dd38ae" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://192.168.3.92:5080/LDAPGateway/LDPAGAuthenAndGetUserRoleService?wsdl" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="LDPAGAuthenAndGetUserRoleService.xsd" MetadataType="Schema" ID="fff37fd4-38a1-46bd-bc3c-4f67aeedef58" SourceId="1" SourceUrl="http://192.168.3.92:5080/LDAPGateway/LDPAGAuthenAndGetUserRoleService?xsd=1" />
+    <MetadataFile FileName="LDPAGAuthenAndGetUserRole.wsdl" MetadataType="Wsdl" ID="401fed07-0a78-4b42-8c8a-d3390c114b09" SourceId="1" SourceUrl="http://192.168.3.92:5080/LDAPGateway/LDPAGAuthenAndGetUserRoleService?wsdl" />
+    <MetadataFile FileName="LDPAGAuthenAndGetUserRoleService1.xsd" MetadataType="Schema" ID="8d3e111d-aac1-4d64-9eb0-6422fda72336" SourceId="1" SourceUrl="http://192.168.3.92:5080/LDAPGateway/LDPAGAuthenAndGetUserRoleService?xsd=2" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

@@ -1,0 +1,84 @@
+﻿<tr class="bg-primary">
+    <th rowspan="2" class="text-center align-middle" style="width:50px;min-width:50px;max-width:50px;"></th>
+    <th rowspan="2" style="width:190px;min-width:190px;max-width:190px;" class="text-left align-middle">รายการค่าใช้จ่าย</th>
+    <th colspan="6" class="text-center">ได้รับจัดสรรงบประมาณจากรัฐบาล (บาท)</th>
+    <th rowspan="2" class="text-center align-middle" style="width:50px;min-width:50px;max-width:50px;"></th>
+</tr>
+<tr class="bg-primary">
+    <th style="width:100px;min-width:100px;max-width:100px;"></th>
+    <th style="width:121px;min-width:121px;max-width:121px;" class="text-right">งบประมาณ</th>
+    <th style="width:135px;min-width:135px;max-width:135px;" class="text-right">งบประมาณเพิ่ม/ปรับปรุง</th>
+    <th style="width:140px;min-width:140px;max-width:140px;" class="text-left">หมายเหตุ</th>
+    <th style="width:121px;min-width:121px;max-width:121px;" class="text-right">จัดสรร/กันเงิน</th>
+    <th style="width:121px;min-width:121px;max-width:121px;" class="text-right">คงเหลือสุทธิ</th>
+</tr>
+
+@*เงินงบประมาณ*@
+<tr ng-repeat-start="expenses in row.ExpensesItems">
+    <td rowspan="2" class="text-center align-top" style="width:50px;min-width:50px;max-width:50px;">
+        <a href="javascript:void(0)" class="text-danger"
+           ng-if="$settings.formView.editAble"
+           ng-click="deleteExpenses($event, row.ExpensesItems, $index, expenses.SEQ_ID)">ยกเลิก</a>
+    </td>
+    <td rowspan="2" style="width:190px;min-width:190px;max-width:190px;" class="word-wrap align-top">{{expenses.EXPENSES_NAME|trim}}
+        <div class="border-top mt-1" ng-if="expenses.CAN_ADD_PROJECT">
+            <fw-execute-button text="ข้อมูลโครงการ"
+                               css-icon-class="ion-ios-albums-outline" css-class="btn btn-primary btn-sm mt-n2"
+                               ng-disabled="$settings.isLoading||!$settings.formView.editAble"
+                               ng-click="createProject($event, expenses)"></fw-execute-button>
+        </div>
+    </td>
+    <th style="width:100px;min-width:100px;max-width:100px;" class="bg-white">เงิน งปม.</th>
+    <td style="width:121px;min-width:121px;max-width:121px;" class="text-right bg-white align-middle">{{+expenses.BUDGET_AMOUNT|displayDecimal:2}}</td>
+    <td style="width:135px;min-width:135px;max-width:135px;" class="text-right bg-white">
+        <fw-input-number-mask ng-model="expenses.NewAllocateBudgetAmounts"
+                              ng-disabled="$settings.isLoading||expenses.CAN_ADD_PROJECT"
+                              ng-change="calBudget(expenses)"
+                              css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+    </td>
+    <th rowspan="2" style="width:140px;min-width:140px;max-width:140px;" class="text-left align-top">
+        <textarea ng-model="expenses.RemarkText" maxlength="120"
+                  class="form-control textarea-noresize" placeholder="ความยาวไม่เกิน 120 ตัวอักษร"
+                  style="min-height:100px;max-height:100px;height:100px"
+                  ng-disabled="$settings.isLoading"></textarea>
+    </th>
+    <td style="width:121px;min-width:121px;max-width:121px;" class="text-right bg-white align-middle">{{+expenses.USE_BUDGET_AMOUNT|displayDecimal:2}}</td>
+    <td style="width:121px;min-width:121px;max-width:121px;" class="text-right bg-white align-middle">{{+expenses.REMAIN_BUDGET_AMOUNT|displayDecimal:2}}</td>
+    <td rowspan="2" style="width:50px;min-width:50px;max-width:50px;" class="text-center align-top">
+        <a href="javascript:void(0)" class="text-primary"|
+           ng-if="$settings.formData.BudgetId!=null&&expenses.SEQ_ID!=null&&!expenses.CAN_ADD_PROJECT"
+           ng-click="viewAllocateExpensesHistory($event, expenses)"><span class="animated fadeIn">ประวัติ</span></a>
+    </td>
+</tr>
+@*เงินนอกงบประมาณ*@
+<tr>
+    <th class="bg-light" style="width:100px;min-width:100px;max-width:100px;">เงินนอก งปม.</th>
+    <td style="width:121px;min-width:121px;max-width:121px;" class="text-right bg-light align-middle">{{+expenses.OFF_BUDGET_AMOUNT|displayDecimal:2}}</td>
+    <td style="width:135px;min-width:135px;max-width:135px;" class="text-right bg-light align-middle">
+        <fw-input-number-mask ng-model="expenses.NewAllocateOffBudgetAmounts"
+                              ng-change="calBudget(expenses)"
+                              ng-disabled="$settings.isLoading||expenses.CAN_ADD_PROJECT"
+                              css-class="text-right" placeholder="จำนวน (บาท)"></fw-input-number-mask>
+    </td>
+    <td style="width:121px;min-width:121px;max-width:121px;" class="text-right bg-light align-middle">{{+expenses.USE_OFF_BUDGET_AMOUNT|displayDecimal:2}}</td>
+    <td style="width:121px;min-width:121px;max-width:121px;" class="text-right bg-light align-middle">{{+expenses.REMAIN_OFF_BUDGET_AMOUNT|displayDecimal:2}}</td>
+</tr>
+<tr ng-repeat-end ng-if="false"></tr>
+
+<tr>
+    <th rowspan="2" colspan="2" class="text-right align-middle bg-primary">รวม (บาท)</th>
+    <th class="bg-white">เงิน งปม.</th>
+    <th class="text-right bg-white">{{row.ExpensesItems|fwSimpleSummary:['BUDGET_AMOUNT']:2}}</th>
+    <th class="text-right bg-white">{{row.ExpensesItems|fwSimpleSummary:['NewAllocateBudgetAmounts']:2}}</th>
+    <th rowspan="2">&nbsp;</th>
+    <th class="text-right bg-white">{{row.ExpensesItems|fwSimpleSummary:['USE_BUDGET_AMOUNT']:2}}</th>
+    <th class="text-right bg-white">{{row.ExpensesItems|fwSimpleSummary:['REMAIN_BUDGET_AMOUNT']:2}}</th>
+    <th rowspan="2">&nbsp;</th>
+</tr>
+<tr>
+    <th class="bg-light">เงินนอก งปม.</th>
+    <th class="text-right bg-light">{{row.ExpensesItems|fwSimpleSummary:['OFF_BUDGET_AMOUNT']:2}}</th>
+    <th class="text-right bg-light">{{row.ExpensesItems|fwSimpleSummary:['NewAllocateOffBudgetAmounts']:2}}</th>
+    <th class="text-right bg-light">{{row.ExpensesItems|fwSimpleSummary:['USE_OFF_BUDGET_AMOUNT']:2}}</th>
+    <th class="text-right bg-light">{{row.ExpensesItems|fwSimpleSummary:['REMAIN_OFF_BUDGET_AMOUNT']:2}}</th>
+</tr>

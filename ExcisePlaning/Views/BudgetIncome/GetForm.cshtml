@@ -1,0 +1,567 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="d-block shadow-sm m-0 mb-2 p-3">
+        <div class="form-row">
+            <div class="col-12 col-md-3">
+                <label class="require-field">ปี งปม. (พ.ศ.)<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.FiscalYear.ErrorMessages"></fw-validate-error-output></label>
+                <fw-input-mask model="$settings.formData.FiscalYear" mask="9999" change="fiscalYearChanged()" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+            </div>
+            <div class="col-12 col-md-3">
+                <label class="require-field">งวดที่รัฐบาลจัดสรร<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ReceivePeriod.ErrorMessages"></fw-validate-error-output></label>
+                <fw-input-mask model="$settings.formData.ReceivePeriod" mask="99/9999" placeholder="เดือน/ปี (พ.ศ.)"></fw-input-mask>
+            </div>
+            @if ("off_budget".Equals(ViewBag.PageType))
+            {
+                <div class="col-12 col-md-3">
+                    <label class="d-none d-md-block">&nbsp;</label>
+                    <md-checkbox ng-model="$settings.formData.OffBudgetSpeadToExpenses" class="m-0" ng-true-value="1" ng-false-value="0" ng-disabled="$settings.isLoading||true">กระจายลงแต่ละรายการ คชจ.</md-checkbox>
+                    <span class="text-danger f-10">กระจายงบประมาณลงแต่ละรายการค่าใช้จ่าย ซึ่งการเลือก ตัวเลือกนี้ รายการค่าใช้จ่ายทุกตัวที่ต้องการ จัดสรรงบประมาณให้หน่วยงานภูมิภาค หรือ กันเงินงบประมาณ จะต้องมียอดเงินงบประมาณถึงจะสามารถทำรายการได้</span>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="d-none d-md-block">&nbsp;</label>
+                    <div class="d-flex float-md-right">
+                        <fw-execute-button text="บันทึก" css-icon-class="ti-save"
+                                           css-class="btn btn-primary btn-sm mr-1"
+                                           ng-click="submitSave($event)"
+                                           ng-disabled="$settings.isLoading||$settings.formView.expenses.length==0||!$settings.formView.editAble"
+                                           on-loading="$settings.isSaving"></fw-execute-button>
+                        <fw-execute-button text="ยกเลิก" css-icon-class="ion-close-circled"
+                                           css-class="btn btn-danger btn-sm"
+                                           ng-disabled="$settings.isLoading"
+                                           ng-click="submitSearch()"></fw-execute-button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-12 col-md-3">
+                    <label class="required-field">เลขที่เอกสาร<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ReferDocNo.ErrorMessages"></fw-validate-error-output></label>
+                    <fw-input-mask model="$settings.formData.ReferDocNo" disabled="$settings.isLoading" mask="9999999999" placeholder="เฉพาะตัวเลขไม่เกิน 10 หลัก"></fw-input-mask>
+                    <span class="text-danger f-12">เลขที่อ้างอิงในการรับเงินประจำงวดในแต่ละงวด</span>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="d-none d-md-block">&nbsp;</label>
+                    <div class="d-flex float-md-right">
+                        <fw-execute-button text="บันทึก" css-icon-class="ti-save"
+                                           css-class="btn btn-primary btn-sm mr-1"
+                                           ng-click="submitSave($event)"
+                                           ng-disabled="$settings.isLoading||$settings.formView.expenses.length==0||!$settings.formView.editAble"
+                                           on-loading="$settings.isSaving"></fw-execute-button>
+                        <fw-execute-button text="ยกเลิก" css-icon-class="ion-close-circled"
+                                           css-class="btn btn-danger btn-sm"
+                                           ng-disabled="$settings.isLoading"
+                                           ng-click="submitSearch()"></fw-execute-button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <tr class="bg-primary">
+                            <th colspan="6" class="text-center">
+                                <span ng-if="$settings.pageType == 'budget'">เงินงบประมาณกรมสรรพสามิต (บาท)</span>
+                                <span ng-if="$settings.pageType == 'off_budget'">เงินนอกงบประมาณกรมสรรพสามิต (บาท)</span>
+                            </th>
+                        </tr>
+                        <tr class="bg-primary">
+                            <th style="width:130px;min-width:130px;max-width:130px;" class="text-right">
+                                <span ng-if="$settings.pageType == 'budget'">งบประมาณ</span>
+                                <span ng-if="$settings.pageType == 'off_budget'">แผนรายรับ/รายจ่าย</span>
+                            </th>
+                            <th style="width:130px;min-width:130px;max-width:130px;" class="text-right">
+                                <span ng-if="$settings.pageType == 'budget'">เงินประจำงวด</span>
+                                <span ng-if="$settings.pageType == 'off_budget'">จัดเก็บรายได้</span>
+                            </th>
+                            <th style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">จัดสรร</th>
+                            <th style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">กันเงิน</th>
+                            <th style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">เบิกจ่าย</th>
+                            <th style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">คงเหลือสุทธิ</th>
+                        </tr>
+                        <tr>
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-right text-muted">
+                                <span ng-if="$settings.pageType == 'budget'">{{$settings.formView.netBudgetAmounts|number:2}}</span>
+                                <span ng-if="$settings.pageType == 'off_budget'">{{$settings.formView.netOffBudgetAmounts|number:2}}</span>
+                            </td>
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-right text-primary f-w-900">
+                                <span ng-if="$settings.pageType == 'budget'">{{$settings.formView.netActualBudgetAmounts|number:2}}</span>
+                                <span ng-if="$settings.pageType == 'off_budget'">{{$settings.formView.netOffActualBudgetAmounts|number:2}}</span>
+                            </td>
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-right">
+                                <a href="javascript:void(0)" ng-if="$settings.pageType == 'budget'" ng-click="showModalBudgetGroupByDep('BUDGET_ALLOCATE', 1)">{{$settings.formView.netAllocateBudgetToDepartmentAmounts|displayDecimal:2}}<span class="ti-new-window ml-1 text-primary"></span></a>
+                                <a href="javascript:void(0)" ng-if="$settings.pageType == 'off_budget'" ng-click="showModalBudgetGroupByDep('BUDGET_ALLOCATE', 2)" >{{$settings.formView.netAllocateOffBudgetToDepartmentAmounts|displayDecimal:2}}<span class="ti-new-window ml-1 text-primary"></span></a>
+                            </td>
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-right text-warning">
+                                <a href="javascript:void(0)" class="text-warning" ng-if="$settings.pageType == 'budget'" ng-click="showModalBudgetGroupByDep('BUDGET_RESERVE', 1)">{{$settings.formView.netReserveBudgetAmounts|displayDecimal:2}}<span class="ti-new-window ml-1 text-primary"></span></a>
+                                <a href="javascript:void(0)" class="text-warning" ng-if="$settings.pageType == 'off_budget'" ng-click="showModalBudgetGroupByDep('BUDGET_RESERVE', 2)">{{$settings.formView.netReserveOffBudgetAmounts|displayDecimal:2}}<span class="ti-new-window ml-1 text-primary"></span></a>
+                            </td>
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-right">
+                                <span ng-if="$settings.pageType == 'budget'" class="text-warning">{{$settings.formView.netReserveWithdrawalBudgetAmounts|displayDecimal:2}}</span>
+                                <span ng-if="$settings.pageType == 'off_budget'" class="text-warning">{{$settings.formView.netReserveWithdrawalOffBudgetAmounts|displayDecimal:2}}</span>
+                            </td>
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-right text-success f-w-900">
+                                <span ng-if="$settings.pageType == 'budget'">{{$settings.formView.netRemainBudgetAmounts|displayDecimal:2}}</span>
+                                <span ng-if="$settings.pageType == 'off_budget'">{{$settings.formView.netOffRemainBudgetAmounts|displayDecimal:2}}</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                @*ตัวกรองข้อมูล*@
+                <div class="position-fixed" style="z-index:100;top:68px;right:0px;" ng-if="$settings.formView.expenses.length > 0">
+                    <div class="container position-absolute align-middle"
+                         style="left:210px;top:30px;width:250px;"
+                         ng-class="{'animated fadeIn': $settings.isOpenSearch, 'animated fadeIn': !$settings.isOpenSearch}"
+                         ng-style="{'left': $settings.isOpenSearch ? '-232px' : '-15px'}">
+
+                        <div class="animated fadeIn position-absolute p-2 border-danger text-white bg-secondary f-w-900 cursor-pointer text-center"
+                             style="left:-15px;"
+                             ng-click="$settings.isOpenSearch=!$settings.isOpenSearch"><span class="mr-1" ng-class="{'animated rotateIn ti-search': !$settings.isOpenSearch, 'animated rotateIn ti-close': $settings.isOpenSearch}"></span></div>
+                        <div class="p-2 border border-dark shadow-lg bg-light">
+                            <h4 class="f-16 border-bottom mb-2 pb-2">ระบุเงื่อนไขการกรองข้อมูล</h4>
+                            <div class="row">
+                                <div class="col-12 mb-1">
+                                    <label>แผนงาน</label>
+                                    <select ng-model="$settings.filters.planId" fw-select2>
+                                        <option value="empty">--- แผนงาน ---</option>
+                                        <option ng-repeat="item in $settings.filters.plans" value="{{item.PLAN_ID}}">{{item.PLAN_NAME}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 mb-1">
+                                    <label>ผลผลิต</label>
+                                    <select ng-model="$settings.filters.produceId" fw-select2>
+                                        <option value="empty">--- ผลผลิต ---</option>
+                                        <option ng-repeat="item in $settings.filters.produces" value="{{item.PRODUCE_ID}}">{{item.PRODUCE_NAME}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 mb-1">
+                                    <label>กิจกรรม</label>
+                                    <select ng-model="$settings.filters.activityId" fw-select2>
+                                        <option value="empty">--- กิจกรรม ---</option>
+                                        <option ng-repeat="item in $settings.filters.activities" value="{{item.ACTIVITY_ID}}">{{item.ACTIVITY_NAME}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 mb-1">
+                                    <label>งบรายจ่าย</label>
+                                    <select ng-model="$settings.filters.budgetTypeId" fw-select2>
+                                        <option value="empty">--- งบรายจ่าย ---</option>
+                                        <option ng-repeat="item in $settings.filters.budgetTypes" value="{{item.BUDGET_TYPE_ID}}">{{item.BUDGET_TYPE_NAME}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 mb-1">
+                                    <label>หมวดค่าใช้จ่าย</label>
+                                    <select ng-model="$settings.filters.expensesGroupId" fw-select2>
+                                        <option value="empty">--- หมวดค่าใช้จ่าย ---</option>
+                                        <option ng-repeat="item in $settings.filters.expensesGroups" value="{{item.EXPENSES_GROUP_ID}}">{{item.EXPENSES_GROUP_NAME + ' [' + item.BUDGET_TYPE_NAME + ']'}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                @*แสดงรายการค่าใช้จ่าย และ ช่องให้ระบุจำนวนเงินที่ได้รับจัดสรร*@
+                <fw-validate-error-output css-class="d-block" error-messages="$settings.formErrors.Expenses.ErrorMessages"></fw-validate-error-output>
+                <div class="table-responsive">
+                    <table class="table table-bordered m-0 p-0">
+
+                        <tr ng-if="!$settings.isLoading && $settings.formView.expenses.length == 0">
+                            <th colspan="9" class="text-center text-danger">--- ไม่พบรายการค่าใช้จ่ายที่จัดสรรจากรัฐบาล ---</th>
+                        </tr>
+
+                        <tr ng-repeat-start="(groupIndex, row) in $settings.formView.expenses|customFilter:$settings.filters" ng-if="false"></tr>
+                        @*แสดงส่วน Header*@
+                        <tr class="bg-primary">
+                            <td style="width:71px;max-width:71px;min-width:71px;">{{groupIndex + 1}}</td>
+                            <td style="width:auto;max-width:160px;" class="text-left word-wrap"><div class="border-bottom mb-1 pb-1 f-16 f-w-900">แผนงาน</div>{{row.GroupBy.PLAN_NAME || '-'}}</td>
+                            <td style="width:auto;max-width:160px;" class="text-left word-wrap"><div class="border-bottom mb-1 pb-1 f-16 f-w-900">ผลผลิต</div>{{row.GroupBy.PRODUCE_NAME || '-'}}</td>
+                            <td style="width:auto;max-width:160px;" class="text-left word-wrap"><div class="border-bottom mb-1 pb-1 f-16 f-w-900">กิจกรรม</div>{{row.GroupBy.ACTIVITY_NAME || '-'}}</td>
+                            <td style="width:130px;max-width:130px;min-width:130px;" class="text-left word-wrap"><div class="border-bottom mb-1 pb-1 f-16 f-w-900">งบรายจ่าย</div>{{row.GroupBy.BUDGET_TYPE_NAME + ' (แหล่งเงิน: ' + (row.GroupBy.BUDGET_TYPE_GOVERNMENT_REFER_CODE || 'N/A') + ')'}}</td>
+                            <td style="width:130px;max-width:130px;min-width:130px;" class="text-left word-wrap"><div class="border-bottom mb-1 pb-1 f-16 f-w-900">หมวดค่าใช้จ่าย</div>{{row.GroupBy.EXPENSES_GROUP_NAME + ' (แหล่งเงิน: ' + (row.GroupBy.EXPENSES_GROUP_GOVERNMENT_REFER_CODE || 'N/A') + ')'}}</td>
+                        </tr>
+
+
+                        @*แสดงรายการค่าใช้จ่ายที่จัดสรรจากรัฐบาล*@
+                        @if ("all".Equals(ViewBag.PageType))
+                        {
+                            @Html.Partial("~/Views/BudgetIncome/Partial/Income_All_Budget_Template.cshtml")
+                        }
+                        else if ("budget".Equals(ViewBag.PageType))
+                        {
+                            @Html.Partial("~/Views/BudgetIncome/Partial/Income_Budget_Template.cshtml")
+                        }
+                        else if ("off_budget".Equals(ViewBag.PageType))
+                        {
+                            @Html.Partial("~/Views/BudgetIncome/Partial/Income_Off_Budget_Template.cshtml")
+                        }
+
+
+                        <tr ng-repeat-end ng-if="false"></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/inputnumber")
+    @Scripts.Render("~/bundle/select2")
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $fwModalService, $fwModalHelperService, $fwDialogService, $customHttp, $timeout, $fwDateService, $filter) {
+            $scope.$settings = {
+                isLoading: false, isSaving: false, isOpenSearch: false,
+                pageType: '@ViewBag.PageType',
+                formErrors: {},
+                filters: {
+                    plans: [], produces: [], activities: [], budgetTypes: [], expensesGroups: [],
+                    planId: 'empty', produceId: 'empty', activityId: 'empty', budgetTypeId: 'empty', expensesGroupId: 'empty'
+                }, // ตัวกรอง
+                formView: {
+                    editAble: false,
+
+                    netBudgetAmounts: 0, netActualBudgetAmounts: 0,
+                    netUseBudgetAmounts: 0,
+                    netAllocateBudgetToDepartmentAmounts: 0,
+                    netReserveBudgetAmounts: 0, netReserveWithdrawalBudgetAmounts: 0,
+                    netRemainBudgetAmounts: 0,
+
+                    netOffBudgetAmounts: 0, netOffActualBudgetAmounts: 0,
+                    netOffUseBudgetAmounts: 0, netAllocateOffBudgetToDepartmentAmounts: 0,
+                    netReserveOffBudgetAmounts: 0, netReserveWithdrawalOffBudgetAmounts: 0,
+                    netOffRemainBudgetAmounts: 0,
+                    expenses: []
+                },
+                formData: {} // init func
+            };
+
+            // จัดเตรียมหน้าฟอร์ม
+            $scope.init = function () {
+                var monthNoStr = new Date().getMonth() + 1;
+                if (monthNoStr < 10)
+                    monthNoStr = '0' + monthNoStr;
+
+                $scope.$settings.formData = {
+                    BudgetId: null,
+                    FiscalYear: $fwDateService.convertYearToBuddhist('@ViewBag.FiscalYear'),
+                    OffBudgetSpeadToExpenses: 0,
+                    ReceivePeriod: $filter('textFormat')('{0}/{1}', monthNoStr, $fwDateService.convertYearToBuddhist('@ViewBag.FiscalYear')),
+                    ReferDocNo: null
+                };
+            };
+            // เมื่องแสดงสรุปงบประมาณตามหน่วยงาน
+            $scope.showModalBudgetGroupByDep = function (retrieveType, budgetType) {
+                var fiscalYear = $fwDateService.convertYearToBritish($scope.$settings.formData.FiscalYear);
+                $fwModalHelperService.getSummaryBudgetGroupByDepartment(fiscalYear, retrieveType, budgetType);
+            };
+            // เมื่อปีเปลี่ยนแปลง
+            var fiscalYearChagedId = null;
+            $scope.fiscalYearChanged = function () {
+                $timeout.cancel(fiscalYearChagedId);
+                fiscalYearChagedId = $timeout(function () {
+                    var fiscalYear = ('' + $scope.$settings.formData.FiscalYear).replace(/[^\d]/g, '');
+                    if (fiscalYear.length == 4)
+                        $scope.submitSearch();
+                }, 500);
+            };
+            // ส่งคำขอข้อมูล
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    $scope.$settings.isLoading = true;
+                    var fiscalYear = $fwDateService.convertYearToBritish($scope.$settings.formData.FiscalYear);
+                    $customHttp.formPost('@Url.Action("Retrieve", "BudgetIncome")', { fiscalYear: fiscalYear }).then(function (res) {
+                        $scope.$settings.formView.netBudgetRequestStartYearAmounts = res.data.netBudgetRequestStartYearAmounts;
+
+                        $scope.$settings.formView.expenses = res.data.expenses || [];
+                        $scope.$settings.formView.netBudgetAmounts = res.data.netBudgetAmounts || 0;
+                        $scope.$settings.formView.netActualBudgetAmounts = res.data.netActualBudgetAmounts || 0;
+                        $scope.$settings.formView.netUseBudgetAmounts = res.data.netUseBudgetAmounts || 0;
+                        $scope.$settings.formView.netAllocateBudgetToDepartmentAmounts = res.data.netAllocateBudgetToDepartmentAmounts || 0;
+                        $scope.$settings.formView.netReserveBudgetAmounts = res.data.netReserveBudgetAmounts || 0;
+                        $scope.$settings.formView.netReserveWithdrawalBudgetAmounts = res.data.netReserveWithdrawalBudgetAmounts || 0;
+                        $scope.$settings.formView.netRemainBudgetAmounts = res.data.netRemainBudgetAmounts || 0;
+
+                        $scope.$settings.formView.netOffBudgetAmounts = res.data.netOffBudgetAmounts || 0;
+                        $scope.$settings.formView.netOffActualBudgetAmounts = res.data.netOffActualBudgetAmounts || 0;
+                        $scope.$settings.formView.netOffUseBudgetAmounts = res.data.netOffUseBudgetAmounts || 0;
+                        $scope.$settings.formView.netAllocateOffBudgetToDepartmentAmounts = res.data.netAllocateOffBudgetToDepartmentAmounts || 0;
+                        $scope.$settings.formView.netReserveOffBudgetAmounts = res.data.netReserveOffBudgetAmounts || 0;
+                        $scope.$settings.formView.netReserveWithdrawalOffBudgetAmounts = res.data.netReserveWithdrawalOffBudgetAmounts || 0;
+                        $scope.$settings.formView.netOffRemainBudgetAmounts = res.data.netOffRemainBudgetAmounts || 0;
+
+                        $scope.$settings.formView.editAble = res.data.editAble;
+                        $scope.$settings.formView.expenses = res.data.expenses || [];
+
+                        $scope.$settings.formData.BudgetId = res.data.budgetId;
+                        $scope.$settings.formData.OffBudgetSpeadToExpenses = res.data.offBudgetSpeadToExpenses;
+
+
+
+                        $scope.$settings.filters.plans = [];
+                        $scope.$settings.filters.produces = [];
+                        $scope.$settings.filters.activities = [];
+                        $scope.$settings.filters.budgetTypes = [];
+                        $scope.$settings.filters.expensesGroups = [];
+                        angular.forEach($scope.$settings.formView.expenses, function (expensesItem) {
+                            // แผนงาน
+                            if ($scope.$settings.filters.plans.filter(function (item) { return item.PLAN_ID == expensesItem.GroupBy.PLAN_ID; }).length == 0)
+                                $scope.$settings.filters.plans.push({ PLAN_ID: expensesItem.GroupBy.PLAN_ID, PLAN_NAME: expensesItem.GroupBy.PLAN_NAME });
+                            // ผลผลิต
+                            if ($scope.$settings.filters.produces.filter(function (item) { return item.PRODUCE_ID == expensesItem.GroupBy.PRODUCE_ID; }).length == 0)
+                                $scope.$settings.filters.produces.push({ PRODUCE_ID: expensesItem.GroupBy.PRODUCE_ID, PRODUCE_NAME: expensesItem.GroupBy.PRODUCE_NAME });
+                            // กิจกรรม
+                            if ($scope.$settings.filters.activities.filter(function (item) { return item.ACTIVITY_ID == expensesItem.GroupBy.ACTIVITY_ID; }).length == 0)
+                                $scope.$settings.filters.activities.push({ ACTIVITY_ID: expensesItem.GroupBy.ACTIVITY_ID, ACTIVITY_NAME: expensesItem.GroupBy.ACTIVITY_NAME });
+                            // งบรายจ่าย
+                            if ($scope.$settings.filters.budgetTypes.filter(function (item) { return item.BUDGET_TYPE_ID == expensesItem.GroupBy.BUDGET_TYPE_ID; }).length == 0)
+                                $scope.$settings.filters.budgetTypes.push({ BUDGET_TYPE_ID: expensesItem.GroupBy.BUDGET_TYPE_ID, BUDGET_TYPE_NAME: expensesItem.GroupBy.BUDGET_TYPE_NAME });
+                            // หมวดค่าใช้จ่าย
+                            if ($scope.$settings.filters.expensesGroups.filter(function (item) { return item.EXPENSES_GROUP_ID == expensesItem.GroupBy.EXPENSES_GROUP_ID; }).length == 0)
+                                $scope.$settings.filters.expensesGroups.push({
+                                    EXPENSES_GROUP_ID: expensesItem.GroupBy.EXPENSES_GROUP_ID,
+                                    EXPENSES_GROUP_NAME: expensesItem.GroupBy.EXPENSES_GROUP_NAME,
+                                    BUDGET_TYPE_NAME: expensesItem.GroupBy.BUDGET_TYPE_NAME
+                                });
+                        });
+                        $scope.$settings.filters.planId = 'empty';
+                        $scope.$settings.filters.produceId = 'empty';
+                        $scope.$settings.filters.activityId = 'empty';
+                        $scope.$settings.filters.budgetTypeId = 'empty';
+                        $scope.$settings.filters.expensesGroupId = 'empty';
+
+
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                    });
+                }, 300);
+            };
+            // บันทึกรายการจัดสรร งปม.
+            $scope.submitSave = function (event) {
+                if (!$scope.$settings.formView.editAble)
+                    return;
+
+                $scope.$settings.isLoading = true;
+                $scope.$settings.isSaving = true;
+
+                var params = $.extend(true, {
+                    Expenses: [],
+                    PageType: $scope.$settings.pageType
+                }, $scope.$settings.formData);
+                params.FiscalYear = $fwDateService.convertYearToBritish(params.FiscalYear);
+
+                // แปลงเป็นปี ค.ศ.
+                var parts = ('' + params.ReceivePeriod).split('/').filter(function (val) { return !(/[^\d]/g).test(val); });
+                params.ReceivePeriod = '';
+                if (parts.length == 2)
+                    params.ReceivePeriod = $filter('textFormat')('{0}/{1}', parts[0], $fwDateService.convertYearToBritish(parts[1]));
+
+                // รวบรวมรายการ คชจ. ที่มีการแก้ไข เพื่อส่งไปบันทึก
+                angular.forEach($scope.$settings.formView.expenses, function (item) {
+                    var expensesIncomeItems = $.extend(true, [], item.ExpensesItems);
+                    expensesIncomeItems = expensesIncomeItems.filter(function (expensesItem) {
+                        return expensesItem.NewAllocateBudgetAmounts != undefined
+                            || expensesItem.NewAllocateOffBudgetAmounts != undefined
+                            || expensesItem.Projects != undefined;
+                    });
+                    params.Expenses = params.Expenses.concat(expensesIncomeItems);
+                });
+                // ส่งคำขอบันทึกรายการ
+                $scope.$settings.formErrors = {};
+                $customHttp.formPost('@Url.Action("SubmitSave", "BudgetIncome")', params).then(function (res) {
+                    $scope.$settings.formErrors = res.data.errors || {}
+                    if (null != res.data.errorText)
+                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                    else if (null != res.data.errors)
+                        $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งให้เรียบร้อยก่อน');
+                    else
+                        $fwDialogService.alertDialog(event, 'รับเงินประจำงวด เรียบร้อยแล้ว').then(function () {
+                            $scope.init();
+                            $scope.submitSearch();
+                        });
+
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                });
+            };
+            // ค่าใช้จ่ายภายใต้โครงการ
+            $scope.showProject = function (event, expensesItem) {
+                var fiscalYear = $fwDateService.convertYearToBritish($scope.$settings.formData.FiscalYear);
+                var spreadOffIncomeToExpenses = $scope.$settings.formData.OffBudgetSpeadToExpenses; // 1 = spread, 0 = no
+                $fwModalService.getModal('@Url.Action("GetModalExpensesProjectForm", "BudgetIncome")', { $fiscalYear: fiscalYear, $expensesItem: expensesItem, $spreadOffIncomeToExpenses: spreadOffIncomeToExpenses }, function ($scope, $customHttp, $mdDialog, $fwDialogService, $timeout, $fiscalYear, $expensesItem, $spreadOffIncomeToExpenses, $controller) {
+                    var $scopeExtends = {};
+                    $controller('AppController', { $scope: $scopeExtends }); // สืบทอดคุณสมบัติของ AppController มาเก็บที่ $scopeExtends
+
+                    $scope.$settings = {
+                        isLoading: false,
+                        pageType: '@ViewBag.PageType',
+                        spreadOffIncomeToExpenses: $spreadOffIncomeToExpenses,
+                        formView: $.extend(true, {}, $expensesItem),
+                        formData: {
+                            projects: $expensesItem.Projects || []
+                        }
+                    };
+
+                    // กดแสดงประวัติ
+                    $scope.viewHistory = function (event, row) {
+                        $scopeExtends.viewHistory(event, row);
+                    };
+                    // ส่งคำร้องค้นหา
+                    $scope.submitSearch = function () {
+                        $timeout(function () {
+                            $scope.$settings.isLoading = true;
+                            $customHttp.formPost('@Url.Action("RetrieveExpensesProject", "BudgetIncome")', {
+                                fiscalYear: $expensesItem.YR,
+                                planId: $expensesItem.PLAN_ID,
+                                produceId: $expensesItem.PRODUCE_ID,
+                                activityId: $expensesItem.ACTIVITY_ID,
+                                budgetTypeId: $expensesItem.BUDGET_TYPE_ID,
+                                expensesGroupId: $expensesItem.EXPENSES_GROUP_ID,
+                                expensesId: $expensesItem.EXPENSES_ID,
+                                pageType: $scope.$settings.pageType
+                            }).then(function (res) {
+                                $scope.$settings.formData.projects = res.data || [];
+                                $scope.$settings.isLoading = false;
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        }, 200);
+                    };
+                    // เมื่อกดปุ่มยกเลิกโครงการ
+                    // เรียกใช้ viewHistory จาก AppController
+
+                    // กดปุ่มตกลง
+                    $scope.ok = function () {
+                        $mdDialog.hide($scope.$settings.formData.projects);
+                    };
+                    // กดปุ่มปิดหน้าต่าง
+                    $scope.close = function () {
+                        $mdDialog.cancel({});
+                    };
+
+                    // โหลดข้อมูลโครงการ
+                    if (undefined == $expensesItem.Projects)
+                        $scope.submitSearch();
+                }, event).then(function (projects) {
+                    if (undefined == expensesItem.Projects)
+                        expensesItem.Projects = [];
+                    expensesItem.Projects = projects;
+
+                    expensesItem.NewAllocateBudgetAmounts = 0;
+                    expensesItem.NewAllocateOffBudgetAmounts = 0;
+                    angular.forEach(projects, function (project) {
+                        expensesItem.NewAllocateBudgetAmounts += (+project.AllocateBudgetAmounts) || 0;
+                        expensesItem.NewAllocateOffBudgetAmounts += (+project.AllocateOffBudgetAmounts) || 0;
+                    });
+                }, function () { });
+            };
+            // แสดงประวัติการรับเงินงบประมาณจากรัฐบาลของรายการค่าใช้จ่าย
+            $scope.viewHistory = function (event, expensesInfo) {
+                $fwModalService.getModal('@Url.Action("GetModalViewIncomeHistoryForm", "BudgetIncome")', { $expensesInfo: expensesInfo }, function ($scope, $timeout, $customHttp, $fwDialogService, $mdDialog, $expensesInfo) {
+                    $scope.$settings = {
+                        isLoading: false,
+                        pageType: '@ViewBag.PageType',
+                        formView: {
+                            expensesInfo: $.extend(true, {}, $expensesInfo),
+                            rows: []
+                        }
+                    };
+
+                    // ส่งคำขอข้อมูล
+                    $scope.submitSearch = function () {
+                        $scope.$settings.isLoading = true;
+                        $customHttp.formPost('@Url.Action("RetriveIncomeHistory", "BudgetIncome")', {
+                            fiscalYear: $expensesInfo.YR,
+                            planId: $expensesInfo.PLAN_ID,
+                            produceId: $expensesInfo.PRODUCE_ID,
+                            activityId: $expensesInfo.ACTIVITY_ID,
+                            budgetTypeId: $expensesInfo.BUDGET_TYPE_ID,
+                            expensesGroupId: $expensesInfo.EXPENSES_GROUP_ID,
+                            expensesId: $expensesInfo.EXPENSES_ID,
+                            projectId: $expensesInfo.PROJECT_ID || null,
+                            pageType: '@ViewBag.PageType'
+                        }).then(function (res) {
+                            $scope.$settings.formView.rows = res.data || [];
+                            $scope.$settings.isLoading = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                        });
+                    };
+                    // ยกเลิกประวัติการรับเงินจากรัฐบาล
+                    $scope.submitReject = function (event, row) {
+                        $fwDialogService.confirmDialog(event, 'ยืนยันการยกเลิก ประวัติการรับเงินงวด รายการนี้').then(function () {
+                            $customHttp.formPost('@Url.Action("SubmitRejectIncomeHistory", "BudgetIncome")', { incomeId: row.INCOME_ID}).then(function (res) {
+                                if (null != res.data.errorText)
+                                    $fwDialogService.dangerDialog(event, res.data.errorText);
+                                else
+                                    $timeout(function () {
+                                        $scope.submitSearch();
+                                    }, 100);
+                            }, function () { });
+                        }, function () { });
+                    };
+                    // ปิด Dialog
+                    $scope.ok = function () {
+                        $mdDialog.hide({});
+                    };
+                    $scope.close = function () {
+                        $mdDialog.cancel({});
+                    };
+
+                    // จัดเตรียมข้อมูลแสดงผลในฟอร์ม
+                    $timeout(function () {
+                        $scope.submitSearch();
+                    }, 100);
+                }, event).then(function () {
+                    //$scope.submitSearch();
+                }, function () { });
+            };
+
+            // โหลดข้อมูลตั้งตนของฟอร์ม
+            $scope.init();
+            //$scope.$settings.formData.ReceivePeriod = $filter('textFormat')('{0}/{1}', new Date().getMonth() + 1, $fwDateService.convertYearToBuddhist('@ViewBag.FiscalYear'));
+            $scope.submitSearch();
+        }).filter('customFilter', function () {
+            return function (expensesItems, filters) {
+                var planId = ('' + filters.planId).replace(/[^\d]/g, '');
+                var produceId = ('' + filters.produceId).replace(/[^\d]/g, '');
+                var activityId = ('' + filters.activityId).replace(/[^\d]/g, '');
+                var budgetTypeId = ('' + filters.budgetTypeId).replace(/[^\d]/g, '');
+                var expensesGroupId = ('' + filters.expensesGroupId).replace(/[^\d]/g, '');
+
+                if (planId != '')
+                    expensesItems = expensesItems.filter(function (item) { return item.GroupBy.PLAN_ID == planId; });
+                if (produceId != '')
+                    expensesItems = expensesItems.filter(function (item) { return item.GroupBy.PRODUCE_ID == produceId; });
+                if (activityId != '')
+                    expensesItems = expensesItems.filter(function (item) { return item.GroupBy.ACTIVITY_ID == activityId; });
+                if (budgetTypeId != '')
+                    expensesItems = expensesItems.filter(function (item) { return item.GroupBy.BUDGET_TYPE_ID == budgetTypeId; });
+                if (expensesGroupId != '')
+                    expensesItems = expensesItems.filter(function (item) { return item.GroupBy.EXPENSES_GROUP_ID == expensesGroupId; });
+
+                return expensesItems;
+            };
+        });
+    </script>
+}

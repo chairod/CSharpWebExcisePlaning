@@ -1,0 +1,95 @@
+﻿<md-dialog flex="99" flex-gt-sm="80">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์ม{{$settings.expensesName}}</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <fw-execute-button text="เพิ่มรายการ" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round"
+                               ng-click="addItem($event)" ng-disabled="$settings.isLoading"></fw-execute-button>
+            <span class="text-danger ml-2 float-md-right f-w-900">จำนวน {{$settings.formData.rows.length|number:0}} รายการ</span>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th style="width:75px;min-width:75px;max-width:75px;" class="text-center align-middle">ลำดับ</th>
+                        <th style="min-width:190px" class="text-left">รายการ</th>
+                        <th style="width:130px;min-width:130px;max-width:130px;" class="text-center">จำนวน</th>
+                        <th style="width:130px;min-width:130px;max-width:130px;" class="text-center">หน่วยนับ</th>
+                        <th style="width:145px;min-width:145px;max-width:145px;" class="text-right">ราคา/หน่วย (บาท)</th>
+                        <th style="width:170px;min-width:170px;max-width:170px;" class="text-right">รวม (บาท)</th>
+                        <th style="width:180px;min-width:180px;max-width:180px;" class="text-left">หมายเหตุ</th>
+                        <th style="width:60px;min-width:60px;max-width:60px;"></th>
+                    </tr>
+
+                    <tr ng-if="$settings.formData.rows.length==0&&!$settings.isLoading">
+                        <th colspan="8" class="text-center text-danger animated fadeIn">--- โปรดกดที่ปุ่ม "เพิ่มรายการ" ---</th>
+                    </tr>
+
+                    <tr ng-repeat="row in $settings.formData.rows">
+                        <td style="width:75px;min-width:75px;max-width:75px;" class="text-center">{{$index + 1}}</td>
+                        <td style="min-width:190px" class="text-left bg-light">
+                            <select class="form-control" ng-model="row.AssetId"
+                                    ng-change="assetChanged(row.AssetId, $settings.assets, row)"
+                                    ng-disabled="$settings.isLoading" fw-select2>
+                                <option value="empty">--- วัสดุคอมพิวเตอร์ ---</option>
+                                <option ng-repeat="item in $settings.assets" value="{{item.ASSET_ID}}">{{item.ASSET_NAME}}</option>
+                            </select>
+                            <input type="text" class="d-block w-100 p-1 mt-1" ng-model="row.AssetOtherName" title="{{row.AssetOtherName}}"
+                                   ng-if="row.AssetOtherFlag==true||row.AssetOtherFlag=='true'"
+                                   ng-disabled="$settings.isLoading" placeholder="ไม่เกิน 200 ตัวอักษร" maxlength="200" />
+                        </td>
+                        <td style="width:130px;min-width:130px;max-width:130px;" class="text-center">
+                            <fw-input-number-mask ng-model="row.Amounts" css-class="text-center"
+                                                  ng-change="calTotalPrice(row)"
+                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999"></fw-input-number-mask>
+                        </td>
+                        <td style="width:130px;min-width:130px;max-width:130px;" class="text-left">
+                            <select class="form-control" ng-model="row.UnitId" ng-disabled="$settings.isLoading" fw-select2>
+                                <option value="empty">--- หน่วยนับ ---</option>
+                                <option ng-repeat="item in $settings.units" value="{{item.UNIT_ID}}">{{item.UNIT_TEXT}}</option>
+                            </select>
+                        </td>
+                        <td style="width:145px;min-width:145px;max-width:145px;" class="text-right">
+                            <fw-input-number-mask ng-model="row.PricePerUnit" css-class="text-right"
+                                                  ng-change="calTotalPrice(row)"
+                                                  ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999.00"></fw-input-number-mask>
+                        </td>
+                        <td style="width:170px;min-width:170px;max-width:170px;" class="text-right align-middle word-wrap">{{row.TotalPrice|number:2}}</td>
+                        <td style="width:180px;min-width:180px;max-width:180px;" class="text-left">
+                            <input type="text" class="form-control" ng-model="row.RemarkText" ng-disabled="$settings.isLoading" />
+                        </td>
+                        <td style="width:60px;min-width:60px;max-width:60px;" class="text-center">
+                            <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.rows.splice($index, 1)">ยกเลิก</a>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="$settings.formData.rows.length > 0" class="bg-primary">
+                        <th colspan="2" class="text-right animated fadeIn">รวมทั้งสิ้น</th>
+                        <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['Amounts']:0}}</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                        <th class="text-right animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['TotalPrice']:2}}</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div ng-if="$settings.isLoading">
+            <span class="text-danger f-w-900 animated fadeIn">กำลังจัดเตรียมแบบฟอร์ม ...</span>
+        </div>
+        <span flex></span>
+        <fw-execute-button text="ตกลง" css-class="btn btn-primary btn-sm mr-md-1 mb-1 mb-md-0"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-ios-checkmark"
+                           ng-click="ok()"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

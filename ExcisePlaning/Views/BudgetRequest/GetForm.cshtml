@@ -1,0 +1,2666 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    @*ส่วนหัวของหน้าจอ*@
+    <div class="form-row mb-2">
+        <div class="col-12">
+            <div class="d-flex float-md-left">
+                <fw-execute-button text="ค้นหา Template"
+                                   ng-disabled="$settings.isLoading||$settings.formView.signOff||$settings.formView.processStatus!=0@(!ViewBag.CanCreateBudgetRequest?"||true":"")"
+                                   css-icon-class="icofont icofont-ui-search"
+                                   css-class="btn btn-primary btn-sm mb-1 mb-md-0 mr-1" ng-click="browseTemplate($event)"></fw-execute-button>
+            </div>
+            <div class="d-flex float-md-right">
+                <fw-execute-button text="@(ViewBag.RequestId==""?"ส่งคำขอ งปม.":"ปรับปรุงคำขอ")"
+                                   ng-disabled="$settings.isLoading||$settings.currYear>$settings.formData.FiscalYear||$settings.formView.processStatus!=0||$settings.formView.signOff==true@(!ViewBag.CanCreateBudgetRequest && string.IsNullOrEmpty(ViewBag.RequestId)?"||true":"")"
+                                   css-icon-class="icofont icofont-save"
+                                   on-loading="$settings.isSaving"
+                                   css-class="btn btn-primary btn-sm mb-1 mb-md-0 mr-1" ng-click="submitSave($event)"></fw-execute-button>
+                <fw-execute-button text="ยกเลิกคำขอ" ng-disabled="$settings.isLoading||$settings.formData.RequestId==''||$settings.formView.processStatus!=0||$settings.formView.signOff==true"
+                                   css-icon-class="ion-close"
+                                   on-loading="$settings.isReject"
+                                   css-class="btn btn-danger btn-sm mb-1 mb-md-0 mr-1" ng-click="submitReject($event)"></fw-execute-button>
+                <fw-execute-button text="SignOff คำขอ" ng-disabled="$settings.isLoading||$settings.formData.RequestId==''||$settings.formData.RequestType!='1'||$settings.formView.processStatus!=0||$settings.formView.signOff==true"
+                                   css-icon-class="ion-checkmark"
+                                   ng-if="$settings.formData.RequestType=='1'"
+                                   on-loading="$settings.isSignOff"
+                                   css-class="btn btn-primary btn-sm mb-1 mb-md-0 mr-1" ng-click="submitSignOff($event)"></fw-execute-button>
+            </div>
+        </div>
+    </div>
+
+    @*ข้อมูลคำขอ*@
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        @*บอกประเภทขอคำของบประมาณ (เงินงบประมาณ หรือ เงินนอกงบประมาณ)*@
+        <div class="position-absolute f-14 text-white p-2 bg-danger shadow-lg" style="top:0px;right:0px">
+            @(ViewBag.RequestType == "START" ? "งบประมาณต้นปี" : "ของบเพิ่มเติม")
+        </div>
+
+        <div class="d-flex pb-2 mb-2 border-bottom" ng-if="$settings.formData.RequestId != '' && $settings.formData.RequestType=='1' && $settings.formView.signOff==false">
+            <span class="text-danger f-14 animated fadeIn">*** คำขอต้นปี หากรายการค่าใช้จ่ายถูกต้องครบถ้วนแล้วให้กดที่ปุ่ม "SignOff" เพื่อยืนยันคำขอส่งให้กับกรมสรรพสามิต ***</span>
+        </div>
+
+
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label class="required-field">ปี (พ.ศ.)</label>
+                <input type="text" class="form-control-plaintext border border-warning text-warning pl-2" value="{{$settings.formData.FiscalYear}}" ng-disabled="true||$settings.isLoading" />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="required-field">หน่วยงาน</label>
+                <input type="text" class="form-control-plaintext border border-warning text-warning pl-2" value="{{$settings.formView.depName}}" ng-disabled="true||$settings.isLoading" />
+            </div>
+            <div class="form-group col-12 col-md-6">
+                <label>หมายเหตุ/คำอธิบายเพิ่มเติม<fw-validate-error-output error-messages="$settings.formErrors.RemarkText.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                <textarea class="form-control textarea-noresize"
+                          ng-model="$settings.formData.RemarkText" title="{{$settings.formData.RemarkText}}"
+                          ng-disabled="$settings.isLoading||$settings.formView.processStatus!=0||$settings.formView.signOff==true"
+                          style="height:50px;"></textarea>
+            </div>
+        </div>
+        <div class="form-row mb-2 border-bottom">
+            <div class="form-group col-12 col-md-3">
+                <label>รายการ คชจ.</label>
+                <input type="text" class="form-control-plaintext border border-warning text-warning pl-2" value="{{$settings.formData.Expenses.length|number:0}} รายการ" ng-disabled="true||$settings.isLoading" />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>รวมคำของบประมาณ (บาท)</label>
+                <input type="text" class="form-control-plaintext border border-warning text-warning pl-2" value="{{$settings.formData.Expenses|budgetRequestSummaryAmounts}} บาท" ng-disabled="true||$settings.isLoading" />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="required-field">ผู้ทำคำขอ</label>
+                <input type="text" class="form-control-plaintext border border-warning text-warning pl-2" value="{{$settings.formView.requestName}}" title="{{$settings.formView.requestName}}" ng-disabled="true||$settings.isLoading" />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="required-field">วันที่ส่งคำขอ</label>
+                <input type="text" class="form-control-plaintext border border-warning text-warning pl-2" value="{{$settings.formView.requestDate}}" ng-disabled="true||$settings.isLoading" />
+            </div>
+        </div>
+        @*<div class="form-row">
+                <div class="form-group col-12 col-md-3">
+                    <label>แผนงาน</label>
+                    <input type="text" class="form-control-plaintext border border-warning text-warning pl-2" value="{{$settings.formView.planName}}" title="{{$settings.formView.planName}}" ng-disabled="true||$settings.isLoading" />
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>ผลผลิต</label>
+                    <input type="text" class="form-control-plaintext border border-warning text-warning pl-2" value="{{$settings.formView.produceName}}" title="{{$settings.formView.produceName}}" ng-disabled="true||$settings.isLoading" />
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>กิจกรรม</label>
+                    <input type="text" class="form-control-plaintext border border-warning text-warning pl-2" value="{{$settings.formView.activityName}}" title="{{$settings.formView.activityName}}" ng-disabled="true||$settings.isLoading" />
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>งบรายจ่าย</label>
+                    <input type="text" class="form-control-plaintext border border-warning text-warning pl-2" value="{{$settings.formView.budgetTypeName}}" title="{{$settings.formView.budgetTypeName}}" ng-disabled="true||$settings.isLoading" />
+                </div>
+            </div>*@
+        <div class="form-row">
+            @*<div class="form-group col-12 col-md-3">
+                    <label>หมวด คชจ.</label>
+                    <input type="text" class="form-control-plaintext border border-warning text-warning pl-2" value="{{$settings.formView.expensesGroupName}}" title="{{$settings.formView.expensesGroupName}}" ng-disabled="true||$settings.isLoading" />
+                </div>*@
+
+            @*แสดงตัวแหล่งเงิน (งปม. หรือ เงินนอก งปม.) กรณีเป็นการขอเงินงบเพิ่มเติม*@
+            @if (ViewBag.RequestType == "MORE")
+            {
+                <div class="form-group col-12 col-md-3 mb-0">
+                    <label class="d-none d-md-block">&nbsp;<fw-validate-error-output error-messages="$settings.formErrors.BudgetTypeFlag.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <md-checkbox ng-model="$settings.formData.BudgetTypeFlag" ng-true-value="1" ng-false-value="2">เงิน งปม.</md-checkbox>
+                    <md-checkbox ng-model="$settings.formData.BudgetTypeFlag" ng-true-value="2" ng-false-value="1">เงินนอก งปม.</md-checkbox>
+                </div>
+                <div class="form-group col-12 col-md-3 mb-0">
+                    <label class="required-field">เลขที่หนังสือ<fw-validate-error-output error-messages="$settings.formErrors.RefCode.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" ng-model="$settings.formData.RefCode" ng-disabled="$settings.isLoading" maxlength="11" placeholder="ระบุเลขที่หนังสืออ้างอิงคำขอเพิ่มเติม" />
+                </div>
+            }
+
+            @*ปุ่มสำหรับกำหนด Master Template ของคำขอเงินงบประมาณ
+                <div class="form-group col-12 col-md-3">
+                    <label class="d-none d-md-block">&nbsp;</label>
+                    <fw-execute-button text="กำหนด Template หลัก" ng-disabled="$settings.isLoading||$settings.formData.Expenses.length==0||$settings.formView.processStatus!=0||$settings.formView.signOff==true"
+                                       css-icon-class="ion-checkmark"
+                                       css-class="btn btn-primary btn-sm mb-1 mb-md-0 mr-1"
+                                       ng-click="setMasterTemplate()"></fw-execute-button>
+                    <span class="text-danger f-12">*** จะแสดงหน้าต่างให้เลือก Template หลักในกรณีที่เลือกใช้ Template คำของบประมาณมากกว่า 1 รายการ ***</span>
+                </div>*@
+        </div>
+    </div>
+
+    @*รายการ คชจ. ที่ต้องการส่งคำขอเงินงบประมาณ*@
+    <div class="card card-block borderless-card shadow-sm m-0">
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <fw-validate-error-output error-messages="$settings.formErrors.Expenses.ErrorMessages" css-class="d-block"></fw-validate-error-output>
+            </div>
+            <div class="col-12 col-md-8">
+                <md-checkbox ng-model="$settings.expensesRequestOnly" class="m-0 float-md-right mb-1" ng-disabled="$settings.isLoading||$settings.formData.Expenses.length==0">แสดงเฉพาะรายการค่าใช้จ่ายที่ส่งคำขอ</md-checkbox>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <tr>
+                    <th style="width:60px;max-width:60px;min-width:60px;"></th>
+                    <th style="width:auto;max-width:160px;" class="text-left">แผนงาน</th>
+                    <th style="width:auto;max-width:160px;" class="text-left">ผลผลิต</th>
+                    <th style="width:auto;max-width:160px;" class="text-left">กิจกรรม</th>
+                    <th style="width:130px;max-width:130px;min-width:130px;" class="text-left">งบรายจ่าย</th>
+                    <th style="width:130px;max-width:130px;min-width:130px;" class="text-left">หมวด คชจ.<span class="ml-1" ng-if="$settings.isLoadExpenses"><i class="rotate-refresh ti-reload"></i></span></th>
+                </tr>
+                <tr ng-if="$settings.formData.Expenses.length == 0">
+                    <th colspan="6" class="text-danger text-center animated fadeIn">--- กดที่ปุ่ม "ค้นหา Template" เพื่อทำคำขอ ---</th>
+                </tr>
+                <tr ng-repeat-start="($groupIndex, groupItem) in $settings.formData.Expenses|privateFilterExpenses:$settings.expensesRequestOnly" class="bg-primary">
+                    <td style="width:60px;max-width:60px;min-width:60px;" class="text-center">{{$groupIndex + 1}}</td>
+                    <td style="width:130px;max-width:130px;min-width:130px;" class="text-left word-wrap">{{groupItem.GroupBy.PLAN_NAME||'-'}}</td>
+                    <td style="width:130px;max-width:130px;min-width:130px;" class="text-left word-wrap">{{groupItem.GroupBy.PRODUCE_NAME||'-'}}</td>
+                    <td style="width:130px;max-width:130px;min-width:130px;" class="text-left word-wrap">{{groupItem.GroupBy.ACTIVITY_NAME||'-'}}</td>
+                    <td style="width:130px;max-width:130px;min-width:130px;" class="text-left word-wrap">{{groupItem.GroupBy.BUDGET_TYPE_NAME}}</td>
+                    <td style="width:130px;max-width:130px;min-width:130px;" class="text-left word-wrap">{{groupItem.GroupBy.EXPENSES_GROUP_NAME}}</td>
+                </tr>
+                @*รายการค่าใช้จ่ายภายใต้กลุ่ม แผนงาน ผลผลิต กิจกรรม งบรายจ่าย หมวดค่าใช้จ่าย*@
+                <tr>
+                    <td colspan="6" class="p-0">
+                        <table class="table table-striped m-0">
+                            <tr class="bg-secondary text-white">
+                                <th style="width:60px;min-width:60px;max-width:60px;"></th>
+                                <th style="width:auto;min-width:200px;" class="text-left">รายการค่าใช้จ่าย</th>
+                                <th style="width:130px;min-width:130px;max-width:130px;" class="text-right word-wrap">คำขอ (บาท)</th>
+                                <th style="width:100px;max-width:100px;min-width:100px;"></th>
+                            </tr>
+                            <tr ng-repeat="($rowIndex, row) in groupItem.Expenses" ng-class="{'text-primary': row.TOTAL_REQUEST_BUDGET>0, 'text-muted': row.TOTAL_REQUEST_BUDGET<=0}">
+                                <td style="width:60px;max-width:60px;min-width:60px;" class="text-center">{{$groupIndex + 1}}.{{$rowIndex + 1}}</td>
+                                <td style="width:auto;min-width:200px;" class="word-wrap">{{row.EXPENSES_NAME}}</td>
+                                <td style="width:150px;max-width:150px;min-width:150px;" class="text-right">{{row.TOTAL_REQUEST_BUDGET|number:2}}</td>
+                                <td style="width:100px;max-width:100px;min-width:100px;">
+                                    <a href="javascript:void(0)" class="f-w-900 " ng-class="{'text-primary': row.TOTAL_REQUEST_BUDGET>0, 'text-muted': row.TOTAL_REQUEST_BUDGET<=0}" ng-click="setExpensesDetail($event, row)">รายละเอียด<sup><i class="ml-1 ti-new-window"></i></sup></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                @*ผลรวมของกลุ่มข้อมูล*@
+                <tr class="bg-secondary text-white">
+                    <th colspan="5" class="text-right animated fadeIn">รวม</th>
+                    <th class="text-right animated fadeIn">{{groupItem.Expenses|fwSimpleSummary:['TOTAL_REQUEST_BUDGET']:2}}</th>
+                </tr>
+                <tr ng-repeat-end></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+    @Styles.Render("~/content/datepickerrange")
+    @Styles.Render("~/content/tags-input")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/tags-input")
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/select2")
+    @Scripts.Render("~/bundle/inputnumber")
+    @Scripts.Render("~/bundle/datepickerrange")
+<script type="text/javascript">
+        angular.module("leaveApp").controller('SharedController', function ($scope, $fwModalService) {
+            $scope.setExpensesDetail = function (event, row) {
+                $fwModalService.getModal('@Url.Action("GetExpensesDetailForm", "BudgetRequest")?expensesFormName=' + $.trim(row.FORM_TEMPLATE_NAME), { $row: row || {} }, function ($scope, $controller, $q, $filter, $fwUtils, $row, $mdDialog, $customHttp, $timeout, $fwModalHelperService) {
+                    $scope.$settings = {
+                        isLoading: true,
+                        expensesName: $row.EXPENSES_NAME || '',
+                        expensesColumn: {},
+                        personnelTypes: @Html.Raw(Json.Encode(@ViewBag.PersonnelTypes)),
+                        positions: [],
+                        personnelLevels: [],
+                        formData: { rows: [] },
+                        expensesInfo: $row || {} // รายละเอียดของรายการ คชจ. ที่กำลังจัดการข้อมูล
+                    };
+
+                    // โหลดตำแหน่งงานตามรายการ คชจ. (บางรายการ คชจ. ไม่สามารถใช้ตำแหน่งงานได้)
+                    $customHttp.formPost('@Url.Action("RetrievePositionAuthorizeByExpensesId", "Helper")', { expensesId: $row.EXPENSES_ID }).then(function (res) {
+                        $scope.$settings.positions = res.data || []
+                    }, function () { });
+                    // โหลดระดับ C ตามรายการ คชจ. (บางรายการ คชจ. ไม่สามารถใช้ระดับ C ได้)
+                    $customHttp.formPost('@Url.Action("RetrievePersonnelLeveAuthorizeByExpensesId", "Helper")', { expensesId: $row.EXPENSES_ID }).then(function (res) {
+                        $scope.$settings.personnelLevels = res.data || []
+                    }, function () { });
+
+                    // ตรวจสอบประเภทของโครงสร้างข้อมูล เป็น Object or Array
+                    if ($row.EXPENSES_DESCRIBEs.length == undefined)
+                        $scope.$settings.formData.rows = $.extend(true, {}, $row.EXPENSES_DESCRIBEs);
+                    else
+                        $scope.$settings.formData.rows = $.extend(true, [], $row.EXPENSES_DESCRIBEs);
+
+                    // กำหนดค่าเริ่มต้นในฟอร์ม
+                    // มีการระบุข้อมูลอยู่แล้วให้นำไปแสดงผล
+                    //if (typeof $row.EXPENSES_DETAILs == 'object')
+                    //    $scope.$settings.formData.rows = $row.EXPENSES_DETAILs;
+
+                    // โหลดข้อมูลคอลัมล์ ของรายการ คชจ.
+                    $scope.getExpensesColumn = function (expensesFormName) {
+                        $scope.$settings.isLoading = true;
+                        $customHttp.formGet('@Url.Action("GetExpensesColumn", "BudgetRequest")', {
+                            expensesFormName: expensesFormName
+                        }).then(function (res) {
+                            $scope.$settings.expensesColumn = $fwUtils.parseJson(res.data) || {};
+                            // กระจายข้อความไปยัง แต่ล่ะ Controller เพื่อให้ทราบว่ามีการโหลดโครงสร้างข้อมูล
+                            // ของรายการ คชจ. เรียบร้อยแล้ว
+                            $scope.$broadcast('GetExpensesColumn.loaded', []);
+                            $scope.$settings.isLoading = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                        });
+                    };
+                    // โหลดโครงสร้างข้อมูลอื่นๆ
+                    $scope.getStructureBy = function (filename) {
+                        return $q(function (resolve) {
+                            $customHttp.formGet('@Url.Action("GetExpensesColumn", "BudgetRequest")', {
+                                expensesFormName: filename
+                            }).then(function (res) {
+                                resolve($fwUtils.parseJson(res.data));
+                            }, function () {
+                                resolve(null);
+                            });
+                        });
+                    };
+                    // จำนวน & ชื่อฟิลด์ จะแตกต่างกันไปขึ้นอยู่กับ แบบฟอร์มของรายการค่าใช้จ่าย
+                    $scope.addItem = function () {
+                        return $q(function (resolve) {
+                            var newItem = $.extend(true, {}, $scope.$settings.expensesColumn);
+                            var index = $scope.$settings.formData.rows.push(newItem);
+                            $scope.$broadcast('addItem.complete', []);
+                            resolve({ $index: index, $newItem: newItem });
+                        });
+                    };
+                    // เมื่อรหัสพนักงานเปลี่ยนแปลง
+                    var personCodeChangedId = null;
+                    $scope.personCodeChanged = function (item) {
+                        $timeout.cancel(personCodeChangedId);
+                        personCodeChangedId = $timeout(function () {
+                            item.PersonId = null;
+                            item.PersonName = null;
+                            if ($.trim(item.PersonCode).length == 5) {
+                                $customHttp.formPost('@Url.Action("RetrievePersonnelByPersonCode", "Helper")', { personCode: item.PersonCode }).then(function (res) {
+                                    var personInfo = res.data || {};
+                                    item.PersonId = personInfo.PERSON_ID;
+                                    item.PersonName = $filter('textFormat')('{0}{1} {2}', personInfo.PREFIX_NAME || '', personInfo.FIRST_NAME || '', personInfo.LAST_NAME || '');
+                                    //item.PersonTypeName = personInfo.PERSON_TYPE_NAME || '';
+                                    item.PositionName = personInfo.POSITION_NAME || '';
+                                    item.LevelName = personInfo.LEVEL_NAME || ''
+                                    item.Salary = personInfo.SALARY || 0;
+                                });
+                            }
+                        }, 700);
+                    };
+                    // เมื่อ Asset เปลี่ยนแปลงค่า
+                    // ค้นหาค่าที่เลือก เพื่อดูรายละเอียดของ Asset เช่น id, name, otherflag(เป็น Asset ประเภทอื่นๆใช่หรือไม่)
+                    var assetChangedId = null;
+                    $scope.assetChanged = function (assetId, items, currRow) {
+                        $timeout.cancel(assetChangedId);
+                        assetChangedId = $timeout(function () {
+                            var selectedItem = null;
+                            assetId = ('' + assetId).replace(/[^\d]/g, '');
+                            items = items || [];
+                            if ('' != assetId) {
+                                selectedItem = items.filter(function (item) { return item.ASSET_ID == assetId; });
+                                selectedItem = selectedItem.length > 0 ? selectedItem[0] : null;
+                            }
+
+                            $scope.$broadcast('asset.changed', {
+                                selectedItem: selectedItem,
+                                currRow: currRow
+                            });
+                        }, 400);
+                    };
+                    // เมื่อกดปุ่ม เพื่อค้นหาบุคลาการ
+                    $scope.browsePersons = function (event) {
+                        var selectedPersons = $scope.$settings.formData.rows || [];
+                        var persons = selectedPersons.map(function (item) { return { PERSON_ID: item.PersonId }; });
+                        $fwModalHelperService.getPersonnelSelectMultipleModal(event, '@Url.Action("GetHelperPersonSearchMultiSelectForm", "Helper")', persons, '@ViewBag.DepartmentId').then(function (selectedItems) {
+
+                            var personIds = selectedPersons.map(function (person) { return person.PersonId; });
+                            var allNewPersons = [];
+                            $.each(selectedItems, function (index, person) {
+                                var newItem = $.extend(true, {}, $scope.$settings.expensesColumn);
+                                newItem = $.extend(true, newItem,
+                                    {
+                                        PersonId: person.PERSON_ID,
+                                        PersonCode: person.PERSON_CODE,
+                                        PersonName: $filter('textFormat')('{0}{1} {2}', person.PREFIX_NAME, person.FIRST_NAME, person.LAST_NAME),
+                                        DepId: person.DEP_ID,
+                                        DepName: person.DEP_NAME,
+                                        SubDepId: person.SUB_DEP_ID,
+                                        SubDepName: person.SUB_DEP_NAME,
+                                        PersonTypeId: person.PERSON_TYPE_ID,
+                                        PersonTypeName: person.PERSON_TYPE_NAME,
+                                        PositionId: person.POSITION_ID,
+                                        PositionName: person.POSITION_NAME,
+                                        LevelName: person.LEVEL_NAME, // ระดับ C ของบุคลากร
+                                        Salary: person.SALARY || 0
+                                    });
+
+                                var foundIndex = personIds.indexOf(person.PERSON_ID);
+                                if (foundIndex > -1)
+                                    newItem = selectedPersons[foundIndex];
+
+                                allNewPersons.push(newItem);
+                            });
+
+                            $scope.$settings.formData.rows = allNewPersons;
+                        }, function () { });
+                    };
+                    // กดตกลง และ ปิดหน้าต่าง
+                    $scope.ok = function () {
+                        // $scope.calSummary ในทุก Controller ย่อยๆ จะมีการ Inherite method นี้ไว้
+                        // เพราะโครงสร้างการเก็บข้อมูลแต่ละ รายการ คชจ. จะแตกต่างกันชื่อฟิลด์ก็จะแตกต่างกันด้วย
+                        $row.TOTAL_REQUEST_BUDGET = $scope.calSummary();
+                        $mdDialog.hide($scope.$settings.formData.rows);
+                    };
+                    // ปิดหน้าต่าง
+                    $scope.close = function () {
+                        $mdDialog.cancel(null);
+                    };
+
+
+                    var formTemplateName = $.trim($row.FORM_TEMPLATE_NAME).replace(/\#.+/g, '');
+                    // สืบทอดคุณสมบัติเฉพาะของ Controller ของแบบฟอร์มรายการค่าใช้จ่าย
+                    // บางรายการค่าใช้จ่ายจะมีการดึงข้อมูลเพิ่มเติม หรือ ตรวจสอบค่าต่างๆที่เฉพาะเจาะจง ดังนั้นจึงแยกไปเขียนเป็น Controller
+                    // เฉพาะของรายการ คชจ. นั้น
+                    // ข้อบังคับ: จะต้องมี function calSummary()
+                    try {
+                        $controller($filter('textFormat')('Private{0}Controller', formTemplateName), { $scope: $scope });
+                    } catch { };
+
+
+                    // โหลดข้อมูลคอลัมล์ ของแต่ละรายการค่าใช้จ่าย
+                    // สำหรับเครียมโครงสร้างเพื่อลงรายละเอียดของรายการ คชจ.
+                    $scope.getExpensesColumn(formTemplateName);
+                }, event).then(function (items) {
+                    row.EXPENSES_DESCRIBEs = items;
+                }, function () { });
+            };
+        }).controller('AppController', function ($scope, $controller, $fwUtils, $window, $fwDateService, $customHttp, $timeout, $filter, $q, $fwDialogService, $fwModalService, $fwModalHelperService) {
+
+            var defaultRequestName = '@ViewBag.EmpFullName';
+            var defaultDepName = '@ViewBag.DepartmentName';
+            var defaultDepId = '@ViewBag.DepartmentId';
+            var defaultYear = $fwDateService.convertYearToBuddhist('@ViewBag.fiscalYear');
+
+            $controller('SharedController', { $scope: $scope });
+
+            $scope.$settings = {
+                isLoading: false, isSaving: false, isLoadExpenses: false, isReject: false, isSignOff: false,
+                expensesRequestOnly: false,
+                currYear: $fwDateService.convertYearToBuddhist('@ViewBag.CurrYear'),
+                formView: {
+                    depName: defaultDepName,
+                    requestName: defaultRequestName,
+                    requestDate: $fwDateService.getCurrDate().toString(),
+                    //planName: '', produceName: '', activityName: '',
+                    //budgetTypeName: '', expensesGroupName: '',
+
+                    signOff: false, // เฉพาะคำขอต้นปี จะต้อง SignOff คำขอ (true, false)
+                    processStatus: 0, // 1 = จัดสรรม, 0 = รอจัดสรร, -1 = ไม่จัดสรร
+                },
+                formErrors: {},
+                formData: {
+                    RequestId: '@ViewBag.RequestId', MasterTemplateId: null, // เลือกใช้ Template ใดในการทำคำขอ
+                    FiscalYear: defaultYear,
+                    RefCode: null, // เลขที่หนังสืออ้างอิง กรณีคำขอเพิ่มเติม
+                    RequestType: '@(ViewBag.RequestType == "START" ? "1" : "2")', // 1 = คำขอ งปม. ต้นปี, 2 = คำขอ งปม. เพิ่มเติม
+                    DepId: defaultDepId,
+                    //PlanId: null, ProduceId: null, ActivityId: null, BudgetTypeId: null, ExpensesGroupId: null,
+                    Expenses: [],
+                    RemarkText: '', BudgetTypeFlag: '@(ViewBag.RequestType == "START" ? "1" : "")' // 1 = เงินงปม., 2 = เงินนอก งปม.
+                }
+            };
+            $scope.$settings.expensesRequestOnly = $scope.$settings.formData.RequestId != '';
+
+
+            // ค้นหารายละเอียดรายการ คชจ. จาก Template/คำขอเงิน งปม.
+            // templateIds = array<int>
+            $scope.getExpensesDetail = function (reqId, templateIds) {
+                return $q(function (resolve) {
+                    $scope.$settings.isLoadExpenses = true;
+                    $customHttp.formPost('@Url.Action("GetExpensesDetailBy", "Helper")', { reqId: reqId, templateIds: templateIds }).then(function (res) {
+                        var expenses = res.data || [];
+                        var oldExpenses = [];
+                        angular.forEach($scope.$settings.formData.Expenses, function (expensesItem) {
+                            oldExpenses = oldExpenses.concat($.extend(true, [], expensesItem.Expenses));
+                        });
+
+                        // จัดเตรียมรายการค่าใช้จ่าย
+                        $.each(expenses, function (groupIndex, groupItem) {
+                            $.each(groupItem.Expenses, function (index, item) {
+                                var foundOldExpenses = oldExpenses.filter(function (expensesItem) {
+                                    return expensesItem.TEMPLATE_ID == item.TEMPLATE_ID && expensesItem.EXPENSES_ID == item.EXPENSES_ID;
+                                });
+
+                                var expensesDetails = $fwUtils.parseJson(item.EXPENSES_DESCRIBEs) || [];
+                                if (foundOldExpenses.length > 0) {
+                                    expensesDetails = foundOldExpenses[0].EXPENSES_DESCRIBEs;
+                                    expenses[groupIndex].Expenses[index].TOTAL_REQUEST_BUDGET = foundOldExpenses[0].TOTAL_REQUEST_BUDGET;
+                                }
+                                expenses[groupIndex].Expenses[index].EXPENSES_DESCRIBEs = expensesDetails;
+                            });
+                        });
+
+                        $scope.$settings.formData.Expenses = expenses;
+                        $scope.$settings.isLoadExpenses = false;
+                        resolve({});
+                    }, function () {
+                        $scope.$settings.isLoadExpenses = false;
+                        resolve({});
+                    });
+                });
+            };
+            // เมื่อกดปุ่ม กำหนด Template หลัก
+            //$scope.setMasterTemplate = function (selectedTemplates) {
+            //    if (undefined == selectedTemplates) {
+            //        selectedTemplates = [];
+            //        var selectedTemplateIds = [];
+            //        angular.forEach($scope.$settings.formData.Expenses, function (item) {
+            //            if (selectedTemplateIds.indexOf(item.TEMPLATE_ID) == -1) {
+            //                selectedTemplateIds.push(item.TEMPLATE_ID);
+            //                selectedTemplates.push(item);
+            //            }
+            //        });
+            //    }
+
+            //    // แสดง Dialog ให้เลือก Master Template คำของเงินงบประมาณ
+            //    $scope.selectMasterTemplate($scope.$settings.formData.MasterTemplateId, selectedTemplates).then(function (selectedItem) {
+            //        $scope.$settings.formData.MasterTemplateId = selectedItem.TEMPLATE_ID;
+
+            //        $scope.$settings.formData.PlanId = selectedItem.PLAN_ID || null;
+            //        $scope.$settings.formData.ProduceId = selectedItem.PRODUCE_ID || null;
+            //        $scope.$settings.formData.ActivityId = selectedItem.ACTIVITY_ID || null;
+            //        $scope.$settings.formData.BudgetTypeId = selectedItem.BUDGET_TYPE_ID || null;
+            //        $scope.$settings.formData.ExpensesGroupId = selectedItem.EXPENSES_GROUP_ID || null;
+
+            //        $scope.$settings.formView.planName = selectedItem.PLAN_NAME || '-';
+            //        $scope.$settings.formView.produceName = selectedItem.PRODUCE_NAME || '-';
+            //        $scope.$settings.formView.activityName = selectedItem.ACTIVITY_NAME || '-';
+            //        $scope.$settings.formView.budgetTypeName = selectedItem.BUDGET_TYPE_NAME || '-';
+            //        $scope.$settings.formView.expensesGroupName = selectedItem.EXPENSES_GROUP_NAME || '-';
+            //    });
+            //};
+            // ค้นหา Template การส่งคำขอ
+            $scope.browseTemplate = function (event) {
+                var budgetTypeFlag = '@(ViewBag.RequestType == "MORE" ? "$scope.$settings.formData.BudgetTypeFlag" : "")';
+                var budgetTargetFlag = '(@ViewBag.RequestType == "START" ? "1" : "2")'; // 1 = คำขอ งปม. ต้นปี, 2 = คำขอ งปม. เพิ่มเติม
+                var selectedTemplates = [], selectedTemplateIds = [];
+                angular.forEach($scope.$settings.formData.Expenses, function (groupItem) {
+                    angular.forEach(groupItem.Expenses, function (item) {
+                        if (selectedTemplateIds.indexOf(item.TEMPLATE_ID) == -1) {
+                            selectedTemplateIds.push(item.TEMPLATE_ID);
+                            selectedTemplates.push(item);
+                        }
+                    });
+                });
+
+                $fwModalHelperService.getBudgetTemplateSelectMultiple(event, selectedTemplates, budgetTypeFlag, budgetTargetFlag).then(function (templates) {
+
+                    // แสดง Dialog ให้เลือก Master Template คำขอเงินงบประมาณ
+                    //$scope.setMasterTemplate(templates);
+                    //$scope.selectMasterTemplate($scope.$settings.formData.MasterTemplateId, templates).then(function (selectedItem) {
+                    //    $scope.$settings.formData.MasterTemplateId = selectedItem.TEMPLATE_ID;
+
+                    //    $scope.$settings.formData.PlanId = selectedItem.PLAN_ID || null;
+                    //    $scope.$settings.formData.ProduceId = selectedItem.PRODUCE_ID || null;
+                    //    $scope.$settings.formData.ActivityId = selectedItem.ACTIVITY_ID || null;
+                    //    $scope.$settings.formData.BudgetTypeId = selectedItem.BUDGET_TYPE_ID || null;
+                    //    $scope.$settings.formData.ExpensesGroupId = selectedItem.EXPENSES_GROUP_ID || null;
+
+                    //    $scope.$settings.formView.planName = selectedItem.PLAN_NAME || '-';
+                    //    $scope.$settings.formView.produceName = selectedItem.PRODUCE_NAME || '-';
+                    //    $scope.$settings.formView.activityName = selectedItem.ACTIVITY_NAME || '-';
+                    //    $scope.$settings.formView.budgetTypeName = selectedItem.BUDGET_TYPE_NAME || '-';
+                    //    $scope.$settings.formView.expensesGroupName = selectedItem.EXPENSES_GROUP_NAME || '-';
+                    //});
+
+                    // แสดงรายการค่าใช้จ่ายในใต้ Template ที่เลือกเพื่อให้ผู้ใช้งานระบุรายละเอียดคำขอ
+                    var templateIds = templates.map(function (item) { return item.TEMPLATE_ID; });
+                    $scope.getExpensesDetail($scope.$settings.formData.RequestId, templateIds).then(function () {
+                        // กรณีเป็นการเลือก Template มาใหม่ให้ยกเลิก แสดงเฉพาะ รายการที่มียอดเงิน
+                        $scope.$settings.expensesRequestOnly = false;
+                    });
+
+
+
+                    // ถ้ามีการเลือกมากกว่า 1 รายการ
+                    // ให้ใช้ข้อมูล Template แรกสุดสำหรับกำหนด แผนงาน ผลผลิต กิจกรรม, ...
+                    //var row = selectedItems[0] || {};
+                    //$scope.$settings.formData.RequestId = '';
+                    //$scope.$settings.formData.FiscalYear = defaultYear;
+                    //$scope.$settings.formData.DepId = defaultDepId;
+                    //$scope.$settings.formData.TemplateId = row.TEMPLATE_ID;
+                    //$scope.$settings.formData.PlanId = row.PLAN_ID || null;
+                    //$scope.$settings.formData.ProduceId = row.PRODUCE_ID || null;
+                    //$scope.$settings.formData.ActivityId = row.ACTIVITY_ID || null;
+                    //$scope.$settings.formData.BudgetTypeId = row.BUDGET_TYPE_ID || null;
+                    //$scope.$settings.formData.ExpensesGroupId = row.EXPENSES_GROUP_ID || null;
+                    // $scope.$settings.formData.RemarkText = '';
+                    // $scope.$settings.formData.BudgetTypeFlag = 1;
+
+                    //$scope.$settings.formView.depName = defaultDepName;
+                    //$scope.$settings.formView.requestName = defaultRequestName;
+                    //$scope.$settings.formView.requestDate = $fwDateService.getCurrDate().toString();
+                    //$scope.$settings.formView.planName = row.PLAN_NAME || '-';
+                    //$scope.$settings.formView.produceName = row.PRODUCE_NAME || '-';
+                    //$scope.$settings.formView.activityName = row.ACTIVITY_NAME || '-';
+                    //$scope.$settings.formView.budgetTypeName = row.BUDGET_TYPE_NAME || '-';
+                    //$scope.$settings.formView.expensesGroupName = row.EXPENSES_GROUP_NAME || '-';
+
+
+                    // แสดงรายการ คชจ. ที่ถูกกำหนดไว้ใน Template
+                    //$scope.$settings.formData.Expenses = [];
+                    //var templateIds = selectedItems.map(function (item) { return item.TEMPLATE_ID; });
+                    //getExpensesDetail($scope.$settings.formData.RequestId, templateIds);
+                });
+            };
+            // แสดงแบบฟอร์มให้เลือก Template หลักคำของบประมาณ
+        @*$scope.selectMasterTemplate = function (selectedTemplateId, templates) {
+            return $q(function (resolve) {
+                if (templates.length == 1) {
+                    resolve(templates[0]);
+                    return;
+                }
+
+                $fwModalService.getModal('@Url.Action("GetSelectMasterTemplateForm", "BudgetRequest")', { $selectedTemplateId: selectedTemplateId, $templates: templates }, function ($scope, $mdDialog, $templates, $selectedTemplateId, $fwDialogService) {
+                    $scope.$settings = {
+                        isLoading: false,
+                        formData: {
+                            templates: $templates || [],
+                            selectedTemplateId: $selectedTemplateId || null
+                        }
+                    };
+
+                    // เปิดหน้าต่าง
+                    $scope.ok = function (event) {
+                        var searchSelectedTemplates = $scope.$settings.formData.templates.filter(function (item) { return item.TEMPLATE_ID == $scope.$settings.formData.selectedTemplateId; });
+                        if (searchSelectedTemplates.length == 0) {
+                            $fwDialogService.dangerDialog(event, 'กรุณาเลือก Template หลักในการจัดทำคำของบประมาณก่อน')
+                            return;
+                        }
+                        $mdDialog.hide(searchSelectedTemplates[0]);
+                    };
+                    // ปิดหน้าต่าง
+                    $scope.close = function () {
+                        $mdDialog.cancel();
+                    };
+                }, null).then(function (selectedTemplate) {
+                    resolve(selectedTemplate);
+                }, function () { });
+            });
+        };*@
+            // กดเพื่อระบุรายละเอียดอื่นๆ ของแต่ล่ะรายการ คชจ.
+            @*$scope.setExpensesDetail = function (event, row) {
+                $fwModalService.getModal('@Url.Action("GetExpensesDetailForm", "BudgetRequest")?expensesFormName=' + $.trim(row.FORM_TEMPLATE_NAME), { $row: row || {} }, function ($scope, $controller, $q, $filter, $fwUtils, $row, $mdDialog, $customHttp, $timeout, $fwModalHelperService) {
+                    $scope.$settings = {
+                        isLoading: true,
+                        expensesName: $row.EXPENSES_NAME || '',
+                        expensesColumn: {},
+                        personnelTypes: @Html.Raw(Json.Encode(@ViewBag.PersonnelTypes)),
+                        positions: [],
+                        personnelLevels: [],
+                        formData: { rows: [] },
+                        expensesInfo: $row || {} // รายละเอียดของรายการ คชจ. ที่กำลังจัดการข้อมูล
+                    };
+
+                    // โหลดตำแหน่งงานตามรายการ คชจ. (บางรายการ คชจ. ไม่สามารถใช้ตำแหน่งงานได้)
+                    $customHttp.formPost('@Url.Action("RetrievePositionAuthorizeByExpensesId", "Helper")', { expensesId: $row.EXPENSES_ID }).then(function (res) {
+                        $scope.$settings.positions = res.data || []
+                    }, function () { });
+                    // โหลดระดับ C ตามรายการ คชจ. (บางรายการ คชจ. ไม่สามารถใช้ระดับ C ได้)
+                    $customHttp.formPost('@Url.Action("RetrievePersonnelLeveAuthorizeByExpensesId", "Helper")', { expensesId: $row.EXPENSES_ID }).then(function (res) {
+                        $scope.$settings.personnelLevels = res.data || []
+                    }, function () { });
+
+                    // ตรวจสอบประเภทของโครงสร้างข้อมูล เป็น Object or Array
+                    if ($row.EXPENSES_DESCRIBEs.length == undefined)
+                        $scope.$settings.formData.rows = $.extend(true, {}, $row.EXPENSES_DESCRIBEs);
+                    else
+                        $scope.$settings.formData.rows = $.extend(true, [], $row.EXPENSES_DESCRIBEs);
+
+                    // กำหนดค่าเริ่มต้นในฟอร์ม
+                    // มีการระบุข้อมูลอยู่แล้วให้นำไปแสดงผล
+                    //if (typeof $row.EXPENSES_DETAILs == 'object')
+                    //    $scope.$settings.formData.rows = $row.EXPENSES_DETAILs;
+
+                    // โหลดข้อมูลคอลัมล์ ของรายการ คชจ.
+                    $scope.getExpensesColumn = function (expensesFormName) {
+                        $scope.$settings.isLoading = true;
+                        $customHttp.formGet('@Url.Action("GetExpensesColumn", "BudgetRequest")', {
+                            expensesFormName: expensesFormName
+                        }).then(function (res) {
+                            $scope.$settings.expensesColumn = $fwUtils.parseJson(res.data) || {};
+                            // กระจายข้อความไปยัง แต่ล่ะ Controller เพื่อให้ทราบว่ามีการโหลดโครงสร้างข้อมูล
+                            // ของรายการ คชจ. เรียบร้อยแล้ว
+                            $scope.$broadcast('GetExpensesColumn.loaded', []);
+                            $scope.$settings.isLoading = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                        });
+                    };
+                    // โหลดโครงสร้างข้อมูลอื่นๆ
+                    $scope.getStructureBy = function (filename) {
+                        return $q(function (resolve) {
+                            $customHttp.formGet('@Url.Action("GetExpensesColumn", "BudgetRequest")', {
+                                expensesFormName: filename
+                            }).then(function (res) {
+                                resolve($fwUtils.parseJson(res.data));
+                            }, function () {
+                                resolve(null);
+                            });
+                        });
+                    };
+                    // จำนวน & ชื่อฟิลด์ จะแตกต่างกันไปขึ้นอยู่กับ แบบฟอร์มของรายการค่าใช้จ่าย
+                    $scope.addItem = function () {
+                        return $q(function (resolve) {
+                            var newItem = $.extend(true, {}, $scope.$settings.expensesColumn);
+                            var index = $scope.$settings.formData.rows.push(newItem);
+                            $scope.$broadcast('addItem.complete', []);
+                            resolve({ $index: index, $newItem: newItem });
+                        });
+                    };
+                    // เมื่อรหัสพนักงานเปลี่ยนแปลง
+                    var personCodeChangedId = null;
+                    $scope.personCodeChanged = function (item) {
+                        $timeout.cancel(personCodeChangedId);
+                        personCodeChangedId = $timeout(function () {
+                            item.PersonId = null;
+                            item.PersonName = null;
+                            if ($.trim(item.PersonCode).length == 5) {
+                                $customHttp.formPost('@Url.Action("RetrievePersonnelByPersonCode", "Helper")', { personCode: item.PersonCode }).then(function (res) {
+                                    var personInfo = res.data || {};
+                                    item.PersonId = personInfo.PERSON_ID;
+                                    item.PersonName = $filter('textFormat')('{0}{1} {2}', personInfo.PREFIX_NAME || '', personInfo.FIRST_NAME || '', personInfo.LAST_NAME || '');
+                                    //item.PersonTypeName = personInfo.PERSON_TYPE_NAME || '';
+                                    item.PositionName = personInfo.POSITION_NAME || '';
+                                    item.LevelName = personInfo.LEVEL_NAME || ''
+                                    item.Salary = personInfo.SALARY || 0;
+                                });
+                            }
+                        }, 700);
+                    };
+                    // เมื่อ Asset เปลี่ยนแปลงค่า
+                    // ค้นหาค่าที่เลือก เพื่อดูรายละเอียดของ Asset เช่น id, name, otherflag(เป็น Asset ประเภทอื่นๆใช่หรือไม่)
+                    var assetChangedId = null;
+                    $scope.assetChanged = function (assetId, items, currRow) {
+                        $timeout.cancel(assetChangedId);
+                        assetChangedId = $timeout(function () {
+                            var selectedItem = null;
+                            assetId = ('' + assetId).replace(/[^\d]/g, '');
+                            items = items || [];
+                            if ('' != assetId) {
+                                selectedItem = items.filter(function (item) { return item.ASSET_ID == assetId; });
+                                selectedItem = selectedItem.length > 0 ? selectedItem[0] : null;
+                            }
+
+                            $scope.$broadcast('asset.changed', {
+                                selectedItem: selectedItem,
+                                currRow: currRow
+                            });
+                        }, 400);
+                    };
+                    // เมื่อกดปุ่ม เพื่อค้นหาบุคลาการ
+                    $scope.browsePersons = function (event) {
+                        var selectedPersons = $scope.$settings.formData.rows || [];
+                        var persons = selectedPersons.map(function (item) { return { PERSON_ID: item.PersonId }; });
+                        $fwModalHelperService.getPersonnelSelectMultipleModal(event, '@Url.Action("GetHelperPersonSearchMultiSelectForm", "Helper")', persons, '@ViewBag.DepartmentId').then(function (selectedItems) {
+
+                            var personIds = selectedPersons.map(function (person) { return person.PersonId; });
+                            var allNewPersons = [];
+                            $.each(selectedItems, function (index, person) {
+                                var newItem = $.extend(true, {}, $scope.$settings.expensesColumn);
+                                newItem = $.extend(true, newItem,
+                                    {
+                                        PersonId: person.PERSON_ID,
+                                        PersonCode: person.PERSON_CODE,
+                                        PersonName: $filter('textFormat')('{0}{1} {2}', person.PREFIX_NAME, person.FIRST_NAME, person.LAST_NAME),
+                                        DepId: person.DEP_ID,
+                                        DepName: person.DEP_NAME,
+                                        SubDepId: person.SUB_DEP_ID,
+                                        SubDepName: person.SUB_DEP_NAME,
+                                        PersonTypeId: person.PERSON_TYPE_ID,
+                                        PersonTypeName: person.PERSON_TYPE_NAME,
+                                        PositionId: person.POSITION_ID,
+                                        PositionName: person.POSITION_NAME,
+                                        LevelName: person.LEVEL_NAME, // ระดับ C ของบุคลากร
+                                        Salary: person.SALARY || 0
+                                    });
+
+                                var foundIndex = personIds.indexOf(person.PERSON_ID);
+                                if (foundIndex > -1)
+                                    newItem = selectedPersons[foundIndex];
+
+                                allNewPersons.push(newItem);
+                            });
+
+                            $scope.$settings.formData.rows = allNewPersons;
+                        }, function () { });
+                    };
+                    // กดตกลง และ ปิดหน้าต่าง
+                    $scope.ok = function () {
+                        // $scope.calSummary ในทุก Controller ย่อยๆ จะมีการ Inherite method นี้ไว้
+                        // เพราะโครงสร้างการเก็บข้อมูลแต่ละ รายการ คชจ. จะแตกต่างกันชื่อฟิลด์ก็จะแตกต่างกันด้วย
+                        $row.TOTAL_REQUEST_BUDGET = $scope.calSummary();
+                        $mdDialog.hide($scope.$settings.formData.rows);
+                    };
+                    // ปิดหน้าต่าง
+                    $scope.close = function () {
+                        $mdDialog.cancel(null);
+                    };
+
+
+                    var formTemplateName = $.trim($row.FORM_TEMPLATE_NAME).replace(/\#.+/g, '');
+                    // สืบทอดคุณสมบัติเฉพาะของ Controller ของแบบฟอร์มรายการค่าใช้จ่าย
+                    // บางรายการค่าใช้จ่ายจะมีการดึงข้อมูลเพิ่มเติม หรือ ตรวจสอบค่าต่างๆที่เฉพาะเจาะจง ดังนั้นจึงแยกไปเขียนเป็น Controller
+                    // เฉพาะของรายการ คชจ. นั้น
+                    // ข้อบังคับ: จะต้องมี function calSummary()
+                    try {
+                        $controller($filter('textFormat')('Private{0}Controller', formTemplateName), { $scope: $scope });
+                    } catch { };
+
+
+                    // โหลดข้อมูลคอลัมล์ ของแต่ละรายการค่าใช้จ่าย
+                    // สำหรับเครียมโครงสร้างเพื่อลงรายละเอียดของรายการ คชจ.
+                    $scope.getExpensesColumn(formTemplateName);
+                }, event).then(function (items) {
+                    row.EXPENSES_DESCRIBEs = items;
+                }, function () { });
+            };*@
+            // บันทึกคำขอ
+            $scope.submitSave = function (event) {
+                $scope.$settings.isLoading = true;
+                $scope.$settings.isSaving = true;
+                $scope.$settings.formErrors = {};
+
+                var params = $.extend(true, {}, $scope.$settings.formData);
+                params.Expenses = [];
+                angular.forEach($scope.$settings.formData.Expenses, function (groupItem) {
+                    params.Expenses = params.Expenses.concat($.extend(true, [], groupItem.Expenses));
+                });
+                $.each(params.Expenses, function (index, expensesItem) {
+                    params.Expenses[index].EXPENSES_DESCRIBEs = angular.toJson(expensesItem.EXPENSES_DESCRIBEs);
+                });
+                params.FiscalYear = $fwDateService.convertYearToBritish(params.FiscalYear);
+
+                $customHttp.formPost('@Url.Action("SubmitSave", "BudgetRequest")', params).then(function (res) {
+                    $scope.$settings.formErrors = res.data.errors || {};
+                    if (res.data.errorText != null)
+                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                    else if (null != res.data.errors)
+                        $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งให้เรียบร้อยก่อน');
+                    else {
+                        var alertMsg = 'ส่งคำของบประมาณเรียบร้อยแล้ว';
+                        if (params.RequestId != '')
+                            alertMsg = 'แก้ไขคำของบประมาณเรียบร้อยแล้ว';
+
+                        alertMsg = $filter('textFormat')('{0} <div>เลขที่รายการ: {1}</div> <div>*** ระบบจะโหลดข้อมูลที่ทำคำงบประมาณให้หลังจากปิดหน้าต่าง ***</div>', alertMsg, res.data.reqId);
+                        $scope.$settings.formData.RequestId = res.data.reqId;
+                        $fwDialogService.alertDialog(event, alertMsg).then(function () {
+                            $scope.submitRetrieve();
+                        });
+                    }
+
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                });
+            };
+            // SignOff คำของบประมาณ
+            $scope.submitSignOff = function (event) {
+                if ($scope.$settings.formData.RequestId == '') {
+                    return;
+                }
+
+                $fwDialogService.confirmDialog(event, 'ยืนยันการ SignOff').then(function () {
+                    $scope.$settings.isLoading = true;
+                    $scope.$settings.isSignOff = true;
+                    $customHttp.formPost('@Url.Action("SubmitSignOff", "BudgetRequest")', { reqId: $scope.$settings.formData.RequestId }).then(function (res) {
+                        if (null != res.data.errorText)
+                            $fwDialogService.dangerDialog(event, res.data.errorText);
+                        else
+                            $fwDialogService.alertDialog(event, 'SignOff คำขอเรียบร้อยแล้ว').then(function () {
+                                $scope.submitRetrieve();
+                            }, function () { });
+                        $scope.$settings.isLoading = false;
+                        $scope.$settings.isSignOff = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                        $scope.$settings.isSignOff = false;
+                    });
+                }, function () { });
+            };
+            // ยกเลิก คำของบประมาณ
+            $scope.submitReject = function (event) {
+                if ($scope.$settings.formData.RequestId == '') {
+                    return;
+                }
+
+                $fwDialogService.confirmDialog(event, 'ยืนยัน การยกเลิกคำขอ').then(function () {
+                    $scope.$settings.isLoading = true;
+                    $scope.$settings.isReject = true;
+                    $customHttp.formPost('@Url.Action("SubmitReject", "BudgetRequest")', { reqId: $scope.$settings.formData.RequestId }).then(function (res) {
+                        if (null != res.data.errorText)
+                            $fwDialogService.dangerDialog(event, res.data.errorText);
+                        else
+                            $fwDialogService.alertDialog(event, 'ยกเลิก คำขอเรียบร้อยแล้ว').then(function () {
+                                $window.location.href = '@Url.Action("GetForm", "BudgetRequest", new { })';
+                            }, function () { });
+                        $scope.$settings.isLoading = false;
+                        $scope.$settings.isReject = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                        $scope.$settings.isReject = false;
+                    });
+                }, function () { });
+            };
+            // Retrieve ข้อมูลคำขอ
+            $scope.submitRetrieve = function () {
+                if ($scope.$settings.formData.RequestId == '') {
+                    if (@(ViewBag.CanCreateBudgetRequest ? "1==1" : "1==2"))
+                        $scope.browseTemplate();
+                    else
+                        $fwDialogService.dangerDialog(null, "ในระบบกำหนดให้หน่วยงานที่ท่านสังกัดอยู่ ไม่สามารถสร้างคำของบประมาณใหม่ได้ โปรดตรวจสอบ");
+                }else {
+                    $scope.$settings.isLoading = true;
+                    $customHttp.formPost('@Url.Action("RetrieveBudgetRequest", "BudgetRequest")', { reqId: $scope.$settings.formData.RequestId }).then(function (res) {
+                        var row = res.data || {};
+                        $scope.$settings.formData.RequestId = row.REQ_ID;
+                        $scope.$settings.formData.RefCode = row.REFER_REQ_ID;
+                        //$scope.$settings.formData.MasterTemplateId = row.MASTER_TEMPLATE_ID;
+                        $scope.$settings.formData.FiscalYear = $fwDateService.convertYearToBuddhist(row.YR);
+                        $scope.$settings.formData.DepId = row.DEP_ID;
+                        //$scope.$settings.formData.PlanId = row.PLAN_ID;
+                        //$scope.$settings.formData.ProduceId = row.PRODUCE_ID;
+                        //$scope.$settings.formData.ActivityId = row.ACTIVITY_ID;
+                        //$scope.$settings.formData.BudgetTypeId = row.BUDGET_TYPE_ID;
+                        //$scope.$settings.formData.ExpensesGroupId = row.EXPENSES_GROUP_ID;
+                        $scope.$settings.formData.RequestType = row.REQ_TYPE; // 1 = คำขอต้นปี, 2 = คำขอเพิ่มเติม
+                        $scope.$settings.formData.BudgetTypeFlag = row.BUDGET_TYPE; // 1 = เงิน งปม., 2= เงินนอก งปม.
+                        $scope.$settings.formData.RemarkText = row.REMARK_TEXT;
+
+
+                        $scope.$settings.formView.depName = row.DEP_NAME;
+                        $scope.$settings.formView.requestName = row.CREATED_NAME;
+                        $scope.$settings.formView.requestDate = $filter('sqlDate')(row.CREATED_DATETIME, null, null, false);
+                        //$scope.$settings.formView.planName = row.PLAN_NAME || '-';
+                        //$scope.$settings.formView.produceName = row.PRODUCE_NAME || '-';
+                        //$scope.$settings.formView.activityName = row.ACTIVITY_NAME || '-';
+                        //$scope.$settings.formView.budgetTypeName = row.BUDGET_TYPE_NAME;
+                        //$scope.$settings.formView.expensesGroupName = row.EXPENSES_GROUP_NAME;
+
+                        $scope.$settings.formView.signOff = row.SIGNOFF_FLAG; // true, false
+                        $scope.$settings.formView.processStatus = row.PROCESS_STATUS;
+
+                        // ค้นหารายการ คชจ. ของคำขอ งปม.
+                        $scope.$settings.formData.Expenses = [];
+                        $timeout(function () {
+                            $scope.getExpensesDetail($scope.$settings.formData.RequestId, row.TEMPLATE_IDs);
+                        }, 200);
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                    });
+                }
+            };
+
+
+
+            // เปิดหน้าค้นหา Template ให้เมื่อเปิดหน้าฟอร์ม
+            $timeout(function () {
+                $scope.submitRetrieve();
+            }, 200);
+        }).controller('PrivateRentHouseFormController', function ($scope, $customHttp, $timeout, $filter) {
+            // แบบฟอร์มค่าเช่าบ้าน
+            var getHouseRateId = null;
+            $scope.getHouseRate = function (row) {
+                $timeout.cancel(getHouseRateId);
+                getHouseRateId = $timeout(function () {
+                    row.RentMonthlyRateVal = 0;
+                    row.RentYearlyRateVal = 0;
+                    $customHttp.formPost('@Url.Action("GetRentHouseRateBy", "BudgetRequest")', { levelId: row.LevelId, salary: row.Salary }).then(function (res) {
+                        var rentHouseAmount = res.data || 0;
+                        row.RentPriceRate = rentHouseAmount;
+                        row.RentMonthlyRateVal = rentHouseAmount; // จำนวนเงินค่าเช่าบ้าน ที่เบิกได้
+                        row.RentYearlyRateVal = rentHouseAmount * 12;
+                    }, function () { });
+                }, 800);
+            };
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['RentYearlyRateVal'], 0, null, false);
+            };
+        }).controller('PrivateMonthlyCompensationExtraFormController', function ($scope, $filter, $timeout) {
+            // ฟอร์มค่าตอบแทนพิเศษรายเดือน
+            var callCompensationId = null;
+            $scope.calCompensation = function (row) {
+                $timeout.cancel(callCompensationId);
+                callCompensationId = $timeout(function () {
+                    var compensationMonthlyVal = +row.CompensationMonthlyVal;
+                    row.CompensationYearlyVal = compensationMonthlyVal * 12;
+                }, 600);
+            };
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['CompensationYearlyVal'], 0, null, false);
+            };
+        }).controller('PrivateSocialSecurityFormController', function ($scope, $filter, $timeout, $customHttp) {
+            // ฟอร์มเงินสมทบกองทุนประกันสังคม
+
+            // ค้นหาร้อยล่ะของเงินเดือน ที่หักเข้ากองทุนประกันสังคม
+            $scope.$const = {
+                salaryPercentRate: 0, // ร้อยละของ งด. ที่หักเข้า กองทุนประกันสังคม
+                limitAmountValue: 0 // หักเข้า กองทุนประกันสังคม ไม่เกินยอดนี้
+            };
+            $customHttp.formPost('@Url.Action("GetSalaryRateForSocialSecurity", "BudgetRequest")', {}).then(function (res) {
+                $scope.$const.salaryPercentRate = +(res.data.ITEM_VALUE || 0);
+                $scope.$const.limitAmountValue = +(res.data.ITEM_VALUE2 || 0);
+            }, function () { });
+            // เมื่อค่าเงินเดือนเปลี่ยนแปลง
+            var salaryValueChangedId = null;
+            $scope.salaryValueChanged = function (row) {
+                $timeout.cancel(salaryValueChangedId);
+                salaryValueChangedId = $timeout(function () {
+                    var salaryVal = +(row.Salary || 0);
+                    row.MonthlyRateVal = +((salaryVal * $scope.$const.salaryPercentRate / 100.00).toFixed(5));
+                    if (row.MonthlyRateVal > $scope.$const.limitAmountValue)
+                        row.MonthlyRateVal = $scope.$const.limitAmountValue;
+                    row.YearlyRateVal = +((row.MonthlyRateVal * 12).toFixed(5));
+                }, 700);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['YearlyRateVal'], 0, null, false);
+            };
+        }).controller('PrivateCompensationFundFormController', function ($scope, $filter, $timeout, $customHttp) {
+            // ฟอร์มเงินสมทบกองทุนเงินทดแทน
+
+            // ค้นหาร้อยล่ะของเงินเดือน ที่หักเข้ากองทุนเงินทดแทน
+            $scope.$const = {
+                salaryPercentRate: 0 // ร้อยละของ งด. ที่หักเข้า กองทุนเงินทดแทน
+            };
+            $customHttp.formPost('@Url.Action("GetSalaryRateForCompensationFund", "BudgetRequest")', {}).then(function (res) {
+                $scope.$const.salaryPercentRate = +(res.data.ITEM_VALUE || 0);
+            }, function () { });
+            // เมื่อค่าเงินเดือนเปลี่ยนแปลง
+            var salaryValueChangedId = null;
+            $scope.salaryValueChanged = function (row) {
+                $timeout.cancel(salaryValueChangedId);
+                salaryValueChangedId = $timeout(function () {
+                    var salaryVal = +(row.Salary || 0);
+                    row.MonthlyRateVal = +((salaryVal * $scope.$const.salaryPercentRate / 100.00).toFixed(5));
+                    row.YearlyRateVal = +((row.MonthlyRateVal * 12).toFixed(5));
+                }, 700);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['YearlyRateVal'], 0, null, false);
+            };
+        }).controller('PrivateIndustrailSurveyFormController', function ($scope, $filter, $timeout, $customHttp) {
+            // ฟอร์มค่าตรวจปฏิบัติการโรงงานอุตสาหกรรม
+
+            // ร้องขอข้อมูลประเภทยานพาหนะ
+            $scope.$settings.vehicleTypes = [];
+            $customHttp.formPost('@Url.Action("RetrieveAllVehicleType", "Helper")', {}).then(function (res) {
+                $scope.$settings.vehicleTypes = res.data || [];
+            }, function () { });
+            // เมื่อประเภทยานพาหนะเปลี่ยนแปลง
+            var vehicleTypeChangedId = null;
+            $scope.vehicleTypeChanged = function (row) {
+                $timeout.cancel(vehicleTypeChangedId);
+                vehicleTypeChangedId = $timeout(function () {
+                    row.CompensationPrice = 0;
+                    row.TotalPrice = 0;
+
+                    var vehicleTypeId = +('' + row.VehicleTypeId).replace(/[^\d]/g, '');
+                    if (vehicleTypeId != '') {
+                        var vehicleTypeInfo = $scope.$settings.vehicleTypes.filter(function (item) { return item.VEHICLE_TYPE_ID == vehicleTypeId; });
+                        if (vehicleTypeInfo.length > 0) {
+                            row.CompensationRatePrice = vehicleTypeInfo[0].COMPENSATION_PRICE || 0;
+                            row.TotalPrice = row.CompensationRatePrice * (+row.AmountDays);
+                        }
+                        @* $customHttp.formPost('@Url.Action("RetrieveVehicleTypeById", "Helper")', { vehicleId: vehicleId }).then(function (res) {
+                            var vehicleInfo = res.data || {};
+                            row.CompensationPrice = vehicleInfo.COMPENSATION_PRICE || 0;
+                            row.TotalPrice = row.CompensationPrice * (+row.AmountDays);
+                        }, function () { });*@
+                    }
+                }, 200);
+            };
+            // เมื่อจำนวนวันเปลี่ยนแปลง
+            var amountDaysChangedId = null;
+            $scope.amountDaysChanged = function (row) {
+                $timeout.cancel(amountDaysChangedId);
+                amountDaysChangedId = $timeout(function () {
+                    row.TotalPrice = (+row.CompensationRatePrice) * (+row.AmountDays);
+                }, 600);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivatePersonnelOrCommitteeCompensationFormController', function ($scope, $fwModalService, $filter, $customHttp, $fwUtils) {
+            // ค่าตอบแทนบุคคลหรือคณะกรรมการ
+            var expensesFormName = "PersonnelOrCommitteeCompensationFormItem";
+
+            // โครงสร้างจะเป็น { MasterStructure: {}, DetailStructure: {} }
+            $scope.formDetailStructure = {};
+            $customHttp.formGet('@Url.Action("GetExpensesColumn", "BudgetRequest")', {
+                expensesFormName: expensesFormName
+            }).then(function (res) {
+                $scope.formDetailStructure = $fwUtils.parseJson(res.data) || {};
+            }, function () { });
+
+
+            $scope.formView = {
+                netCompensationPrice: 0
+            };
+
+            // สร้าง/แก้ไข คณะกรรมการ, ผู้คุมงาน
+            $scope.createCommittee = function (event) {
+
+                // โครงสร้างข้อมูลจะเป็น { CommitteeGroups: [], QualityAssureanceGroups: [] }
+                var formData = $scope.$settings.formData.rows;
+                $fwModalService.getModal('@Url.Action("GetExpensesDetailForm", "BudgetRequest")?expensesFormName=' + expensesFormName, { $formData: formData, $formDetailStructure: $scope.formDetailStructure, $expensesName: $scope.$settings.expensesName }, function ($scope, $formData, $timeout, $formDetailStructure, $expensesName, $mdDialog) {
+                    $scope.$settings = {
+                        formData: $formData || {},
+                        expensesName: $expensesName,
+                        formView: {
+                            netCommitteeCompensationPrice: 0, // รวมค่าตอบแทนของ คณะกรรมการ
+                            netQualityAssuranceCompensationPrice: 0 // รวมค่าตอบแทนของ ผู้ควบคุมงาน
+                        }
+                    };
+
+                    // กดปุ่ม เพิ่มรายการ
+                    // type : Committee, QualityAssurance
+                    $scope.addNewItem = function (type) {
+                        var newItem = $.extend(true, {}, $formDetailStructure.MasterStructure);
+
+                        // ส่วนคณะกรรมการ จะประกอบไปด้วย 2 รายการคือ ประธาน และ คณะกรรมการ
+                        if ('Committee' == type) {
+                            var subNewItem = $.extend(true, {}, $formDetailStructure.DetailStructure);
+                            subNewItem.CommitteeTypeName = 'ประธาน';
+                            newItem.Items.push(subNewItem);
+
+                            subNewItem = $.extend(true, {}, $formDetailStructure.DetailStructure);
+                            subNewItem.CommitteeTypeName = 'คณะกรรมการ';
+                            newItem.Items.push(subNewItem);
+
+                            $scope.$settings.formData.CommitteeGroups.push(newItem)
+                        } else {
+                            // ผู้ควบคุมงาน จะประกอบไปด้วย หัวหน้า และ ผู้ควบคุมงาน
+                            var subNewItem = $.extend(true, {}, $formDetailStructure.DetailStructure);
+                            subNewItem.CommitteeTypeName = 'หัวหน้า';
+                            newItem.Items.push(subNewItem);
+
+                            subNewItem = $.extend(true, {}, $formDetailStructure.DetailStructure);
+                            subNewItem.CommitteeTypeName = 'ผู้ควบคุมงาน';
+                            newItem.Items.push(subNewItem);
+
+                            $scope.$settings.formData.QualityAssuranceGroups.push(newItem);
+                        }
+                    };
+                    // เมื่อ จำนวนคน จำนวนวัน และ ค่าตอบแทนเปลี่ยนแปลง
+                    var calCompensationPriceChangedId = null;
+                    $scope.calCompensationPrice = function (item) {
+                        $timeout.cancel(calCompensationPriceChangedId);
+                        calCompensationPriceChangedId = $timeout(function () {
+                            item.TotalCompensationPrice = (+item.CommitteeAmounts) * (+item.AmountDays) * (+item.CompensationPriceRate);
+
+                            // คำนวณผลรวมค่าตอบแทน (คณะกรรมการ, ผู้ควบคุมงาน)
+                            $scope.calNetCompensationPrice();
+                        }, 700);
+                    };
+                    // คำนวณผลรวมค่าตอบแทน (คณะกรรมการ, ผู้ควบคุมงาน)
+                    $scope.calNetCompensationPrice = function () {
+                        $scope.$settings.formView.netCommitteeCompensationPrice = 0;
+                        $scope.$settings.formView.netQualityAssuranceCompensationPrice = 0;
+
+                        angular.forEach($scope.$settings.formData.CommitteeGroups, function (row) {
+                            $scope.$settings.formView.netCommitteeCompensationPrice += $filter('fwSimpleSummary')(row.Items, ['TotalCompensationPrice'], 2, null, false);
+                        });
+
+                        angular.forEach($scope.$settings.formData.QualityAssuranceGroups, function (row) {
+                            $scope.$settings.formView.netQualityAssuranceCompensationPrice += $filter('fwSimpleSummary')(row.Items, ['TotalCompensationPrice'], 2, null, false);
+                        });
+                    };
+                    // กดปุ่ม ตกลง
+                    $scope.ok = function () {
+                        $mdDialog.hide($scope.$settings.formData);
+                    };
+                    // กดปุ่ม ปิดหน้าต่าง
+                    $scope.close = function () {
+                        $mdDialog.cancel({});
+                    };
+
+
+                    // กรณีเปิดฟอร์มมาเพื่อทำรายการ
+                    // คำนวณผลรวมค่าตอบแทน (คณะกรรมการ, ผู้ควบคุมงาน)
+                    $scope.calNetCompensationPrice();
+                }, event).then(function () {
+                    $scope.calSummary();
+                }, function () { });
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                $scope.formView.netCompensationPrice = 0;
+
+                // คณะกรรมการ
+                angular.forEach($scope.$settings.formData.rows.CommitteeGroups, function (row) {
+                    $scope.formView.netCompensationPrice += $filter('fwSimpleSummary')(row.Items, ['TotalCompensationPrice'], 0, null, false);
+                });
+
+                // ผู้คุมงาน
+                angular.forEach($scope.$settings.formData.rows.QualityAssuranceGroups, function (row) {
+                    $scope.formView.netCompensationPrice += $filter('fwSimpleSummary')(row.Items, ['TotalCompensationPrice'], 0, null, false);
+                });
+
+                return $scope.formView.netCompensationPrice;
+            };
+
+            // กำหนดค่าเริ่มต้นให้กับฟอร์ม
+            // $scope.$settings.formData.rows จะถูก Initialize ค่าให้เป็น Array
+            // ในตอนเริ่มต้น ซึ่งฟอร์มค่าตอบแทนบุคคลหรือคณะกรรมการ จะมีรูปแบบการเก็บข้อมูลที่แตกต่างจากฟอร์มอื่น
+            // { CommitteeGroups: [], QualityAssureanceGroups: [] }
+            $scope.$on('GetExpensesColumn.loaded', function () {
+                if (angular.isArray($scope.$settings.formData.rows))
+                    $scope.$settings.formData.rows = $.extend(true, {}, $scope.$settings.expensesColumn);
+            });
+
+            $scope.calSummary();
+        }).controller('PrivateRetiredGovernmentCompensationFormController', function ($scope, $filter, $timeout) {
+            // แบบฟอร์มค่าตอบแทนข้าราชการเกษียณ
+
+            // ค่าตอบแทนต่อเดือนเปลี่ยนแปลง
+            var compensationMonthlyRateChangedId = null;
+            $scope.compensationMonthlyRateChanged = function (row) {
+                $timeout.cancel(compensationMonthlyRateChangedId);
+                compensationMonthlyRateChangedId = $timeout(function () {
+                    row.CompensationYearlyPrice = (+row.CompensationMonthlyRatePrice) * 12;
+                }, 600);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['CompensationYearlyPrice'], 0, null, false);
+            };
+        }).controller('PrivateOvertimeCompensationFormController', function ($scope, $filter, $customHttp, $timeout) {
+            // แบบฟอร์มอัตรค่าตอบแทนปฏิบัติงานนอกเวลาราชการ
+
+            // ค่าคงที่ค่าตอบแทนการปฏิบัติงาน (วันทำการ, วันหยุด)
+            $scope.$configs = {
+                workingCompensationPerHour: 0, // อัตราค่าตอบแทน/ชม. วันทำการ
+                holidayCompensationPerHour: 0 // อัตราค่าตอบแทน/ชม. วันหยุด
+            };
+
+            $customHttp.formPost('@Url.Action("GetWorkingRateCompensation", "BudgetRequest")', {}).then(function (res) {
+                var constInfo = res.data || {};
+                $scope.$configs.workingCompensationPerHour = (+constInfo.ITEM_VALUE) || 0;
+            }, function () { });
+
+            $customHttp.formPost('@Url.Action("GetHolidayRateCompensation", "BudgetRequest")', {}).then(function (res) {
+                var constInfo = res.data || {};
+                $scope.$configs.holidayCompensationPerHour = (+constInfo.ITEM_VALUE) || 0;
+            }, function () { });
+
+            // คำนวณค่าตอบแทน
+            var calCompensationPriceId = null;
+            $scope.calCompensationPrice = function (row) {
+                $timeout.cancel(calCompensationPriceId);
+                calCompensationPriceId = $timeout(function () {
+                    // ค่าตอบแทน เวลาทำการ
+                    row.TotalCompensationWorkingPrice = $scope.$configs.workingCompensationPerHour * (+row.WorkingAmountDays) * (+row.WorkingAmountHoursPerDay);
+                    row.WorkingCompensationPerHour = $scope.$configs.workingCompensationPerHour;
+
+                    // ค่าตอบแทน วันหยุด
+                    row.TotalCompensationHolidayPrice = $scope.$configs.holidayCompensationPerHour * (+row.HolidayAmountDays) * (+row.HolidayAmountHoursPerDay);
+                    row.HolidayCompensationPerHour = $scope.$configs.holidayCompensationPerHour;
+
+                    row.NetCompensationPrice = row.TotalCompensationWorkingPrice + row.TotalCompensationHolidayPrice;
+                }, 700);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['NetCompensationPrice'], 0, null, false);
+            };
+        }).controller('PrivateInsteadCarForPositionCompensationFormController', function ($scope, $filter, $timeout) {
+            // ค่าตอบแทนแหมาจ่ายแทนการจัดหารถประจำตำแหน่ง
+
+            // คำนวณค่าตอบแทนต่อปี
+            var calCompensationId = null;
+            $scope.calCompensation = function (row) {
+                $timeout.cancel(calCompensationId);
+                calCompensationId = $timeout(function () {
+                    row.CompensationYearlyPrice = (+row.CompensationMonthlyRatePrice) * 12;
+                }, 600);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['CompensationYearlyPrice'], 0, null, false);
+            };
+        }).controller('PrivateAllowanceFormController', function ($scope, $filter, $timeout, $customHttp, $fwUtils) {
+            // ค่าเบี้ยเลี้ยง ค่าเช่าที่พัก และค่าพาหนะ
+
+            $scope.$formView = {
+                timeAmounts: 0,
+
+                allowancePersonAmounts: 0,
+                allowanceAmountDays: 0,
+                allowanceTotalCompensationPrice: 0,
+
+                rentRoomPersonAmounts: 0,
+                rentRoomAmountDays: 0,
+                rentRoomTotalCompensationPrice: 0,
+
+                vehicleAndOilPrice: 0,
+                netExpensesPrice: 0
+            };
+
+            // โหลดโครงสร้างรายละเอียด
+            var detailStructure = {};
+            $customHttp.formGet('@Url.Action("GetExpensesColumn", "BudgetRequest")', {
+                expensesFormName: 'AllowanceFormItems'
+            }).then(function (res) {
+                detailStructure = $fwUtils.parseJson(res.data) || {};
+            }, function () { });
+            // ค้นหาอัตราค่าตอบแทน ตามระดับบุคลากร
+            var getCompensationRateId = null;
+            $scope.getCompensationRate = function (row) {
+                $timeout.cancel(getCompensationRateId);
+                getCompensationRateId = $timeout(function () {
+                    row.AllowanceCompensationRatePrice = 0;
+                    row.RentRoomCompensationRatePrice = 0;
+                    var levelId = ('' + row.LevelId).replace(/[^\d]/g, '');
+                    if (levelId != '') {
+                        $customHttp.formPost('@Url.Action("GetPersonnelLevelCompensationRateBy", "Helper")', { personLevelId: levelId }).then(function (res) {
+                            var compensationRateInfos = res.data || [];
+
+                            // ค่าเบี้ยเลี้ยง
+                            var findCompensationRate = compensationRateInfos.filter(function (item) { return item.COMPENSATION_TYPE_CODE == 'COMPENSATION_ALLOWANCE'; });
+                            row.AllowanceCompensationRatePrice = findCompensationRate.length > 0 ? findCompensationRate[0].RATE_AMOUNT : 0;
+
+                            // ค่าเช่าห้องพัก
+                            findCompensationRate = compensationRateInfos.filter(function (item) { return item.COMPENSATION_TYPE_CODE == 'COMPENSATION_RENT_ROOM'; });
+                            row.RentRoomCompensationRatePrice = findCompensationRate.length > 0 ? findCompensationRate[0].RATE_AMOUNT : 0;
+
+                            // คำนวณค่าใช้จ่ายรวมในแต่ละรายการ
+                            $scope.calCompensationPrice(row);
+                        }, function () { });
+                    }
+                }, 100);
+
+            };
+            // กรณีมีเพิ่มรายการใหม่ ให้ Default รายละเอียด 1 รายการ
+            $scope.$on('addItem.complete', function () {
+                $timeout(function () {
+                    var lastIndex = $scope.$settings.formData.rows.length - 1;
+                    var currRow = $scope.$settings.formData.rows[lastIndex];
+                    $scope.addDetail(currRow);
+                }, 100);
+            });
+            // กดปุ่ม เพิ่มรายการย่อย
+            $scope.addDetail = function (row) {
+                var newItem = $.extend(true, {}, detailStructure);
+                row.Items.push(newItem);
+            };
+            // คำนวณค่าใช้จ่าย
+            var calCompensationPriceId = null;
+            $scope.calCompensationPrice = function (row) {
+                $timeout.cancel(calCompensationPriceId);
+                calCompensationPriceId = $timeout(function () {
+
+                    // ค่าเบี้ยเลี้ยง
+                    row.AllowanceTotalCompensationPrice = (+row.TimeAmounts) * (+row.AllowancePersonAmounts) * (+row.AllowanceAmountDays) * (+row.AllowanceCompensationRatePrice);
+
+                    // ค่าเช่าที่พัก
+                    row.RentRoomTotalCompensationPrice = (+row.TimeAmounts) * (+row.RentRoomPersonAmounts) * (+row.RentRoomAmountDays) * (+row.RentRoomCompensationRatePrice);
+
+                    // รวม
+                    row.NetExpensesPrice = (+row.AllowanceTotalCompensationPrice) + (+row.RentRoomTotalCompensationPrice) + (+row.VehicleAndOilPrice);
+
+                    // รวมทุกรายการ
+                    $scope.calSummary();
+                }, 100);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                $scope.$formView.timeAmounts = 0;
+
+                $scope.$formView.allowancePersonAmounts = 0;
+                $scope.$formView.allowanceAmountDays = 0;
+                $scope.$formView.allowanceTotalCompensationPrice = 0;
+
+                $scope.$formView.rentRoomPersonAmounts = 0;
+                $scope.$formView.rentRoomAmountDays = 0;
+                $scope.$formView.rentRoomTotalCompensationPrice = 0;
+
+                $scope.$formView.vehicleAndOilPrice = 0;
+                $scope.$formView.netExpensesPrice = 0;
+
+                angular.forEach($scope.$settings.formData.rows, function (row) {
+                    $scope.$formView.timeAmounts += $filter('fwSimpleSummary')(row.Items, ['TimeAmounts'], 0, null, false);
+                    $scope.$formView.allowancePersonAmounts += $filter('fwSimpleSummary')(row.Items, ['AllowancePersonAmounts'], 0, null, false);
+                    $scope.$formView.allowanceAmountDays += $filter('fwSimpleSummary')(row.Items, ['AllowanceAmountDays'], 0, null, false);
+                    $scope.$formView.allowanceTotalCompensationPrice += $filter('fwSimpleSummary')(row.Items, ['AllowanceTotalCompensationPrice'], 0, null, false);
+
+                    $scope.$formView.rentRoomPersonAmounts += $filter('fwSimpleSummary')(row.Items, ['RentRoomPersonAmounts'], 0, null, false);
+                    $scope.$formView.rentRoomAmountDays += $filter('fwSimpleSummary')(row.Items, ['RentRoomAmountDays'], 0, null, false);
+                    $scope.$formView.rentRoomTotalCompensationPrice += $filter('fwSimpleSummary')(row.Items, ['RentRoomTotalCompensationPrice'], 0, null, false);
+
+                    $scope.$formView.vehicleAndOilPrice += $filter('fwSimpleSummary')(row.Items, ['VehicleAndOilPrice'], 0, null, false);
+                    $scope.$formView.netExpensesPrice += $filter('fwSimpleSummary')(row.Items, ['NetExpensesPrice'], 0, null, false);
+                });
+
+                return $scope.$formView.netExpensesPrice;
+            };
+
+
+            // กำหนดค่าเริ่่มต้นให้ฟอร์ม
+            $scope.calSummary();
+        }).controller('PrivateRepairVehicleAndTransportFormController', function ($scope, $filter, $fwDateService, $timeout, $fwUtils, $customHttp) {
+            // ค่าซ่อมแซมยานพาหนะและขนส่ง
+
+            $scope.$settings = $.extend({}, $scope.$settings || {}, {
+                vehicleTypes: []
+            });
+            $scope.$formView = {
+                netExpensesRepairPrice: 0
+            };
+
+            // ประเภทยานพาหนะ
+            $customHttp.formPost('@Url.Action("RetrieveAllVehicleType", "Helper")', {}).then(function (res) {
+                $scope.$settings.vehicleTypes = res.data || [];
+            }, function () { });
+            // โครงสร้างข้อมูลส่วนรายละเอียด
+            var detailStructure = {};
+            $customHttp.formGet('@Url.Action("GetExpensesColumn", "BudgetRequest")', { expensesFormName: "RepairVehicleAndTransportFormItems" }).then(function (res) {
+                detailStructure = $fwUtils.parseJson(res.data) || {};
+            }, function () { });
+            // ถ้ามีการเพิ่มรายการหลัก ให้เพิ่มรายละเอียดย่อย 1 รายการ
+            $scope.$on('addItem.complete', function () {
+                $timeout(function () {
+                    var lastIndex = $scope.$settings.formData.rows.length - 1;
+                    var currRow = $scope.$settings.formData.rows[lastIndex];
+                    $scope.addDetail(currRow);
+                }, 100);
+            });
+            // เพิ่มรายละเอียดของรายการ
+            $scope.addDetail = function (row) {
+                var newItem = $.extend(true, {}, detailStructure);
+                row.Items.push(newItem);
+            };
+            // คำนวณอายุของยานพาหนะ
+            var calVehicleAgeId = null;
+            $scope.calVehicleAge = function (row) {
+                $timeout.cancel(calVehicleAgeId);
+                calVehicleAgeId = $timeout(function () {
+                    if ($.trim(row.RegisterDate) != '') {
+                        row.VehicleAgeValue = $.trim($fwDateService.diffDate(row.RegisterDate));
+                    }
+                }, 300);
+            };
+            // คำนวณค่าซ่อมแซมภาพรวมทุกรายการ
+            var calExpensesRepairId = null;
+            $scope.calExpensesRepairPrice = function () {
+                $timeout.cancel(calExpensesRepairId);
+                calExpensesRepairId = $timeout(function () {
+                    $scope.calSummary();
+                }, 300);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                $scope.$formView.netExpensesRepairPrice = 0;
+                angular.forEach($scope.$settings.formData.rows, function (row) {
+                    $scope.$formView.netExpensesRepairPrice += $filter('fwSimpleSummary')(row.Items, ['ExpensesRepairPrice'], 0, null, false);
+                });
+
+                return $scope.$formView.netExpensesRepairPrice;
+            };
+
+
+            // กำหนดค่าเริ่่มต้นให้ฟอร์ม
+            $scope.calSummary();
+            // คำนวนอายุการใช้งานยานพาหนะและขนส่งใหม่
+            angular.forEach($scope.$settings.formData.rows, function (row) {
+                angular.forEach(row.Items, function (item) {
+                    item.VehicleAgeValue = '';
+                    if ($.trim(item.RegisterDate) != '') {
+                        item.VehicleAgeValue = $.trim($fwDateService.diffDate(item.RegisterDate));
+                    }
+                });
+            });
+        }).controller('PrivateRepairEquipmentFormController', function ($scope, $filter, $timeout, $customHttp) {
+            // ค่าซ่อมแซมครุภัณฑ์
+
+            $scope.$settings.assets = [];
+            $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 6 }).then(function (res) {
+                $scope.$settings.assets = res.data || [];
+            }, function () { });
+
+            // เมื่อเปลี่ยนแปลงครุภัณฑ์
+            $scope.$on('asset.changed', function (event, items) {
+                items.currRow.EquipmentName = '';
+                items.currRow.EquipmentOtherFlag = false;
+                items.currRow.EquipmentOtherName = '';
+                if (null != items.selectedItem) {
+                    items.currRow.EquipmentName = items.selectedItem.ASSET_NAME;
+                    items.currRow.EquipmentOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+                    items.currRow.EquipmentOtherName = '';
+                }
+            });
+
+            // คำนวณราคาค่าซ่อมครุภัณฑ์
+            var calRepairPriceId = null;
+            $scope.calRepairPrice = function (row) {
+                $timeout.cancel(calRepairPriceId);
+                calRepairPriceId = $timeout(function () {
+                    row.RepairTotalPrice = (+row.RepairAmounts) * (+row.RepairPricePerItem);
+                }, 500);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['RepairTotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateRepairBuildingFormController', function ($scope, $filter, $customHttp) {
+            // ค่าซ่อมแซมสิ่งก่อสร้าง
+
+            // โหลดรายการสิ่งก่อสร้าง
+            $scope.$settings = $.extend($scope.$settings, {
+                assets: []
+            });
+            $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 1 }).then(function (res) {
+                $scope.$settings.assets = res.data || [];
+            }, function () { });
+
+            // เมื่อเปลี่ยนแปลงครุภัณฑ์
+            $scope.$on('asset.changed', function (event, items) {
+                items.currRow.BuildingName = '';
+                items.currRow.BuildingOtherFlag = false;
+                items.currRow.BuildingOtherName = '';
+                if (null != items.selectedItem) {
+                    items.currRow.BuildingName = items.selectedItem.ASSET_NAME;
+                    items.currRow.BuildingOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+                    items.currRow.BuildingOtherName = '';
+                }
+            });
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['RepairPrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForRentBuildingFormController', function ($scope, $filter, $customHttp, $timeout) {
+            // ค่าเช่าทรัพย์สิน
+
+            // แสดง DDL ให้เลือกรายการเช่าสินทรัพย์
+            $scope.$settings.assets = [];
+            $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 7 }).then(function (res) {
+                $scope.$settings.assets = res.data || [];
+            }, function () { });
+
+            // เมื่อเปลี่ยนแปลงครุภัณฑ์
+            $scope.$on('asset.changed', function (event, items) {
+                items.currRow.AssetName = '';
+                items.currRow.AssetOtherFlag = false;
+                items.currRow.AssetOtherName = '';
+                if (null != items.selectedItem) {
+                    items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+                    items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+                    items.currRow.AssetOtherName = '';
+                }
+            });
+
+            // คำนวณค่าเช่าต่อปี
+            var calRentPriceId = null;
+            $scope.calRentPrice = function (row) {
+                $timeout.cancel(calRentPriceId);
+                calRentPriceId = $timeout(function () {
+                    row.RentYearlyPrice = (+row.RentMonthlyPrice) * 12;
+                }, 500);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['RentYearlyPrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForHireServiceFormController', function ($scope, $filter, $timeout) {
+            // ค่าจ้างเหมาบริการ
+
+
+            // หลังจากโหลด โครงสร้างข้อมูลเสร็จ ให้สร้างรายการไว้เพียง 2 รายการ
+            $scope.$on('GetExpensesColumn.loaded', function () {
+                if ($scope.$settings.formData.rows.length == 0) {
+                    $scope.addItem();
+                    $scope.addItem();
+
+                    var item = $scope.$settings.formData.rows[0];
+                    item.ServiceName = 'ค่าจ้างเหมาบริการทำความสะอาด';
+
+                    item = $scope.$settings.formData.rows[1];
+                    item.ServiceName = 'ค่าจ้างเหมาบริการรักษาความปลอดภัย';
+                }
+            });
+            // คำนวณมูลค่าเหมาจ่าย
+            var calServicePriceId = null;
+            $scope.calServicePrice = function (row) {
+                $timeout.cancel(calServicePriceId);
+                calServicePriceId = $timeout(function () {
+                    row.ServiceMonthlyPrice = (+row.PersonAmounts) * (+row.ServicePrice);
+                    row.ServiceYearlyPrice = row.ServiceMonthlyPrice * 12;
+                }, 500);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['ServiceYearlyPrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForKillTermiteFormController', function ($scope, $filter, $timeout) {
+            // ค่ากำจัดปลวก (เหมาบริการ)
+
+
+            // หลังจากโหลด โครงสร้างข้อมูลเสร็จ ให้สร้างรายการไว้เพียง 2 รายการ
+            $scope.$on('GetExpensesColumn.loaded', function () {
+                if ($scope.$settings.formData.rows.length == 0) {
+                    $scope.addItem();
+
+                    var item = $scope.$settings.formData.rows[0];
+                    item.ServiceName = 'ค่ากำจัดปลวก';
+                }
+            });
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['ServicePrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForSoftwareMAFormController', function ($scope, $filter) {
+            // ค่าจ้างเหมาบริการ บำรุงรักษาระบบ
+
+            $scope.$on('GetExpensesColumn.loaded', function () {
+                // ถ้าเป็นการบันทึกรายการครั้งแรก ให้ใช้ข้อมูลจาก โครงสร้างไฟล์ .json ที่ตรงกับชื่อฟอร์ม
+                // เนื่องจากหน้าจอ MA มีการแยก Tab ออกเป็น 3 Tabs
+                if ($scope.$settings.formData.rows.length != undefined) {
+                    $scope.$settings.formData.rows = $scope.$settings.expensesColumn;
+                }
+
+                // โหลดข้อมูลโครงสร้างรายการที่จะคีย์ลงรายการ MA ใหม่
+                var keys = Object.keys($scope.$settings.expensesColumn);
+                if (keys.indexOf('ServiceName') == -1)
+                    $scope.getExpensesColumn('ChargeForSoftwareMAItems');
+            });
+
+            // กดเพิ่มรายการค่าบำรุงรักษา
+            $scope.addMAItem = function (type) {
+                var newItems = $.extend(true, {}, $scope.$settings.expensesColumn);
+                $scope.$settings.formData.rows[type].Items.push(newItems);
+            };
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                var totalServiceMaSoftware = $filter('fwSimpleSummary')($scope.$settings.formData.rows.MASoftware.Items, ['ServicePrice'], 0, null, false),
+                    totalServiceMaBuilding = $filter('fwSimpleSummary')($scope.$settings.formData.rows.MABuilding.Items, ['ServicePrice'], 0, null, false),
+                    totalServiceMaOther = $filter('fwSimpleSummary')($scope.$settings.formData.rows.MAOther.Items, ['ServicePrice'], 0, null, false);
+                return totalServiceMaSoftware + totalServiceMaBuilding + totalServiceMaOther;
+            };
+        }).controller('PrivateChargeForReprintStampFormController', function ($scope, $filter) {
+            // ค่าจ้างพิมพ์แก้ไขแสตมป์ (ค่าจ้างเหมา)
+
+            // มีเพียง 1 รายการ
+            $scope.$on('GetExpensesColumn.loaded', function () {
+                if ($scope.$settings.formData.rows.length == 0) {
+                    $scope.addItem();
+                    var item = $scope.$settings.formData.rows[0];
+                    item.ServiceName = 'ค่าจ้างพิมพ์แก้ไขแสตมป์';
+                }
+            });
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['ServicePrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForRentServiceFormController', function ($scope, $filter) {
+            // ค่าจ้างเหมาบริการอื่นๆ
+
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['ServicePrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForAdvertiseAndReleaseFormController', function ($scope, $filter, $customHttp, $timeout) {
+            // ค่าโฆษณาและเผยแพร่
+
+            // โหลดข้อมูลรายการโฆษณาและเผยแพร่
+        @*$scope.$settings = $.extend($scope.$settings, {
+            assets: []
+        });
+        $customHttp.formPost('@Url.Action("RetrieveAllAdvertiseAsset", "Helper")', {}).then(function (res) {
+            $scope.$settings.assets = res.data || [];
+        }, function () { });*@
+
+            // คำนวณราคารวม ต่อรายการ
+            var calTotalPriceId = null;
+            $scope.calTotalPrice = function (row) {
+                $timeout.cancel(calTotalPriceId);
+                calTotalPriceId = $timeout(function () {
+                    row.TotalPrice = (+row.Amounts) * (+row.PricePerUnit);
+                }, 500);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForMaintainAirConditionerFormController', function ($scope, $filter, $timeout) {
+            // ค่าใช้จ่ายในการบำรุงรักษาเครื่องปรับอากาศ
+
+            // มีเพียง 1 รายการ
+            $scope.$on('GetExpensesColumn.loaded', function () {
+                if ($scope.$settings.formData.rows.length == 0) {
+                    $scope.addItem();
+                    var item = $scope.$settings.formData.rows[0];
+                    item.ServiceName = 'ค่าใช้จ่ายในการบำรุงรักษาเครื่องปรับอากาศ';
+                }
+            });
+            // คำนวณราคารวม ต่อรายการ
+            var calTotalPriceId = null;
+            $scope.calTotalPrice = function (row) {
+                $timeout.cancel(calTotalPriceId);
+                calTotalPriceId = $timeout(function () {
+                    row.TotalPrice = (+row.Amounts) * (+row.PricePerUnit);
+                }, 500);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForOtherFormController', function ($scope, $filter, $timeout, $customHttp) {
+            // ค่าใช้สอยอื่นๆ
+
+
+            $scope.$settings = $.extend(true, { assets: [] }, $scope.$settings);
+            $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 10 }).then(function (res) {
+                $scope.$settings.assets = res.data || [];
+            }, function () { });
+
+            // เมื่อเปลี่ยนแปลงครุภัณฑ์
+            $scope.$on('asset.changed', function (event, items) {
+                items.currRow.AssetName = '';
+                items.currRow.AssetOtherFlag = false;
+                items.currRow.AssetOtherName = '';
+                if (null != items.selectedItem) {
+                    items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+                    items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+                    items.currRow.AssetOtherName = '';
+                }
+            });
+
+            // คำนวณมูลค่ารวมของรายการ
+            var calTotalPriceId = null;
+            $scope.calTotalPrice = function (row) {
+                $timeout.cancel(calTotalPriceId);
+                calTotalPriceId = $timeout(function () {
+                    row.TotalPrice = (+row.Amounts) * (+row.PricePerUnit);
+                }, 300);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForMaterialOfficialFormController', function ($scope, $filter, $timeout, $customHttp) {
+            // ค่าวัสดุสำนักงาน
+
+            // โหลดข้อมูล วัสดุสำนักงาน และ หน่วยนับ
+            $scope.$settings = $.extend($scope.$settings, {
+                assets: [],
+                units: []
+            });
+
+            // เมื่อเปลี่ยนแปลงครุภัณฑ์
+            $scope.$on('asset.changed', function (event, items) {
+                items.currRow.AssetName = '';
+                items.currRow.AssetOtherFlag = false;
+                items.currRow.AssetOtherName = '';
+                if (null != items.selectedItem) {
+                    items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+                    items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+                    items.currRow.AssetOtherName = '';
+                }
+            });
+            // โหลดข้อมูลสินทรัพย์
+            $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 3 }).then(function (res) {
+                $scope.$settings.assets = res.data || [];
+            }, function () { });
+            // โหลดข้อมูลหน่วยนับ
+            $customHttp.formPost('@Url.Action("RetrieveAllUnit", "Helper")', {}).then(function (res) {
+                $scope.$settings.units = res.data || [];
+            }, function () { });
+
+            // คำนวณมูลค่ารวมของรายการ
+            var calTotalPriceId = null;
+            $scope.calTotalPrice = function (row) {
+                $timeout.cancel(calTotalPriceId);
+                calTotalPriceId = $timeout(function () {
+                    row.TotalPrice = (+row.Amounts) * (+row.PricePerUnit);
+                }, 300);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForMaterialOtherFormController', function ($scope, $filter, $timeout, $customHttp) {
+            // ค่าวัสดุอื่นๆ
+
+            // โหลดข้อมูล วัสดุสำนักงาน และ หน่วยนับ
+            $scope.$settings = $.extend($scope.$settings, {
+                assets: [],
+                units: []
+            });
+
+            // เมื่อเปลี่ยนแปลงครุภัณฑ์
+            $scope.$on('asset.changed', function (event, items) {
+                items.currRow.AssetName = '';
+                items.currRow.AssetOtherFlag = false;
+                items.currRow.AssetOtherName = '';
+                if (null != items.selectedItem) {
+                    items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+                    items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+                    items.currRow.AssetOtherName = '';
+                }
+            });
+            // โหลดข้อมูลสินทรัพย์
+            $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 17 }).then(function (res) {
+                $scope.$settings.assets = res.data || [];
+            }, function () { });
+            // โหลดข้อมูลหน่วยนับ
+            $customHttp.formPost('@Url.Action("RetrieveAllUnit", "Helper")', {}).then(function (res) {
+                $scope.$settings.units = res.data || [];
+            }, function () { });
+
+            // คำนวณมูลค่ารวมของรายการ
+            var calTotalPriceId = null;
+            $scope.calTotalPrice = function (row) {
+                $timeout.cancel(calTotalPriceId);
+                calTotalPriceId = $timeout(function () {
+                    row.TotalPrice = (+row.Amounts) * (+row.PricePerUnit);
+                }, 300);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForOilAndLubricateFormController', function ($scope, $filter, $timeout, $customHttp) {
+            // ค่าน้ำมันเชื้อเพลิงและหล่อลื่น
+
+            // โหลดข้อมูล ประเภทยานพาหนะ
+            $scope.$settings = $.extend($scope.$settings, {
+                vehicleTypes: []
+            });
+            $customHttp.formPost('@Url.Action("RetrieveAllVehicleType", "Helper")', {}).then(function (res) {
+                $scope.$settings.vehicleTypes = res.data || [];
+            }, function () { });
+
+            // คำนวณมูลค่ารวมของรายการ
+            var calTotalPriceId = null;
+            $scope.calTotalPrice = function (row) {
+                $timeout.cancel(calTotalPriceId);
+                calTotalPriceId = $timeout(function () {
+                    row.TotalPrice = (+row.VehicleAmounts) * (+row.AmountDays) * (+row.LiterAmountsPerMonth) * (+row.PricePerLiter);
+                    row.TotalYearlyPrice = row.TotalPrice * 12;
+                }, 300);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalYearlyPrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForElectricalAndRadioFormController', function ($scope, $filter, $timeout, $customHttp) {
+            // ค่าวัสดุไฟฟ้าและวิทยุ
+
+            // โหลดข้อมูล วัสดุไฟฟ้าและวิทยุ
+            $scope.$settings = $.extend($scope.$settings, {
+                assets: [],
+                units: []
+            });
+
+            // เมื่อเปลี่ยนแปลงครุภัณฑ์
+            $scope.$on('asset.changed', function (event, items) {
+                items.currRow.AssetName = '';
+                items.currRow.AssetOtherFlag = false;
+                items.currRow.AssetOtherName = '';
+                if (null != items.selectedItem) {
+                    items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+                    items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+                    items.currRow.AssetOtherName = '';
+                }
+            });
+            // โหลดข้อมูลสินทรัพย์
+            $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 8 }).then(function (res) {
+                $scope.$settings.assets = res.data || [];
+            }, function () { });
+            // โหลดข้อมูลหน่วยนับ
+            $customHttp.formPost('@Url.Action("RetrieveAllUnit", "Helper")', {}).then(function (res) {
+                $scope.$settings.units = res.data || [];
+            }, function () { });
+
+            // คำนวณมูลค่ารวมของรายการ
+            var calTotalPriceId = null;
+            $scope.calTotalPrice = function (row) {
+                $timeout.cancel(calTotalPriceId);
+                calTotalPriceId = $timeout(function () {
+                    row.TotalPrice = (+row.Amounts) * (+row.PricePerUnit);
+                }, 300);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForScienceAndMedicalFormController', function ($scope, $filter, $timeout, $customHttp) {
+            // ค่าวัสดุวิทยาศาสตร์หรือการแพทย์
+
+            // โหลดข้อมูล วิทยาศาสตร์หรือการแพทย์ และ หน่วยนับ
+            $scope.$settings = $.extend($scope.$settings, {
+                assets: [],
+                units: []
+            });
+            // เมื่อเปลี่ยนแปลงครุภัณฑ์
+            $scope.$on('asset.changed', function (event, items) {
+                items.currRow.AssetName = '';
+                items.currRow.AssetOtherFlag = false;
+                items.currRow.AssetOtherName = '';
+                if (null != items.selectedItem) {
+                    items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+                    items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+                    items.currRow.AssetOtherName = '';
+                }
+            });
+            // โหลดข้อมูลสินทรัพย์
+            $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 4 }).then(function (res) {
+                $scope.$settings.assets = res.data || [];
+            }, function () { });
+            // โหลดข้อมูลหน่วยนับ
+            $customHttp.formPost('@Url.Action("RetrieveAllUnit", "Helper")', {}).then(function (res) {
+                $scope.$settings.units = res.data || [];
+            }, function () { });
+
+            // คำนวณมูลค่ารวมของรายการ
+            var calTotalPriceId = null;
+            $scope.calTotalPrice = function (row) {
+                $timeout.cancel(calTotalPriceId);
+                calTotalPriceId = $timeout(function () {
+                    row.TotalPrice = (+row.Amounts) * (+row.PricePerUnit);
+                }, 300);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateComputerMaterialFormController', function ($scope, $filter, $timeout, $customHttp) {
+            // ค่าวัสดุคอมพิวเตอร์
+
+            // โหลดข้อมูล ครุภัณฑ์คอมพิวเตอร์ และ หน่วยนับ
+            $scope.$settings = $.extend($scope.$settings, {
+                assets: [],
+                units: []
+            });
+            // เมื่อเปลี่ยนแปลงครุภัณฑ์
+            $scope.$on('asset.changed', function (event, items) {
+                items.currRow.AssetName = '';
+                items.currRow.AssetOtherFlag = false;
+                items.currRow.AssetOtherName = '';
+                if (null != items.selectedItem) {
+                    items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+                    items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+                    items.currRow.AssetOtherName = '';
+                }
+            });
+            // โหลดข้อมูลสินทรัพย์
+            $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 13 }).then(function (res) {
+                $scope.$settings.assets = res.data || [];
+            }, function () { });
+            // โหลดข้อมูลหน่วยนับ
+            $customHttp.formPost('@Url.Action("RetrieveAllUnit", "Helper")', {}).then(function (res) {
+                $scope.$settings.units = res.data || [];
+            }, function () { });
+
+            // คำนวณมูลค่ารวมของรายการ
+            var calTotalPriceId = null;
+            $scope.calTotalPrice = function (row) {
+                $timeout.cancel(calTotalPriceId);
+                calTotalPriceId = $timeout(function () {
+                    row.TotalPrice = (+row.Amounts) * (+row.PricePerUnit);
+                }, 300);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateVehicleEquipmentAndTransportController', function ($scope, $filter, $timeout, $customHttp) {
+            // ค่าวัสดุยานพาหนะและขนส่ง
+
+            // โหลดข้อมูล ค่าวัสดุยานพาหนะและขนส่ง และ หน่วยนับ
+            $scope.$settings = $.extend($scope.$settings, {
+                assets: [],
+                units: []
+            });
+            // เมื่อเปลี่ยนแปลงครุภัณฑ์
+            $scope.$on('asset.changed', function (event, items) {
+                items.currRow.AssetName = '';
+                items.currRow.AssetOtherFlag = false;
+                items.currRow.AssetOtherName = '';
+                if (null != items.selectedItem) {
+                    items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+                    items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+                    items.currRow.AssetOtherName = '';
+                }
+            });
+            // โหลดข้อมูลสินทรัพย์
+            $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 14 }).then(function (res) {
+                $scope.$settings.assets = res.data || [];
+            }, function () { });
+            // โหลดข้อมูลหน่วยนับ
+            $customHttp.formPost('@Url.Action("RetrieveAllUnit", "Helper")', {}).then(function (res) {
+                $scope.$settings.units = res.data || [];
+            }, function () { });
+
+            // คำนวณมูลค่ารวมของรายการ
+            var calTotalPriceId = null;
+            $scope.calTotalPrice = function (row) {
+                $timeout.cancel(calTotalPriceId);
+                calTotalPriceId = $timeout(function () {
+                    row.TotalPrice = (+row.Amounts) * (+row.PricePerUnit);
+                }, 300);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivatePublicUtilitiesFormController', function ($scope, $filter) {
+            // ค่าไฟฟ้า ประปา โทรศัพท์ ไปรษณีย์ ค่าบริการสื่อสารและโทรคมนาคม
+            // ใช้แบบฟอร์ม เดียวกัน
+            // โดยในการกำหนดชื่อแบบฟอร์มจะใส่ SalarayAndIncomeForm#[ชื่อรายการ คชจ.]
+
+            // เตรียมรายการไว้เพียง 1 รายการเท่านั้น
+            $scope.addNew = function (itemText) {
+                $scope.addItem();
+                var item = $scope.$settings.formData.rows[$scope.$settings.formData.rows.length - 1];
+                item.ItemText = itemText;
+            };
+            if ($scope.$settings.formData.rows.length == 0) {
+                var expensesText = ($scope.$settings.expensesInfo.FORM_TEMPLATE_NAME || '').replace(/^[\w]+\#/g, '');
+                $scope.addNew(expensesText);
+            }
+            //$scope.newItem = function (itemText) {
+            //    $scope.addItem();
+            //    var currIndex = $scope.$settings.formData.rows.length - 1;
+            //    var currItem = $scope.$settings.formData.rows[currIndex];
+            //    currItem.ItemText = itemText;
+            //};
+            //// โหลดข้อมูลพื้นฐาน
+            //if ($scope.$settings.formData.rows.length == 0) {
+            //    $scope.newItem('ค่าโทรศัพท์');
+            //    $scope.newItem('ค่าประปา');
+            //    $scope.newItem('ค่าไปรษณีย์');
+            //    $scope.newItem('ค่าไฟฟ้า');
+            //    $scope.newItem('ค่าบริการสื่อสารและโทรคมนาคม');
+            //}
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['RequestBudgetAmounts'], 0, null, false);
+            };
+        }).controller('PrivateOfficialEquipmentFormController', function ($scope, $filter, $q, $customHttp, $timeout, $fwDialogService) {
+            // ครุภัณฑ์สำนักงาน
+
+            // โหลดข้อมูล ครุภัณฑ์สำนักงาน
+            $scope.$settings = $.extend($scope.$settings, {
+                assets: [],
+                formErrors: {}
+            });
+            $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 16 }).then(function (res) {
+                $scope.$settings.assets = res.data || [];
+                $scope.$broadcast('official.equipment.form.asset.loaded', []);
+            }, function () { });
+
+            // เมื่อครุภัณฑ์เปลี่ยนแปลง โหลดข้อมูลพื้นฐานครุภัณฑ์สำนักงานของแต่ละหน่วยงาน มาเป็นค่าเริ่มต้น
+            var assetIdChangedId = null;
+            $scope.assetIdChanged = function (row) {
+                return $q(function (resolve) {
+                    $timeout.cancel(assetIdChangedId);
+                    assetIdChangedId = $timeout(function () {
+                        var assetId = ('' + row.AssetId).replace(/[^\d]/g, '');
+                        if (assetId != '') {
+                            $customHttp.formPost('@Url.Action("RetrieveDepartmentAssetStockInfo", "BudgetRequest")', { assetId: assetId }).then(function (res) {
+                                var assetStockInfo = res.data;
+                                if (angular.isObject(assetStockInfo)) {
+                                    row.StockAmounts = assetStockInfo.STOCK_AMOUNT;
+                                    row.RequestAmounts = assetStockInfo.STOCK_AMOUNT;
+                                    row.PriceType = '' + assetStockInfo.PRICE_TYPE;
+                                    row.PricePerUnit = assetStockInfo.PRICE_TYPE == '1' ? assetStockInfo.STANDARD_PRICE : assetStockInfo.NON_STANDARD_PRICE;
+                                    $scope.calTotalPrice(row);
+                                }
+                                resolve({});
+                            }, function () { resolve({}); });
+                        } else
+                            resolve({});
+                    }, 200);
+                });
+            };
+            // เมื่อเปลี่ยนแปลงครุภัณฑ์คอมพิวเตอร์
+            $scope.privateAssetChanged = function (assetId, assetItems, row) {
+                $scope.assetIdChanged(row).then(function () {
+                    $scope.assetChanged(row.AssetId, assetItems, row);
+                });
+            }
+            // หลังจากครุภัณฑ์คอมพิวเตอร์เปลี่ยนแปลงเสร็จ
+            $scope.$on('asset.changed', function (event, items) {
+                items.currRow.AssetName = '';
+                items.currRow.AssetOtherFlag = false;
+                items.currRow.AssetOtherName = '';
+                if (null != items.selectedItem) {
+                    items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+                    items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+                    items.currRow.AssetOtherName = '';
+                }
+            });
+            // คำนวณจำนวนสินทรัพย์คงคลัง
+            var calStockAmountId = null;
+            $scope.calStockAmount = function (row) {
+                $timeout.cancel(calStockAmountId);
+                calStockAmountId = $timeout(function () {
+                    row.RequiredAmounts = (+row.StockAmounts) + (+row.RequestAmounts);
+
+                    var calAmounts = (+row.RequestAmounts) + (+row.ReplaceAmounts);
+                    row.TotalPrice = calAmounts * (+row.PricePerUnit);
+                }, 400);
+            };
+            // คำนวณราคารวม
+            var calTotalPriceId = null;
+            $scope.calTotalPrice = function (row) {
+                $timeout.cancel(calTotalPriceId);
+                calTotalPriceId = $timeout(function () {
+                    row.RequiredAmounts = (+row.StockAmounts) + (+row.RequestAmounts);
+
+                    var calAmounts = (+row.RequestAmounts) + (+row.ReplaceAmounts);
+                    row.TotalPrice = calAmounts * (+row.PricePerUnit);
+                }, 500);
+            };
+            // หลังจากอัพโหลดไฟล์สำเร็จ
+            $scope.uploadCallback = function (res, params) {
+                var row = $scope.$settings.formData.rows[params.index];
+                row.AttachFilename = res.data.filename;
+            };
+            // ลบรายการ
+            $scope.delete = function (index, row) {
+                if ($.trim(row.AttachFilename) != '')
+                    $customHttp.formGet('@Url.Action("DeleteFile", "Resource")', {
+                        groupType: "BudgetRequest",
+                        filename: row.AttachFilename
+                    }).then(function () { }, function () { });
+
+                $scope.$settings.formData.rows.splice(index, 1);
+            };
+            // เมื่อกดปุ่ม ok
+            // ยืนยันรายการที่ไม่ใช่ราคามาตรฐานต้อง อัพโหลดไฟล์
+            $scope.privateOk = function (event) {
+                $scope.$settings.formErrors = [];
+                var hasError = false;
+                angular.forEach($scope.$settings.formData.rows, function (row) {
+                    var error = { ErrorMessages: [] };
+                    if (row.PriceType == '0' && $.trim(row.AttachFilename) == '') {
+                        error.ErrorMessages.push('*** โปรดแนบไฟล์ ***');
+                        hasError = true;
+                    }
+
+                    $scope.$settings.formErrors.push(error);
+                });
+                if (hasError) {
+                    $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งก่อน !!');
+                    return;
+                }
+
+                // return ค่ากลับและปิดหน้าต่าง
+                $scope.ok();
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                // บันทึกรายการ ครุภัณฑ์สำนักงาน ของแต่ละหน่วยงาน
+                if ($scope.$settings.formData.rows.length > 0)
+                    $customHttp.formPost('@Url.Action("SubmitSaveDepartmentAsset", "BudgetRequest")', {
+                        Items: $scope.$settings.formData.rows
+                    }).then(function () { }, function () { });
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateComputerEquipmentFormController', function ($scope, $controller, $customHttp) {
+            // ครุภัณฑ์คอมพิวเตอร์
+
+            // สืบทอดคุณสมบัติของ Controller (extend)
+            $controller('PrivateOfficialEquipmentFormController', { $scope: $scope });
+            // ส่วน Parent controller มีการโหลด Asset ทำให้ต้องโหลดข้อมูล Asset ส่วนของตนเองหลัง inherit controller
+            $scope.$on('official.equipment.form.asset.loaded', function (event) {
+                // โหลดข้อมูลสินทรัพย์
+                $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 5 }).then(function (res) {
+                    $scope.$settings.assets = res.data || [];
+                }, function () { });
+            });
+            //// เมื่อเปลี่ยนแปลงครุภัณฑ์คอมพิวเตอร์
+            //$scope.privateAssetChanged = function (assetId, assetItems, row) {
+            //    $scope.assetIdChanged(row).then(function () {
+            //        $scope.assetChanged(row.AssetId, assetItems, row);
+            //    });
+            //}
+            //// หลังจากครุภัณฑ์คอมพิวเตอร์เปลี่ยนแปลงเสร็จ
+            //$scope.$on('asset.changed', function (event, items) {
+            //    items.currRow.AssetName = '';
+            //    items.currRow.AssetOtherFlag = false;
+            //    items.currRow.AssetOtherName = '';
+            //    if (null != items.selectedItem) {
+            //        items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+            //        items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+            //        items.currRow.AssetOtherName = '';
+            //    }
+            //});
+        }).controller('PrivateVehicleAndTransportEquipmentFormController', function ($scope, $controller, $customHttp) {
+            // ครุภัณฑ์ยานพาหนะและขนส่ง
+
+            // สืบทอดคุณสมบัติของ Controller (extend)
+            $controller('PrivateOfficialEquipmentFormController', { $scope: $scope });
+            // ส่วน Parent controller มีการโหลด Asset ทำให้ต้องโหลดข้อมูล Asset ส่วนของตนเองหลัง inherit controller
+            $scope.$on('official.equipment.form.asset.loaded', function (event) {
+                // โหลดข้อมูลสินทรัพย์
+                $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 12 }).then(function (res) {
+                    $scope.$settings.assets = res.data || [];
+                }, function () { });
+            });
+            //// เมื่อเปลี่ยนแปลงครุภัณฑ์คอมพิวเตอร์
+            //$scope.privateAssetChanged = function (assetId, assetItems, row) {
+            //    $scope.assetIdChanged(row).then(function () {
+            //        $scope.assetChanged(row.AssetId, assetItems, row);
+            //    });
+            //}
+            //// หลังจากครุภัณฑ์คอมพิวเตอร์เปลี่ยนแปลงเสร็จ
+            //$scope.$on('asset.changed', function (event, items) {
+            //    items.currRow.AssetName = '';
+            //    items.currRow.AssetOtherFlag = false;
+            //    items.currRow.AssetOtherName = '';
+            //    if (null != items.selectedItem) {
+            //        items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+            //        items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+            //        items.currRow.AssetOtherName = '';
+            //    }
+            //});
+        }).controller('PrivateScienceEquipmentFormController', function ($scope, $controller, $customHttp) {
+            // ครุภัณฑ์วิทยาศาสตร์
+
+            // สืบทอดคุณสมบัติของ Controller (extend)
+            $controller('PrivateOfficialEquipmentFormController', { $scope: $scope });
+            // ส่วน Parent controller มีการโหลด Asset ทำให้ต้องโหลดข้อมูล Asset ส่วนของตนเองหลัง inherit controller
+            $scope.$on('official.equipment.form.asset.loaded', function (event) {
+                // โหลดข้อมูลสินทรัพย์
+                $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 11 }).then(function (res) {
+                    $scope.$settings.assets = res.data || [];
+                }, function () { });
+            });
+            //// เมื่อเปลี่ยนแปลงครุภัณฑ์คอมพิวเตอร์
+            //$scope.privateAssetChanged = function (assetId, assetItems, row) {
+            //    $scope.assetIdChanged(row).then(function () {
+            //        $scope.assetChanged(row.AssetId, assetItems, row);
+            //    });
+            //}
+            //// หลังจากครุภัณฑ์คอมพิวเตอร์เปลี่ยนแปลงเสร็จ
+            //$scope.$on('asset.changed', function (event, items) {
+            //    items.currRow.AssetName = '';
+            //    items.currRow.AssetOtherFlag = false;
+            //    items.currRow.AssetOtherName = '';
+            //    if (null != items.selectedItem) {
+            //        items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+            //        items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+            //        items.currRow.AssetOtherName = '';
+            //    }
+            //});
+        }).controller('PrivateOtherEquipmentFormController', function ($scope, $controller, $customHttp) {
+            // ครุภัณฑ์อื่นๆ
+
+            // สืบทอดคุณสมบัติของ Controller (extend)
+            $controller('PrivateOfficialEquipmentFormController', { $scope: $scope });
+            // ส่วน Parent controller มีการโหลด Asset ทำให้ต้องโหลดข้อมูล Asset ส่วนของตนเองหลัง inherit controller
+            $scope.$on('official.equipment.form.asset.loaded', function (event) {
+                // โหลดข้อมูลสินทรัพย์
+                $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 15 }).then(function (res) {
+                    $scope.$settings.assets = res.data || [];
+                }, function () { });
+            });
+            //// เมื่อเปลี่ยนแปลงครุภัณฑ์คอมพิวเตอร์
+            //$scope.privateAssetChanged = function (assetId, assetItems, row) {
+            //    $scope.assetIdChanged(row).then(function () {
+            //        $scope.assetChanged(row.AssetId, assetItems, row);
+            //    });
+            //}
+            //// หลังจากครุภัณฑ์คอมพิวเตอร์เปลี่ยนแปลงเสร็จ
+            //$scope.$on('asset.changed', function (event, items) {
+            //    items.currRow.AssetName = '';
+            //    items.currRow.AssetOtherFlag = false;
+            //    items.currRow.AssetOtherName = '';
+            //    if (null != items.selectedItem) {
+            //        items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+            //        items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+            //        items.currRow.AssetOtherName = '';
+            //    }
+            //});
+        }).controller('PrivateLandAndBuildingFormController', function ($scope, $customHttp, $filter, $fwDialogService) {
+            // ที่ดินและสิ่งก่อสร้าง
+
+            // โหลดข้อมูล ครุภัณฑ์สำนักงาน
+            $scope.$settings = $.extend($scope.$settings, {
+                assets: [],
+                formErrors: {}
+            });
+
+            // โหลดข้อมูล Asset
+            $customHttp.formPost('@Url.Action("GetAssetByAssetType", "Helper")', { assetTypeId: 1 }).then(function (res) {
+                $scope.$settings.assets = res.data || [];
+            }, function () { });
+
+            // เมื่อเปลี่ยนแปลงครุภัณฑ์
+            $scope.$on('asset.changed', function (event, items) {
+                items.currRow.AssetName = '';
+                items.currRow.AssetOtherFlag = false;
+                items.currRow.AssetOtherName = '';
+                if (null != items.selectedItem) {
+                    items.currRow.AssetName = items.selectedItem.ASSET_NAME;
+                    items.currRow.AssetOtherFlag = items.selectedItem.ASSET_OTHER_FLAG; // true, false
+                    items.currRow.AssetOtherName = '';
+                }
+            });
+
+            // หลังจากอัพโหลดไฟล์สำเร็จ
+            $scope.uploadCallback = function (res, params) {
+                var row = $scope.$settings.formData.rows[params.index];
+                row.AttachFilename = res.data.filename;
+            };
+            // ลบรายการ
+            $scope.delete = function (index, row) {
+                if ($.trim(row.AttachFilename) != '')
+                    $customHttp.formGet('@Url.Action("DeleteFile", "Resource")', {
+                        groupType: "BudgetRequest",
+                        filename: row.AttachFilename
+                    }).then(function () { }, function () { });
+
+                $scope.$settings.formData.rows.splice(index, 1);
+            };
+            // เมื่อกดปุ่ม ok
+            // ยืนยันรายการที่ไม่ใช่ราคามาตรฐานต้อง อัพโหลดไฟล์
+            $scope.privateOk = function (event) {
+                $scope.$settings.formErrors = [];
+                var hasError = false;
+                angular.forEach($scope.$settings.formData.rows, function (row) {
+                    var error = { ErrorMessages: [] };
+                    if ($.trim(row.AttachFilename) == '') {
+                        error.ErrorMessages.push('*** โปรดแนบไฟล์ ***');
+                        hasError = true;
+                    }
+
+                    $scope.$settings.formErrors.push(error);
+                });
+                if (hasError) {
+                    $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งก่อน !!');
+                    return;
+                }
+
+                // return ค่ากลับและปิดหน้าต่าง
+                $scope.ok();
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateSubsidyFormController', function ($scope, $filter) {
+            // เงินอุดหนุนสำหรับค่าสินบนและเงินรางวัล สุรา ยาสูบ ไพ่ แสตมป์สรรพสามิตและ พ.ร.บ. ภาษีสรรพสามิต พ.ศ. 2527
+
+            // เพิ่มรายการให้มีเพียง 1 รายการ
+            if ($scope.$settings.formData.rows.length == 0) {
+                $scope.addItem();
+                var currItem = $scope.$settings.formData.rows[0];
+                currItem.ItemText = 'เงินสินบนและเงินรางวัล สุรา ยาสูบ ไพ่แสตมป์สรรพสามิต และ พ.ร.บ. ภาษีสรรพสามิต พ.ศ. 2527';
+            }
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateChargeForPrintStampFormController', function ($scope, $filter, $timeout) {
+            // ค่าใช้จ่ายในการจัดพิมพ์แสตมป์สรรพสามิต
+
+            // คำนวณราคารวมของรายการ
+            var calTotalPriceId = null;
+            $scope.calTotalPrice = function (row) {
+                $timeout.cancel(calTotalPriceId);
+                calTotalPriceId = $timeout(function () {
+                    row.TotalPrice = (+row.Amounts) * (+row.PricePerUnit);
+                }, 400);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateExpensesSeminaForeignFormController', function ($scope, $filter) {
+            // ค่าใช้จ่ายในการอบรมต่างประเทศ
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateExpensesConferenceForeignFormController', function ($scope, $filter) {
+            // ค่าใช้จ่ายในการประชุมต่างประเทศ
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateHireAdvisorFormController', function ($scope, $filter) {
+            // ค่าจ้างที่ปรึกษา
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateEducationFundFormController', function ($scope, $filter) {
+            // ค่าทุนการศึกษาต่อ
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateHealthCheckProjectFormController', function ($scope, $filter, $timeout) {
+            // โครงการตรวจสุขภาพ (ลูกจ้างชั่วคราว)
+
+            // เตรียมรายการไว้เพียง 1 รายการเท่านั้น
+            if ($scope.$settings.formData.rows.length == 0) {
+                $scope.addItem();
+                var item = $scope.$settings.formData.rows[0];
+                item.ItemText = 'โครงการตรวจสุขภาพ (ลูกจ้างชั่วคราว)';
+            }
+            // คำนวณมูลค่ารวมของรายการ
+            var calTotalPriceId = null;
+            $scope.calTotalPrice = function (row) {
+                $timeout.cancel(calTotalPriceId);
+                calTotalPriceId = $timeout(function () {
+                    row.TotalPrice = (+row.Amounts) * (+row.PricePerUnit);
+                }, 200);
+            };
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateGovernmentIncomeFormController', function ($scope, $filter) {
+            // ค่าถอนคืนรายได้แผ่นดิน
+
+            // เตรียมรายการไว้เพียง 1 รายการเท่านั้น
+            if ($scope.$settings.formData.rows.length == 0) {
+                $scope.addItem();
+                var item = $scope.$settings.formData.rows[0];
+                item.ItemText = 'ค่าถอนคืนเงินรายได้แผ่นดิน';
+            }
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateTranferToMinistryOfFinancialFormController', function ($scope, $filter) {
+            // โอนให้กระทรวงการคลังฯ
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateCompensationGovernmentEmployeeFormController', function ($scope, $filter) {
+            // ค่าตอบแทนพนักงานราชการ
+
+            // เตรียมรายการไว้เพียง 1 รายการเท่านั้น
+            $scope.addNew = function (itemText) {
+                $scope.addItem();
+                var item = $scope.$settings.formData.rows[$scope.$settings.formData.rows.length - 1];
+                item.ItemText = itemText;
+            };
+            if ($scope.$settings.formData.rows.length == 0) {
+                var expensesText = ($scope.$settings.expensesInfo.FORM_TEMPLATE_NAME || '').replace(/^[\w]+\#/g, '');
+                $scope.addNew(expensesText);
+            }
+
+            // เตรียมรายการไว้เพียง 1 รายการเท่านั้น
+            //if ($scope.$settings.formData.rows.length == 0) {
+            //    $scope.addItem();
+            //    var item = $scope.$settings.formData.rows[0];
+            //    item.ItemText = 'ค่าตอบแทนพนักงานราชการ';
+
+            //    $scope.addItem();
+            //    item = $scope.$settings.formData.rows[1];
+            //    item.ItemText = 'เงินช่วยเหลือการครองชีพพนักงานราชการ';
+            //}
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateSalaryAndIncomeFormController', function ($scope, $filter) {
+            // หมวดค่าใช้จ่าย เงินเดือน ค่าจ้างประจำ ค่าจ้างลูกจ้างชั่วคราว
+            // ใช้แบบฟอร์ม เดียวกัน
+            // โดยในการกำหนดชื่อแบบฟอร์มจะใส่ SalarayAndIncomeForm#[ชื่อรายการ คชจ.]
+
+            // เตรียมรายการไว้เพียง 1 รายการเท่านั้น
+            $scope.addNew = function (itemText) {
+                $scope.addItem();
+                var item = $scope.$settings.formData.rows[$scope.$settings.formData.rows.length - 1];
+                item.ItemText = itemText;
+            };
+            if ($scope.$settings.formData.rows.length == 0) {
+                var expensesText = ($scope.$settings.expensesInfo.FORM_TEMPLATE_NAME || '').replace(/^[\w]+\#/g, '');
+                $scope.addNew(expensesText);
+            }
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 0, null, false);
+            };
+        }).controller('PrivateTraningAndSeminorsFormController', function ($scope, $filter, $customHttp, $timeout) {
+            // ค่าใช้จ่ายในการสัมมนาและฝึกอบรม
+
+            $scope.$settings = $.extend({
+                traningAndSeminors: [],
+                activityStruc: {},
+                expensesStruc: {},
+                units: []
+            }, $scope.$settings);
+
+
+            // โหลดโครงสร้าง สำหรับบันทึกกิจกรรม
+            $scope.getStructureBy('TraningAndSeminorsFormActivity').then(function (structure) {
+                $scope.$settings.activityStruc = structure;
+            });
+            // โหลดโครงสร้าง สำหรับบันทึกค่าใช้จ่ายในกิจกรรม
+            $scope.getStructureBy('TraningAndSeminorsFormItems').then(function (structure) {
+                $scope.$settings.expensesStruc = structure;
+            });
+            //โหลดข้อมูลรายการค่าฝึกอบรมและสัมนา
+            $customHttp.formPost("@Url.Action("RetriveAllTraningAndSeminors", "Helper")", {}).then(function (res) {
+                $scope.$settings.traningAndSeminors = res.data || [];
+            }, function () { });
+            // โหลดข้อมูลหน่วยนับ
+            $customHttp.formPost("@Url.Action("RetrieveAllUnit", "Helper")", {}).then(function (res) {
+                $scope.$settings.units = res.data || [];
+            }, function () { });
+            // เพิ่มกิจกรรม
+            $scope.addActivity = function (row) {
+                var newActivity = $.extend(true, {}, $scope.$settings.activityStruc);
+                row.Activities.push(newActivity);
+            };
+            // เพิ่มค่าใช้จ่ายในแต่ละกิจกรรม
+            $scope.addExpenses = function (row) {
+                var newExpenses = $.extend(true, {}, $scope.$settings.expensesStruc);
+                row.Expenses.push(newExpenses);
+            };
+            // เมื่อค่าฝึกอบรมและสัมนาเปลี่ยนแปลง
+            var traningAndSeminorsChangedId = null;
+            $scope.trainingAndSeminorsChanged = function (row) {
+                $timeout.cancel(traningAndSeminorsChangedId);
+                traningAndSeminorsChangedId = $timeout(function () {
+                    var selectedId = row.TraningAndSeminorsId.replace(/[^\d]/g, '');
+                    var selectedItem = $scope.$settings.traningAndSeminors.filter(function (item) { return item.SEQ_ID == selectedId; });
+                    row.TraningAndSeminorsName = '';
+                    row.CompensationPrice = 0;
+
+                    if (selectedItem.length > 0) {
+                        row.TraningAndSeminorsName = selectedItem[0].ITEM_TEXT;
+                        row.CompensationPrice = selectedItem[0].COMPENSATION_PRICE || 0;
+                        $scope.calPrice(row);
+                    }
+                }, 300);
+            };
+            // คำนวณยอดรวมต่อรายการ
+            var calPriceId = null;
+            $scope.calPrice = function (row) {
+                $timeout.cancel(calPriceId);
+                calPriceId = $timeout(function () {
+                    row.TotalPersonAmounts = (+row.TypeAPersonAmounts) + (+row.TypeBPersonAmounts) + (+row.GuestAmounts) + (+row.StaffAmounts) + (+row.LecturerAmounts);
+                    row.TotalPrice = (row.TimeAmounts || 1) * (row.TotalPersonAmounts == 0 ? 1 : row.TotalPersonAmounts) * (row.UnitAmounts || 1) * (+row.CompensationPrice);
+                }, 300);
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                var totalPrice = 0;
+                angular.forEach($scope.$settings.formData.rows, function (row) {
+                    angular.forEach(row.Activities, function (activityItem) {
+                        totalPrice += $filter('fwSimpleSummary')(activityItem.Expenses, ['TotalPrice'], 2, null, false);
+                    });
+                });
+                return totalPrice;
+            };
+        }).controller('PrivateChargePetoleumFormController', function ($scope, $customHttp, $fwModalService, $filter) {
+            // แบบฟอร์มค่าปิโตรเลียม
+            // ฟอร์มนี้จะประกอบไปด้วย
+            // 1. ข้อมูลรายการค่าปิโตรเลียม ของแต่ละองค์กร
+            //  1.1 ข้อมูลรายละเอียดค่าใช้จ่าย (งบรายการ หมวดค่าใช้จ่าย ค่าใช้จ่าย)
+            //      1.1.1 รายละเอียดย่อยของแต่ละรายการค่าใช้จ่าย
+
+            $scope.$settings = $.extend({
+                expensesStruc: {}
+            }, $scope.$settings);
+
+            // โหลดโครงสร้างข้อมูล รายละเอียด เพื่อเตรียมสำหรับบันทึกรายการค่าใช้จ่ายของแต่ละองค์กร
+            $scope.getStructureBy('ChargePetoleumItemForm').then(function (structure) {
+                $scope.$settings.expensesStruc = structure;
+            });
+            // โหลดข้อมูลองค์กร กรณีที่เป็นการสร้างรายการครั้งแรก
+            if ($scope.$settings.formData.rows.length == 0)
+                $customHttp.formPost('@Url.Action("GetOrganizationByExpenses", "Helper")', { expensesId: $scope.$settings.expensesInfo.EXPENSES_ID }).then(function (res) {
+                    var organizations = res.data || [];
+                    angular.forEach(organizations, function (organization) {
+                        $scope.addItem().then(function (newItem) {
+                            var currRow = $scope.$settings.formData.rows[newItem.$index - 1];
+                            currRow.OrgId = organization.ORG_ID;
+                            currRow.OrgName = organization.ORG_NAME;
+                        });
+                    });
+                }, function () { });
+
+
+
+            // กดปุ่มเพื่อ ระบุรายการค่าใช้จ่าย ของแต่ละองค์กร
+            $scope.privateSetExpenses = function (event, row) {
+                $fwModalService.getModal('@Url.Action("GetExpensesDetailForm", "BudgetRequest", new { expensesFormName = "ChargePetoleumItemForm" })', { $expensesItems: row.Expenses, $orgName: row.OrgName, $expensesStruc: $scope.$settings.expensesStruc }, function ($scope, $controller, $fwUtils, $orgName, $expensesItems, $expensesStruc, $mdDialog, $fwModalHelperService) {
+                    $scope.$settings = {
+                        isLoading: false,
+                        expensesItems: $.extend(true, [], $expensesItems),
+                        OrgName: $orgName || '-',
+                        reserveExpensesIdsForPetoleum: $fwUtils.parseJson('@Html.Raw(Json.Encode(ViewBag.ExpensesIdsReserveForPetolium))')
+                    };
+
+                    // สืบทอดคุณสมบัติเพื่อเรียกใช้ ฟังชันก์จาก AppController
+                    $controller('SharedController', { $scope: $scope });
+
+                    // กดปุ่มเพิ่ม คชจ.
+                    $scope.privateBrowseExpenses = function (event) {
+                        $fwModalHelperService.getExpensesSelectMultiModal(event, $scope.$settings.expensesItems).then(function (selectedItems) {
+                            var oldExpenses = $.extend(true, [], $scope.$settings.expensesItems);
+                            $scope.$settings.expensesItems = [];
+                            var expensesIds = oldExpenses.map(function (expenses) { return expenses.EXPENSES_ID; });
+                            angular.forEach(selectedItems, function (selectedItem) {
+                                if ($scope.$settings.reserveExpensesIdsForPetoleum.indexOf(selectedItem.EXPENSES_ID) == -1) {
+                                    var newItem = $.extend(true, {}, $expensesStruc);
+                                    newItem.BUDGET_TYPE_ID = selectedItem.BUDGET_TYPE_ID;
+                                    newItem.BUDGET_TYPE_NAME = selectedItem.BUDGET_TYPE_NAME;
+                                    newItem.EXPENSES_GROUP_ID = selectedItem.EXPENSES_GROUP_ID;
+                                    newItem.EXPENSES_GROUP_NAME = selectedItem.EXPENSES_GROUP_NAME;
+                                    newItem.EXPENSES_MASTER_NAME = selectedItem.EXPENSES_MASTER_NAME;
+                                    newItem.EXPENSES_ID = selectedItem.EXPENSES_ID;
+                                    newItem.EXPENSES_NAME = selectedItem.EXPENSES_NAME;
+                                    newItem.FORM_TEMPLATE_NAME = selectedItem.FORM_TEMPLATE_NAME;
+
+                                    newItem.EXPENSES_DESCRIBEs = "";
+                                    var foundIndex = expensesIds.indexOf(selectedItem.EXPENSES_ID);
+                                    if (foundIndex > -1) {
+                                        newItem.EXPENSES_DESCRIBEs = oldExpenses[foundIndex].EXPENSES_DESCRIBEs;
+                                        newItem.TOTAL_REQUEST_BUDGET = oldExpenses[foundIndex].TOTAL_REQUEST_BUDGET;
+                                    }
+
+                                    $scope.$settings.expensesItems.push(newItem);
+                                }
+                            });
+                        }, function () { });
+                    };
+                    // กดปุ่มเพื่อ ระบุรายละเอียดของรายการค่าใช้จ่าย
+                    $scope.privateSetExpensesDetail = function (event, row) {
+                        $customHttp.formPost('@Url.Action("RetrieveExpensesById", "Helper")', { expensesId: row.EXPENSES_ID }).then(function (res) {
+                            row.BUDGET_TYPE_ID = res.data.BUDGET_TYPE_ID;
+                            row.BUDGET_TYPE_NAME = res.data.BUDGET_TYPE_NAME;
+                            row.EXPENSES_GROUP_ID = res.data.EXPENSES_GROUP_ID;
+                            row.EXPENSES_GROUP_NAME = res.data.EXPENSES_GROUP_NAME;
+                            row.EXPENSES_MASTER_NAME = res.data.EXPENSES_MASTER_NAME;
+                            row.EXPENSES_ID = res.data.EXPENSES_ID;
+                            row.EXPENSES_NAME = res.data.EXPENSES_NAME;
+                            row.FORM_TEMPLATE_NAME = res.data.FORM_TEMPLATE_NAME;
+
+                            if (null == row.EXPENSES_DESCRIBEs || undefined == row.EXPENSES_DESCRIBEs)
+                                row.EXPENSES_DESCRIBEs = [];
+
+                            // เรียกใช้ function จาก master "AppController"
+                            $scope.setExpensesDetail(event, row);
+                        }, function () { });
+                    };
+                    // กดตกลง
+                    $scope.privateOk = function () {
+                        $mdDialog.hide($scope.$settings.expensesItems);
+                    };
+                    // กดปิดหน้าต่าง
+                    $scope.privateClose = function () {
+                        $mdDialog.cancel();
+                    };
+                }, event).then(function (expensesItems) {
+                    row.TotalPrice = $filter('fwSimpleSummary')(expensesItems, ['TOTAL_REQUEST_BUDGET'], 2, null, false);
+                    row.Expenses = expensesItems || [];
+                }, function () { });
+            };
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 2, null, false);
+            };
+        }).filter('privateFilterExpenses', function () {
+            return function (rows, requestExpensesOnly) {
+                if (!requestExpensesOnly)
+                    return rows;
+                return rows.filter(function (groupItem) {
+                    return groupItem.Expenses.filter(function (row) { return row.TOTAL_REQUEST_BUDGET > 0; }).length > 0;
+                });
+            };
+        }).filter('budgetRequestSummaryAmounts', function ($filter) {
+            return function (rows) {
+                var totalAmounts = 0;
+                angular.forEach(rows, function (groupItem) {
+                    totalAmounts += $filter('fwSimpleSummary')(groupItem.Expenses, ['TOTAL_REQUEST_BUDGET'], 2, null, false);
+                });
+                return $filter('displayDecimal')(totalAmounts, 2);
+            };
+        });
+</script>
+}
+

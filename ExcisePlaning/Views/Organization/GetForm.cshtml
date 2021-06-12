@@ -1,0 +1,174 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-1">
+        <div class="form-row border-bottom">
+            <div class="form-group col-12 col-md-3">
+                <label>ชื่อองค์กร</label>
+                <input type="text" class="form-control" ng-model="$settings.formSearch.orgName"
+                       ng-change="orgNameChanged()" maxlength="200" placeholder="ระบุบางส่วนของชื่อ" />
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <fw-execute-button text="สร้างใหม่" css-class="btn btn-primary btn-sm"
+                                   css-icon-class="ion-plus"
+                                   ng-click="createNew($event)"
+                                   ng-disabled="$settings.isLoading"></fw-execute-button>
+            </div>
+        </div>
+
+        <fw-simple-data-table columns="$settings.tableConfigs.columns" disabled="$settings.isLoading"
+                              auto-load="false"
+                              row-click-callback="rowClick($event, $row, $columnConfig)"
+                              route-url="@Url.Action("Retrieve", "Organization")"></fw-simple-data-table>
+    </div>
+</div>
+
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")}
+@section Scripts{
+    @Scripts.Render("~/bundle/select2");
+    <script type="text/javascript">
+        angular.module("leaveApp").controller('AppController', function ($scope, $customHttp, $timeout, $q, $fwDateService, $fwDialogService, $fwModalService) {
+            $scope.$settings = {
+                isLoading: false, isDepartmentLoading: false,
+                departments: [],
+                expensesGroups: [], expenses: [],
+                tableConfigs: {
+                    columns: [
+                        { label: 'รหัสองค์กร', className: 'text-left word-wrap', type: 'field', field: 'ORG_ID', style: 'min-width:115px;max-width:115px;width:115px;' },
+                        { label: 'เลขที่อ้างอิง', className: 'text-left word-wrap', type: 'expression', field: '{{row.ORG_CODE||\'-\'}}', style: 'min-width:125px;max-width:125px;width:125px;' },
+                        {
+                            label: 'ชื่อองค์กร', className: 'text-left word-wrap', type: 'html', params: 'BTN_EDIT',
+                            field: '<a href="javascript:void(0)" class="text-primary f-w-900">{{row.ORG_NAME}}<sup class="ml-2 ti-new-window"></sup></a>', style: 'width:auto;min-width:200px;'
+                        },
+                        {
+                            label: '', className: 'text-center word-wrap', type: 'html', params: 'BTN_DELETE',
+                            field: '<a href="javascript:void(0)" class="text-danger f-w-900">ยกเลิก</a>', style: 'min-width:80px;max-width:80px;width:80px;'
+                        }
+                    ]
+                },
+                formSearch: {
+                    orgName: ''
+                }
+            };
+
+            // ส่งคำร้องค้นหา
+            var submitSearchId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(submitSearchId);
+                submitSearchId = $timeout(function () {
+                    var params = $.extend(true, {}, $scope.$settings.formSearch);
+                    $scope.$broadcast('fwSimpleDataTable.paramsChanged', params);
+                }, 300);
+            };
+            // เมื่อชื่อหน่วยงานเปลี่ยนแปลง
+            var orgNameChangedId = null;
+            $scope.orgNameChanged = function () {
+                $timeout.cancel(orgNameChangedId);
+                orgNameChangedId = $timeout(function () {
+                        $scope.submitSearch();
+                }, 300);
+            };
+            // เมื่อคลิกที่แถวของ fwSimpleDataTable
+            $scope.rowClick = function (event, row, columnConfigs) {
+                var elName = event.target.tagName.toUpperCase();
+                if ('A' == elName) {
+                    if (columnConfigs.params == 'BTN_EDIT')
+                        $scope.createNew(event, row);
+                    else if (columnConfigs.params == 'BTN_DELETE')
+                        $fwDialogService.confirmDialog(event, 'ยืนยัน!! การยกเลิกองค์กร').then(function () {
+                            $scope.$settings.isLoading = true;
+                            $customHttp.formPost('@Url.Action("SubmitDelete", "Organization")', { orgId: row.ORG_ID}).then(function (res) {
+                                if (null != res.data.errorText)
+                                    $fwDialogService.dangerDialog(event, res.data.errorText);
+                                else
+                                    $scope.submitSearch();
+                                $scope.$settings.isLoading = false;
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        }, function () { });
+                }
+
+                return $q(function (resolve) {
+                    resolve({ event: event, row: row, columnConfigs: columnConfigs });
+                });
+            };
+            // เมื่อกดสร้างหน่วยงานใหม่
+            $scope.createNew = function (event, row) {
+                $fwModalService.getModal('@Url.Action("GetModalForm", "Organization")', { $row: row || {} }, function ($scope, $row, $timeout, $customHttp, $mdDialog, $fwDialogService, $fwModalHelperService) {
+                    $scope.$settings = {
+                        isLoading: false, isSaving: false,
+                        formErrors: {},
+                        formData: {} // init func
+                    };
+
+                    // จัดเตรียมหน้าฟอร์ม
+                    $scope.init = function () {
+                        $scope.$settings.checkedAll = false;
+                        $scope.$settings.formErrors = {};
+                        $scope.$settings.formData = {
+                            OrgId: $row.ORG_ID || null,
+                            OrgName: $row.ORG_NAME || '',
+                            OrgCode: $row.ORG_CODE || '',
+                            Expenses: $row.EXPENSES || []
+                        }
+                    };
+                    // เลือกรายการค่าใช้จ่ายที่เกี่ยวข้อง
+                    $scope.browseExpenses = function (event) {
+                        $fwModalHelperService.getExpensesSelectMultiModal(event, $scope.$settings.formData.Expenses).then(function (selectedItems) {
+                            $scope.$settings.formData.Expenses = selectedItems || [];
+                        }, function () { });
+                    };
+                    // กดปุ่มบันทึก
+                    $scope.submitSave = function (event) {
+                        $scope.$settings.isLoading = true;
+                        $scope.$settings.isSaving = true;
+                        $scope.$settings.formErrors = {};
+                        var params = $.extend(true, { ExpensesIds: [] }, $scope.$settings.formData);
+                        params.ExpensesIds = (params.Expenses || []).map(function (item) { return item.EXPENSES_ID; });
+                        $customHttp.formPost('@Url.Action("SubmitSave", "Organization")', params).then(function (res) {
+                            $scope.$settings.formErrors = res.data.errors || {};
+                            if (null != res.data.errors)
+                                $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งก่อน');
+                            else
+                                $fwDialogService.alertDialog(event, 'บันทึกเรียบร้อยแล้ว').then(function () {
+                                    if ($scope.$settings.formData.OrgId != null)
+                                        $mdDialog.hide();
+                                    else
+                                        $scope.init();
+                                });
+
+                            $scope.$settings.isLoading = false;
+                            $scope.$settings.isSaving = false;
+                        }, function () {
+                            $scope.$settings.isLoading = false;
+                            $scope.$settings.isSaving = false;
+                        });
+                    };
+                    // กดปิดหน้าต่าง
+                    $scope.close = function () {
+                        $mdDialog.hide();
+                    };
+
+
+                    $timeout(function () {
+                        $scope.init();
+                    }, 300);
+                }, event).then(function () {
+                    $scope.submitSearch();
+                }, function () { });
+            };
+
+
+            // ค้นหาข้อมูลเมื่อโหลดหน้าเว็บเสร็จ
+            $scope.submitSearch();
+        });
+    </script>
+}

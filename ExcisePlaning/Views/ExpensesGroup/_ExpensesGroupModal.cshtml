@@ -1,0 +1,134 @@
+﻿<md-dialog flex="98" flex-gt-sm="55">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ฟอร์มหมวดค่าใช้จ่าย</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">งบรายจ่าย<fw-validate-error-output error-messages="$settings.formErrors.BudgetTypeId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.BudgetTypeId" ng-disabled="$settings.isLoading" fw-select2>
+                        <option value="empty">--- งบรายจ่าย ---</option>
+                        @foreach (var BudgetTypex in ViewBag.BudgetType)
+                        {
+                            <option value="@BudgetTypex.BUDGET_TYPE_ID">@BudgetTypex.BUDGET_TYPE_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label>กลุ่มหมวด คชจ.</label>
+                    <select class="form-control" ng-model="$settings.formData.MasterId" ng-disabled="$settings.isLoading" fw-select2>
+                        <option value="empty">--- กลุ่มหมวด คชจ. ---</option>
+                        @foreach (var ExpensesMaster in ViewBag.ExpensesMaster)
+                        {
+                            <option value="@ExpensesMaster.EXPENSES_MASTER_ID">@ExpensesMaster.EXPENSES_MASTER_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <label class="required-field">ลำดับการจัดเรียงข้อมูล<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.OrderSeq.ErrorMessages"></fw-validate-error-output></label>
+                    <fw-input-number-mask ng-model="$settings.formData.OrderSeq" min-value="0" max-value="999" ng-disabled="$settings.isLoading"></fw-input-number-mask>
+                    <span class="text-danger f-12">ค่านี้จะใช้เป็นส่วนหนึ่งของการสร้างรหัสกันเงิน</span>
+                </div>
+            </div>
+            <div class="form-row border-bottom">
+                
+            </div>
+
+            <fw-tabs>
+                <fw-tab label="รายการค่าใช้จ่าย">
+                    <div class="row">
+                        <div class="col-12 col-md-5 align-middle">จำนวน {{$settings.formData.ExpensesItems.length|number:0}} รายการ</div>
+                        <div class="col-12 col-md-7">
+                            <fw-execute-button text="ค้นหา" css-class="btn btn-primary btn-sm float-md-right" css-icon-class="ti-search"
+                                               ng-click="browseExpenses($event)"
+                                               ng-disabled="$settings.isLoading"></fw-execute-button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive overflow-auto" style="height:250px;min-height:250px;max-height:250px;">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th style="width:60px;min-width:60px;max-width:60px"></th>
+                                <th style="min-width:190px" class="text-left">ชื่อค่าใช้จ่าย</th>
+                            </tr>
+                            <tr ng-if="$settings.formData.ExpensesItems.length==0&&!$settings.isLoading">
+                                <th colspan="2" class="text-danger text-center animated fadeIn">--- กดที่ปุ่ม "ค้นหา" เพื่อเลือกรายการค่าใช้จ่าย ---</th>
+                            </tr>
+
+                            <tr ng-repeat="row in $settings.formData.ExpensesItems">
+                                <td style="width:60px;min-width:60px;max-width:60px" class="text-center">
+                                    <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.ExpensesItems.splice($index, 1)">ยกเลิก</a>
+                                </td>
+                                <td style="min-width:190px">{{row.ExpensesName}}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="text-left">
+                        <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.ExpensesItems=[]">[ยกเลิกทั้งหมด]</a>
+                    </div>
+                </fw-tab>
+                <fw-tab label="แหล่งเงิน">
+                    <div class="row">
+                        <div class="col-12 col-md-5 align-middle">จำนวน {{$settings.formData.GovernmentRefers.length|number:0}} รายการ</div>
+                        <div class="col-12 col-md-7">
+                            <fw-execute-button text="เพิ่ม" css-class="btn btn-primary btn-sm float-md-right" css-icon-class="ti-plus"
+                                               ng-click="addGovernmentRefer($event)"
+                                               ng-disabled="$settings.isLoading"></fw-execute-button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive overflow-auto" style="height:250px;min-height:250px;max-height:250px;">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th style="width:60px;min-width:60px;max-width:60px"></th>
+                                <th style="width:100px;min-width:100px;max-width:100px" class="text-left">ปี พ.ศ.</th>
+                                <th style="width:150px;min-width:150px;max-width:150px" class="text-left">เลขที่อ้างอิงแหล่งเงิน</th>
+                                <th style="min-width:190px" class="text-left">หมายเหตุ</th>
+                            </tr>
+                            <tr ng-if="$settings.formData.GovernmentRefers.length==0&&!$settings.isLoading">
+                                <th colspan="4" class="text-danger text-center animated fadeIn">--- กดที่ปุ่ม "เพิ่ม" เพื่อเพิ่มรายการอ้างอิงแหล่งเงิน ---</th>
+                            </tr>
+
+                            <tr ng-repeat="row in $settings.formData.GovernmentRefers">
+                                <td style="width:60px;min-width:60px;max-width:60px" class="text-center align-middle">
+                                    <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.GovernmentRefers.splice($index, 1)">ยกเลิก</a>
+                                </td>
+                                <td style="width:100px;min-width:100px;max-width:100px" class="text-left">
+                                    <fw-input-mask model="row.Yr" disabled="$settings.isLoading" mask="9999" placeholder="ปี พ.ศ."></fw-input-mask>
+                                    <fw-validate-error-output error-messages="$settings.formErrors.GovernmentRefers[$index].Yr.ErrorMessages" css-class="ml-1"></fw-validate-error-output>
+                                </td>
+                                <td style="width:150px;min-width:150px;max-width:150px" class="text-left">
+                                    <input type="text" class="form-control" ng-model="row.ReferCode" ng-disabled="$settings.isLoading" maxlength="50" placeholder="ความยาวไม่เกิน 50 ตัวอักษร" />
+                                    <fw-validate-error-output error-messages="$settings.formErrors.GovernmentRefers[$index].ReferCode.ErrorMessages" css-class="ml-1"></fw-validate-error-output>
+                                </td>
+                                <td style="min-width:190px" class="text-left">
+                                    <input type="text" class="form-control" ng-model="row.RemarkText" ng-disabled="$settings.isLoading" maxlength="100" placeholder="ความยาวไม่เกิน 100 ตัวอักษร" />
+                                    <fw-validate-error-output error-messages="$settings.formErrors.GovernmentRefers[$index].RemarkText.ErrorMessages" css-class="ml-1"></fw-validate-error-output>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="text-left">
+                        <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.GovernmentRefers=[]">[ยกเลิกทั้งหมด]</a>
+                    </div>
+                </fw-tab>
+            </fw-tabs>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-2"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="save($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

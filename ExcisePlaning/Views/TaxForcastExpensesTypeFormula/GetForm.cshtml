@@ -1,0 +1,218 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-1">
+        <div class="form-row">
+            <div class="form-group col-12 col-md-2">
+                <label>วันที่มีผลบังคับใช้</label>
+                <div class="input-group">
+                    <fw-date-range model="$settings.formSearch.effectiveDateStr" single-date-picker="true"
+                                   disabled="$settings.isLoading"
+                                   change="submitSearch()"></fw-date-range>
+                </div>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="d-none d-md-block">ประเภทรายจ่ายภาษี</label>
+                <select class="form-control" ng-model="$settings.formSearch.taxExpensesTypeId" ng-disabled="$settings.isLoading"
+                        fw-select2 ng-change="submitSearch()">
+                    <option value="empty">--- ประเภทรายจ่ายภาษี ---</option>
+                    @foreach (var item in ViewBag.ForcastExpensesTypes)
+                    {
+                        <option value="@item.FORCAST_EXPENSES_TYPE_ID">@item.FORCAST_EXPENSES_TYPE_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-2">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <fw-execute-button text="ตั้งค่าใหม่" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round" ng-disabled="$settings.isLoading" ng-click="createNew($event)"></fw-execute-button>
+            </div>
+        </div>
+        <fw-simple-data-table columns="$settings.tableConfigs.columns" disabled="$settings.isLoading"
+                              auto-load="false"
+                              row-click-callback="rowClick($event, $row, $columnConfig)"
+                              route-url="@Url.Action("Retrieve", "TaxForcastExpensesTypeFormula")"></fw-simple-data-table>
+    </div>
+</div>
+
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+    @Styles.Render("~/content/datepickerrange")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/datepickerrange")
+    @Scripts.Render("~/bundle/inputnumber")
+    @Scripts.Render("~/bundle/select2")
+<script type="text/javascript">
+        angular.module("leaveApp").controller('AppController',
+            function ($scope, $timeout, $q, $fwModalService, $fwDialogService, $customHttp) {
+                $scope.$settings = {
+                    isLoading: false,
+                    formSearch: {
+                        effectiveDateStr: null,
+                        taxExpensesTypeId: 'empty'
+                    },
+                    tableConfigs: {
+                        columns: [
+                            { label: '', className: 'text-center word-wrap', type: 'html', params: 'BTN_DELETE', field: '<a href="javascript:void(0)" ng-if="row.EDIT_ABLE" class="f-w-900 text-danger" >ยกเลิก</a>', style: 'width:70px;min-width:70px;max-width:70px' },
+                            {
+                                label: 'ประเภทรายจ่ายภาษี', className: 'text-left word-wrap', type: 'html', params: 'BTN_EDIT',
+                                field: '<a href="javascript:void(0)" class="f-w-900 " ng-class="{\'text-primary\': row.EDIT_ABLE, \'text-muted\': !row.EDIT_ABLE}">{{row.FORCAST_EXPENSES_TYPE_NAME}}<span class="ti-new-window ml-1"></span><span ng-if="!row.EDIT_ABLE" class="ml-1 text-danger">[หมดอายุ]</span></a>', style: 'min-width:220px'
+                            },
+                            { label: 'วันที่เริ่มใช้', className: 'text-center word-wrap', type: 'expression', field: '{{row.START_DATE|sqlDate:\'\':null:false}}', style: 'width:100px;min-width:100px;max-width:100px;' },
+                            { label: 'วันหมดอายุ', className: 'text-center word-wrap', type: 'expression', field: '{{row.EXPIRE_DATE|sqlDate:\'\':null:false}}', style: 'width:100px;min-width:100px;max-width:100px;' },
+                            { label: 'สูตรร้อยละที่ใช้คำนวณ', className: 'text-center word-wrap', type: 'field', field: 'CAL_PERCENT_FORMULA', style: 'min-width:220px;max-width:220px;width:220px;' }
+                        ]
+                    }
+                };
+                // แบบฟอร์มการบันทึกสูตรการคำนวณหามูลค่า ประเภทค่าใช้จ่ายภาษี
+                $scope.createNew = function (event, row) {
+                    $fwModalService.getModal('@Url.Action("GetModalForm", "TaxForcastExpensesTypeFormula", new { })', { $row: row || {} },
+                        function ($scope, $customHttp, $timeout, $mdDialog, $fwDialogService, $filter, $row) {
+                            $scope.$settings = {
+                                isLoading: false, isEditAble: true,
+                                isNextStartDateLoading: false,
+                                formData: {},
+                                formErrors: {}
+                            };
+
+                            // สร้างค่าเริ่มต้นของฟอร์ม
+                            $scope.init = function () {
+                                $scope.$settings.formErrors = {};
+                                $scope.$settings.formData = {
+                                    FormulaId: null,
+                                    StartDateStr: null, ExpireDateStr: null,
+                                    TaxExpensesTypeId: 'empty',
+                                    Formulas: []
+                                };
+
+                                // โหลดค่าเริ่มต้น กรณีแก้ไขรายการ
+                                if (undefined != $row.FORMULA_ID) {
+                                    $scope.$settings.formData.FormulaId = $row.FORMULA_ID;
+                                    $scope.$settings.formData.StartDateStr = $filter('sqlDate')($row.START_DATE, '', null, false);
+                                    $scope.$settings.formData.ExpireDateStr = $filter('sqlDate')($row.EXPIRE_DATE, '', null, false);
+                                    $scope.$settings.formData.TaxExpensesTypeId = '' + $row.FORCAST_EXPENSES_TYPE_ID;
+                                    $scope.$settings.isEditAble = $row.EDIT_ABLE;
+                                    $scope.getFormulaDetail($row.FORMULA_ID);
+                                }
+                            };
+                            // ค้นหาสูตรการคำนวณ
+                            $scope.getFormulaDetail = function (formulaId) {
+                                $scope.$settings.isLoading = true;
+                                $customHttp.formPost('@Url.Action("RetrieveFormulaDetail", "TaxForcastExpensesTypeFormula")', { formulaId: formulaId }).then(function (res) {
+                                    $scope.$settings.formData.Formulas = res.data || [];
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+                            // ประเภทประมาณการรายจ่ายภาษีเปลี่ยนแปลง
+                            var forcastExpensesTypeChangedId = null;
+                            $scope.forcastExpensesTypeChanged = function () {
+                                $timeout.cancel(forcastExpensesTypeChangedId);
+                                forcastExpensesTypeChangedId = $timeout(function () {
+                                    $scope.$settings.formData.StartDateStr = null;
+                                    var forcastExpensesTypeId = ('' + $scope.$settings.formData.TaxExpensesTypeId).replace(/[^\d]/g, '');
+                                    if (forcastExpensesTypeId.length == 0)
+                                        return;
+
+                                    $scope.$settings.isNextStartDateLoading = true;
+                                    $customHttp.formPost('@Url.Action("RetrieveNextStartDateBy", "TaxForcastExpensesTypeFormula")', { forcastExpensesTypeId: forcastExpensesTypeId }).then(function (res) {
+                                        if (null != res.data.NextStartDate) {
+                                            var nextStartDate = $filter('sqlDate')(res.data.NextStartDate, '', null, false);
+                                            $scope.$settings.formData.StartDateStr = nextStartDate;
+                                            $scope.$settings.formData.ExpireDateStr = nextStartDate;
+                                        }
+                                        $scope.$settings.isNextStartDateLoading = false;
+                                    }, function () {
+                                        $scope.$settings.isNextStartDateLoading = false;
+                                    });
+                                }, 300);
+                            };
+                            // เพิ่มสูตรในการคำนวณ
+                            $scope.addFormula = function () {
+                                $scope.$settings.formData.Formulas.push({
+                                    PERCENT_VAL: null,
+                                    CAL_PRIORITY: $scope.$settings.formData.Formulas.length + 1,
+                                    REMARK_TEXT: null
+                                });
+                            };
+                            // ส่งคำขอบันทึกสูตรการคำนวณ
+                            $scope.submitSave = function (event) {
+                                $scope.$settings.isLoading = true;
+                                $scope.$settings.formErrors = {};
+
+                                var params = $.extend(true, {}, $scope.$settings.formData);
+                                params.TaxExpensesTypeId = ('' + params.TaxExpensesTypeId).replace(/[^\d]/g, '');
+                                $customHttp.formPost('@Url.Action("SubmitSave", "TaxForcastExpensesTypeFormula")', params).then(function (res) {
+                                    $scope.$settings.formErrors = res.data.errors || {};
+                                    if (null != res.data.errorText)
+                                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                                    else if (res.data.errors == null)
+                                        $fwDialogService.alertDialog(event, 'บันทึกสูตรการคำนวณเรียบร้อยแล้ว').then(function () {
+                                            if ($row.FORCAST_EXPENSES_TYPE_ID == null)
+                                                $scope.init();
+                                            else
+                                                $scope.close();
+                                        });
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+                            // ปิดหน้าฟอร์ม
+                            $scope.close = function () {
+                                $mdDialog.hide();
+                            };
+
+
+                            $scope.init();
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        });
+                };
+                // เมื่อคลิกที่แถวข้อมูล
+                $scope.rowClick = function (event, row, columnConfig) {
+                    var elName = event.target.tagName; // Upper
+                    if ('A' == elName)
+                        if (columnConfig.params == 'BTN_EDIT') {
+                            $scope.createNew(event, row);
+                        } else if (columnConfig.params == 'BTN_DELETE' && row.EDIT_ABLE && !$scope.$settings.isLoading) {
+                            $fwDialogService.confirmDialog(event, 'ยืนยัน!! การยกเลิกสูตรนี้ และ สูตรคำนวณที่กำหนดไว้หลัง วันหมดอายุ ของรายการนี้จะถูกยกเลิกไปด้วย').then(function () {
+                                $scope.$settings.isLoading = true;
+                                $customHttp.formPost('@Url.Action("SubmitDelete", "TaxForcastExpensesTypeFormula")', { formulaId: row.FORMULA_ID }).then(function (res) {
+                                    if (null != res.data.errorText)
+                                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                                    else
+                                        $scope.submitSearch();
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            }, function () { });
+                        }
+
+                    return $q(function (resolve) {
+                        resolve({ row: row });
+                    });
+                };
+                // ส่งคำขอค้นหาข้อมูล
+                var timeoutId = null;
+                $scope.submitSearch = function () {
+                    $timeout.cancel(timeoutId);
+                    timeoutId = $timeout(function () {
+                        var params = $.extend(true, {}, $scope.$settings.formSearch);
+                        params.taxExpensesTypeId = ('' + params.taxExpensesTypeId).replace(/[^\d]/g, '');
+                        $scope.$broadcast('fwSimpleDataTable.paramsChanged', params);
+                    }, 300);
+                };
+
+                // โหลดค่าเริ่มต้นแบบฟอร์ม
+                $scope.submitSearch();
+        });
+</script>
+}

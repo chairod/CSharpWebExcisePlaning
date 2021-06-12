@@ -1,0 +1,232 @@
+﻿
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="card card-block borderless-card shadow-sm" ng-controller="AppController">
+    <div class="form-row">
+        <div class="form-group col-12 col-md-4">
+            <label>รายการค่าใช้จ่ายต่างๆ</label>
+            <select class="form-control" ng-model="$settings.formData.ExpensesID" ng-change="ExpensesIDChanged()" ng-disabled="$settings.isLoading" fw-select2>
+                <option value="empty">--- รายการค่าใช้จ่ายต่างๆ ---</option>
+                @foreach (var ExpensesItem in ViewBag.ExpensesItem)
+                {
+                    <option value="@ExpensesItem.EXPENSES_ID">@ExpensesItem.EXPENSES_NAME</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-12 col-md-2">
+            <label>รหัส GL</label>
+            <div class="input-group">
+                <input type="text" class="form-control" ng-model="$settings.formData.GLCode"
+                       ng-change="ExpensesIDChanged()" />
+            </div>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label>รายละเอียด GL</label>
+            <div class="input-group">
+                <input type="text" class="form-control" ng-model="$settings.formData.GLText"
+                       ng-change="ExpensesIDChanged()" />
+            </div>
+        </div>
+        <div class="form-group col-12 col-md-2">
+            <label class="d-none d-md-block">&nbsp;</label>
+            <fw-execute-button text="ตั้งค่าใหม่" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round" ng-disabled="$settings.isLoading" ng-click="createNew($event)"></fw-execute-button>
+        </div>
+    </div>
+    <fw-simple-data-table columns="$settings.tableConfigs.columns" disabled="$settings.isLoading"
+                          auto-load="false"
+                          row-click-callback="rowClick($event, $row, $columnConfig)"
+                          route-url="@Url.Action("RetrieveForm", "ExpensesGLCode")"></fw-simple-data-table>
+</div>
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")}
+@section Scripts{
+    @Scripts.Render("~/bundle/select2");
+<script type="text/javascript">
+        angular.module("leaveApp").controller('AppController',
+            function ($scope, $customHttp, $timeout, $q, $fwDialogService, $fwModalService) {
+                $scope.$settings = {
+                    isLoading: false,
+                    formData: {
+                        ExpensesID : null,
+                        GLCode: '',
+                        GLText: '',
+                        ExpensesID_Old: null,
+                        GLCode_Old: '',
+                        GLText_Old: ''
+                    },
+                    tableConfigs: {
+                        columns: [
+                            { label: 'No.', className: 'text-center word-wrap', type: 'rowNumber', style: 'min-width:50px;max-width:50px;width:50px;' },
+                            {
+                                label: 'รายการค่าใช้จ่ายต่างๆ', className: 'text-left word-wrap', type: 'html', params: 'BTN_EDIT',
+                                field: '<a href="javascript:void(0)" class="text-primary f-w-900">{{row.EXPENSES_NAME}}<sup class="ml-1 ti-new-window"></sup></a>', style: 'min-width:220px'
+                            },
+                            { label: 'รหัส GL', className: 'text-center word-wrap', type: 'field', field: 'GLCODE', style: 'min-width:100px;max-width:100px;width:100px;' },
+                            { label: 'รายละเอียด GL', className: 'text-center word-wrap', type: 'field', field: 'GL_TEXT', style: 'min-width:400px;max-width:400px;width:400px;' },
+
+                            { label: '...', className: 'text-center word-wrap', params: 'BTN_DELETE', type: 'html', field: '<a href="javascript:void(0)" class="text-danger f-14 f-w-900">ยกเลิก</a>', style: 'min-width:80px;max-width:80px;width:80px;' }
+                        ]
+                    }
+                };
+
+                $scope.createNew = function (event, formData) {
+                    $fwModalService.getModal('@Url.Action("GetModalResource", "ExpensesGLCode", new { })', {
+                        $formData: (formData || {})
+                    },
+                        function ($scope, $customHttp, $mdDialog, $fwDialogService, $timeout, $fwModalHelperService, $formData) {
+                            $scope.$settings = {
+                                isLoading: false,
+                                formData: {},
+                                formError: {},
+                                menus: $formData.MENUs || [],
+                                persons: $formData.PERSONs || []
+                            };
+
+                            // กำหนดค่าเริ่มต้น
+                            $scope.init = function () {
+                                $scope.$settings.formError = {};
+                                $scope.$settings.formData = {
+                                    ExpensesID: $formData.EXPENSES_ID || null,
+                                    GLCode: $formData.GLCODE || '',
+                                    GLText: $formData.GL_TEXT || '',
+                                    ExpensesID_Old: $formData.EXPENSES_ID || null,
+                                    GLCode_Old: $formData.GLCODE || '',
+                                    GLText_Old: $formData.GL_TEXT || ''
+
+                                };
+                            };
+                            // ส่งคำขอบันทึกข้อมูล
+                            $scope.save = function (event) {
+                                $scope.$settings.isLoading = true;
+                                $scope.$settings.formError = {};
+
+                                var params = $.extend(true, {
+                                    MenuIds: $scope.$settings.menus.map(function (item) { return item.MENU_ID; }),
+                                    PersonIds: $scope.$settings.persons.map(function (item) { return item.PERSON_ID; })
+                                }, $scope.$settings.formData);
+                                $customHttp.formPost('@Url.Action("SubmitSave", "ExpensesGLCode")', params).then(function (res) {
+                                    $scope.$settings.formError = res.data.errors || {};
+                                    if (res.data.errors == null)
+                                        $fwDialogService.alertDialog(event, 'บันทึกการเปลี่ยนแปลงเรียบร้อยแล้ว').then(function () {
+                                            $scope.close();
+                                        });
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+
+                            // ปิดหน้าต่าง
+                            $scope.close = function () {
+                                $mdDialog.hide();
+                            };
+
+
+                            $scope.init();
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        });
+                };
+                $scope.rowClick = function (event, row, columnConfig) {
+                    if (columnConfig.params == 'BTN_DELETE') {
+                        $fwDialogService.confirmDialog(event, 'ยืนยัน!! การยกเลิกกลุ่มผู้ใช้งานนี้').then(function () {
+                            $scope.$settings.isLoading = true;
+                            $customHttp.formPost('@Url.Action("SubmitDelete", "ExpensesGLCode")', { ExpensesID: row.EXPENSES_ID, GLCode: row.GLCODE, GLText: row.GL_TEXT }).then(function () {
+                                $scope.submitSearch();
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        });
+                    }
+                    else if (columnConfig.params == 'BTN_EDIT') {
+                        $fwModalService.getModal('@Url.Action("GetModalResource", "ExpensesGLCode")', { $row: row }, function ($scope, $mdDialog, $timeout, $row, $fwDialogService, $customHttp) {
+                        $scope.$settings = {
+                            isLoading: false,
+                            formErrors: {},
+                            formData: {                        
+                                ExpensesID: ''+$row.EXPENSES_ID,
+                                GLCode: $row.GLCODE,
+                                GLText: $row.GL_TEXT,
+                                ExpensesID_Old: '' +$row.EXPENSES_ID,
+                                GLCode_Old: $row.GLCODE,
+                                GLText_Old: $row.GL_TEXT,
+                            }
+                        };
+
+                        // บันทึกการเปลี่ยนแปลง
+                        $scope.save = function (event) {
+                            $scope.$settings.isLoading = true;
+                            $customHttp.formPost('@Url.Action("SubmitSave", "ExpensesGLCode")', $scope.$settings.formData).then(function (res) {
+                                $scope.$settings.formErrors = res.data.errors || {};
+                                if (null != res.data.errorText)
+                                    $fwDialogService.dangerDialog(event, res.data.errorText);
+
+                                if (null == res.data.errorText && null == res.data.errors)
+                                    $fwDialogService.alertDialog(event, 'บันทึกการเปลี่ยนแปลงเรียบร้อยแล้ว').then(function () {
+                                        $scope.close();
+                                    });
+                                $scope.$settings.isLoading = false;
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        };
+                        // ปิดหน้าต่าง
+                            $scope.close = function ()
+                            {
+                            $mdDialog.hide({ behavior: true });
+                        };
+
+                        }, event).then(function ()
+                        {
+                        $scope.submitSearch();
+                        });
+                    }
+
+                    return $q(function (resolve) {
+                        resolve({ row: row });
+                    });
+                };
+
+
+                var timeoutId = null;
+                $scope.submitSearch = function () {
+                    $timeout.cancel(timeoutId);
+                    timeoutId = $timeout(function () {
+                        $scope.$broadcast('fwSimpleDataTable.paramsChanged', {
+
+                            ExpensesID: $scope.$settings.formData.ExpensesID,
+                            GLCode: $scope.$settings.formData.GLCode,
+                            GLText: $scope.$settings.formData.GLText,
+                            ExpensesID_Old: $scope.$settings.formData.ExpensesID,
+                            GLCode_Old: $scope.$settings.formData.GLCode,
+                            GLText_Old: $scope.$settings.formData.GLText
+                        });
+                    }, 300);
+                };
+
+                // เมื่อตัวกรอง ชื่อกลุ่มผู้ใช้งานเปลี่ยนแปลง
+                var ExpensesIDChangedId = null
+                $scope.ExpensesIDChanged = function () {
+                    $timeout.cancel(ExpensesIDChangedId);
+                    ExpensesIDChangedId = $timeout(function () {
+                        $scope.submitSearch();
+                    }, 300);
+                };
+
+
+                $scope.submitSearch();
+        });
+</script>
+
+}
+
+
+
+
+

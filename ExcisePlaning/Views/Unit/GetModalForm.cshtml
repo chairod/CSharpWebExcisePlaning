@@ -1,0 +1,29 @@
+﻿
+<md-dialog flex="98" flex-gt-sm="25">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ฟอร์มบันทึกหน่วยนับ</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="required-field">ชื่อหน่วยนับ<fw-validate-error-output class="ml-1" error-messages="$settings.formErrors.UnitName.ErrorMessages"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" id="unitName" ng-model="$settings.formData.UnitName" ng-disabled="$settings.isLoading" />
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="submitSave($event)"></fw-execute-button>
+        <fw-execute-button text="ยกเลิก" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

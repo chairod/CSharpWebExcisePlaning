@@ -1,0 +1,205 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="card card-block borderless-card shadow-sm" ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <div class="form-row">
+            <div class="form-group col-12 col-md-2">
+                <label>ปี งปม. (พ.ศ.) </label>
+                <fw-input-mask model="$settings.formData.Yr" mask="9999" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+            </div>
+        </div>
+        <div class="form-row">
+
+
+            <div class="form-group col-12 col-md-4">
+                <label>แผนงาน</label>
+                <select class="form-control" ng-model="$settings.formData.PlanID" ng-change="submitSearch()" ng-disabled="$settings.isLoading" fw-select2>
+                    <option value="empty">--- แผนงาน ---</option>
+                    @foreach (var PlanConfig in ViewBag.PlanConfig)
+                    {
+                        <option value="@PlanConfig.PLAN_ID">@PlanConfig.PLAN_NAME</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group col-12 col-md-4">
+                <label>ผลผลิต</label>
+                <select class="form-control" ng-model="$settings.formData.ProductID" ng-change="submitSearch()" ng-disabled="$settings.isLoading" fw-select2>
+                    <option value="empty">--- ผลผลิต ---</option>
+                    @foreach (var product in ViewBag.product)
+                    {
+                        <option value="@product.PRODUCE_ID">@product.PRODUCE_NAME</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group col-12 col-md-4">
+                <label>กิจกรรม</label>
+                <select class="form-control" ng-model="$settings.formData.ActivityID" ng-change="submitSearch()" ng-disabled="$settings.isLoading" fw-select2>
+                    <option value="empty">--- กิจกรรม ---</option>
+                    @foreach (var Activity in ViewBag.Activity)
+                    {
+                        <option value="@Activity.ACTIVITY_ID">@Activity.ACTIVITY_NAME</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group col-12 col-md-4">
+                <label>งบรายจ่าย</label>
+                <select class="form-control" ng-model="$settings.formData.BudgetID" ng-change="submitSearch()" ng-disabled="$settings.isLoading" fw-select2>
+                    <option value="empty">--- งบรายจ่าย ---</option>
+                    @foreach (var Budget in ViewBag.Budget)
+                    {
+                        <option value="@Budget.BUDGET_TYPE_ID">@Budget.BUDGET_TYPE_NAME</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group col-12 col-md-4">
+                <label>ยุทธศาสตร์</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="$settings.formData.Strategic" ng-change="submitSearch()" disabled />
+                </div>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <fw-execute-button text="แสดงข้อมูล" css-class="btn btn-primary btn-sm" css-icon-class="icofont icofont-ui-search"
+                                   ng-disabled="$settings.isLoading"
+                                   ng-click="submitSearch($event)"></fw-execute-button>
+            </div>
+        </div>
+
+
+        <div class="form-row">
+            <div class="form-group col-12  col-md-12">
+                <div id="chartReportContainerColumn" class="mb-2 mb-md-0" style="width:800px;min-height:800px;" ></div>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/select2")
+    @Scripts.Render("~/bundle/fusionChart")
+    <script type="text/javascript">
+        angular.module("leaveApp").controller('AppController',
+            function ($scope, $customHttp, $timeout, $q, $fwDialogService, $fwModalService, $fwDateService) {
+                $scope.$settings = {
+                    isLoading: false,
+                    formData: {
+                        Yr: $fwDateService.convertYearToBuddhist('@ViewBag.FiscalYear'),
+                        PlanID: 'empty',
+                        ProductID: 'empty',
+                        ActivityID: 'empty',
+                        BudgetID: 'empty',
+                        Strategic: ''
+                    },
+                    formView: {
+                        chartDataAllocate: [],
+                        chartDataUsed: [],
+                        category: []
+                    }
+                };
+                $scope.submitSearch = function () {
+
+
+                    $customHttp.formPost('@Url.Action("ShowData", "GraphAnnualBudgetResult")', {
+                        Yr: $scope.$settings.formData.Yr,
+                        PlanID: $scope.$settings.formData.PlanID,
+                        ProductID: $scope.$settings.formData.ProductID,
+                        ActivityID: $scope.$settings.formData.ActivityID,
+                        BudgetID: $scope.$settings.formData.BudgetID,
+                        Strategic: $scope.$settings.formData.Strategic
+                    }).then(function (res) {
+                        $scope.$settings.formView.chartDataAllocate = res.data.chartDataAllocate || [];
+                        $scope.$settings.formView.chartDataUsed = res.data.chartDataUsed || [];
+                        $scope.$settings.formView.category = res.data.category || [];
+                        $scope.$settings.isLoading = false;
+                        $scope.ShowGraphcolumn2d();
+
+
+                    }
+                    );
+                };
+
+
+
+
+
+                $scope.ShowGraphcolumn2d = function () {
+
+                    // แสดงผลกราฟ column2d
+                    FusionCharts.ready(function () {
+                        var salesChart = new FusionCharts({
+                            type: 'mscolumn3d',
+                            renderAt: 'chartReportContainerColumn',
+                            width: '90%',
+                            height: '70%',
+                            dataFormat: 'json',
+                            dataSource: {
+                                "chart": {
+                                    "caption": "",
+                                    "subCaption": "",
+                                    "xAxisName": "",
+                                    "yAxisName": "",
+                                    "showvalues": "0",
+                                    "formatnumberscale": "1",
+                                    "labeldisplay": "ROTATE",
+                                    "slantlabels": "1",
+                                    "divLineAlpha": "40",
+                                    "anchoralpha": "0",
+                                    "animation": "1",
+                                    "legendborderalpha": "20",
+                                    "drawCrossLine": "0",
+                                    "crossLineColor": "#0d0d0d",
+                                    "crossLineAlpha": "100",
+                                    "theme": "fusion"
+                                },
+                                "categories": [{
+                                    "category": $scope.$settings.formView.category
+                                }],
+                                "dataset": [
+                                    {
+                                        "seriesname": "จัดสรร",
+                                        "data": $scope.$settings.formView.chartDataAllocate
+                                    },
+                                    {
+                                        "seriesname": "รายงานผล",
+                                        "data": $scope.$settings.formView.chartDataUsed
+                                    }]
+                            }
+                        })
+                            .render();
+                    });
+                };
+
+                
+                //แสดงข้อมูลเริ่มต้น
+                $scope.submitSearch();
+
+
+
+            });
+    </script>
+
+
+
+
+}
+
+

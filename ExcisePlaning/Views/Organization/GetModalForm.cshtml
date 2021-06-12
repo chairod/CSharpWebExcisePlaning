@@ -1,0 +1,65 @@
+﻿<md-dialog flex="99" flex-gt-sm="55">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์มบันทึกองค์กร</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="row">
+                <div class="col-12 col-md-5 border-right">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label class="required-field">ชื่อองค์กร<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.OrgName.ErrorMessages"></fw-validate-error-output></label>
+                            <input type="text" class="form-control" ng-model="$settings.formData.OrgName" ng-disabled="$settings.isLoading" maxlength="200" />
+                        </div>
+                        <div class="form-group col-12">
+                            <label>รหัสอ้างอิง<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.OrgCode.ErrorMessages"></fw-validate-error-output></label>
+                            <input type="text" class="form-control" ng-model="$settings.formData.OrgCode" ng-disabled="$settings.isLoading" maxlength="20" />
+                            <span class="text-danger f-12">รหัสอ้างอิงของทางลูกค้า (กรณีไม่มีไม่ต้องระบุ)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-7">
+                    <h4 class="border-bottom pb-1 mb-1 f-16">เลือกรายการค่าใช้จ่ายที่ใช้องค์กรนี้ได้</h4>
+                    <fw-execute-button text="เลือกค่าใช้จ่าย" css-class="btn btn-primary btn-sm"
+                                       ng-disabled="$settings.isLoading"
+                                       css-icon-class="ti-search"
+                                       ng-click="browseExpenses($event)"></fw-execute-button>
+                    <div class="table-responsive overflow-auto" style="height:250px;max-height:250px;">
+                        <table class="table table-bordered mb-1">
+                            <tr>
+                                <th style="width:auto;min-width:200px;" class="text-left">ค่าใช้จ่าย</th>
+                                <th style="width:70px;min-width:70px;max-width:70px"></th>
+                            </tr>
+                            <tr ng-repeat="row in $settings.formData.Expenses">
+                                <td style="width:auto;min-width:200px;" class="text-left word-wrap">{{row.EXPENSES_NAME}}</td>
+                                <td style="width:70px;min-width:70px;max-width:70px" class="text-center">
+                                    <a href="javascript:void(0)" class="text-danger f-w-900 float-md-right" ng-click="$settings.formData.Expenses.splice($index,1)">ยกเลิก</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-2 pt-2 border-top">
+                        <a href="javascript:void(0)" class="text-danger f-w-900 float-md-right" ng-click="$settings.formData.Expenses = []">[ยกเลิกทั้งหมด]</a>
+                        <span class="text-danger f-12">** ในขั้นตอนการทำคำขอเงินงบประมาณระบบจะดึงข้อมูลนี้ไปสร้างเป็นรายการให้ระบุ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           on-loading="$settings.isSaving"
+                           css-icon-class="ti-save"
+                           ng-click="submitSave($event)"></fw-execute-button>
+        <fw-execute-button text="ยกเลิก" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

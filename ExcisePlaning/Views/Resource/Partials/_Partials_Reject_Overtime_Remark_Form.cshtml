@@ -1,0 +1,41 @@
+﻿<md-dialog flex="100" flex-gt-sm="55">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>บันทึกสาเหตุ</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <h4 class="text-primary f-w-900 f-14">** โปรดระบุเหตุผล ของการไม่เห็นสมควรอนุมัติลงในพนักงานแต่ละราย (ไม่บังคับ)</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped f-14">
+                    <tr>
+                        <th style="min-width:100px;max-width:100px;width:100px;" class="text-center">เลขที่</th>
+                        <th style="min-width:160px;max-width:160px;width:160px" class="text-left">หน่วยงาน</th>
+                        <th style="min-width:190px" class="text-left">ชื่อ - นามสกุล</th>
+                        <th style="min-width:340px;" class="text-center">ระบุสาเหตุ (ไม่บังคับ)</th>
+                    </tr>
+                    <tr ng-repeat="row in $settings.selectedItems">
+                        <td style="min-width:100px;max-width:100px;width:100px;" class="text-center">{{row.REQ_ID}}</td>
+                        <td style="min-width:160px;max-width:160px;width:160px" class="text-left">{{row.DEP_NAME}}</td>
+                        <td style="min-width:190px" class="text-left">{{row.FIRST_NAME+' '+row.LAST_NAME}}</td>
+                        <td style="min-width:340px;" class="text-center">
+                            <input type="text" class="form-control" ng-model="row.RemarkText" maxlength="100" placeholder="ความยาวไม่เกิน 100 ตัวอักษร" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="ตกลง" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-checkmark-round"
+                           ng-click="ok()"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

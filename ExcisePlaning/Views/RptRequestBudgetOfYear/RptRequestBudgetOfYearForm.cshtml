@@ -1,0 +1,145 @@
+﻿
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card pb-1 mb-1">
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>ปี งปม. (พ.ศ.) </label>
+                <fw-input-mask model="$settings.formSearch.fiscalYear" mask="9999" placeholder="ระบุปี พ.ศ." disabled="$settings.isLoading"></fw-input-mask>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>เขตพื้นที่</label>
+                <select class="form-control" ng-model="$settings.formSearch.areaId" ng-disabled="$settings.isLoading@(ViewBag.CanSelectDepartment?"":"||true")" fw-select2
+                        ng-change="areaChanged()">
+                    <option value="empty">--- เขตพื้นที่ ---</option>
+                    @foreach (var item in ViewBag.Areas)
+                    {
+                        <option value="@item.AREA_ID">@item.AREA_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>หน่วยงาน</label>
+                <select class="form-control" ng-model="$settings.formSearch.depId" ng-disabled="$settings.isLoading||$settings.departments.length==0@(ViewBag.CanSelectDepartment?"":"||true")" fw-select2>
+                    <option value="empty">--- หน่วยงาน ---</option>
+                    <option ng-repeat="item in $settings.departments" value="{{item.DEP_ID}}">{{item.DEP_NAME}}</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>งบรายจ่าย</label>
+                <select class="form-control" ng-model="$settings.formSearch.budgetTypeId" ng-disabled="$settings.isLoading" fw-select2>
+                    <option value="empty">--- งบรายจ่าย ---</option>
+                    @foreach (var item in ViewBag.BudgetTypes)
+                    {
+                        <option value="@item.BUDGET_TYPE_ID">@item.BUDGET_TYPE_NAME</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <div class="border-bottom pb-2 mb-1">
+                    <md-checkbox ng-model="$settings.formSearch.budgetType" ng-disabled="$settings.isLoading"
+                                 ng-true-value="1" class="mb-0">เงินงบประมาณ</md-checkbox>
+                    <md-checkbox ng-model="$settings.formSearch.budgetType" ng-disabled="$settings.isLoading"
+                                 ng-true-value="2" class="mb-0">เงินนอกงบประมาณ</md-checkbox>
+                </div>
+                <div>
+                    <md-checkbox ng-model="$settings.formSearch.requestType" ng-disabled="$settings.isLoading"
+                                 ng-true-value="1" class="mb-0">คำขอต้นปี</md-checkbox>
+                    <md-checkbox ng-model="$settings.formSearch.requestType" ng-disabled="$settings.isLoading"
+                                 ng-true-value="2" class="mb-0">คำขอเพิ่มเติม</md-checkbox>
+                </div>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <fw-execute-button text="ส่งออก Excel" css-icon-class="icofont icofont-file-excel"
+                                   css-class="btn btn-primary btn-sm" ng-disabled="$settings.isLoading"
+                                   on-loading="$settings.isExporting"
+                                   ng-click="submitExport()"></fw-execute-button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/select2")
+    <script type="text/javascript">
+        angular.module("leaveApp").controller('AppController',
+            function ($scope, $customHttp, $fwDialogService, $filter, $timeout, $window, $fwDateService, $q) {
+                $scope.$settings = {
+                    isLoading: false, isExporting: false,
+                    departments: [],
+                    formSearch: {
+                        fiscalYear: $fwDateService.convertYearToBuddhist('@ViewBag.DefaultFiscalYear'),
+                        areaId: '@ViewBag.DefaultAreaId', depId: 'empty',
+                        budgetTypeId: 'empty', budgetType: null, requestType: null
+                    }
+                };
+
+                // เมื่อเขตพื้นที่เปลี่ยนแปลง
+                var areaChangedId = null;
+                $scope.areaChanged = function () {
+                    return $q(function (resolve) {
+                        $timeout.cancel(areaChangedId);
+                        areaChangedId = $timeout(function () {
+                            $scope.$settings.departments = [];
+                            $scope.$settings.formSearch.depId = 'empty';
+                            var areaId = ('' + $scope.$settings.formSearch.areaId).replace(/[^\d]/g, '');
+                            if (areaId.length == 0)
+                                return;
+
+                            $customHttp.formPost('@Url.Action("GetDepartmentBy", "Helper")', { areaId: areaId }).then(function (res) {
+                                $scope.$settings.departments = res.data || [];
+                                resolve({});
+                            }, function () { });
+                        }, 300);
+                    });
+                };
+                // ส่งคำขอไปออกรายงาน
+                $scope.submitExport = function () {
+                    $scope.$settings.isLoading = true;
+                    $scope.$settings.isExporting = true;
+
+                    var params = $.extend(true, {}, $scope.$settings.formSearch);
+                    params.fiscalYear = ('' + params.fiscalYear).replace(/[^\d]/g, '');
+                    if (params.fiscalYear.length != 4) {
+                        $fwDialogService.dangerDialog(null, 'โปรดระบุปีงบประมาณ');
+                        return;
+                    }
+                    params.fiscalYear = $fwDateService.convertYearToBritish(params.fiscalYear);
+                    params.budgetTypeId = ('' + params.budgetTypeId).replace('empty', '');
+                    params.areaId = ('' + params.areaId).replace('empty', '');
+                    params.depId = ('' + params.depId).replace('empty', '');
+                    $customHttp.formPost('@Url.Action("Retrieve", "RptRequestBudgetOfYear")', params).then(function (res) {
+                        $scope.$settings.isLoading = false;
+                        $scope.$settings.isExporting = false;
+                        if (null != res.data.errorText) {
+                            $fwDialogService.dangerDialog(null, res.data.errorText);
+                            return
+                        }
+
+                        $window.location.href = $filter('textFormat')('@Url.Action("GetFile", "Resource", new { groupType = "Temporary" })&filename={0}&resultFilename={1}&deleteFlag=Y'
+                            , res.data.filename, res.data.resultFilename);
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                        $scope.$settings.isExporting = false;
+                    });
+                };
+
+
+                // กำหนดค่าเริ่มต้นแบบฟอร์ม
+                $scope.areaChanged().then(function () {
+                    $scope.$settings.formSearch.depId = '@ViewBag.DefaultDepId';
+                });
+            });
+    </script>
+}

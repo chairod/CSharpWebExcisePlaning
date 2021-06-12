@@ -1,0 +1,351 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2 p-3">
+        <div class="row border-bottom mb-2 pb-2">
+            <div class="col-12 col-md-5 border-right">
+                <h4 class="m-0 pb-2 mb-2 f-16 border-bottom">ดาวน์โหลดแบบฟอร์มจัดสรรงบประมาณ</h4>
+                <div class="form-row">
+                    <div class="form-group col-12 col-md-4 mb-0">
+                        <label>ปีงบประมาณ (พ.ศ.)</label>
+                        <input type="text" class="form-control" value="{{$settings.formData.FiscalYear|convertYearToBuddhist}}" readonly />
+                    </div>
+                    <div class="form-group col-12 col-md-4 mb-0">
+                        <label class="required-field">จัดสรรจาก<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.AllocateType.ErrorMessages"></fw-validate-error-output></label>
+                        <div>
+                            <md-checkbox ng-model="$settings.formData.AllocateType"
+                                         ng-disabled="$settings.isLoading" ng-click="$settings.formData.Expenses = []"
+                                         ng-true-value="1" ng-false-value="2">เงินงบประมาณ</md-checkbox>
+                            <md-checkbox ng-model="$settings.formData.AllocateType"
+                                         ng-disabled="$settings.isLoading" ng-click="$settings.formData.Expenses = []"
+                                         ng-true-value="2" ng-false-value="1">เงินนอกงบประมาณ</md-checkbox>
+                        </div>
+                    </div>
+                    <div class="form-group col-12 col-md-4 mb-0">
+                        <fw-execute-button text="ดาวน์โหลดแบบฟอร์ม" css-class="btn btn-primary btn-sm float-md-right"
+                                           css-icon-class="ti-download"
+                                           on-loading="$settings.isDownloading"
+                                           ng-disabled="$settings.isLoading||$settings.formData.Expenses.length==0"
+                                           ng-click="submitDownload($event)"></fw-execute-button>
+                    </div>
+                </div>
+                <span class="text-danger f-14">*** การเปลี่ยนแปลง แหล่งเงินที่จัดสรร จะทำให้รายการค่าใช้จ่ายที่เลือกไว้หายไป ***</span>
+            </div>
+            <div class="col-12 col-md-7">
+                <h4 class="m-0 pb-2 f-16 mb-2 border-bottom">อัพโหลดแบบฟอร์มจัดสรรงบประมาณ</h4>
+                <fw-file-upload upload-url="@Url.Action("SubmitUploadDocument", "Resource", new { uploadType = "Temporary" })"
+                                accept-filetypes="xls,xlsx"
+                                ng-disabled="$settings.isLoading"
+                                callback="uploadDone($res)"></fw-file-upload>
+                <div ng-if="$settings.uploadDocumentStatusText!=''">
+                    <span class="animated fadeIn text-danger f-w-900">{{$settings.uploadDocumentStatusText}}</span><i class="ml-1 ti-reload rotate-refresh"></i>
+                </div>
+            </div>
+        </div>
+
+
+        <fw-validate-error-output css-class="mr-1" error-messages="$settings.formErrors.Departments.ErrorMessages"></fw-validate-error-output>
+        <fw-validate-error-output css-class="mr-1" error-messages="$settings.formErrors.Expenses.ErrorMessages"></fw-validate-error-output>
+        <fw-tabs>
+            @*เลือกรายการค่าใช้จ่าย ที่จะจัดสรรเพิ่มเติมให้กับหน่วยงานภูมิภาค*@
+            <fw-tab label="ระบุค่าใช้จ่าย">
+                <div class="row">
+                    <div class="col-12 col-md-5">
+                        <input type="text" class="p-1 border border-dark w-100" ng-model="expensesFilterText"
+                               placeholder="ระบุบางส่วนของชื่อ ที่ต้องการค้นหา"
+                               ng-disabled="$settings.isLoading" />
+                    </div>
+                    <div class="col-12 col-md-7">
+                        <fw-execute-button text="ค้นหาค่าใช้จ่าย" css-class="btn btn-primary btn-sm float-md-right mr-1"
+                                           css-icon-class="icofont icofont-ui-search"
+                                           on-loading="$settings.isDownloading"
+                                           ng-disabled="$settings.isLoading"
+                                           ng-click="browseBudgetExpenses($event)"></fw-execute-button>
+                    </div>
+                </div>
+                <div class="table-responsive overflow-auto" style="height:273px;min-height:273px;max-height:273px">
+                    <table class="table table-bordered table-striped pb-1">
+                        <tr>
+                            <th style="width:60px;max-width:60px;min-width:60px;"></th>
+                            <th style="width:130px;max-width:130px;min-width:130px;" class="text-left">แผนงาน</th>
+                            <th style="width:130px;max-width:130px;min-width:130px;" class="text-left">ผลผลิต</th>
+                            <th style="width:130px;max-width:130px;min-width:130px;" class="text-left">กิจกรรม</th>
+                            <th style="width:130px;max-width:130px;min-width:130px;" class="text-left">งบรายจ่าย</th>
+                            <th style="width:130px;max-width:130px;min-width:130px;" class="text-left">หมวด คชจ.</th>
+                            <th style="min-width:200px;">รายการค่าใช้จ่าย<span class="ml-1" ng-if="$settings.isLoadExpenses"><i class="rotate-refresh ti-reload"></i></span></th>
+                            <th style="width:130px;min-width:130px;max-width:130px;" class="text-left">โครงการ</th>
+                        </tr>
+                        <tr ng-if="$settings.formData.Expenses.length == 0">
+                            <th colspan="8" class="text-danger text-center animated fadeIn">--- กดที่ปุ่ม "ค้นหาค่าใช้จ่าย" เพื่อเพิ่มรายการค่าใช้จ่ายที่ต้องการจัดสรร ---</th>
+                        </tr>
+                        <tr ng-repeat="row in $settings.formData.Expenses|customFilterExpenses:expensesFilterText">
+                            <td style="width:60px;max-width:60px;min-width:60px;" class="text-center">
+                                <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.Expenses.splice($index, 1)">ยกเลิก</a>
+                            </td>
+                            <td style="width:130px;max-width:130px;min-width:130px;" class="text-left word-wrap">{{row.PLAN_NAME||'-'}}</td>
+                            <td style="width:130px;max-width:130px;min-width:130px;" class="text-left word-wrap">{{row.PRODUCE_NAME||'-'}}</td>
+                            <td style="width:130px;max-width:130px;min-width:130px;" class="text-left word-wrap">{{row.ACTIVITY_NAME||'-'}}</td>
+                            <td style="width:130px;max-width:130px;min-width:130px;" class="text-left word-wrap">{{row.BUDGET_TYPE_NAME}}</td>
+                            <td style="width:130px;max-width:130px;min-width:130px;" class="text-left word-wrap">{{row.EXPENSES_GROUP_NAME}}</td>
+                            <td style="width:200px;min-width:200px;max-width:200px;" class="word-wrap">{{row.EXPENSES_NAME}}</td>
+                            <td style="width:130px;min-width:130px;max-width:130px;" class="text-left word-wrap">{{row.PROJECT_NAME}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="text-danger">
+                    <div class="float-md-left"><a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.Expenses = []">[ยกเลิกทั้งหมด]</a></div>
+                    <div class="float-md-right">จำนวน: {{$settings.formData.Expenses.length|number:0}} รายการ</div>
+                </div>
+            </fw-tab>
+
+            <fw-tab label="ระบุหน่วยงาน">
+                <div class="form-row">
+                    <div class="form-group col-12 col-md-3">
+                        <input type="text" class="w-100 p-1 border border-dark" ng-model="areaFilterText" ng-disabled="$settings.isLoading" placeholder="ค้นหาชื่อ เขตพื้นที่" />
+                        <div class="table-responsive overflow-auto" style="height:284px;min-height:284px;max-height:284px">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th colspan="2" style="width:auto;min-width:200px;">เขตพื้นที่</th>
+                                </tr>
+                                <tr ng-repeat="row in $settings.areas|filter:{AREA_NAME: areaFilterText}">
+                                    <td style="width:60px;min-width:60px;max-width:60px;" class="text-center">
+                                        <input type="checkbox" ng-model="row.checked" ng-disabled="$settings.isLoading" />
+                                    </td>
+                                    <td style="width:auto;min-width:200px;">{{row.AREA_NAME}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group col-12 col-md-9">
+                        <input type="text" class="w-100 p-1 border border-dark" ng-model="$settings.filterText" ng-disabled="$settings.isLoading" placeholder="ระบุชื่อ เขตพื้นที่ หรือ หน่วยงาน" />
+                        <div class="table-responsive overflow-auto mb-2" style="height:265px;min-height:265px;max-height:265px">
+                            <table class="table table-bordered pb-1">
+                                <tr>
+                                    <th style="width:60px;min-width:60px;max-width:60px;" class="text-center"><input type="checkbox" ng-model="$settings.checkedAll" ng-disabled="$settings.isLoading" ng-click="checkedAll()" /></th>
+                                    <th style="width:100px;min-width:100px;max-width:100px">เขตพื้นที่</th>
+                                    <th style="width:auto;max-width:200px">หน่วยงาน</th>
+                                </tr>
+
+                                <tr ng-if="$settings.departments.length == 0">
+                                    <th colspan="2" class="text-center text-danger">--- ไม่พบข้อมูลหน่วยงาน ---</th>
+                                </tr>
+                                <tr ng-repeat="row in $settings.departments|customFilter:$settings.filterText:onlySelected:$settings.areas">
+                                    <td style="width:60px;min-width:60px;max-width:60px;" class="text-center">
+                                        <input type="checkbox" ng-model="row.checked" ng-disabled="$settings.isLoading" />
+                                    </td>
+                                    <td style="width:100px;min-width:100px;max-width:100px" class="text-left word-wrap">{{row.AREA_NAME}}</td>
+                                    <td style="width:auto;max-width:200px" class="text-left word-wrap">{{row.DEP_NAME}}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <md-checkbox ng-model="onlySelected" class="m-0" ng-true-value="1" ng-false-value="0" ng-disabled="$settings.isLoading">แสดงเฉพาะหน่วยงานที่เลือก</md-checkbox>
+                        <span class="text-danger float-md-right">จำนวน: {{($settings.departments|customFilter:'':1:$settings.areas).length}} หน่วยงาน</span>
+                    </div>
+                </div>
+            </fw-tab>
+
+        </fw-tabs>
+
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/inputnumber")
+    @Scripts.Render("~/bundle/select2")
+<script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $filter, $customHttp, $fwDialogService, $fwModalService, $fwModalHelperService, $timeout, $window, $fwDateService, $fwUtils) {
+            $scope.$settings = {
+                isLoading: false, isDownloading: false, isLoadExpenses: false,
+                departments: $fwUtils.parseJson('@Html.Raw(Json.Encode(ViewBag.Departments))'),
+                areas: $fwUtils.parseJson('@Html.Raw(Json.Encode(ViewBag.Areas))'),
+                checkedAll: false, filterText: '',
+                uploadDocumentStatusText: '',
+                formData: {}, formErrors: {}
+            };
+
+            // จัดเตรียมหน้าฟอร์ม
+            $scope.init = function () {
+                $scope.$settings.formData = {
+                    FiscalYear: '@ViewBag.FiscalYear',
+                    AllocateType: 1, // เงินงบประมาณ
+                    Expenses: [] // รายการค่าใช้จ่ายที่จะจัดสรรเพิ่มเติม
+                };
+
+                $scope.$settings.uploadDocumentStatusText = '';
+                $scope.$settings.formErrors = {};
+            };
+            // เลือกทุกหน่วยงาน
+            var checkAllId = null;
+            $scope.checkedAll = function () {
+                $timeout.cancel(checkAllId);
+                checkAllId = $timeout(function () {
+                    var departments = $filter('customFilter')($scope.$settings.departments, $scope.$settings.filterText, 0, $scope.$settings.areas);
+                    var depIds = $scope.$settings.departments.map(function (depItem) { return depItem.DEP_ID; });
+                    angular.forEach(departments, function (departmentItem) {
+                        var foundIndex = depIds.indexOf(departmentItem.DEP_ID);
+                        if (foundIndex > -1)
+                            $scope.$settings.departments[foundIndex].checked = $scope.$settings.checkedAll;
+                    });
+                }, 300);
+            };
+            // กดค้นหา รายการคชจ./โครงการ ของกรมสรรพสามิต
+            $scope.browseBudgetExpenses = function (event) {
+                $fwModalHelperService.getBudgetExpensesSelectMultiModal(event,
+                    '@ViewBag.FiscalYear',
+                    $scope.$settings.formData.AllocateType,
+                    $scope.$settings.formData.Expenses
+                ).then(function (selectedItems) {
+                    $scope.$settings.formData.Expenses = selectedItems || [];
+                }, function () { });
+            };
+            // กดดาวน์โหลดแบบฟอร์มจัดสรรงบประมาณ
+            $scope.submitDownload = function (event) {
+                $scope.$settings.isLoading = true;
+                $scope.$settings.isDownloading = true;
+
+                var selectedDepartments = $filter('customFilter')($scope.$settings.departments, "", 1, $scope.$settings.areas);
+                var params = $.extend(true, {
+                    Departments: selectedDepartments
+                }, $scope.$settings.formData);
+                $customHttp.formPost('@Url.Action("GetDownloadAllocateForm", "BudgetAllocateDepartmentExtra")', params).then(function (res) {
+                    $scope.$settings.formErrors = res.data.errors || {};
+                    if (null != res.data.errorText)
+                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                    else if (null != res.data.errors)
+                        $fwDialogService.dangerDialog(event, 'กรุณาตรวจสอบค่าต่างๆที่ระบบแจ้ง ให้เรียบร้อยก่อน');
+                    else
+                    {
+                        var resultFilename = "แบบฟอร์มจัดสรรงบประมาณ_" + ($scope.$settings.formData.RequestType == '1' ? "ต้นปี" : "เพิ่มเติม");
+                        resultFilename += "_ประจำปี_" + $fwDateService.convertYearToBuddhist($scope.$settings.formData.FiscalYear);
+                        resultFilename = $fwUtils.urlEncoded(resultFilename);
+                        $window.location.href = '@Url.Action("GetFile", "Resource", new { groupType = "Temporary" })&filename=' + res.data.filename + '&resultFilename=' + resultFilename + '&deleteFlag=Y';
+                    }
+
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isDownloading = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isDownloading = false;
+                });
+            };
+            // เมื่ออัพโหลดเอกสารเสร็จ
+            $scope.uploadDone = function (res) {
+                $scope.$settings.uploadDocumentStatusText = '';
+                if (null == res.data.errorText) {
+                    $scope.$settings.isLoading = true;
+                    $scope.$settings.uploadDocumentStatusText = 'กำลังตรวจสอบเอกสารที่อัพโหลด ...';
+
+                    var params = { filename: res.data.filename, referDocNo: "", actionType: "VERIFY" };
+                    $customHttp.formPost('@Url.Action("VerifyDocument", "BudgetAllocateDepartmentExtra")', params).then(function (res) {
+                        if (null != res.data.errorText)
+                            $fwDialogService.dangerDialog(null, res.data.errorText).then(function () {
+                                $window.location.href = '@Url.Action("GetFile", "Resource", new { groupType = "Temporary" })&filename=' + res.data.filename + '&resultFilename=' + res.data.filename + '&deleteFlag=Y';
+                            });
+                        else
+                            $fwModalService.getModal('@Url.Action("GetVerifyModalForm", "BudgetAllocateDepartmentExtra")', { $filename: res.data.uploadFilename, $verifyDepartments: res.data.verifyDepartments, $periodCode: res.data.periodCode }, function ($scope, $customHttp, $mdDialog, $filename, $verifyDepartments, $periodCode) {
+                                $scope.$settings = {
+                                    isLoading: false,
+                                    formErrors: {},
+                                    formData: {
+                                        ReferDocNo: null
+                                    },
+                                    formView: {
+                                        rows: $verifyDepartments,
+                                        periodCode: $periodCode
+                                    }
+                                };
+
+                                // ยืนยันการจัดสรร
+                                $scope.submitSave = function (event) {
+                                    $scope.$settings.isLoading = true;
+                                    var params = { filename: $filename, referDocNo: $scope.$settings.formData.ReferDocNo, actionType: "COMMIT" };
+                                    $customHttp.formPost('@Url.Action("VerifyDocument", "BudgetAllocateDepartmentExtra")', params).then(function (res) {
+                                        $scope.$settings.formErrors = res.data.errors || {};
+                                        if (null != res.data.errors)
+                                            $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งให้เรียบร้อยก่อน!!');
+                                        else if (null != res.data.errorText)
+                                            $fwDialogService.dangerDialog(event, res.data.errorText).then(function () {
+                                                $mdDialog.hide();
+                                                // ดาวน์โหลดผลลัพธ์การ อัพโหลดไฟล์
+                                                $window.location.href = '@Url.Action("GetFile", "Resource", new { groupType = "Temporary" })&filename=' + res.data.filename + '&resultFilename=' + res.data.filename + '&deleteFlag=Y';
+                                            });
+                                        else
+                                            $fwDialogService.alertDialog(event, 'จัดสรรงบประมาณตามแบบฟอร์มที่อัพโหลดเรียบร้อยแล้ว').then(function () {
+                                                $mdDialog.hide();
+                                                // ดาวน์โหลดผลลัพธ์การ อัพโหลดไฟล์
+                                                $window.location.href = '@Url.Action("GetFile", "Resource", new { groupType = "Temporary" })&filename=' + res.data.filename + '&resultFilename=' + res.data.filename + '&deleteFlag=Y';
+                                            });
+                                        $scope.$settings.isLoading = false;
+                                    }, function () {
+                                        $scope.$settings.isLoading = false;
+                                    });
+                                };
+                                // ยกเลิกการจัดสรร
+                                $scope.submitReject = function (event) {
+                                    $scope.$settings.isLoading = true;
+                                    $customHttp.formPost('@Url.Action("DeleteUploadFile", "BudgetAllocateDepartmentExtra")', { filename: $filename }).then(function () {
+                                        $scope.$settings.isLoading = false;
+                                        $timeout(function () {
+                                            $mdDialog.hide();
+                                        }, 100);
+                                    }, function () {
+                                        $scope.$settings.isLoading = false;
+                                    });
+                                };
+                            });
+                        //$fwDialogService.alertDialog(null, 'จัดสรรงบประมาณตามแบบฟอร์มที่อัพโหลดเรียบร้อยแล้ว');
+
+                        // ดาวน์โหลดผลลัพธ์การ อัพโหลดไฟล์
+                        //$window.location.href = '@Url.Action("GetFile", "Resource", new { groupType = "Temporary" })&filename=' + res.data.filename + '&resultFilename=' + res.data.filename + '&deleteFlag=Y';
+                        $scope.$settings.uploadDocumentStatusText = '';
+                        $scope.$settings.isLoading = false;
+                    }, function () {
+                        $scope.$settings.isLoading = false;
+                        $scope.$settings.uploadDocumentStatusText = '';
+                    });
+                }
+            };
+
+            $scope.init();
+        }).filter('customFilter', function () {
+            return function (rows, filterText, onlySelectedFlag, areas) {
+                if (null == rows || undefined == rows)
+                    return rows || [];
+
+                var areaIds = (areas || []).filter(function (item) { return item.checked; }).map(function (item) { return item.AREA_ID; });
+                if (areaIds.length == 0)
+                    return [];
+                rows = rows.filter(function (item) { return areaIds.indexOf(item.AREA_ID) > -1; });
+                if ($.trim(filterText) != '')
+                    rows = rows.filter(function (item) { return item.AREA_NAME.indexOf(filterText) > -1 || item.DEP_NAME.indexOf(filterText) > -1; });
+                if (onlySelectedFlag == 1)
+                    rows = rows.filter(function (item) { return item.checked; });
+
+                return rows;
+            };
+        }).filter('customFilterExpenses', function () {
+            return function (expenses, filterText) {
+                if (null == expenses || undefined == expenses || $.trim(filterText) == '')
+                    return expenses || [];
+
+                return expenses.filter(function (item) {
+                    return item.PLAN_NAME.indexOf(filterText) > -1 ||
+                        item.PRODUCE_NAME.indexOf(filterText) > -1 ||
+                        item.ACTIVITY_NAME.indexOf(filterText) > -1 ||
+                        item.BUDGET_TYPE_NAME.indexOf(filterText) > -1 ||
+                        item.EXPENSES_GROUP_NAME.indexOf(filterText) > -1 ||
+                        item.EXPENSES_NAME.indexOf(filterText) > -1 ||
+                        (item.PROJECT_NAME || '').indexOf(filterText) > -1;
+                });
+            };
+        });
+</script>
+}

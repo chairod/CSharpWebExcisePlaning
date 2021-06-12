@@ -1,0 +1,349 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="d-block shadow-sm m-0 mb-2 p-3">
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>เขตพื้นที่</label>
+                <select class="form-control" fw-select2
+                        ng-model="$settings.formSearch.areaId" ng-disabled="$settings.isLoading@(ViewBag.DepAuthorize.Equals(2)?"||true":"")"
+                        ng-change="areaChanged()">
+                    <option value="empty">--- เขตพื้นที่ ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.AreaShortFieldProperty item in ViewBag.Areas)
+                    {
+                        <option value="@item.AREA_ID">@item.AREA_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>หน่วยงาน<span class="ml-1 ti-reload rotate-refresh" ng-if="$settings.isDepartmentLoading"></span></label>
+                <select class="form-control" fw-select2
+                        ng-model="$settings.formSearch.depId"
+                        ng-disabled="$settings.isLoading||$settings.departments.length==0@(!ViewBag.CanSelectDepartment?"||true":"")"
+                        ng-change="submitSearch()">
+                    <option value="empty">--- หน่วยงาน ---</option>
+                    <option ng-repeat="item in $settings.departments" value="{{item.DEP_ID}}">{{item.DEP_NAME}}</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ปีงบประมาณ (พ.ศ.)</label>
+                <fw-input-mask model="$settings.formSearch.fiscalYear"
+                               change="fiscalYearChanged()"
+                               mask="9999" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ช่วงวันที่ (จัดสรร หรือ เบิกจ่าย)</label>
+                <fw-date-range model="$settings.formSearch.dateRange" disabled="$settings.isLoading" change="dateRangeChanged()"></fw-date-range>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>แผนงาน</label>
+                <select class="form-control" fw-select2
+                        ng-model="$settings.formSearch.planId" ng-disabled="$settings.isLoading"
+                        ng-change="submitSearch()">
+                    <option value="empty">--- แผนงาน ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.PlanShortFieldProperty item in ViewBag.Plans)
+                    {
+                        <option value="@item.PLAN_ID">@item.PLAN_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ผลผลิต</label>
+                <select class="form-control" fw-select2
+                        ng-model="$settings.formSearch.produceId" ng-disabled="$settings.isLoading"
+                        ng-change="submitSearch()">
+                    <option value="empty">--- ผลผลิต ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.ProduceShortFieldProperty item in ViewBag.Produces)
+                    {
+                        <option value="@item.PRODUCE_ID">@item.PRODUCE_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>กิจกรรม</label>
+                <select class="form-control" fw-select2
+                        ng-model="$settings.formSearch.activityId" ng-disabled="$settings.isLoading"
+                        ng-change="submitSearch()">
+                    <option value="empty">--- กิจกรรม ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.ActivityShortFieldProperty item in ViewBag.Activities)
+                    {
+                        <option value="@item.ACTIVITY_ID">@item.ACTIVITY_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>งบรายจ่าย</label>
+                <select class="form-control" fw-select2
+                        ng-model="$settings.formSearch.budgetTypeId" ng-disabled="$settings.isLoading"
+                        ng-change="budgetTypeChanged()">
+                    <option value="empty">--- งบรายจ่าย ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.BudgetTypeShortFieldProperty item in ViewBag.BudgetTypes)
+                    {
+                        <option value="@item.BUDGET_TYPE_ID">@item.BUDGET_TYPE_NAME</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3 mb-md-0">
+                <label>หมวดค่าใช้จ่าย<span class="ti-reload rotate-refresh ml-1" ng-if="$settings.isExpensesGroupLoading"></span></label>
+                <select class="form-control" fw-select2
+                        ng-model="$settings.formSearch.expensesGroupId" ng-disabled="$settings.isLoading||$settings.expensesGroups.length==0"
+                        ng-change="submitSearch()">
+                    <option value="empty">--- หมวดค่าใช้จ่าย ---</option>
+                    <option ng-repeat="item in $settings.expensesGroups" value="{{item.EXPENSES_GROUP_ID}}">{{item.EXPENSES_GROUP_NAME}}</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3" mb-md-0>
+                <label class="d-none d-md-block">&nbsp;</label>
+                <md-checkbox ng-model="$settings.formSearch.budgetTypeFlag" class="mb-md-0" ng-click="submitSearch()" ng-true-value="1" ng-false-value="2">เงินงบประมาณ</md-checkbox>
+                <md-checkbox ng-model="$settings.formSearch.budgetTypeFlag" class="mb-md-0" ng-click="submitSearch()" ng-true-value="2" ng-false-value="1">เงินนอก งปม.</md-checkbox>
+            </div>
+            <div class="form-group col-12 col-md-6 mb-md-0">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <fw-execute-button text="ส่งออก Excel" css-class="btn btn-primary btn-sm float-md-left" css-icon-class="icofont icofont-file-excel"
+                                   on-loading="$settings.isExporting"
+                                   ng-disabled="$settings.isLoading"
+                                   ng-click="submitExport($event)"></fw-execute-button>
+            </div>
+        </div>
+    </div>
+
+
+    @*<div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                              auto-load="false"
+                              disabled="$settings.isLoading"
+                              table-type="group"
+                              row-click-callback="rowClick($event, $row, $columnConfig)"
+                              search-done-callback="searchDone($res)"
+                              route-url="@Url.Action("Retrieve", "RptDepartmentBudgetCashFlow")"></fw-simple-data-table>
+    </div>*@
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+    @Styles.Render("~/content/datepickerrange")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/select2")
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/datepickerrange")
+
+    <script type="text/javascript">
+        angular.module("leaveApp").controller('AppController', function ($scope, $filter, $window, $q, $fwDateService, $customHttp, $timeout, $fwDialogService, $fwModalService) {
+
+            $scope.$settings = {
+                isLoading: false, isDepartmentLoading: false, canExport: true,
+                isExporting: false,
+                departments: [], expensesGroups: [],
+                formSearch: {
+                    fiscalYear: $fwDateService.convertYearToBuddhist('@ViewBag.DefaultYear'),
+                    areaId: '@ViewBag.DefaultAreaId',
+                    depId: 'empty',
+                    planId: 'empty', produceId: 'empty', activityId: 'empty',
+                    budgetTypeId: 'empty', expensesGroupId: 'empty',
+                    budgetTypeFlag: 1, // 1 = เงินงบ, 2 = เงินนอก
+                    dateRange: null
+                },
+                //tableConfigs: {
+                //    columns: [
+                //        {
+                //            label: 'แผนงาน', className: 'text-left word-wrap bg-primary', type: 'groupBy',
+                //            field: '<div class="border-bottom mb-1 pb-1 f-w-900 f-16">แผนงาน</div>{{group.GroupBy.PLAN_NAME||\'-\'}}',
+                //            style: 'min-width:230px;max-width:230px;width:230px;'
+                //        },
+                //        {
+                //            label: 'ผลผลิต', className: 'text-left word-wrap bg-primary', type: 'groupBy',
+                //            field: '<div class="border-bottom mb-1 pb-1 f-w-900 f-16">ผลผลิต</div>{{group.GroupBy.PRODUCE_NAME||\'-\'}}',
+                //            style: 'min-width:150px;max-width:150px;width:auto;'
+                //        },
+                //        {
+                //            label: 'กิจกรรม', className: 'text-left word-wrap bg-primary', type: 'groupBy',
+                //            field: '<div class="border-bottom mb-1 pb-1 f-w-900 f-16">กิจกรรม</div>{{group.GroupBy.ACTIVITY_NAME||\'-\'}}',
+                //            style: 'min-width:150px;max-width:150px;width:auto;'
+                //        },
+                //        {
+                //            label: 'งบรายจ่าย', className: 'text-left word-wrap bg-primary', type: 'groupBy',
+                //            field: '<div class="border-bottom mb-1 pb-1 f-w-900 f-16">งบรายจ่าย</div>{{group.GroupBy.BUDGET_TYPE_NAME}}',
+                //            style: 'min-width:230px;max-width:230px;width:230px;'
+                //        },
+                //        {
+                //            label: 'หมวดค่าใช้จ่าย', className: 'text-left word-wrap bg-primary', type: 'groupBy',
+                //            field: '<div class="border-bottom mb-1 pb-1 f-w-900 f-16">หมวดค่าใช้จ่าย</div>{{group.GroupBy.EXPENSES_GROUP_NAME}}',
+                //            style: 'min-width:150px;max-width:150px;width:150px;'
+                //        },
+                //        {
+                //            label: 'ค่าใช้จ่าย', className: 'text-left word-wrap bg-primary', type: 'groupBy',
+                //            field: '<div class="border-bottom mb-1 pb-1 f-w-900 f-16">ค่าใช้จ่าย</div>{{group.GroupBy.EXPENSES_NAME}}' +
+                //                '<span class="ml-1 text-warning" ng-if="group.GroupBy.PROJECT_NAME!=null">({{group.GroupBy.PROJECT_NAME}})</span>',
+                //            style: 'min-width:150px;max-width:150px;width:150px;'
+                //        },
+                //        { label: '', className: 'text-center word-wrap', type: 'rowNumber', style: 'width:60px;min-width:60px;max-width:60px;' },
+                //        {
+                //            label: 'หน่วยงาน', className: 'text-left word-wrap', type: 'field', field: 'DEP_NAME',
+                //            style: 'width:auto;min-width:200px;max-width:200px;'
+                //        },
+                //        {
+                //            label: 'ได้รับจัดสรร (บาท)', className: 'text-right word-wrap', type: 'fieldNumber',
+                //            field: 'NET_BUDGET_AMOUNT',
+                //            style: 'min-width:190px;max-width:190px;width:190px;'
+                //        },
+                //        {
+                //            label: 'เบิกจ่าย (บาท)', className: 'text-right word-wrap', type: 'fieldNumber',
+                //            field: 'NET_USE_BUDGET_AMOUNT',
+                //            style: 'min-width:190px;max-width:190px;width:190px;'
+                //        },
+                //        {
+                //            label: 'คงเหลือ (บาท)', className: 'text-right word-wrap', type: 'fieldNumber',
+                //            field: 'NET_REMAIN_BUDGET_AMOUNT',
+                //            style: 'min-width:190px;max-width:190px;width:190px;'
+                //        },
+                //        {
+                //            label: 'ร้อยละ', className: 'text-center word-wrap', type: 'fieldNumber',
+                //            field: 'NET_USE_PERCENT',
+                //            style: 'min-width:130px;max-width:130px;width:130px;'
+                //        }
+                //    ]
+                //}
+            };
+
+            // ค้นหาประวัติคำขอ
+            //var submitSearchId = null;
+            $scope.submitSearch = function () {
+                //$timeout.cancel(submitSearchId);
+                //submitSearchId = $timeout(function () {
+                //    $scope.$settings.canExport = false;
+
+                //    var params = $.extend(true, { fromDateStr: null, toDateStr: null, returnType: "RETRIEVE" }, $scope.$settings.formSearch);
+                //    params.fiscalYear = $fwDateService.convertYearToBritish(params.fiscalYear);
+                //    params.areaId = ('' + params.areaId).replace(/[^\d]/ig, '');
+                //    params.depId = ('' + params.depId).replace(/[^\d]/ig, '');
+                //    params.planId = ('' + params.planId).replace(/[^\d]/ig, '');
+                //    params.produceId = ('' + params.produceId).replace(/[^\d]/ig, '');
+                //    params.activityId = ('' + params.activityId).replace(/[^\d]/ig, '');
+                //    params.budgetTypeId = ('' + params.budgetTypeId).replace(/[^\d]/ig, '');
+                //    params.expensesGroupId = ('' + params.expensesGroupId).replace(/[^\d]/ig, '');
+                //    var datePieces = ('' + params.dateRange).split(' - ');
+                //    if (datePieces.length == 2) {
+                //        params.fromDateStr = $fwDateService.parseDateStr(datePieces[0]).toString();
+                //        params.toDateStr = $fwDateService.parseDateStr(datePieces[1]).toString();
+                //    }
+                //    $scope.$broadcast('fwSimpleDataTable.paramsChanged', params);
+                //}, 300);
+            };
+            // หลังจากที่ค้นหารายข้อมูลเสร็จ
+            $scope.searchDone = function (res) {
+                return $q(function (resolve) {
+                    $scope.$settings.canExport = (res.data.rows || []).length > 0;
+                    resolve(res);
+                });
+            };
+            // นำออกข้อมูลไปยัง Excel
+            $scope.submitExport = function (event) {
+                $scope.$settings.isLoading = true;
+                $scope.$settings.isExporting = true;
+
+                var params = $.extend(true, { fromDateStr: null, toDateStr: null, returnType: "EXPORT" }, $scope.$settings.formSearch);
+                params.fiscalYear = $fwDateService.convertYearToBritish(params.fiscalYear);
+                params.areaId = ('' + params.areaId).replace(/[^\d]/ig, '');
+                params.depId = ('' + params.depId).replace(/[^\d]/ig, '');
+                params.planId = ('' + params.planId).replace(/[^\d]/ig, '');
+                params.produceId = ('' + params.produceId).replace(/[^\d]/ig, '');
+                params.activityId = ('' + params.activityId).replace(/[^\d]/ig, '');
+                params.budgetTypeId = ('' + params.budgetTypeId).replace(/[^\d]/ig, '');
+                params.expensesGroupId = ('' + params.expensesGroupId).replace(/[^\d]/ig, '');
+                var datePieces = ('' + params.dateRange).split(' - ');
+                if (datePieces.length == 2) {
+                    params.fromDateStr = $fwDateService.parseDateStr(datePieces[0]).toString();
+                    params.toDateStr = $fwDateService.parseDateStr(datePieces[1]).toString();
+                }
+
+                $customHttp.formPost('@Url.Action("Retrieve", "RptDepartmentBudgetCashFlow")', params).then(function (res) {
+                    if (null != res.data.errorText)
+                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                    else
+                        $window.location.href = '@Url.Action("GetFile", "Resource", new { groupType = "Temporary" })&filename=' + res.data.filename + '&resultFilename=' + res.data.filename + '&deleteFlag=Y';
+
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isExporting = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isExporting = false;
+                });
+            };
+            // เมื่อปีงบประมาณเปลี่ยน
+            var fiscalYearChangedId = null;
+            $scope.fiscalYearChanged = function () {
+                $timeout.cancel(fiscalYearChangedId);
+                fiscalYearChangedId = $timeout(function () {
+                    var fiscalYear = ('' + $scope.$settings.formSearch.fiscalYear).replace(/[^\d]+/g, '');
+                    if (fiscalYear.length == 4)
+                        $scope.submitSearch();
+                }, 300);
+            };
+            // เมื่อเลขที่คำขอเปลี่ยนแปลง
+            var dateRangeChangedId = null;
+            $scope.dateRangeChanged = function () {
+                $timeout.cancel(dateRangeChangedId);
+                dateRangeChangedId = $timeout(function () {
+                    $scope.submitSearch();
+                }, 300);
+            };
+            // เมื่อเขตพื้นที่เปลี่ยนแปลง
+            var areaChangedId = null;
+            $scope.areaChanged = function () {
+                return $q(function (resolve) {
+                    $timeout.cancel(areaChangedId);
+                    areaChangedId = $timeout(function () {
+                        var areaId = $scope.$settings.formSearch.areaId.replace('empty', '');
+                        $scope.$settings.departments = [];
+                        $scope.$settings.formSearch.depId = 'empty';
+
+                        if (areaId != '')
+                            $customHttp.formPost('@Url.Action("GetDepartmentAuthorizeBy", "Helper")', { areaId: areaId }).then(function (res) {
+                                $scope.$settings.departments = res.data || [];
+                                resolve({});
+                            }, function () { });
+                        else
+                            resolve({});
+                        $scope.submitSearch();
+                    }, 200);
+                });
+            };
+            // เมื่องบรายจ่ายเปลี่ยนแปลง
+            var budgetTypeIdChanged = null;
+            $scope.budgetTypeChanged = function () {
+                $timeout.cancel(budgetTypeIdChanged);
+                budgetTypeIdChanged = $timeout(function () {
+                    var budgetTypeId = $scope.$settings.formSearch.budgetTypeId.replace('empty', '');
+                    $scope.$settings.expensesGroups = [];
+                    if (budgetTypeId != '')
+                        $customHttp.formPost('@Url.Action("RetrieveExpensesGroupByBudgetType", "Helper")', { budgetTypeId: budgetTypeId }).then(function (res) {
+                            $scope.$settings.expensesGroups = res.data || [];
+                            $scope.$settings.formSearch.expensesGroupId = 'empty';
+                        }, function () { });
+
+                    $scope.submitSearch();
+                }, 200);
+            };
+
+
+
+            // กำหนดค่าเริ่มต้นให้ฟอร์ม
+            $timeout(function () {
+                //$scope.submitSearch();
+
+                // โหลดหน่วยงาน
+                $scope.areaChanged().then(function () {
+                    $scope.$settings.formSearch.depId = '@ViewBag.DefaultDepartmentId';
+                });
+            }, 300);
+        });
+    </script>
+}

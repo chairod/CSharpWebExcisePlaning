@@ -1,0 +1,58 @@
+﻿<md-dialog flex="99" flex-gt-sm="55">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์มปรับปรุงยอดกันเงิน</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row border-bottom">
+                <div class="form-group col-12 col-md-4">
+                    <input type="text" class="form-control" value="เลขที่ใบกัน: {{$settings.formData.ReserveId}}" title="เลขที่ใบกัน: {{$settings.formData.ReserveId}}" readonly />
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <input type="text" class="form-control" value="กันเงิน: {{$settings.formData.ReserveAmounts|displayDecimal:2}} บาท" title="กันเงิน: {{$settings.formData.ReserveAmounts|displayDecimal:2}}" readonly />
+                </div>
+                <div class="form-group col-12 col-md-4">
+                    <input type="text" class="form-control" value="คงเหลือ: {{$settings.formData.RemainAmounts|displayDecimal:2}} บาท" title="คงเหลือ: {{$settings.formData.RemainAmounts|displayDecimal:2}}" readonly />
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-12 col-md-4">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <md-checkbox ng-model="$settings.formData.AdjustmentType" class="m-0" ng-true-value="2" ng-false-value="3" ng-disabled="$settings.isLoading">ปรับลดยอด</md-checkbox>
+                            <md-checkbox ng-model="$settings.formData.AdjustmentType" class="m-0" ng-true-value="3" ng-false-value="2" ng-disabled="$settings.isLoading">ปรับเพิ่มยอด</md-checkbox>
+                        </div>
+                        <div class="form-group col-12">
+                            <label class="required-field">ยอดปรับปรุง<fw-validate-error-output error-messages="$settings.formErrors.AdjustmentAmounts.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                            <fw-input-number-mask ng-model="$settings.formData.AdjustmentAmounts" min-value="0.00" max-value="9999999999999.99" ng-disabled="$settings.isLoading"></fw-input-number-mask>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-8">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label>หมายเหตุ<fw-validate-error-output error-messages="$settings.formErrors.RemarkText.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                            <textarea class="form-control textarea-noresize" ng-model="$settings.formData.RemarkText" ng-disabled="$settings.isLoading" style="min-height:120px;height:120px"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="ปรับปรุง" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           on-loading="$settings.isSaving"
+                           css-icon-class="ti-save"
+                           ng-click="submitSave()"></fw-execute-button>
+        <fw-execute-button text="ยกเลิก" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

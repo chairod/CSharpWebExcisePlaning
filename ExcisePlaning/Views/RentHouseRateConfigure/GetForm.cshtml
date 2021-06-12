@@ -1,0 +1,160 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card card-block borderless-card shadow-sm" ng-controller="AppController">
+    <div class="form-row">
+        <div class="form-group col-12 col-md-4">
+            <label>ระดับ C ของบุลคลากร</label>
+            <select class="form-control" ng-model="$settings.formSearch.levelId" 
+                    ng-change="submitSearch()" 
+                    ng-disabled="$settings.isLoading" fw-select2>
+                <option value="empty">--- ระดับ C ของบุลคลากร ---</option>
+                @foreach (var LevelID in ViewBag.LevelID)
+                {
+                    <option value="@LevelID.LEVEL_ID">@LevelID.LEVEL_NAME</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group col-12 col-md-2">
+            <label class="d-none d-md-block">&nbsp;</label>
+            <fw-execute-button text="สร้างใหม่" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round" ng-disabled="$settings.isLoading" ng-click="createNew($event)"></fw-execute-button>
+        </div>
+    </div>
+    <fw-simple-data-table columns="$settings.tableConfigs.columns" disabled="$settings.isLoading"
+                          auto-load="false"
+                          row-click-callback="rowClick($event, $row, $columnConfig)"
+                          route-url="@Url.Action("Retrieve", "RentHouseRateConfigure")"></fw-simple-data-table>
+</div>
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")}
+@section Scripts{
+    @Scripts.Render("~/bundle/select2");
+    @Scripts.Render("~/bundle/inputnumber");
+    <script type="text/javascript">
+        angular.module("leaveApp").controller('AppController',
+            function ($scope, $customHttp, $timeout, $q, $fwDialogService, $fwModalService) {
+                $scope.$settings = {
+                    isLoading: false,
+                    formSearch: { levelId: 'empty' },
+                    tableConfigs: {
+                        columns: [
+                            { label: 'No.', className: 'text-center word-wrap', type: 'rowNumber', style: 'min-width:50px;max-width:50px;width:50px;' },
+                            {
+                                label: 'ระดับ C ของบุลคลากร', className: 'text-left word-wrap', type: 'html', params: 'BTN_EDIT',
+                                field: '<a href="javascript:void(0)" class="text-primary f-w-900">{{row.LEVEL_NAME}}<sup class="ml-1 ti-new-window"></sup></a>', style: 'width:200px;min-width:200px;'
+                            },
+                            { label: 'เงินเดือน (เริ่มต้น)', className: 'text-left word-wrap', type: 'fieldNumber', field: 'FROM_SALARY', style: 'width:140px;max-width:140px;min-width:140px;' },
+                            { label: 'เงินเดือน (สิ้นสุด)', className: 'text-left word-wrap', type: 'fieldNumber', field: 'TO_SALARY', style: 'width:140px;max-width:140px;min-width:140px;' },
+                            { label: 'ค่าเช่าบ้าน (บาท)', className: 'text-left word-wrap', type: 'fieldNumber', field: 'RATE_AMOUNT', style: 'width:140px;max-width:140px;min-width:140px;' },
+                            { label: '', className: 'text-center word-wrap', params: 'BTN_DELETE', type: 'html', field: '<a href="javascript:void(0)" class="text-danger f-14 f-w-900">ยกเลิก</a>', style: 'min-width:80px;max-width:80px;width:80px;' }
+                        ]
+                    }
+                };
+
+                $scope.createNew = function (event, row) {
+                    $fwModalService.getModal('@Url.Action("GetModalForm", "RentHouseRateConfigure")', { $formData: (row || {}) },
+                        function ($scope, $customHttp, $mdDialog, $fwDialogService, $timeout, $fwModalHelperService, $formData) {
+                            $scope.$settings = {
+                                isLoading: false, isEdit: $formData.RATE_ID != undefined,
+                                formData: {},
+                                formErrors: {}
+                            };
+
+                            // กำหนดค่าเริ่มต้น
+                            $scope.init = function () {
+                                $scope.$settings.formErrors = {};
+                                $scope.$settings.formData = {
+                                    RateId: $formData.RATE_ID || null,
+                                    LevelId: '' + ($formData.LEVEL_ID || 'empty'),
+                                    FromSalary: $formData.FROM_SALARY || null,
+                                    ToSalary: $formData.TO_SALARY || null,
+                                    RateAmount: $formData.RATE_AMOUNT || null
+                                };
+                            };
+                            // ส่งคำขอบันทึกข้อมูล
+                            $scope.save = function (event) {
+                                $scope.$settings.isLoading = true;
+                                $scope.$settings.formErrors = {};
+
+                                var params = $.extend(true, {}, $scope.$settings.formData);
+                                params.LevelId = ('' + params.LevelId).replace(/[^\d]/g, '');
+                                $customHttp.formPost('@Url.Action("SubmitSave", "RentHouseRateConfigure")', params).then(function (res) {
+                                    $scope.$settings.formErrors = res.data.errors || {};
+                                    if (null != res.data.errorText)
+                                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                                    else if (res.data.errors == null)
+                                        $fwDialogService.alertDialog(event, 'บันทึกเรียบร้อยแล้ว').then(function () {
+                                            if ($scope.$settings.isEdit)
+                                                $scope.close();
+                                            else {
+                                                var oldLevelId = $scope.$settings.formData.LevelId;
+                                                $scope.init();
+                                                $scope.$settings.formData.LevelId = oldLevelId;
+                                            }
+                                        });
+                                    $scope.$settings.isLoading = false;
+                                }, function () {
+                                    $scope.$settings.isLoading = false;
+                                });
+                            };
+                            // ปิดหน้าต่าง
+                            $scope.close = function () {
+                                $mdDialog.hide();
+                            };
+
+
+                            $scope.init();
+                        }, event).then(function () {
+                            $scope.submitSearch();
+                        });
+                };
+                $scope.rowClick = function (event, row, columnConfig) {
+                    if (columnConfig.params == 'BTN_DELETE') {
+                        $fwDialogService.confirmDialog(event, 'ยืนยัน!! การยกเลิก').then(function () {
+                            $scope.$settings.isLoading = true;
+                            $customHttp.formPost('@Url.Action("SubmitDelete", "RentHouseRateConfigure")',
+                                { rateId: row.RATE_ID }).then(function () {
+                                $scope.submitSearch();
+                            }, function () {
+                                $scope.$settings.isLoading = false;
+                            });
+                        });
+                    }
+                    else if (columnConfig.params == 'BTN_EDIT') {
+                        $scope.createNew(event, row);
+                    }
+                    return $q(function (resolve) {
+                        resolve({ row: row });
+                    });
+                };
+                // ส่งคำร้องค้นหาข้อมูล
+                var timeoutId = null;
+                $scope.submitSearch = function () {
+                    $timeout.cancel(timeoutId);
+                    timeoutId = $timeout(function () {
+                        $scope.$broadcast('fwSimpleDataTable.paramsChanged', {
+                            levelId: $scope.$settings.formSearch.levelId
+                        });
+                    }, 300);
+                };
+
+                // ค้นหา
+                var LevelIDChangedId = null
+                $scope.LevelIDChanged = function () {
+                    $timeout.cancel(LevelIDChangedId);
+                    LevelIDChangedId = $timeout(function () {
+                        $scope.submitSearch();
+                    }, 300);
+                };
+
+
+                $scope.submitSearch();
+        });
+    </script>
+
+}

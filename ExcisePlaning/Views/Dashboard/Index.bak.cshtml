@@ -1,0 +1,655 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    @*หน้าจอกว้างไปทำให้การแสดงผลข้อมูล ไม่กระชับ จึงบีบด้านข้างซ้ายขวาเข้าอย่างล่ะ 5*@
+    <div class="ml-md-5 mr-md-5">
+
+
+        <div class="clearfix"></div>
+
+        <div class="form-row">
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-total-tab" data-toggle="tab" href="#nav-total" role="tab" aria-controls="nav-total" aria-selected="true">ภาพรวม</a>
+                    <a class="nav-item nav-link" id="nav-budget-tab" data-toggle="tab" href="#nav-budget" role="tab" aria-controls="nav-budget" aria-selected="false">เงินงบประมาณ</a>
+                    <a class="nav-item nav-link" id="nav-offbudget-tab" data-toggle="tab" href="#nav-offbudget" role="tab" aria-controls="nav-offbudget" aria-selected="false">เงินนอกงบประมาณ</a>
+                </div>
+            </nav>
+
+        </div>
+
+        <br />
+        <div class="form-row">
+            <div class="form-group col-12 col-md-4">
+                <label class="d-none d-md-block font-weight-bold">ปี (พ.ศ.)</label>
+                <input type="text" class="form-control" ng-model="$settings.formSearch.fiscalYear" disablee="$settings.isLoading" ng-change="fiscalYearChanged()">
+            </div>
+
+            <div class="form-group col-12 col-md-4">
+                <label class="d-none d-md-block font-weight-bold">ไตรมาส</label>
+                <select class="form-control" ng-model="$settings.formSearch.quarter" ng-change="showDataDashboard()" fw-select2>
+                    <option value="1">ไตรมาส 1</option>
+                    <option value="2">ไตรมาส 2</option>
+                    <option value="3">ไตรมาส 3</option>
+                    <option value="4">ไตรมาส 4</option>
+                </select>
+            </div>
+
+            <div class="form-group col-12 col-md-4">
+                <label class="d-none d-md-block font-weight-bold">หน่วยงาน</label>
+                <select class="form-control" ng-model="$settings.formSearch.depId" ng-change="showDataDashboard()"
+                        ng-disabled="$settings.isLoading@(!ViewBag.CanSelectDepartment?"||true":"")" fw-select2>
+                    <option value="empty">--- หน่วยงาน ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.DepartmentShortFieldProperty depItem in ViewBag.Departments)
+                    {
+                        <option value="@depItem.DEP_ID">@depItem.DEP_NAME</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        @* New DashBorad Sanun *@
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <div class="box box-solid">
+                    <div class="box-header bg-aqua">
+                        <h3 class="box-title text-white">เป้าหมายภาพรวม</h3>
+
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body text-center">
+                        <div id="chart-Budget"></div>
+                    </div>
+
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+            <!-- /.col -->
+            <div class="col-md-4 text-center">
+                <div class="box box-solid">
+                    <div class="box-header bg-aqua">
+                        <h3 class="box-title text-white">เป้าหมายรายจ่ายประจำ</h3>
+
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body text-center">
+                        <div id="chart-BudgetYear"></div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+            <!-- /.col -->
+            <div class="col-md-4 text-center">
+                <div class="box box-solid">
+                    <div class="box-header bg-aqua">
+                        <h3 class="box-title text-white">เป้าหมายงบลงทุน</h3>
+
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body text-center">
+                        <div id="chart-BudgetInvest"></div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+
+        </div>
+
+
+
+        @*สรุปการจัดสรร และ รายงานผล(ภาพรวม และ รายไตรมาส)*@
+        <div class="form-row mt-md-2 ">
+            <div class="col-md-6 text-center">
+                <div class="box box-solid">
+                    <div class="box-header bg-aqua">
+
+                        <div class="form-group row ">
+                            <h3 for="staticEmail" class="col-sm-11 box-title text-white">สัดส่วนงบประมาณ</h3>
+
+
+                        </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body text-center">
+                        <div id="chart-RatioBudget"></div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+            <div class="col-md-6 text-left">
+                <div class="box box-solid">
+                    <div class="box-header bg-aqua">
+                        <nav>
+                            <div class="nav nav-tabs" id="nav-tab-charts" role="tablist">
+                                <a class="nav-item nav-link active" id="nav-charttotal-tab" data-toggle="tab" href="#" ng-click="ShowChartColumn('CostType')" role="tab" aria-controls="nav-CostType" aria-selected="true">ประเภทรายจ่าย</a>
+                                <a class="nav-item nav-link" id="nav-budgetcharge-tab" data-toggle="tab" href="#" ng-click="ShowChartColumn('BudgetType')" role="tab" aria-controls="nav-budgetcharge" aria-selected="false">ประเภทงบประมาณ</a>
+                            </div>
+                        </nav>
+
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body text-center">
+                        <div id="chart-CostType"></div>            
+                    </div>
+                    <div class="box-body text-center">
+                        <div id="chart-BudgetType"></div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+    @Styles.Render("~/Third_Party/assets/css/AdminLTE.min.css")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/select2")
+    @Scripts.Render("~/bundle/fusionChart")
+    <script type="text/javascript">
+
+        angular.module('leaveApp').controller('AppController', function ($scope, $q, $timeout, $fwModalService, $fwDialogService, $customHttp) {
+
+            var globalGaugeChart = {
+                type: 'angulargauge',
+               // renderAt:'',
+                width: '100%',
+                height: '150',
+                dataFormat: 'json',
+                dataSource: {
+                    chart: {
+
+                        lowerLimit: "0",
+                        upperLimit: "100",
+                        theme: "fusion"
+                    },
+                    colorRange: {
+                        color: [] || null
+                    },
+                    dials: {
+                        dial: [{
+                            value: 0 || null
+                        }]
+
+                    }
+                }
+
+            };
+
+            var globalChartmscolumn2d = {
+                type: 'mscolumn2d',
+
+                width: '100%',
+                height: '350',
+                dataFormat: 'json',
+                dataSource: {
+                    chart: {
+                        caption: "",
+                        subCaption: "",
+                        showPercentInTooltip: "0",
+                        decimals: "1",
+                        showLegend: "0",
+                        formatnumberscale: "0",
+                        formatnumber: "1",
+                        palettecolors: ['#6baa01', '#ffff66', '#ff9900'],
+                        theme: "fusion"
+                    },
+                    categories: [],
+                    dataset: []
+                }
+            };
+
+            var globalChartPie = {
+                type: 'doughnut3d',
+                dataFormat: 'json',
+                width: '100%',
+                height: '355',
+
+                dataSource: {
+                    chart: {
+
+                        caption: "",
+                        subCaption: "",
+                        showPercentInTooltip: "0",
+                        decimals: "1",
+                        showLegend: "0",
+                        useDataPlotColorForLabels: "1",
+                        plottooltext:
+                            "<b> $label </b>: <b>$dataValue&nbsp;บาท</b>",
+                        formatnumberscale: "0",
+                        formatnumber: "1",
+                        //"palettecolors": "colors",
+                        //Theme
+                        theme: "fusion"
+                    },
+                    data: []
+                }
+
+
+            };
+
+            //กำหนดค่าโครงสร้างข้อมูลเริ่มต้นให้กับ Fusion Chart
+            var baseFontNames = "CSChatThai, Roboto, Montserrat, Lato, Raleway";
+            var globalChartConfigs = {
+                type: "column3d", //"mscolumn2d",
+                width: "100%",
+                height: "100%",
+                dataFormat: "json",
+                dataSource: {
+                    chart: {
+                        baseFont: baseFontNames,
+                        // Font คำอธิบายกราฟ
+                        captionFont: baseFontNames,
+                        captionFontSize: "12",
+                        // Font Legend
+                        legendItemFont: baseFontNames,
+                        legendItemFontSize: "9",
+                        // Font คำอธิบายแกน Y
+                        xAxisNameFont: baseFontNames,
+                        xAxisNameFontSize: "10",
+                        // Font คำอธิบายแกน Y
+                        yAxisNameFont: baseFontNames,
+                        yAxisNameFontSize: "10",
+                        // Font Label ในแกน X
+                        labelFont: baseFontNames,
+                        labelFontSize: "7",
+                        palettecolors: "5d62b5,29c3be,f2726f",
+                        // Rotate Label
+                        //"labelDisplay": "rotate",
+                        //"slantLabel": "1", // 45 องศา
+
+                        "outCnvBaseFont": baseFontNames,
+                        caption: "ประวัติการมาทำงาน ประจำปี 2563 (ม.ค. - ธ.ค.)",
+                        //subcaption: "ม.ค. - ธ.ค.",
+                        xaxisname: "เดือน",
+                        yaxisname: "จำนวนวันที่มา สาย/ตามเวลาปกติ",
+                        plottooltext:
+                            "<b>$seriesName</b> [$label]: <b>$dataValue&nbsp;บาท</b>",
+                        theme: "fusion",
+                        drawcrossline: "0",
+                        showXAxisValues: "1", // ไม่แสดง Label XAxis
+                        showYAxisValues: "0", // ไม่แสดง Label YAxis
+                        showLegend: "0", // ไม่ต้องแสดง Legend
+                        showvalues: "1",
+                      //  numbersuffix: "ล้าน",
+
+                        formatnumberscale: "0",
+                        formatnumber: "1"
+
+                    },
+                    data: [],
+                    //categories: [],
+                    //// Stack
+                    //dataset: []
+                }
+            };
+
+
+            // กำหนดค่าเริ่มต้นให้กับ Controller
+            $scope.$settings = {
+                formSearch: {
+                    fiscalYear: @ViewBag.fiscalYear + 543,
+                    depId: '@ViewBag.DepartmentId',
+                    quarter:'1'
+                },
+                formView: {
+                    RequestDataTotal: 0,
+                    RequestDataBudget: 0,
+                    RequestDataOffBudget: 0,
+                    AllowcateDataTotal: 0,
+                    AllowcateDataBudget: 0,
+                    AllowcateDataOffBudget: 0,
+                    GraphRequestData: [],
+                    GraphAllowcateData: [],
+                    LastRequestUser: '',
+                    LastRequestDate:'',
+                    LastAllowcateUser:'',
+                    LastAllowcateDate:'',
+                    LastReportUser:'',
+                    LastReportDate: '',
+
+                },
+                formChart: {
+                    gauge1Data: 0,
+                    gauge2Data: 0,
+                    gauge3Data: 0
+
+                }
+            };
+
+            //แสดงยอดงบประมาณ
+            $scope.showDataDashboard = function () {
+                    $scope.$settings.isLoading = true;
+                $customHttp.formPost('@Url.Action("ShowDataDashboard", "Dashboard")', {
+                    iYear: $scope.$settings.formSearch.fiscalYear,
+                    DepID: $scope.$settings.formSearch.depId,
+                    quarter: $scope.$settings.formSearch.quarter
+                }).then(function (res) {
+
+                    $scope.$settings.isLoading = false;
+
+                    $scope.$settings.formView.RequestDataTotal = res.data.RequestDataTotal;
+                    $scope.$settings.formView.RequestDataBudget = res.data.RequestDataBudget;
+                    $scope.$settings.formView.RequestDataOffBudget = res.data.RequestDataOffBudget;
+
+                    $scope.$settings.formView.AllowcateDataTotal = res.data.AllowcateDataTotal;
+                    $scope.$settings.formView.AllowcateDataBudget = res.data.AllowcateDataBudget;
+                    $scope.$settings.formView.AllowcateDataOffBudget = res.data.AllowcateDataOffBudget;
+
+                    $scope.$settings.formView.GraphRequestData = res.data.GraphRequestData || [];
+                    $scope.$settings.formView.GraphAllowcateData = res.data.GraphAllowcateData || [];
+
+                    $scope.$settings.formView.LastRequestUser = res.data.LastRequestUser;
+                    $scope.$settings.formView.LastRequestDate =  res.data.LastRequestDate;
+                    $scope.$settings.formView.LastAllowcateUser =  res.data.LastAllowcateUser;
+                    $scope.$settings.formView.LastAllowcateDate =  res.data.LastAllowcateDate;
+                    $scope.$settings.formView.LastReportUser =  res.data.LastReportUser;
+                    $scope.$settings.formView.LastReportDate = res.data.LastReportDate;
+
+
+
+                    $scope.$settings.formChart.gauge1Data = res.data.gauge1Data;
+                    $scope.$settings.formChart.gauge2Data = res.data.gauge2Data;
+                    $scope.$settings.formChart.gauge3Data = res.data.gauge3Data;
+
+
+
+                    $scope.renderAllocateChart();
+
+
+                    $scope.renderReportChart();
+
+                    $scope.renderchartBudget();
+                    $scope.renderchartBudgetYear();
+                    $scope.renderchartBudgetInvest();
+                    $scope.renderChartPie();
+
+                    $scope.renderChartBudgetType();
+                    $scope.renderChartCostType();
+                    
+
+                    $scope.ShowChartColumn('CostType');
+
+                    }
+                    );
+            };
+
+            $scope.renderchartBudget = function () {
+                var chartConfigs = $.extend(true, {}, globalGaugeChart);
+                var imaxValue = 32;
+
+                if ($scope.$settings.formSearch.quarter == '1')
+                    imaxValue = 32
+                else if ($scope.$settings.formSearch.quarter == '2') {
+                    imaxValue = 54
+                }
+                else if ($scope.$settings.formSearch.quarter == '3') {
+                    imaxValue = 77
+                }
+                else if ($scope.$settings.formSearch.quarter == '4') {
+                    imaxValue = 100
+                }
+
+                chartConfigs.dataSource.colorRange.color = [{
+                    minValue: "0",
+                    maxValue: imaxValue,
+                    code: "#e44a00"
+                }, {
+                        minValue: imaxValue,
+                        maxValue: "100",
+                        code: "#6baa01"
+                    }] || [];
+
+                chartConfigs.dataSource.dials.dial = [{ "value": $scope.$settings.formChart.gauge1Data }];
+                $('#chart-Budget').insertFusionCharts(chartConfigs);
+            };
+
+            $scope.renderchartBudgetYear = function () {
+                var chartConfigs = $.extend(true, {}, globalGaugeChart);
+
+                var imaxValue = 32;
+
+                if ($scope.$settings.formSearch.quarter == '1')
+                    imaxValue = 36
+                else if ($scope.$settings.formSearch.quarter == '2') {
+                    imaxValue = 57
+                }
+                else if ($scope.$settings.formSearch.quarter == '3') {
+                    imaxValue = 80
+                }
+                else if ($scope.$settings.formSearch.quarter == '4') {
+                    imaxValue = 100
+                }
+
+                chartConfigs.dataSource.colorRange.color = [{
+                    minValue: "0",
+                    maxValue: imaxValue,
+                    code: "#e44a00"
+                }, {
+                    minValue: imaxValue,
+                    maxValue: "100",
+                    code: "#6baa01"
+                }] || [];
+
+                chartConfigs.dataSource.dials.dial = [{ "value": $scope.$settings.formChart.gauge2Data }];
+                $('#chart-BudgetYear').insertFusionCharts(chartConfigs);
+            };
+
+            $scope.renderchartBudgetInvest = function () {
+                var chartConfigs = $.extend(true, {}, globalGaugeChart);
+
+                var imaxValue = 32;
+
+                if ($scope.$settings.formSearch.quarter == '1')
+                    imaxValue = 20
+                else if ($scope.$settings.formSearch.quarter == '2') {
+                    imaxValue = 45
+                }
+                else if ($scope.$settings.formSearch.quarter == '3') {
+                    imaxValue = 65
+                }
+                else if ($scope.$settings.formSearch.quarter == '4') {
+                    imaxValue = 100
+                }
+
+                chartConfigs.dataSource.colorRange.color = [{
+                    minValue: "0",
+                    maxValue: imaxValue,
+                    code: "#e44a00"
+                }, {
+                    minValue: imaxValue,
+                    maxValue: "100",
+                    code: "#6baa01"
+                }] || [];
+
+                chartConfigs.dataSource.dials.dial = [{ "value": $scope.$settings.formChart.gauge3Data }];
+                $('#chart-BudgetInvest').insertFusionCharts(chartConfigs);
+            };
+
+            $scope.renderChartPie = function () {
+                var chartConfigs = $.extend(true, {}, globalChartPie);
+                chartConfigs.dataSource.data = $scope.$settings.formView.GraphAllowcateData || [];
+                $('#chart-RatioBudget').insertFusionCharts(chartConfigs);
+
+            };
+
+            $scope.renderChartCostType = function () {
+                var ChartConfigs = $.extend(true, {}, globalChartmscolumn2d);
+                ChartConfigs.dataSource.categories = [{ category: [{ label: "ภาพรวม" }, { label: "รายจ่ายประจำ" }, { label: "รายจ่ายลงทุน" }] }];
+                ChartConfigs.dataSource.dataset = [{
+                    seriesname: "ได้รับจัดสรร",
+                    data: [{
+                        value: "10000"
+                    }, {
+                        value: "11500"
+                    }, {
+                        value: "12500"
+                    }]
+                }, {
+                        seriesname: "เบิกจ่าย",
+                        data: [{
+                            value: "25400"
+                        }, {
+                            value: "29800"
+                        }, {
+                            value: "21800"
+                        }]
+                    },
+                    {
+                        seriesname: "คงเหลือ",
+                        data: [{
+                            value: "25400"
+                        }, {
+                            value: "29800"
+                        }, {
+                            value: "21800"
+                        }]
+                    }];
+
+                $('#chart-CostType').insertFusionCharts(ChartConfigs);
+            };
+
+            $scope.renderChartBudgetType = function () {
+                var ChartConfigs = $.extend(true, {}, globalChartmscolumn2d);
+                ChartConfigs.dataSource.categories = [{ category: [{ label: "งบบุคลากร" }, { label: "งบดำเนินงาน" }, { label: "งบลงทุน" }, { label: "งบเงินอุดหนุน" }, { label: "งบรายจ่ายอื่น" }] }];
+                ChartConfigs.dataSource.dataset = [{
+                    seriesname: "ภาพรวม",
+                    data: [{
+                        value: "10000"
+                    }, {
+                        value: "11500"
+                    }, {
+                        value: "12500"
+                        }, {
+                            value: "500"
+                        }, {
+                            value: "300"
+                        }]
+                }, {
+                    seriesname: "รายจ่ายประจำ",
+                    data: [{
+                        value: "25400"
+                    }, {
+                        value: "29800"
+                    }, {
+                        value: "21800"
+                        }, {
+                            value: "500"
+                        }, {
+                            value: "300"
+                        }]
+                },
+                {
+                    seriesname: "รายจ่ายลงทุน",
+                    data: [{
+                        value: "25400"
+                    }, {
+                        value: "29800"
+                    }, {
+                        value: "21800"
+                        }, {
+                            value: "500"
+                        }, {
+                            value: "300"
+                        }]
+                }];
+
+                $('#chart-BudgetType').insertFusionCharts(ChartConfigs);
+            };
+
+            $scope.ShowChartColumn = function (sType) {
+                //alert(sType);
+                if (sType == 'CostType') {
+
+                    $("#chart-BudgetType").hide();
+                    $("#chart-CostType").show();
+                    
+
+                }
+                else {
+                    $("#chart-CostType").hide();
+                    $("#chart-BudgetType").show();
+                   
+                    $scope.renderChartBudgetType();
+                    //document.getElementById("chart-BudgetType").style.display = "block";
+
+                }
+            };
+
+
+
+            // แสดงผลกราฟ การจัดสรรงบประมาณและรายงานผล
+            $scope.renderAllocateChart = function () {
+                var chartConfigs = $.extend(true, {}, globalChartConfigs);
+                chartConfigs.type = 'column3d';
+                chartConfigs.dataSource.chart.caption = 'กราฟแสดงผล คำของบประมาณ';
+                chartConfigs.dataSource.chart.captionFontSize = "14";
+                chartConfigs.dataSource.chart.yaxisname = 'คำของบประมาณ';
+                chartConfigs.dataSource.chart.yAxisNameFontSize = "12";
+                chartConfigs.dataSource.chart.xaxisname = '';
+                chartConfigs.dataSource.chart.labelFontSize = "12";
+                chartConfigs.dataSource.data = $scope.$settings.formView.GraphRequestData || [];
+                $('#chartContainer').insertFusionCharts(chartConfigs);
+            };
+
+
+
+            // แสดงผลกราฟ รายงานผลรายไตรมาส
+            $scope.renderReportChart = function () {
+                var chartConfigs = $.extend(true, {}, globalChartConfigs);
+                chartConfigs.type = 'column3d';
+                chartConfigs.dataSource.chart.caption = 'กราฟแสดงผล การจัดสรรงบประมาณ';
+                chartConfigs.dataSource.chart.captionFontSize = "14";
+                chartConfigs.dataSource.chart.yaxisname = 'การจัดสรรงบประมาณ';
+                chartConfigs.dataSource.chart.yAxisNameFontSize = "12";
+                chartConfigs.dataSource.chart.xaxisname = '';
+                chartConfigs.dataSource.chart.labelFontSize = "12";
+                chartConfigs.dataSource.data = $scope.$settings.formView.GraphAllowcateData || [];
+                $('#chartReportContainer').insertFusionCharts(chartConfigs);
+            };
+
+
+
+            var timeoutId = null;
+            $scope.submitSearch = function () {
+                $timeout.cancel(timeoutId);
+                timeoutId = $timeout(function () {
+                    $scope.$broadcast('fwSimpleDataTable.paramsChanged', {
+                        iYear: $scope.$settings.formSearch.fiscalYear,
+                        DepID: $scope.$settings.formSearch.depId
+                    });
+                }, 1000);
+            };
+
+            // เมื่อตัวกรองเปลี่ยน
+            var fiscalYearChangedId = null
+            $scope.fiscalYearChanged = function () {
+                $timeout.cancel(fiscalYearChangedId);
+                fiscalYearChangedId = $timeout(function () {
+                    $scope.showDataDashboard();
+                }, 1000);
+            };
+
+            //show dashboard
+            $scope.showDataDashboard();
+
+           
+
+        });
+    </script>
+
+
+}
+

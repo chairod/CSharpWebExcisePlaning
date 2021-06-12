@@ -1,0 +1,292 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-1 pb-2">
+        <div class="row">
+            <div class="col-12 col-md-7 pr-md-1 border-right">
+                <div class="form-row">
+                    <div class="form-group col-12 col-md-2 mb-1">
+                        <label>ปี งปม. (พ.ศ.)</label>
+                        <fw-input-mask model="$settings.formSearch.fiscalYear|convertYearToBuddhist" mask="9999" disabled="true" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+                    </div>
+                    <div class="form-group col-12 col-md-4 mb-1">
+                        <label>เขตพื้นที่</label>
+                        <select class="form-control" ng-model="$settings.formSearch.areaId" ng-disabled="$settings.isLoading@(ViewBag.DepAuhtorize==2?"||true":"")" fw-select2
+                                ng-change="areaChanged()">
+                            <option value="empty">--- เขตพื้นที่ ---</option>
+                            @foreach (var item in ViewBag.Areas)
+                            {
+                                <option value="@item.AREA_ID">@item.AREA_NAME</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-12 col-md-6 mb-1">
+                        <label>หน่วยงาน<span ng-if="$settings.isDepartmentLoading" class="ti-reload rotate-refresh ml-1"></span></label>
+                        <select class="form-control" ng-model="$settings.formSearch.depId" ng-disabled="$settings.isLoading||$settings.departments.length==0" fw-select2>
+                            <option value="empty">--- หน่วยงาน ---</option>
+                            <option ng-repeat="item in $settings.departments" value="{{item.DEP_ID}}">{{item.DEP_NAME}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-12 col-md-6 mb-1">
+                        <md-checkbox ng-model="$settings.formSearch.budgetType" class="mb-0"
+                                     ng-true-value="1" ng-false-value="2">เงินงบประมาณ</md-checkbox>
+                        <md-checkbox ng-model="$settings.formSearch.budgetType" class="mb-0"
+                                     ng-true-value="2" ng-false-value="1">เงินนอกงบประมาณ</md-checkbox>
+                        <div class="text-danger f-w-900 f-12">*** การบันทึกผลการใช้จ่ายงบประมาณ จำเป็นต้องเลือก แหล่งเงิน (เงินงบประมาณ, เงินนอกงบประมาณ) ก่อน เพื่อระบุการใช้จ่ายเงินจากแหล่งเงินใด ***</div>
+                    </div>
+                    <div class="form-group col-12 col-md-6 mb-1">
+                        <fw-execute-button text="ส่งออก Excel" css-class="btn btn-primary btn-sm float-md-left mr-1"
+                                           css-icon-class="ti-save"
+                                           ng-disabled="$settings.isLoading"
+                                           on-loading="$settings.isExporting"
+                                           ng-click="submitExport($event)"></fw-execute-button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-5 pl-md-1">
+                <fw-file-upload callback="uploadDone($res)"
+                                upload-url="@Url.Action("SubmitUploadDocument", "Resource", new { uploadType = "Temporary"})"
+                                accept-filetypes="xls,xlsx"
+                                style="padding: 35px 0px"
+                                ng-disabled="$settings.isLoading||true"></fw-file-upload>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card card-block borderless-card shadow-sm m-0 mb-1 pb-2">
+        @*ส่วนตัวกรองเพื่อค้นหา*@
+        <h4 class="f-16 f-w-900 text-left">เงื่อนไขการส่งออกข้อมูลเพิ่มเติม</h4>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-4">
+                <label>แผนงาน</label>
+                <select class="form-control" ng-model="$settings.formSearch.planId" ng-disabled="$settings.isLoading" fw-select2
+                        ng-change="planChanged()">
+                    <option value="empty">--- แผนงาน ---</option>
+                    @foreach (var item in ViewBag.Plans)
+                    {
+                        <option value="@item.PLAN_ID">@item.PLAN_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-4">
+                <label>ผลผลิต</label>
+                <select class="form-control" ng-model="$settings.formSearch.produceId"
+                        ng-change="produceChanged()"
+                        ng-disabled="$settings.isLoading||$settings.produces.length==0" fw-select2>
+                    <option value="empty">--- ผลผลิต ---</option>
+                    <option ng-repeat="item in $settings.produces" value="{{item.PRODUCE_ID}}">{{item.PRODUCE_NAME}}</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-4">
+                <label>กิจกรรม</label>
+                <select class="form-control" ng-model="$settings.formSearch.activityId"
+                        ng-disabled="$settings.isLoading||$settings.activities.length==0" fw-select2>
+                    <option value="empty">--- กิจกรรม ---</option>
+                    <option ng-repeat="item in $settings.activities" value="{{item.ACTIVITY_ID}}">{{item.ACTIVITY_NAME}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-4">
+                <label>งบรายจ่าย</label>
+                <select class="form-control" ng-model="$settings.formSearch.budgetTypeId" ng-disabled="$settings.isLoading" fw-select2
+                        ng-change="budgetTypeChanged()">
+                    <option value="empty">--- งบรายจ่าย ---</option>
+                    @foreach (var item in ViewBag.BudgetTypes)
+                    {
+                        <option value="@item.BUDGET_TYPE_ID">@item.BUDGET_TYPE_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-4">
+                <label>หมวดค่าใช้จ่าย</label>
+                <select class="form-control" ng-model="$settings.formSearch.expensesGroupId"
+                        ng-disabled="$settings.isLoading||$settings.expensesGroups.length==0" fw-select2
+                        ng-change="expensesGroupChanged()">
+                    <option value="empty">--- หมวดค่าใช้จ่าย ---</option>
+                    <option ng-repeat="item in $settings.expensesGroups" value="{{item.EXPENSES_GROUP_ID}}">{{item.EXPENSES_GROUP_NAME}}</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-4">
+                <label>รายการค่าใช้จ่าย</label>
+                <select class="form-control" ng-model="$settings.formSearch.expensesId"
+                        ng-disabled="$settings.isLoading||$settings.expenses.length==0" fw-select2>
+                    <option value="empty">--- รายการค่าใช้จ่าย ---</option>
+                    <option ng-repeat="item in $settings.expenses" value="{{item.EXPENSES_ID}}">{{item.EXPENSES_NAME}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/inputnumber")
+    @Scripts.Render("~/bundle/select2")
+<script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $q, $customHttp, $filter, $window, $fwDialogService, $timeout) {
+            $scope.$settings = {
+                isLoading: false, isDepartmentLoading: false, isExporting: false,
+                departments: [], produces: [], activities: [], expensesGroups: [], expenses: [],
+                formSearch: {
+                    fiscalYear: '@ViewBag.FiscalYear', budgetType: 1, // 1 = เงินงบ, 2 = เงินนอกงบ
+                    areaId: '@ViewBag.DefaultAreaId', depId: 'empty',
+                    planId: 'empty', produceId: 'empty', activityId: 'empty',
+                    budgetTypeId: 'empty', expensesGroupId: 'empty', expensesId: 'empty'
+                }
+            };
+
+            // เมื่อเขตพื้นที่เปลี่ยนแปลง
+            var areaChangedId = null;
+            $scope.areaChanged = function () {
+                return $q(function (resolve) {
+                    $timeout.cancel(areaChangedId);
+                    areaChangedId = $timeout(function () {
+                        $scope.$settings.departments = [];
+                        $scope.$settings.formSearch.depId = 'empty';
+                        var areaId = ('' + $scope.$settings.formSearch.areaId).replace(/[^\d]/g, '');
+                        if (areaId.length == 0)
+                            return;
+
+                        $scope.$settings.isDepartmentLoading = true;
+                        $customHttp.formPost('@Url.Action("GetDepartmentBy", "Helper")', { areaId: areaId }).then(function (res) {
+                            $scope.$settings.departments = res.data || [];
+                            $scope.$settings.isDepartmentLoading = false;
+                            resolve({});
+                        }, function () {
+                            $scope.$settings.isDepartmentLoading = false;
+                            resolve({});
+                        });
+                    }, 300);
+                });
+            };
+            // เมื่อแผนงานเปลี่ยนแปลง
+            var planChangedId = null;
+            $scope.planChanged = function () {
+                return $q(function (resolve) {
+                    $timeout.cancel(planChangedId);
+                    planChangedId = $timeout(function () {
+                        $scope.$settings.formSearch.produceId = 'empty';
+                        $scope.$settings.formSearch.activityId = 'empty';
+                        $scope.$settings.produces = [];
+                        $scope.$settings.activities = [];
+
+                        var planId = ('' + $scope.$settings.formSearch.planId).replace(/[^\d]/ig, '');
+                        if (planId != '')
+                            $customHttp.formPost('@Url.Action("GetProduceBy", "Helper")', { planId: planId }).then(function (res) {
+                                $scope.$settings.produces = res.data || [];
+                                resolve({});
+                            }, function () { resolve({}); });
+                        else resolve({});
+                    });
+                });
+            };
+            // เมื่อผลผลิตเปลี่ยนแปลง
+            var produceChangedId = null;
+            $scope.produceChanged = function () {
+                return $q(function (resolve) {
+                    $timeout.cancel(produceChangedId);
+                    produceChangedId = $timeout(function () {
+                        $scope.$settings.formSearch.activityId = 'empty';
+                        $scope.$settings.activities = [];
+
+                        var produceId = ('' + $scope.$settings.formSearch.produceId).replace(/[^\d]/ig, '');
+                        if (produceId != '')
+                            $customHttp.formPost('@Url.Action("GetActivityBy", "Helper")', { produceId: produceId }).then(function (res) {
+                                $scope.$settings.activities = res.data || [];
+                                resolve({});
+                            }, function () { resolve({}); });
+                        else resolve({});
+                    });
+                });
+            };
+            // เมื่องบรายจ่าย เปลี่ยนแปลง
+            var budgetTypeIdChangedId = null;
+            $scope.budgetTypeChanged = function () {
+                return $q(function (resolve) {
+                    $timeout.cancel(budgetTypeIdChangedId);
+                    budgetTypeIdChangedId = $timeout(function () {
+                        $scope.$settings.expensesGroups = [];
+                        $scope.$settings.expenses = [];
+                        $scope.$settings.formSearch.expensesGroupId = 'empty';
+                        $scope.$settings.formSearch.expensesId = 'empty';
+                        var budgetTypeId = ('' + $scope.$settings.formSearch.budgetTypeId).replace('empty', '');
+                        $customHttp.formPost('@Url.Action("RetrieveExpensesGroupByBudgetType", "Helper")', { budgetTypeId: budgetTypeId }).then(function (res) {
+                            $scope.$settings.expensesGroups = res.data || [];
+                            resolve({});
+                        }, function () { resolve({}); });
+                    }, 300);
+                });
+            };
+            // เมื่อหมวดค่าใช้จ่าย เปลี่ยนแปลง
+            var expensesGroupIdChangedId = null;
+            $scope.expensesGroupChanged = function () {
+                return $q(function (resolve) {
+                    $timeout.cancel(expensesGroupIdChangedId);
+                    expensesGroupIdChangedId = $timeout(function () {
+                        $scope.$settings.expenses = [];
+                        $scope.$settings.formSearch.expensesId = 'empty';
+                        var expensesGroupId = ('' + $scope.$settings.formSearch.expensesGroupId).replace('empty', '');
+                        $customHttp.formPost('@Url.Action("RetrieveExpensesByExpensesGroup", "Helper")', { expensesGroupId: expensesGroupId }).then(function (res) {
+                            $scope.$settings.expenses = res.data || [];
+                            resolve({});
+                        }, function () { resolve({}); });
+                    }, 300);
+                });
+            };
+
+            // กดส่งออกข้อมูล
+            $scope.submitExport = function (event) {
+                $scope.$settings.isLoading = true;
+
+                var params = $.extend(true, {}, $scope.$settings.formSearch);
+                params.areaId = ('' + params.areaId).replace(/[^\d]/g, '');
+                params.depId = ('' + params.depId).replace(/[^\d]/g, '');
+                params.planId = ('' + params.planId).replace(/[^\d]/g, '');
+                params.produceId = ('' + params.produceId).replace(/[^\d]/g, '');
+                params.activityId = ('' + params.activityId).replace(/[^\d]/g, '');
+                params.budgetTypeId = ('' + params.budgetTypeId).replace(/[^\d]/g, '');
+                params.expensesGroupId = ('' + params.expensesGroupId).replace(/[^\d]/g, '');
+                params.expensesId = ('' + params.expensesId).replace(/[^\d]/g, '');
+                $customHttp.formPost('@Url.Action("SubmitExport", "BudgetReportImport")', params).then(function (res) {
+                    if (null != res.data.errorText)
+                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                    else
+                        $window.location.href = $filter('textFormat')('@Url.Action("GetFile", "Resource", new { groupType = "Temporary" })&filename={0}&deleteFlag=Y&resultFilename={1}'
+                            , res.data.filename
+                            , res.data.downloadFilename);
+                    $scope.$settings.isLoading = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                });
+            };
+            // เมื่ออัพโหลดไฟล์สำเร็จ
+            $scope.uploadDone = function (res) {
+                $scope.$settings.isLoading = true;
+                $customHttp.formPost('@Url.Action("VerfityDocument", "BudgetReportImport")', { filename: res.data.filename, type: "verify" }).then(function (res) {
+                    if (null != res.data.errorText)
+                        $fwDialogService.dangerDialog(null, res.data.errorText);
+                    $scope.$settings.isLoading = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                });
+            };
+
+
+            // จัดเตรียมแบบฟอร์ม
+            $scope.areaChanged().then(function () {
+                $scope.$settings.formSearch.depId = '@ViewBag.DefaultDepId';
+            });
+        });
+</script>
+}

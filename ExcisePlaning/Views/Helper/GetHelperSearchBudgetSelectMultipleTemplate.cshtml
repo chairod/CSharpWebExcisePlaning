@@ -1,0 +1,111 @@
+﻿<md-dialog flex="99" flex-gt-sm="85">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ค้นหา Template คำขอเงินงบประมาณ</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-3">
+                    <label>ชื่อ Template</label>
+                    <input type="text" class="form-control" ng-model="$settings.formSearch.templateName"
+                           ng-change="templateNameChanged()" />
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>แผนงาน</label>
+                    <select class="form-control" fw-select2
+                            ng-model="$settings.formSearch.planId" ng-disabled="$settings.isLoading"
+                            ng-change="submitSearch()">
+                        <option value="empty">--- แผนงาน ---</option>
+                        @foreach (ExcisePlaning.Classes.Mappers.PlanShortFieldProperty item in ViewBag.Plans)
+                        {
+                            <option value="@item.PLAN_ID">@item.PLAN_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>ผลผลิต</label>
+                    <select class="form-control" fw-select2
+                            ng-model="$settings.formSearch.produceId" ng-disabled="$settings.isLoading"
+                            ng-change="submitSearch()">
+                        <option value="empty">--- ผลผลิต ---</option>
+                        @foreach (ExcisePlaning.Classes.Mappers.ProduceShortFieldProperty item in ViewBag.Produces)
+                        {
+                            <option value="@item.PRODUCE_ID">@item.PRODUCE_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>กิจกรรม</label>
+                    <select class="form-control" fw-select2
+                            ng-model="$settings.formSearch.activityId" ng-disabled="$settings.isLoading"
+                            ng-change="submitSearch()">
+                        <option value="empty">--- กิจกรรม ---</option>
+                        @foreach (ExcisePlaning.Classes.Mappers.ActivityShortFieldProperty item in ViewBag.Activities)
+                        {
+                            <option value="@item.ACTIVITY_ID">@item.ACTIVITY_NAME</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12 col-md-3">
+                    <label>งบรายจ่าย</label>
+                    <select class="form-control" fw-select2
+                            ng-model="$settings.formSearch.budgetTypeId" ng-disabled="$settings.isLoading"
+                            ng-change="budgetTypeChanged()">
+                        <option value="empty">--- งบรายจ่าย ---</option>
+                        @foreach (ExcisePlaning.Classes.Mappers.BudgetTypeShortFieldProperty item in ViewBag.BudgetTypes)
+                        {
+                            <option value="@item.BUDGET_TYPE_ID">@item.BUDGET_TYPE_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>หมวด คชจ.<span ng-if="$settings.isLoadExpensesGroup"><i class="animated fadeIn rotate-refresh ti-reload"></i></span></label>
+                    <select class="form-control" fw-select2
+                            ng-model="$settings.formSearch.expensesGroupId" ng-disabled="$settings.isLoading||$settings.expensesGroups.length==0"
+                            ng-change="submitSearch()">
+                        <option value="empty">--- หมวด คชจ. ---</option>
+                        <option ng-repeat="item in $settings.expensesGroups" value="{{item.EXPENSES_GROUP_ID}}">{{item.EXPENSES_GROUP_NAME}}</option>
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label class="d-none d-md-block">&nbsp;</label>
+                    @*<md-checkbox ng-model="$settings.formSearch.budgetSourceType"
+                             ng-click="submitSearch()"
+                             ng-disabled="$settings.isLoading||$settings.budgetSourceTypeReadonly" ng-true-value="'1'">เงิน งปม.</md-checkbox>
+                <md-checkbox ng-model="$settings.formSearch.budgetSourceType"
+                             ng-click="submitSearch()"
+                             ng-disabled="$settings.isLoading||$settings.budgetSourceTypeReadonly" ng-true-value="'2'">เงินนอก งปม.</md-checkbox>*@
+                </div>
+            </div>
+
+            <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                                  title=""
+                                  event-name="fwSimpleDataTable.budgetTemplate.modal.paramsChanged"
+                                  auto-load="false"
+                                  disabled="$settings.isLoading"
+                                  search-done-callback="searchDone($res)"
+                                  column-click-callback="columnClick($event, $rows, $columnConfig)"
+                                  row-click-callback="rowClick($event, $row, $columnConfig)"
+                                  route-url="@Url.Action("RetrieveBudgetTemplate", "Helper")"></fw-simple-data-table>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        @*<fw-execute-button text="สร้าง Template ใหม่" css-class="btn btn-primary btn-sm mr-1"
+        ng-disabled="$settings.isLoading"
+        css-icon-class="ion-plus-round"
+        ng-click="createNew($event)"></fw-execute-button>*@
+        <fw-execute-button text="ตกลง" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading||$settings.selectItems.length==0"
+                           css-icon-class="ion-checkmark-circled"
+                           ng-click="ok()"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

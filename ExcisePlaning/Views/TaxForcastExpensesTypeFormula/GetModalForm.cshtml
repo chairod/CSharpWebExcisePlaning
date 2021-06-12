@@ -1,0 +1,87 @@
+﻿<md-dialog flex="99" flex-gt-sm="55">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์มบันทึกสูตรการคำนวณค่าใช้จ่ายประมาณการรายได้ภาษี</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-3">
+                    <label class="required-field">วันที่เริ่มใช้<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.StartDateStr.ErrorMessages"></fw-validate-error-output><span ng-if="$settings.isNextStartDateLoading"><i class="ml-1 ti-reload rotate-refresh"></i></span></label>
+                    <fw-date-range model="$settings.formData.StartDateStr" single-date-picker="true"
+                                   disabled="$settings.isLoading||!$settings.isEditAble||null!=$settings.formData.FormulaId"></fw-date-range>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label class="required-field">วันหมดอายุ<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ExpireDateStr.ErrorMessages"></fw-validate-error-output></label>
+                    <fw-date-range model="$settings.formData.ExpireDateStr" single-date-picker="true"
+                                   disabled="$settings.isLoading||!$settings.isEditAble||null!=$settings.formData.FormulaId"></fw-date-range>
+                </div>
+                <div class="form-group col-12 col-md-6">
+                    <label class="required-field">ประเภทรายจ่ายภาษี<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.TaxExpensesTypeId.ErrorMessages"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.TaxExpensesTypeId" 
+                            ng-disabled="$settings.isLoading||!$settings.isEditAble||null!=$settings.formData.FormulaId" fw-select2
+                            ng-change="forcastExpensesTypeChanged()">
+                        <option value="empty">--- ประเภทรายจ่ายภาษี ---</option>
+                        @foreach (var item in ViewBag.ForcastExpensesTypes)
+                        {
+                            <option value="@item.FORCAST_EXPENSES_TYPE_ID">@item.FORCAST_EXPENSES_TYPE_NAME</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="row" ng-if="$settings.isEditAble">
+                <div class="col-12">
+                    <fw-execute-button text="เพิ่มสูตร" css-class="btn btn-primary btn-sm"
+                                       ng-disabled="$settings.isLoading"
+                                       css-icon-class="ion-plus-round"
+                                       ng-click="addFormula()"></fw-execute-button>
+                    <fw-validate-error-output css-class="float-md-right ml-1" error-messages="$settings.formErrors.Formulas.ErrorMessages"></fw-validate-error-output>
+                </div>
+            </div>
+            <div class="table-responsive overflow-auto" style="height:290px;min-height:290px;max-height:290px;">
+                <table class="table table-bordered">
+                    <tr class="bg-secondary text-white">
+                        <th style="width:60px;min-width:60px;max-width:60px;"></th>
+                        <th style="width:150px;min-width:150px;max-width:150px;" class="text-center">ค่าร้อยละ</th>
+                        <th style="width:150px;min-width:150px;max-width:150px;" class="text-center">ลำดับการคำนวณ</th>
+                        <th style="min-width:200px;" class="text-left">รายละเอียดอื่นๆ</th>
+                    </tr>
+
+                    <tr ng-if="$settings.formData.Formulas.length == 0 && !$settings.isLoading">
+                        <th colspan="4" class="text-center f-w-900 text-danger">--- คลิกที่ปุ่ม "เพิ่มสูตร" เพื่อกำหนดลำดับสูตรในการคำนวณ ---</th>
+                    </tr>
+
+                    <tr ng-repeat="row in $settings.formData.Formulas">
+                        <th style="width:60px;min-width:60px;max-width:60px;" class="text-center"><a href="javascript:void(0)" class="text-danger f-w-900" ng-if="$settings.isEditAble" ng-click="$settings.formData.Formulas.splice($index, 1)">ยกเลิก</a></th>
+                        <td style="width:150px;min-width:150px;max-width:150px;" class="text-center">
+                            <fw-input-number-mask ng-model="row.PERCENT_VAL" ng-disabled="$settings.isLoading||!$settings.isEditAble" min-value="0.00" max-value="100.00" css-class="text-center" placeholder="ค่าที่ระบุ 0 - 100"></fw-input-number-mask>
+                        </td>
+                        <td style="width:150px;min-width:150px;max-width:150px;" class="text-center">
+                            <fw-input-number-mask ng-model="row.CAL_PRIORITY" ng-disabled="$settings.isLoading||!$settings.isEditAble" min-value="0" max-value="100" css-class="text-center" placeholder="ค่าที่ระบุ 0 - 100"></fw-input-number-mask>
+                        </td>
+                        <td style="min-width:200px;" class="text-left">
+                            <input type="text" class="form-control" ng-model="row.REMARK_TEXT" title="{{row.REMARK_TEXT}}" maxlength="100" placeholder="ไม่เกิน 100 ตัวอักษร" ng-disabled="$settings.isLoading||!$settings.isEditAble" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <a href="javascript:void(0)" class="text-danger f-w-900 d-block float-md-right" ng-if="$settings.isEditAble" ng-click="$settings.formData.Formulas = []">[ยกเลิกสูตรทั้งหมด]</a>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span ng-if="!$settings.isEditAble" class="animated fadeIn text-danger">สูตรที่หมดอายุแล้ว ไม่สามารถแก้ไขข้อมูลได้</span>
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading||!$settings.isEditAble"
+                           css-icon-class="ti-save"
+                           ng-click="submitSave($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

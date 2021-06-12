@@ -1,0 +1,90 @@
+﻿<md-dialog flex="98" flex-gt-sm="55">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ฟอร์มรายการค่าใช้จ่าย</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-4">
+                    <label class="require-field">ชื่อค่าใช้จ่าย<fw-validate-error-output error-messages="$settings.formErrors.ExpensesName.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" ng-model="$settings.formData.ExpensesName" title="{{$settings.formData.ExpensesName}}" ng-disabled="$settings.isLoading" maxlength="120" />
+                </div>
+                <div class="form-group col-12 col-md-8">
+                    <label class="require-field">หมวด คชจ.<fw-validate-error-output error-messages="$settings.formErrors.ExpensesGroupId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <select class="form-control" ng-model="$settings.formData.ExpensesGroupId" ng-disabled="$settings.isLoading" fw-select2>
+                        <option value="empty">--- หมวด คชจ. ---</option>
+                        @foreach (ExcisePlaning.Classes.Mappers.ExpensesGroupShortFieldProperty item in ViewBag.ExpensesGroup)
+                        {
+                            <option value="@item.EXPENSES_GROUP_ID">@(item.EXPENSES_GROUP_NAME + " [" + item.BUDGET_TYPE_NAME + ", " + item.EXPENSES_MASTER_NAME + "]")</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12 col-md-4">
+                    <label class="d-none d-md-block">&nbsp;</label>
+                    <md-checkbox ng-model="$settings.formData.CanAddProject" class="mb-1" ng-true-value="1" ng-false-value="0" ng-disabled="$settings.isLoading">เพิ่มรายละเอียดได้หรือไม่</md-checkbox>
+                    <span class="text-danger f-12">** รายการค่าใช้จ่ายนี้สามารถเพิ่มรายละเอียดภายใต้ตนเองได้หรือไม่ ซึ่งจะนำไปใช้ในขั้นตอนการรับจัดสรรเงินงบประมาณจากรัฐบาล</span>
+                </div>
+                <div class="form-group col-12 col-md-8">
+                    <label class="require-field">แบบฟอร์ม (สำหรับผู้พัฒนา)<fw-validate-error-output error-messages="$settings.formErrors.FormTemplateName.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                    <input type="text" class="form-control" ng-model="$settings.formData.FormTemplateName" title="{{$settings.formData.FormTemplateName}}"
+                           ng-disabled="$settings.isLoading" maxlength="200" />
+                    <span class="d-block text-danger f-12">ชื่อไฟล์แบบฟอร์มที่ใช้สำหรับระบุรายละเอียดในการทำคำขอเงินงบประมาณ ในกรณีที่มีการเพิ่มรายการค่าใช้จ่ายใหม่จะต้องมีการสร้างแบบฟอร์มใหม่ด้วย</span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12 col-md-4">
+                    <label class="required-field">ลำดับการจัดเรียงข้อมูล<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.OrderSeq.ErrorMessages"></fw-validate-error-output></label>
+                    <fw-input-number-mask ng-model="$settings.formData.OrderSeq" min-value="0" max-value="999" ng-disabled="$settings.isLoading"></fw-input-number-mask>
+                </div>
+            </div>
+
+            @*ข้อมูลทางบัญชี*@
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="f-14 float-md-left">รายการทางบัญชี จำนวน {{$settings.formData.ExpensesGLs.length|number:0}} รายการ</h1>
+                    <fw-execute-button text="เพิ่ม" css-class="btn btn-primary btn-sm float-md-right"
+                                       css-icon-class="ti-plus"
+                                       ng-click="addGL()" ng-disabled="$settings.isLoading"></fw-execute-button>
+                    <div class="table-responsive overflow-auto" style="min-height:250px;max-height:250px;height:250px;">
+                        <table class="table table-striped table-bordered">
+                            <tr>
+                                <th style="width:60px;min-width:60px;max-width:60px"></th>
+                                <th style="width:180px;min-width:180px;max-width:180px" class="text-left">รหัสบัญชี</th>
+                                <th style="min-width:150px" class="text-left">ชื่อรายการทางบัญชี</th>
+                            </tr>
+                            <tr ng-repeat="row in $settings.formData.ExpensesGLs">
+                                <td style="width:60px;min-width:60px;max-width:60px" class="text-center align-middle">
+                                    <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.ExpensesGLs.splice($index,1)">ยกเลิก</a>
+                                </td>
+                                <td style="width:180px;min-width:180px;max-width:180px" class="text-left">
+                                    <input type="text" class="form-control" ng-model="row.GLCode" title="{{row.GLCode}}" ng-disabled="$settings.isLoading" maxlength="15" />
+                                    <fw-validate-error-output error-messages="$settings.formErrors.ExpensesGLs[$index].GLCode.ErrorMessages" css-class="ml-1"></fw-validate-error-output>
+                                </td>
+                                <td style="min-width:150px" class="text-left">
+                                    <input type="text" class="form-control" ng-model="row.GLText" title="{{row.GLText}}" ng-disabled="$settings.isLoading" maxlength="120" />
+                                    <fw-validate-error-output error-messages="$settings.formErrors.ExpensesGLs[$index].GLText.ErrorMessages" css-class="ml-1"></fw-validate-error-output>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <fw-validate-error-output error-messages="$settings.formErrors.ExpensesGLs.ErrorMessages" css-class="d-block"></fw-validate-error-output>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-2"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="save($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

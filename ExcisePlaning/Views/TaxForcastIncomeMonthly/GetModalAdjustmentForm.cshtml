@@ -1,0 +1,96 @@
+﻿<md-dialog flex="100" flex-gt-sm="60">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์มปรับปรุงยอดการประมาณการรายรับภาษี</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row border-bottom pb-2 mb-2">
+                <div class="form-group col-12 col-md-4 mb-0">
+                    <label>ปีงบประมาณ (พ.ศ.)</label>
+                    <input type="text" class="form-control border-0 f-22 text-primary f-w-900" style="font-size:20px!important;" value="{{$settings.formData.YR|convertYearToBuddhist}}" />
+                </div>
+                <div class="form-group col-12 col-md-4 mb-0">
+                    <label>เดือน</label>
+                    <input type="text" class="form-control border-0 f-22 text-primary f-w-900" style="font-size:20px!important;" value="{{$settings.formData.MN|toMonthLabel}}" />
+                </div>
+                <div class="form-group col-12 col-md-4 mb-0">
+                    <label>ประเภทรายได้ภาษี</label>
+                    <input type="text" class="form-control border-0 f-22 text-primary f-w-900" style="font-size:20px!important;" value="{{$settings.formData.TAX_SOURCE_NAME}}" title="{{$settings.formView.TAX_SOURCE_NAME}}" />
+                </div>
+            </div>
+
+            <h4 class="f-16 f-w-900">ยอดประมาณการปัจจุบัน</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <tr class="bg-primary">
+                        <th colspan="2" class="text-center">ประมาณการรายได้ภาษี (บาท)</th>
+                        <th rowspan="2" class="text-right">ภาษีเพื่อมหาดไทย</th>
+                        <th colspan="2" class="text-center">เงินค่าใช้จ่ายท้องถิ่น (บาท)</th>
+                    </tr>
+                    <tr class="bg-primary">
+                        <th class="text-right">ในประเทศ</th>
+                        <th class="text-right">นำเข้า</th>
+                        <th class="text-right">ในประเทศ</th>
+                        <th class="text-right">นำเข้า</th>
+                    </tr>
+                    <tr>
+                        <td class="text-right f-20">{{$settings.formData.OLD_DOMESTIC_INCOME_AMOUNT|displayDecimal:2}}</td>
+                        <td class="text-right f-20">{{$settings.formData.OLD_IMPORT_INCOME_AMOUNT|displayDecimal:2}}</td>
+                        <td class="text-right f-20">{{$settings.formData.DOMESTIC_EXPENSES_AMOUNT|displayDecimal:2}}</td>
+                        <td class="text-right f-20">{{$settings.formData.DOMESTIC_EXPENSES_LOCAL_AMOUNT|displayDecimal:2}}</td>
+                        <td class="text-right f-20">{{$settings.formData.IMPORT_EXPENSES_LOCAL_AMOUNT|displayDecimal:2}}</td>
+                    </tr>
+                </table>
+            </div>
+            
+
+            <div class="row">
+                <div class="col-12 col-md-4 border-right">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <md-checkbox class="mb-0" ng-model="$settings.formData.ADJUSTMENT_TYPE" ng-true-value="1" ng-false-value="2">ปรับเพิ่ม</md-checkbox>
+                            <md-checkbox class="mb-0" ng-model="$settings.formData.ADJUSTMENT_TYPE" ng-true-value="2" ng-false-value="1">ปรับลด</md-checkbox>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label class="required-field">ประมาณการรายได้ในประเทศ<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.DOMESTIC_INCOME_AMOUNT.ErrorMessages"></fw-validate-error-output></label>
+                            <fw-input-number-mask ng-model="$settings.formData.DOMESTIC_INCOME_AMOUNT" ng-disabled="$settings.isLoading"
+                                                  min-value="0" max-value="99999999999999.99" css-class="text-right"
+                                                  placeholder="จำนวนเงิน (บาท)"></fw-input-number-mask>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label class="required-field">ประมาณการรายได้นำเข้า<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.IMPORT_INCOME_AMOUNT.ErrorMessages"></fw-validate-error-output></label>
+                            <fw-input-number-mask ng-model="$settings.formData.IMPORT_INCOME_AMOUNT" ng-disabled="$settings.isLoading"
+                                                  min-value="0" max-value="99999999999999.99" css-class="text-right"
+                                                  placeholder="จำนวนเงิน (บาท)"></fw-input-number-mask>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-8">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label>รายละเอียดเพิ่มเติม</label>
+                            <textarea class="form-control textarea-noresize" ng-model="$settings.formData.REMARK_TEXT" rows="7" maxlength="120" placeholder="ความยาวไม่เกิน 120 ตัวอักษร" style="width:100%"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-2"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ti-save"
+                           ng-click="submitSave($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

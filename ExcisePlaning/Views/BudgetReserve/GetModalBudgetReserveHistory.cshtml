@@ -1,0 +1,44 @@
+﻿<md-dialog flex="99" flex-gt-sm="65">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>สรุปรายการค่าใช้จ่ายที่ส่งคำขอ งปม.</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th style="width:60px;min-width:60px;max-width:60px;" class="align-middle">ลำดับที่</th>
+                        <th style="width:145px;min-width:145px;max-width:145px;" class="text-left word-wrap">วันที่ทำรายการ</th>
+                        <th style="width:145px;min-width:145px;max-width:145px;" class="text-left word-wrap">ผู้ทำรายการ</th>
+                        <th style="width:160px;min-width:160px;max-width:160px;" class="text-left word-wrap">งบประมาณ (บาท)</th>
+                        <th style="width:160px;min-width:160px;max-width:160px;" class="text-left word-wrap">เงินคืน (บาท)</th>
+                        <th style="width:130px;min-width:130px;max-width:130px;" class="text-left word-wrap">กันเงินจาก</th>
+                        <th style="width:130px;min-width:130px;max-width:130px;" class="text-left word-wrap"></th>
+                    </tr>
+                    <tr>
+                        <th colspan="7" class="text-center text-danger">--- ไม่พบข้อมูล ---</th>
+                    </tr>
+                    <tr ng-repeat="row in $settings.rows">
+                        <td style="width:60px;min-width:60px;max-width:60px;" class="align-middle">{{row.SEQ_NO}}</td>
+                        <td style="width:145px;min-width:145px;max-width:145px;" class="text-left word-wrap">{{row.CREATED_DATETIME|sqlDate:'':null:true}}</td>
+                        <td style="width:145px;min-width:145px;max-width:145px;" class="text-left word-wrap">{{row.CREATED_NAME}}</td>
+                        <td style="width:160px;min-width:160px;max-width:160px;" class="text-left word-wrap">{{row.RESERVE_BUDGET_AMOUNT|displayDecimal:2}}</td>
+                        <td style="width:160px;min-width:160px;max-width:160px;" class="text-left word-wrap">{{row.CASHBACK_AMOUNT|displayDecimal:2}}</td>
+                        <td style="width:130px;min-width:130px;max-width:130px;" class="text-left word-wrap"><span ng-class="{'text-warning':row.BUDGET_TYPE==2, 'text-primary': row.BUDGET_TYPE==1}">{{row.BUDGET_TYPE==1?'เงิน งมป.':'นอก งปม.'}}</span></td>
+                        <td style="width:130px;min-width:130px;max-width:130px;" class="text-left word-wrap">{{row.RESERVE_TYPE==1?'ผูกพัน':'กันไว้เบิก'}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+

@@ -1,0 +1,465 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-1">
+        <div class="row border-bottom mb-3 pb-2">
+            <div class="col-7">
+                <span class="mr-1 f-w-900 f-18">ปีงบประมาณ @("{{" + ViewBag.FiscalYear+"|convertYearToBuddhist}}")</span>
+                <md-checkbox ng-model="$settings.formData.BudgetType" ng-true-value="1" ng-disabled="true" class="mb-0">เงินงบประมาณ</md-checkbox>
+                <md-checkbox ng-model="$settings.formData.BudgetType" ng-true-value="2" ng-disabled="true" class="mb-0">เงินนอกงบประมาณ</md-checkbox>
+            </div>
+            <div class="col-5">
+                <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm float-md-right"
+                                   css-icon-class="ti-save"
+                                   ng-click="submitSave($event)"
+                                   on-loading="$settings.isSaving"
+                                   ng-disabed="$settings.isLoading"></fw-execute-button>
+            </div>
+        </div>
+
+        @*ข้อมูลการโอนเปลี่ยนแปลง ไปยัง รายการอื่นๆ*@
+        <div class="row border-bottom mb-1 pb-1">
+            <div class="col-12 col-md-6 border-right">
+                <h4 class="m-0 mb-2 pb-1 f-w-900 f-18 border-bottom">รายการต้นทาง</h4>
+                <div class="form-row">
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">แผนงาน<fw-validate-error-output error-messages="$settings.formErrors.FromPlanId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.FromPlanId" ng-disabled="$settings.isLoading" fw-select2
+                                ng-change="planChanged('from')">
+                            <option value="empty">--- แผนงาน ---</option>
+                            @foreach (var item in ViewBag.Plans)
+                            {
+                                <option value="@item.PLAN_ID">@item.PLAN_NAME</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">ผลผลิต<fw-validate-error-output error-messages="$settings.formErrors.FromProduceId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.FromProduceId" ng-disabled="$settings.isLoading||$settings.fromProduces.length==0" fw-select2
+                                ng-change="produceChanged('from')">
+                            <option value="empty">--- ผลผลิต ---</option>
+                            <option ng-repeat="item in $settings.fromProduces" value="{{item.PRODUCE_ID}}">{{item.PRODUCE_NAME}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">กิจกรรม<fw-validate-error-output error-messages="$settings.formErrors.FromActivityId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.FromActivityId" ng-disabled="$settings.isLoading||$settings.fromActivities.length==0" fw-select2>
+                            <option value="empty">--- กิจกรรม ---</option>
+                            <option ng-repeat="item in $settings.fromActivities" value="{{item.ACTIVITY_ID}}">{{item.ACTIVITY_NAME}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">งบรายจ่าย<fw-validate-error-output error-messages="$settings.formErrors.FromBudgetTypeId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.FromBudgetTypeId" ng-disabled="$settings.isLoading" fw-select2
+                                ng-change="budgetTypeChanged('from')">
+                            <option value="empty">--- งบรายจ่าย ---</option>
+                            @foreach (var item in ViewBag.BudgetTypes)
+                            {
+                                <option value="@item.BUDGET_TYPE_ID">@item.BUDGET_TYPE_NAME</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">หมวดค่าใช้จ่าย<fw-validate-error-output error-messages="$settings.formErrors.FromExpensesGroupId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.FromExpensesGroupId" ng-disabled="$settings.isLoading||$settings.fromExpensesGroups.length==0" fw-select2
+                                ng-change="expensesGroupChanged('from')">
+                            <option value="empty">--- หมวดค่าใช้จ่าย ---</option>
+                            <option ng-repeat="item in $settings.fromExpensesGroups" value="{{item.EXPENSES_GROUP_ID}}">{{item.EXPENSES_GROUP_NAME}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">ค่าใช้จ่าย<fw-validate-error-output error-messages="$settings.formErrors.FromExpensesId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.FromExpensesId" ng-disabled="$settings.isLoading||$settings.fromExpenses.length==0" fw-select2
+                                ng-change="expensesChanged('from')">
+                            <option value="empty">--- ค่าใช้จ่าย ---</option>
+                            <option ng-repeat="item in $settings.fromExpenses" value="{{item.EXPENSES_ID}}">{{item.EXPENSES_NAME}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1" ng-if="$settings.fromProjects.length > 0">
+                        <label class="required-field animated fadeIn">โครงการ<fw-validate-error-output error-messages="$settings.formErrors.FromProjectId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control animated fadeIn" ng-model="$settings.formData.FromProjectId" ng-disabled="$settings.isLoading||$settings.fromProjects.length==0" fw-select2>
+                            <option value="empty">--- โครงการ ---</option>
+                            <option ng-repeat="item in $settings.fromProjects" value="{{item.PROJECT_ID}}">{{item.PROJECT_NAME}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <h4 class="m-0 mb-2 pb-1 f-w-900 f-18 border-bottom">รายการปลายทาง</h4>
+                <div class="form-row">
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">แผนงาน<fw-validate-error-output error-messages="$settings.formErrors.ToPlanId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.ToPlanId" ng-disabled="$settings.isLoading" fw-select2
+                                ng-change="planChanged('to')">
+                            <option value="empty">--- แผนงาน ---</option>
+                            @foreach (var item in ViewBag.Plans)
+                            {
+                                <option value="@item.PLAN_ID">@item.PLAN_NAME</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">ผลผลิต<fw-validate-error-output error-messages="$settings.formErrors.ToProduceId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.ToProduceId" ng-disabled="$settings.isLoading||$settings.toProduces.length==0" fw-select2
+                                ng-change="produceChanged('to')">
+                            <option value="empty">--- ผลผลิต ---</option>
+                            <option ng-repeat="item in $settings.toProduces" value="{{item.PRODUCE_ID}}">{{item.PRODUCE_NAME}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">กิจกรรม<fw-validate-error-output error-messages="$settings.formErrors.ToActivityId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.ToActivityId" ng-disabled="$settings.isLoading||$settings.toActivities.length==0" fw-select2>
+                            <option value="empty">--- กิจกรรม ---</option>
+                            <option ng-repeat="item in $settings.toActivities" value="{{item.ACTIVITY_ID}}">{{item.ACTIVITY_NAME}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">งบรายจ่าย<fw-validate-error-output error-messages="$settings.formErrors.ToBudgetTypeId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.ToBudgetTypeId" ng-disabled="$settings.isLoading" fw-select2
+                                ng-change="budgetTypeChanged('to')">
+                            <option value="empty">--- งบรายจ่าย ---</option>
+                            @foreach (var item in ViewBag.BudgetTypes)
+                            {
+                                <option value="@item.BUDGET_TYPE_ID">@item.BUDGET_TYPE_NAME</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">หมวดค่าใช้จ่าย<fw-validate-error-output error-messages="$settings.formErrors.ToExpensesGroupId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.ToExpensesGroupId" ng-disabled="$settings.isLoading||$settings.toExpensesGroups.length==0" fw-select2
+                                ng-change="expensesGroupChanged('to')">
+                            <option value="empty">--- หมวดค่าใช้จ่าย ---</option>
+                            <option ng-repeat="item in $settings.toExpensesGroups" value="{{item.EXPENSES_GROUP_ID}}">{{item.EXPENSES_GROUP_NAME}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1">
+                        <label class="required-field">ค่าใช้จ่าย<fw-validate-error-output error-messages="$settings.formErrors.ToExpensesId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control" ng-model="$settings.formData.ToExpensesId" ng-disabled="$settings.isLoading||$settings.toExpenses.length==0" fw-select2
+                                ng-change="expensesChanged('to')">
+                            <option value="empty">--- ค่าใช้จ่าย ---</option>
+                            <option ng-repeat="item in $settings.toExpenses" value="{{item.EXPENSES_ID}}">{{item.EXPENSES_NAME}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-12 mb-1" ng-if="$settings.toProjects.length > 0">
+                        <label class="required-field animated fadeIn">โครงการ<fw-validate-error-output error-messages="$settings.formErrors.ToProjectId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
+                        <select class="form-control animated fadeIn" ng-model="$settings.formData.ToProjectId" ng-disabled="$settings.isLoading||$settings.toProjects.length==0" fw-select2>
+                            <option value="empty">--- โครงการ ---</option>
+                            <option ng-repeat="item in $settings.toProjects" value="{{item.PROJECT_ID}}">{{item.PROJECT_NAME}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        @*ข้อมูลยอดการโอนเปลี่ยนแปลง และ รายละเอียดอื่นๆ*@
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label class="required-field">จำนวนที่โอน (บาท)<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.TranferAmount.ErrorMessages"></fw-validate-error-output></label>
+                <fw-input-number-mask ng-model="$settings.formData.TranferAmount" ng-disabled="$settings.isLoading"
+                                      min-value="0.00" max-value="999999999999.99" placeholder="ระบุจำนวนเงิน (บาาท)"></fw-input-number-mask>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>วันที่โอน<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.TranferDateStr.ErrorMessages"></fw-validate-error-output></label>
+                <fw-date-range model="$settings.formData.TranferDateStr" disabled="$settings.isLoading"
+                               single-date-picker="true"></fw-date-range>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>เลขที่อ้างอิง<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ReferCode.ErrorMessages"></fw-validate-error-output></label>
+                <input type="text" class="form-control" ng-model="$settings.formData.ReferCode" ng-disabled="$settings.isLoading" maxlength="15" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-6">
+                <label class="required-field">รายละเอียด<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.RemarkText.ErrorMessages"></fw-validate-error-output></label>
+                <textarea class="form-control textarea-noresize" ng-model="$settings.formData.RemarkText" ng-disabled="$settings.isLoading" rows="6" style="height:90px;" maxlength="150" placeholder="ระบุรายละเอียดเพิ่มเติม ความยาวไม่เกิน 150 ตัวอักษร"></textarea>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ผู้โอน</label>
+                <input type="text" class="form-control" value="@ViewBag.LoginName" readonly />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+    @Styles.Render("~/content/datepickerrange")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundle/inputmask")
+    @Scripts.Render("~/bundle/inputnumber")
+    @Scripts.Render("~/bundle/select2")
+    @Scripts.Render("~/bundle/datepickerrange")
+    <script type="text/javascript">
+        angular.module('leaveApp').controller('AppController', function ($scope, $fwDialogService, $customHttp, $timeout, $fwDateService) {
+            $scope.$settings = {
+                isLoading: false, isSaving: false,
+                fromProduces: [], fromActivities: [], fromExpensesGroups: [], fromExpenses: [], fromProjects: [],
+                toProduces: [], toActivities: [], toExpensesGroups: [], toExpenses: [], toProjects: [],
+
+                formErrors: {},
+                formData: {} // init func.
+            };
+
+            // กำหนดค่าเริ่มต้นฟอร์ม
+            $scope.init = function () {
+                $scope.$settings.formErrors = {};
+                $scope.$settings.fromProduces = [];
+                $scope.$settings.fromActivities = [];
+                $scope.$settings.fromExpensesGroups = [];
+                $scope.$settings.fromExpenses = [];
+                $scope.$settings.fromProjects = [];
+
+                $scope.$settings.toProduces = [];
+                $scope.$settings.toActivities = [];
+                $scope.$settings.toExpensesGroups = [];
+                $scope.$settings.toExpenses = [];
+                $scope.$settings.toProjects = [];
+
+                $scope.$settings.formData = {
+                    FiscalYear: '@ViewBag.FiscalYear',
+                    BudgetType: @(ViewBag.PageType == "budget" ? 1 : 2),
+
+                    FromPlanId: 'empty', FromProduceId: 'empty', FromActivityId: 'empty',
+                    FromBudgetTypeId: 'empty', FromExpensesGroupId: 'empty', FromExpensesId: 'empty',
+                    FromProjectId: 'empty',
+
+                    ToPlanId: 'empty', ToProduceId: 'empty', ToActivityId: 'empty',
+                    ToBudgetTypeId: 'empty', ToExpensesGroupId: 'empty', ToExpensesId: 'empty',
+                    ToProjectId: 'empty',
+
+                    TranferAmount: null, ReferCode: null, RemarkText: null,
+                    TranferDateStr: $fwDateService.getCurrDate().toString()
+                };
+            };
+            // เมื่อแผนงานเปลี่ยนแปลง
+            var planChangedId = null;
+            $scope.planChanged = function (type) {
+                $timeout.cancel(planChangedId);
+                planChangedId = $timeout(function () {
+                    var planId = '';
+                    if ('from' == type) {
+                        planId = ('' + $scope.$settings.formData.FromPlanId).replace(/[^\d]/g, '');
+                        $scope.$settings.fromProduces = [];
+                        $scope.$settings.fromActivities = [];
+                        $scope.$settings.formData.FromProduceId = 'empty';
+                        $scope.$settings.formData.FromActivityId = 'empty';
+                    } else {
+                        planId = ('' + $scope.$settings.formData.ToPlanId).replace(/[^\d]/g, '');
+                        $scope.$settings.toProduces = [];
+                        $scope.$settings.toActivities = [];
+                        $scope.$settings.formData.ToProduceId = 'empty';
+                        $scope.$settings.formData.ToActivityId = 'empty';
+                    }
+
+                    if (planId.length == 0)
+                        return;
+
+                    $customHttp.formPost('@Url.Action("GetProduceBy", "Helper")', { planId: planId }).then(function (res) {
+                        var rows = res.data || [];
+                        if ('from' == type)
+                            $scope.$settings.fromProduces = rows;
+                        else
+                            $scope.$settings.toProduces = rows;
+                    }, function () { });
+                }, 300);
+            };
+            // เมื่อผลผลิตเปลี่ยนแปลง
+            var produceChangedId = null;
+            $scope.produceChanged = function (type) {
+                $timeout.cancel(produceChangedId);
+                produceChangedId = $timeout(function () {
+                    var produceId = '';
+                    if ('from' == type) {
+                        produceId = ('' + $scope.$settings.formData.FromProduceId).replace(/[^\d]/g, '');
+                        $scope.$settings.fromActivities = [];
+                        $scope.$settings.formData.FromActivityId = 'empty';
+                    } else {
+                        produceId = ('' + $scope.$settings.formData.ToProduceId).replace(/[^\d]/g, '');
+                        $scope.$settings.toActivities = [];
+                        $scope.$settings.formData.ToActivityId = 'empty';
+                    }
+
+                    if (produceId.length == 0)
+                        return;
+
+                    $customHttp.formPost('@Url.Action("GetActivityBy", "Helper")', { produceId: produceId }).then(function (res) {
+                        var rows = res.data || [];
+                        if ('from' == type)
+                            $scope.$settings.fromActivities = rows;
+                        else
+                            $scope.$settings.toActivities = rows;
+                    }, function () { });
+                }, 300);
+            };
+            // เมื่องบรายจ่ายเปลี่ยนแปลง
+            var budgetTypeChangedId = null;
+            $scope.budgetTypeChanged = function (type) {
+                $timeout.cancel(budgetTypeChangedId);
+                budgetTypeChangedId = $timeout(function () {
+                    var budgetTypeId = '';
+                    if ('from' == type) {
+                        budgetTypeId = ('' + $scope.$settings.formData.FromBudgetTypeId).replace(/[^\d]/g, '');
+                        $scope.$settings.fromExpensesGroups = [];
+                        $scope.$settings.fromExpenses = [];
+                        $scope.$settings.fromProjects = [];
+                        $scope.$settings.formData.FromExpensesGroupId = 'empty';
+                        $scope.$settings.formData.FromExpensesId = 'empty';
+                        $scope.$settings.formData.FromProjectId = 'empty';
+                    } else {
+                        budgetTypeId = ('' + $scope.$settings.formData.ToBudgetTypeId).replace(/[^\d]/g, '');
+                        $scope.$settings.toExpensesGroups = [];
+                        $scope.$settings.toExpenses = [];
+                        $scope.$settings.toProjects = [];
+                        $scope.$settings.formData.ToExpensesGroupId = 'empty';
+                        $scope.$settings.formData.ToExpensesId = 'empty';
+                        $scope.$settings.formData.ToProjectId = 'empty';
+                    }
+
+                    if (budgetTypeId.length == 0)
+                        return;
+
+                    $customHttp.formPost('@Url.Action("RetrieveExpensesGroupByBudgetType", "Helper")', { budgetTypeId: budgetTypeId }).then(function (res) {
+                        var rows = res.data || [];
+                        if ('from' == type)
+                            $scope.$settings.fromExpensesGroups = rows;
+                        else
+                            $scope.$settings.toExpensesGroups = rows;
+                    }, function () { });
+                }, 300);
+            };
+            // เมื่อหมวดค่าใช้จ่ายเปลี่ยนแปลง
+            var expensesGroupChangedId = null;
+            $scope.expensesGroupChanged = function (type) {
+                $timeout.cancel(expensesGroupChangedId);
+                expensesGroupChangedId = $timeout(function () {
+                    var expensesGroupId = '';
+                    if ('from' == type) {
+                        expensesGroupId = ('' + $scope.$settings.formData.FromExpensesGroupId).replace(/[^\d]/g, '');
+                        $scope.$settings.fromExpenses = [];
+                        $scope.$settings.fromProjects = [];
+                        $scope.$settings.formData.FromExpensesId = 'empty';
+                        $scope.$settings.formData.FromProjectId = 'empty';
+                    } else {
+                        expensesGroupId = ('' + $scope.$settings.formData.ToExpensesGroupId).replace(/[^\d]/g, '');
+                        $scope.$settings.toExpenses = [];
+                        $scope.$settings.toProjects = [];
+                        $scope.$settings.formData.ToExpensesId = 'empty';
+                        $scope.$settings.formData.ToProjectId = 'empty';
+                    }
+
+                    if (expensesGroupId.length == 0)
+                        return;
+
+                    $customHttp.formPost('@Url.Action("RetrieveExpensesByExpensesGroup", "Helper")', { expensesGroupId: expensesGroupId }).then(function (res) {
+                        var rows = res.data || [];
+                        if ('from' == type)
+                            $scope.$settings.fromExpenses = rows;
+                        else
+                            $scope.$settings.toExpenses = rows;
+                    }, function () { });
+                }, 300);
+            };
+            // เมื่อค่าใช้จ่ายเปลี่ยนแปลง
+            var expensesChangedId = null;
+            $scope.expensesChanged = function (type) {
+                $timeout.cancel(expensesChangedId);
+                expensesChangedId = $timeout(function () {
+                    var planId = '';
+                    var produceId = '';
+                    var activityId = '';
+                    var budgetTypeId = '';
+                    var expensesGroupId = '';
+                    var expensesId = '';
+                    if ('from' == type) {
+                        planId = ('' + $scope.$settings.formData.FromPlanId).replace(/[^\d]/g, '');
+                        produceId = ('' + $scope.$settings.formData.FromProduceId).replace(/[^\d]/g, '');
+                        activityId = ('' + $scope.$settings.formData.FromActivityId).replace(/[^\d]/g, '');
+                        budgetTypeId = ('' + $scope.$settings.formData.FromBudgetTypeId).replace(/[^\d]/g, '');
+                        expensesGroupId = ('' + $scope.$settings.formData.FromExpensesGroupId).replace(/[^\d]/g, '');
+                        expensesId = ('' + $scope.$settings.formData.FromExpensesId).replace(/[^\d]/g, '');
+                        $scope.$settings.fromProjects = [];
+                        $scope.$settings.formData.FromProjectId = 'empty';
+                    } else {
+                        planId = ('' + $scope.$settings.formData.ToPlanId).replace(/[^\d]/g, '');
+                        produceId = ('' + $scope.$settings.formData.ToProduceId).replace(/[^\d]/g, '');
+                        activityId = ('' + $scope.$settings.formData.ToActivityId).replace(/[^\d]/g, '');
+                        budgetTypeId = ('' + $scope.$settings.formData.ToBudgetTypeId).replace(/[^\d]/g, '');
+                        expensesGroupId = ('' + $scope.$settings.formData.ToExpensesGroupId).replace(/[^\d]/g, '');
+                        expensesId = ('' + $scope.$settings.formData.ToExpensesId).replace(/[^\d]/g, '');
+                        $scope.$settings.toProjects = [];
+                        $scope.$settings.formData.ToProjectId = 'empty';
+                    }
+
+                    if (expensesId.length == 0)
+                        return;
+
+                    $customHttp.formPost('@Url.Action("RetrieveProjectBy", "BudgetReserve")', {
+                        fiscalYear: '@ViewBag.FiscalYear',
+                        budgetType: '@(ViewBag.PageType=="budget" ? 1 : 2)',
+                        planId: planId, produceId: produceId,
+                        activityId: activityId, budgetTypeId: budgetTypeId,
+                        expensesGroupId: expensesGroupId, expensesId: expensesId
+                    }).then(function (res) {
+                        var rows = res.data || [];
+                        if ('from' == type)
+                            $scope.$settings.fromProjects = rows;
+                        else
+                            $scope.$settings.toProjects = rows;
+                    }, function () { });
+                }, 300);
+            };
+            // ส่งค่าไปบันทึก
+            $scope.submitSave = function (event) {
+                $scope.$settings.isLoading = true;
+                $scope.$settings.isSaving = true;
+
+                var params = $.extend(true, {
+                    RequiredFromProjectId: $scope.$settings.fromProjects.length > 0 ? 1 : 0,
+                    RequiredToProjectId: $scope.$settings.toProjects.length > 0 ? 1 : 0
+                }, $scope.$settings.formData);
+                params.FromPlanId = ('' + params.FromPlanId).replace(/[^\d]/g, '');
+                params.FromProduceId = ('' + params.FromProduceId).replace(/[^\d]/g, '');
+                params.FromActivityId = ('' + params.FromActivityId).replace(/[^\d]/g, '');
+                params.FromBudgetTypeId = ('' + params.FromBudgetTypeId).replace(/[^\d]/g, '');
+                params.FromExpensesGroupId = ('' + params.FromExpensesGroupId).replace(/[^\d]/g, '');
+                params.FromExpensesId = ('' + params.FromExpensesId).replace(/[^\d]/g, '');
+                params.FromProjectId = ('' + params.FromProjectId).replace(/[^\d]/g, '');
+
+                params.ToPlanId = ('' + params.ToPlanId).replace(/[^\d]/g, '');
+                params.ToProduceId = ('' + params.ToProduceId).replace(/[^\d]/g, '');
+                params.ToActivityId = ('' + params.ToActivityId).replace(/[^\d]/g, '');
+                params.ToBudgetTypeId = ('' + params.ToBudgetTypeId).replace(/[^\d]/g, '');
+                params.ToExpensesGroupId = ('' + params.ToExpensesGroupId).replace(/[^\d]/g, '');
+                params.ToExpensesId = ('' + params.ToExpensesId).replace(/[^\d]/g, '');
+                params.ToProjectId = ('' + params.ToProjectId).replace(/[^\d]/g, '');
+
+                $customHttp.formPost('@Url.Action("SubmitSave", "BudgetExpensesAdjustment")', params).then(function (res) {
+                    $scope.$settings.formErrors = res.data.errors || {};
+                    if (null != res.data.errorText)
+                        $fwDialogService.dangerDialog(event, res.data.errorText);
+                    else if (null != res.data.errors)
+                        $fwDialogService.dangerDialog(event, 'โปรดตรวจสอบค่าต่างๆที่ระบบแจ้งให้เรียบร้อยก่อน');
+                    else
+                        $fwDialogService.alertDialog(event, 'โอนเปลี่ยนแปลงเรียบร้อยแล้ว').then(function () {
+                            $scope.init();
+                        });
+
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                    $scope.$settings.isSaving = false;
+                });
+            };
+
+            // จัดเตรียมแบบฟอร์ม
+            $scope.init();
+        });
+    </script>
+}

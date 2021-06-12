@@ -1,0 +1,15 @@
+﻿
+@{
+    ViewBag.Title = "รายงานทั้งหมดที่ท่านได้รับสิทธิ์";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3 class="f-w-900 f-18 text-black-50 mb-3 pb-2 border-bottom">รายชื่อรายงาน</h3>
+<ul>
+    @foreach (ExcisePlaning.Classes.Mappers.UserAuthorizeMenuProperty menuItem in ViewBag.ReportMenuItems[0])
+    {
+        <li class="bg-white rounded-bottom shadow-sm p-3 mb-2"><a href="@Url.Action(menuItem.ActionName, menuItem.RouteName)@(string.IsNullOrEmpty(menuItem.QueryString) ? "" : "?" + menuItem.QueryString)" 
+               class="text-primary text-primary f-18">@menuItem.MenuName</a></li>
+    }
+</ul>
+

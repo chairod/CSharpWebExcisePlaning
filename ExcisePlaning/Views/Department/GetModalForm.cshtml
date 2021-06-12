@@ -1,0 +1,85 @@
+﻿<md-dialog flex="98" flex-gt-sm="60">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>แบบฟอร์มหน่วยงาน</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="row">
+                <div class="col-12 col-md-5 border-right">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label class="require-field">เขตพื้นที่<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.AreaId.ErrorMessages"></fw-validate-error-output></label>
+                            <select ng-model="$settings.formData.AreaId" ng-disabled="$settings.isLoading"
+                                    ng-change="submitSearch()" fw-select2>
+                                <option value="empty">--- เขตพื้นที่ ---</option>
+                                @foreach (var item in ViewBag.Areas)
+                                {
+                                    <option value="@item.AREA_ID">@item.AREA_NAME</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-12">
+                            <label>รหัสหน่วยรับงบประมาณ<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.DepCode.ErrorMessages"></fw-validate-error-output></label>
+                            <input type="text" class="form-control" ng-model="$settings.formData.DepCode" ng-disabled="$settings.isLoading" maxlength="20" />
+                            <span class="text-danger f-12">รหัสหน่วยรับเงินงบประมาณ หรือ รหัสอ้างอิงหน่วยงานของลูกค้า</span>
+                        </div>
+                        <div class="form-group col-12">
+                            <label class="require-field">ชื่อหน่วยงาน<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.DepName.ErrorMessages"></fw-validate-error-output></label>
+                            <input type="text" class="form-control" ng-model="$settings.formData.DepName" ng-disabled="$settings.isLoading" maxlength="190" />
+                        </div>
+                        <div class="form-group col-12">
+                            <label>ชื่อย่อ<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.DepShortName.ErrorMessages"></fw-validate-error-output></label>
+                            <input type="text" class="form-control" ng-model="$settings.formData.DepShortName" ng-disabled="$settings.isLoading" maxlength="100" />
+                        </div>
+                        <div class="form-group col-12">
+                            <label class="required-field">ลำดับการจัดเรียง (ค่าที่ระบุได้ 0 - 999)<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.OrderSeq.ErrorMessages"></fw-validate-error-output></label>
+                            <fw-input-number-mask ng-model="$settings.formData.OrderSeq" ng-disabled="$settings.isLoading" min-value="0" max-value="999" />
+                            <span class="text-danger f-12">ระบบจะใช้ค่านี้ในการจัดเรียงลำดับข้อมูล</span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12 col-md-6">
+                            <md-checkbox ng-model="$settings.formData.DepAuthorize" ng-disabled="$settings.isLoading" class="m-0"
+                                         ng-true-value="1" ng-false-value="2">หน่วยงานกลาง<span class="text-danger f-12 ml-1">ตั้งให้หน่วยงานนี้เป็นหน่วยงานกลาง ซึ่งจะสามารถมองเห็นข้อมูลของทุกหน่วยงาน</span></md-checkbox>
+                        </div>
+                        <div class="form-group col-12 col-md-6">
+                            <md-checkbox ng-model="$settings.formData.CanRequestBudget" ng-disabled="$settings.isLoading" class="m-0"
+                                         ng-true-value="1" ng-false-value="0">ได้<span class="text-danger f-12 ml-1">หน่วยงานนี้สามารถส่งคำของบประมาณได้หรือไม่ ใช้ในกรณีของหน่วยงานภูมิภาคที่มีหน่วยงานหลักที่คุมหน่วยงานย่อยในภูมิภาคนั้นๆอีกที</span></md-checkbox>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-7">
+                    <h4 class="f-16 f-w-900 mb-2 pb-2 border-bottom">เลือกหน่วยงานที่อยู่ภายใต้ความรับผิดชอบของหน่วยงานนี้</h4>
+                    <input type="text" class="border border-dark w-100 p-1" ng-model="filterText" ng-disabled="$settings.isLoading" placeholder="ค้นหา [ชื่อหน่วยงาน]" />
+                    <div class="table-responsive overflow-auto" style="height:380px;max-height:380px">
+                        <table class="table table-bordered table-striped m-0">
+                            <tr>
+                                <th style="width:60px;max-width:60px;min-width:60px;" class="text-center"><input type="checkbox" ng-model="$settings.checkedAll" ng-disabled="$settings.isLoading" ng-click="selectAll()" /></th>
+                                <th style="width:auto;min-width:170px;">ชื่อหน่วยงาน</th>
+                            </tr>
+                            <tr ng-repeat="row in $settings.departments|filter:{DEP_NAME:filterText}">
+                                <td class="text-center" style="width:60px;max-width:60px;min-width:60px;"><input type="checkbox" ng-model="row.checked" ng-disabled="$settings.isLoading" /></td>
+                                <td>{{row.DEP_NAME+ ' [' + row.AREA_NAME + ']'}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="text-md-right text-danger mt-1">จำนวน: {{($settings.departments|filter:{checked: true}).length}} หน่วยงาน</div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="บันทึก" css-class="btn btn-primary btn-sm mr-2"
+                           ng-disabled="$settings.isLoading"
+                           on-loading="$settings.isSaving"
+                           css-icon-class="ti-save"
+                           ng-click="save($event)"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>

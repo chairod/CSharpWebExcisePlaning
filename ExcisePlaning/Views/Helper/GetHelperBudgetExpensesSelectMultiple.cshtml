@@ -1,0 +1,113 @@
+﻿<md-dialog flex="99" flex-gt-sm="95">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>ค้นหารายการค่าใช้จ่ายของกรมสรรพสามิต</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-3">
+                    <label>ปีงบประมาณ</label>
+                    <fw-input-mask model="$settings.formSearch.fiscalYear" mask="9999" 
+                                   change="fiscalYearChanged()"
+                                   disabled="$settings.disabledFiscalYear"></fw-input-mask>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>แผนงาน</label>
+                    <select class="form-control" fw-select2
+                            ng-model="$settings.formSearch.planId" ng-disabled="$settings.isLoading"
+                            ng-change="submitSearch()">
+                        <option value="empty">--- แผนงาน ---</option>
+                        @foreach (ExcisePlaning.Classes.Mappers.PlanShortFieldProperty item in ViewBag.Plans)
+                        {
+                            <option value="@item.PLAN_ID">@item.PLAN_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>ผลผลิต</label>
+                    <select class="form-control" fw-select2
+                            ng-model="$settings.formSearch.produceId" ng-disabled="$settings.isLoading"
+                            ng-change="submitSearch()">
+                        <option value="empty">--- ผลผลิต ---</option>
+                        @foreach (ExcisePlaning.Classes.Mappers.ProduceShortFieldProperty item in ViewBag.Produces)
+                        {
+                            <option value="@item.PRODUCE_ID">@item.PRODUCE_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>กิจกรรม</label>
+                    <select class="form-control" fw-select2
+                            ng-model="$settings.formSearch.activityId" ng-disabled="$settings.isLoading"
+                            ng-change="submitSearch()">
+                        <option value="empty">--- กิจกรรม ---</option>
+                        @foreach (ExcisePlaning.Classes.Mappers.ActivityShortFieldProperty item in ViewBag.Activities)
+                        {
+                            <option value="@item.ACTIVITY_ID">@item.ACTIVITY_NAME</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12 col-md-3">
+                    <label>งบรายจ่าย</label>
+                    <select class="form-control" fw-select2
+                            ng-model="$settings.formSearch.budgetTypeId" ng-disabled="$settings.isLoading"
+                            ng-change="budgetTypeChanged()">
+                        <option value="empty">--- งบรายจ่าย ---</option>
+                        @foreach (ExcisePlaning.Classes.Mappers.BudgetTypeShortFieldProperty item in ViewBag.BudgetTypes)
+                        {
+                            <option value="@item.BUDGET_TYPE_ID">@item.BUDGET_TYPE_NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>หมวดค่าใช้จ่าย<span class="ti-reload rotate-refresh ml-1" ng-if="$settings.isExpensesGroupLoading"></span></label>
+                    <select class="form-control" fw-select2
+                            ng-model="$settings.formSearch.expensesGroupId" ng-disabled="$settings.isLoading||$settings.expensesGroups.length==0"
+                            ng-change="expensesGroupChanged()">
+                        <option value="empty">--- หมวดค่าใช้จ่าย ---</option>
+                        <option ng-repeat="item in $settings.expensesGroups" value="{{item.EXPENSES_GROUP_ID}}">{{item.EXPENSES_GROUP_NAME + ' [' + item.EXPENSES_MASTER_NAME + ']'}}</option>
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>รายการค่าใช้จ่าย<span class="ti-reload rotate-refresh ml-1" ng-if="$settings.isExpensesLoading"></span></label>
+                    <select class="form-control" fw-select2
+                            ng-model="$settings.formSearch.expensesId" ng-disabled="$settings.isLoading||$settings.expenses.length==0"
+                            ng-change="submitSearch()">
+                        <option value="empty">--- รายการค่าใช้จ่าย ---</option>
+                        <option ng-repeat="item in $settings.expenses" value="{{item.EXPENSES_ID}}">{{item.EXPENSES_NAME}}</option>
+                    </select>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                    <label>ชื่อโครงการ</label>
+                    <input type="text" class="form-control" ng-model="$settings.formSearch.projectName" 
+                           ng-change="submitSearch()" maxlength="300" placeholder="ระบุบางส่วนของชื่อโครงการ" />
+                </div>
+            </div>
+
+            <fw-simple-data-table columns="$settings.tableConfigs.columns"
+                                  event-name="fwSimpleDataTable.budget.expenses.modal.paramsChanged"
+                                  auto-load="false"
+                                  disabled="$settings.isLoading"
+                                  search-done-callback="searchDone($res)"
+                                  column-click-callback="columnClick($event, $rows, $columnConfig)"
+                                  row-click-callback="rowClick($event, $row, $columnConfig)"
+                                  route-url="@Url.Action("RetrieveBudgetExpenses", "Helper")"></fw-simple-data-table>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <fw-execute-button text="ตกลง" css-class="btn btn-primary btn-sm mr-1"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-checkmark-circled"
+                           ng-click="ok()"></fw-execute-button>
+        <fw-execute-button text="ปิดหน้าต่าง" css-class="btn btn-danger btn-sm"
+                           ng-disabled="$settings.isLoading"
+                           css-icon-class="ion-close-round"
+                           ng-click="close()"></fw-execute-button>
+    </md-dialog-actions>
+</md-dialog>
+
