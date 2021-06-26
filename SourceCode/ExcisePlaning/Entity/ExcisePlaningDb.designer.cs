@@ -22,7 +22,7 @@ namespace ExcisePlaning.Entity
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="ExcisePlaningTest")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="ExcisePlaning")]
 	public partial class ExcisePlaningDbDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -174,9 +174,6 @@ namespace ExcisePlaning.Entity
     partial void InsertT_DEPARTMENT(T_DEPARTMENT instance);
     partial void UpdateT_DEPARTMENT(T_DEPARTMENT instance);
     partial void DeleteT_DEPARTMENT(T_DEPARTMENT instance);
-    partial void InsertT_TRANING_AND_SEMINOR(T_TRANING_AND_SEMINOR instance);
-    partial void UpdateT_TRANING_AND_SEMINOR(T_TRANING_AND_SEMINOR instance);
-    partial void DeleteT_TRANING_AND_SEMINOR(T_TRANING_AND_SEMINOR instance);
     partial void InsertT_BUDGET_REQUEST_MASTER(T_BUDGET_REQUEST_MASTER instance);
     partial void UpdateT_BUDGET_REQUEST_MASTER(T_BUDGET_REQUEST_MASTER instance);
     partial void DeleteT_BUDGET_REQUEST_MASTER(T_BUDGET_REQUEST_MASTER instance);
@@ -270,6 +267,9 @@ namespace ExcisePlaning.Entity
     partial void InsertT_BUDGET_EXPENSES_ADJUSTMENT_HISTORY(T_BUDGET_EXPENSES_ADJUSTMENT_HISTORY instance);
     partial void UpdateT_BUDGET_EXPENSES_ADJUSTMENT_HISTORY(T_BUDGET_EXPENSES_ADJUSTMENT_HISTORY instance);
     partial void DeleteT_BUDGET_EXPENSES_ADJUSTMENT_HISTORY(T_BUDGET_EXPENSES_ADJUSTMENT_HISTORY instance);
+    partial void InsertT_TRANING_AND_SEMINOR(T_TRANING_AND_SEMINOR instance);
+    partial void UpdateT_TRANING_AND_SEMINOR(T_TRANING_AND_SEMINOR instance);
+    partial void DeleteT_TRANING_AND_SEMINOR(T_TRANING_AND_SEMINOR instance);
     #endregion
 		
 		public ExcisePlaningDbDataContext() : 
@@ -758,14 +758,6 @@ namespace ExcisePlaning.Entity
 			}
 		}
 		
-		public System.Data.Linq.Table<T_TRANING_AND_SEMINOR> T_TRANING_AND_SEMINORs
-		{
-			get
-			{
-				return this.GetTable<T_TRANING_AND_SEMINOR>();
-			}
-		}
-		
 		public System.Data.Linq.Table<V_GET_DEPARTMENT_REQUEST_EXPENSES_BUDGET_AND_ALLOCATE_INFORMATION> V_GET_DEPARTMENT_REQUEST_EXPENSES_BUDGET_AND_ALLOCATE_INFORMATIONs
 		{
 			get
@@ -1251,6 +1243,14 @@ namespace ExcisePlaning.Entity
 			get
 			{
 				return this.GetTable<V_GET_SUMMARY_BUDGET_ALLOCATE>();
+			}
+		}
+		
+		public System.Data.Linq.Table<T_TRANING_AND_SEMINOR> T_TRANING_AND_SEMINORs
+		{
+			get
+			{
+				return this.GetTable<T_TRANING_AND_SEMINOR>();
 			}
 		}
 		
@@ -15514,236 +15514,6 @@ namespace ExcisePlaning.Entity
 					this._UPDATED_DATETIME = value;
 					this.SendPropertyChanged("UPDATED_DATETIME");
 					this.OnUPDATED_DATETIMEChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.T_TRANING_AND_SEMINORS")]
-	public partial class T_TRANING_AND_SEMINOR : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private short _SEQ_ID;
-		
-		private string _ITEM_TEXT;
-		
-		private decimal _COMPENSATION_PRICE;
-		
-		private short _ACTIVE;
-		
-		private System.DateTime _CREATED_DATETIME;
-		
-		private int _USER_ID;
-		
-		private System.Nullable<System.DateTime> _UPDATED_DATETIME;
-		
-		private System.Nullable<int> _UPDATED_ID;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnSEQ_IDChanging(short value);
-    partial void OnSEQ_IDChanged();
-    partial void OnITEM_TEXTChanging(string value);
-    partial void OnITEM_TEXTChanged();
-    partial void OnCOMPENSATION_PRICEChanging(decimal value);
-    partial void OnCOMPENSATION_PRICEChanged();
-    partial void OnACTIVEChanging(short value);
-    partial void OnACTIVEChanged();
-    partial void OnCREATED_DATETIMEChanging(System.DateTime value);
-    partial void OnCREATED_DATETIMEChanged();
-    partial void OnUSER_IDChanging(int value);
-    partial void OnUSER_IDChanged();
-    partial void OnUPDATED_DATETIMEChanging(System.Nullable<System.DateTime> value);
-    partial void OnUPDATED_DATETIMEChanged();
-    partial void OnUPDATED_IDChanging(System.Nullable<int> value);
-    partial void OnUPDATED_IDChanged();
-    #endregion
-		
-		public T_TRANING_AND_SEMINOR()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SEQ_ID", AutoSync=AutoSync.OnInsert, DbType="SmallInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public short SEQ_ID
-		{
-			get
-			{
-				return this._SEQ_ID;
-			}
-			set
-			{
-				if ((this._SEQ_ID != value))
-				{
-					this.OnSEQ_IDChanging(value);
-					this.SendPropertyChanging();
-					this._SEQ_ID = value;
-					this.SendPropertyChanged("SEQ_ID");
-					this.OnSEQ_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ITEM_TEXT", DbType="NVarChar(150) NOT NULL", CanBeNull=false)]
-		public string ITEM_TEXT
-		{
-			get
-			{
-				return this._ITEM_TEXT;
-			}
-			set
-			{
-				if ((this._ITEM_TEXT != value))
-				{
-					this.OnITEM_TEXTChanging(value);
-					this.SendPropertyChanging();
-					this._ITEM_TEXT = value;
-					this.SendPropertyChanged("ITEM_TEXT");
-					this.OnITEM_TEXTChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_COMPENSATION_PRICE", DbType="Decimal(10,2) NOT NULL")]
-		public decimal COMPENSATION_PRICE
-		{
-			get
-			{
-				return this._COMPENSATION_PRICE;
-			}
-			set
-			{
-				if ((this._COMPENSATION_PRICE != value))
-				{
-					this.OnCOMPENSATION_PRICEChanging(value);
-					this.SendPropertyChanging();
-					this._COMPENSATION_PRICE = value;
-					this.SendPropertyChanged("COMPENSATION_PRICE");
-					this.OnCOMPENSATION_PRICEChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVE", DbType="SmallInt NOT NULL")]
-		public short ACTIVE
-		{
-			get
-			{
-				return this._ACTIVE;
-			}
-			set
-			{
-				if ((this._ACTIVE != value))
-				{
-					this.OnACTIVEChanging(value);
-					this.SendPropertyChanging();
-					this._ACTIVE = value;
-					this.SendPropertyChanged("ACTIVE");
-					this.OnACTIVEChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CREATED_DATETIME", DbType="DateTime NOT NULL")]
-		public System.DateTime CREATED_DATETIME
-		{
-			get
-			{
-				return this._CREATED_DATETIME;
-			}
-			set
-			{
-				if ((this._CREATED_DATETIME != value))
-				{
-					this.OnCREATED_DATETIMEChanging(value);
-					this.SendPropertyChanging();
-					this._CREATED_DATETIME = value;
-					this.SendPropertyChanged("CREATED_DATETIME");
-					this.OnCREATED_DATETIMEChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USER_ID", DbType="Int NOT NULL")]
-		public int USER_ID
-		{
-			get
-			{
-				return this._USER_ID;
-			}
-			set
-			{
-				if ((this._USER_ID != value))
-				{
-					this.OnUSER_IDChanging(value);
-					this.SendPropertyChanging();
-					this._USER_ID = value;
-					this.SendPropertyChanged("USER_ID");
-					this.OnUSER_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UPDATED_DATETIME", DbType="DateTime")]
-		public System.Nullable<System.DateTime> UPDATED_DATETIME
-		{
-			get
-			{
-				return this._UPDATED_DATETIME;
-			}
-			set
-			{
-				if ((this._UPDATED_DATETIME != value))
-				{
-					this.OnUPDATED_DATETIMEChanging(value);
-					this.SendPropertyChanging();
-					this._UPDATED_DATETIME = value;
-					this.SendPropertyChanged("UPDATED_DATETIME");
-					this.OnUPDATED_DATETIMEChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UPDATED_ID", DbType="Int")]
-		public System.Nullable<int> UPDATED_ID
-		{
-			get
-			{
-				return this._UPDATED_ID;
-			}
-			set
-			{
-				if ((this._UPDATED_ID != value))
-				{
-					this.OnUPDATED_IDChanging(value);
-					this.SendPropertyChanging();
-					this._UPDATED_ID = value;
-					this.SendPropertyChanged("UPDATED_ID");
-					this.OnUPDATED_IDChanged();
 				}
 			}
 		}
@@ -47249,6 +47019,260 @@ namespace ExcisePlaning.Entity
 				{
 					this._GRP_REMAIN_OFF_BUDGET_AMOUNT = value;
 				}
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.T_TRANING_AND_SEMINORS")]
+	public partial class T_TRANING_AND_SEMINOR : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private short _SEQ_ID;
+		
+		private string _ITEM_TEXT;
+		
+		private decimal _COMPENSATION_PRICE;
+		
+		private decimal _COMPENSATION_GOVERN_PRICE;
+		
+		private short _ACTIVE;
+		
+		private System.DateTime _CREATED_DATETIME;
+		
+		private int _USER_ID;
+		
+		private System.Nullable<System.DateTime> _UPDATED_DATETIME;
+		
+		private System.Nullable<int> _UPDATED_ID;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnSEQ_IDChanging(short value);
+    partial void OnSEQ_IDChanged();
+    partial void OnITEM_TEXTChanging(string value);
+    partial void OnITEM_TEXTChanged();
+    partial void OnCOMPENSATION_PRICEChanging(decimal value);
+    partial void OnCOMPENSATION_PRICEChanged();
+    partial void OnCOMPENSATION_GOVERN_PRICEChanging(decimal value);
+    partial void OnCOMPENSATION_GOVERN_PRICEChanged();
+    partial void OnACTIVEChanging(short value);
+    partial void OnACTIVEChanged();
+    partial void OnCREATED_DATETIMEChanging(System.DateTime value);
+    partial void OnCREATED_DATETIMEChanged();
+    partial void OnUSER_IDChanging(int value);
+    partial void OnUSER_IDChanged();
+    partial void OnUPDATED_DATETIMEChanging(System.Nullable<System.DateTime> value);
+    partial void OnUPDATED_DATETIMEChanged();
+    partial void OnUPDATED_IDChanging(System.Nullable<int> value);
+    partial void OnUPDATED_IDChanged();
+    #endregion
+		
+		public T_TRANING_AND_SEMINOR()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SEQ_ID", AutoSync=AutoSync.OnInsert, DbType="SmallInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public short SEQ_ID
+		{
+			get
+			{
+				return this._SEQ_ID;
+			}
+			set
+			{
+				if ((this._SEQ_ID != value))
+				{
+					this.OnSEQ_IDChanging(value);
+					this.SendPropertyChanging();
+					this._SEQ_ID = value;
+					this.SendPropertyChanged("SEQ_ID");
+					this.OnSEQ_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ITEM_TEXT", DbType="NVarChar(150) NOT NULL", CanBeNull=false)]
+		public string ITEM_TEXT
+		{
+			get
+			{
+				return this._ITEM_TEXT;
+			}
+			set
+			{
+				if ((this._ITEM_TEXT != value))
+				{
+					this.OnITEM_TEXTChanging(value);
+					this.SendPropertyChanging();
+					this._ITEM_TEXT = value;
+					this.SendPropertyChanged("ITEM_TEXT");
+					this.OnITEM_TEXTChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_COMPENSATION_PRICE", DbType="Decimal(10,2) NOT NULL")]
+		public decimal COMPENSATION_PRICE
+		{
+			get
+			{
+				return this._COMPENSATION_PRICE;
+			}
+			set
+			{
+				if ((this._COMPENSATION_PRICE != value))
+				{
+					this.OnCOMPENSATION_PRICEChanging(value);
+					this.SendPropertyChanging();
+					this._COMPENSATION_PRICE = value;
+					this.SendPropertyChanged("COMPENSATION_PRICE");
+					this.OnCOMPENSATION_PRICEChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_COMPENSATION_GOVERN_PRICE", DbType="Decimal(10,2) NOT NULL")]
+		public decimal COMPENSATION_GOVERN_PRICE
+		{
+			get
+			{
+				return this._COMPENSATION_GOVERN_PRICE;
+			}
+			set
+			{
+				if ((this._COMPENSATION_GOVERN_PRICE != value))
+				{
+					this.OnCOMPENSATION_GOVERN_PRICEChanging(value);
+					this.SendPropertyChanging();
+					this._COMPENSATION_GOVERN_PRICE = value;
+					this.SendPropertyChanged("COMPENSATION_GOVERN_PRICE");
+					this.OnCOMPENSATION_GOVERN_PRICEChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVE", DbType="SmallInt NOT NULL")]
+		public short ACTIVE
+		{
+			get
+			{
+				return this._ACTIVE;
+			}
+			set
+			{
+				if ((this._ACTIVE != value))
+				{
+					this.OnACTIVEChanging(value);
+					this.SendPropertyChanging();
+					this._ACTIVE = value;
+					this.SendPropertyChanged("ACTIVE");
+					this.OnACTIVEChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CREATED_DATETIME", DbType="DateTime NOT NULL")]
+		public System.DateTime CREATED_DATETIME
+		{
+			get
+			{
+				return this._CREATED_DATETIME;
+			}
+			set
+			{
+				if ((this._CREATED_DATETIME != value))
+				{
+					this.OnCREATED_DATETIMEChanging(value);
+					this.SendPropertyChanging();
+					this._CREATED_DATETIME = value;
+					this.SendPropertyChanged("CREATED_DATETIME");
+					this.OnCREATED_DATETIMEChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USER_ID", DbType="Int NOT NULL")]
+		public int USER_ID
+		{
+			get
+			{
+				return this._USER_ID;
+			}
+			set
+			{
+				if ((this._USER_ID != value))
+				{
+					this.OnUSER_IDChanging(value);
+					this.SendPropertyChanging();
+					this._USER_ID = value;
+					this.SendPropertyChanged("USER_ID");
+					this.OnUSER_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UPDATED_DATETIME", DbType="DateTime")]
+		public System.Nullable<System.DateTime> UPDATED_DATETIME
+		{
+			get
+			{
+				return this._UPDATED_DATETIME;
+			}
+			set
+			{
+				if ((this._UPDATED_DATETIME != value))
+				{
+					this.OnUPDATED_DATETIMEChanging(value);
+					this.SendPropertyChanging();
+					this._UPDATED_DATETIME = value;
+					this.SendPropertyChanged("UPDATED_DATETIME");
+					this.OnUPDATED_DATETIMEChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UPDATED_ID", DbType="Int")]
+		public System.Nullable<int> UPDATED_ID
+		{
+			get
+			{
+				return this._UPDATED_ID;
+			}
+			set
+			{
+				if ((this._UPDATED_ID != value))
+				{
+					this.OnUPDATED_IDChanging(value);
+					this.SendPropertyChanging();
+					this._UPDATED_ID = value;
+					this.SendPropertyChanged("UPDATED_ID");
+					this.OnUPDATED_IDChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
 	}

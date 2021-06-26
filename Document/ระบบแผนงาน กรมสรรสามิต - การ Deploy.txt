@@ -65,6 +65,18 @@ Views/*, angular.app.js
     Views/Helper/GetHelperReserveBudgetSearchSelectMultipleForm.cshtml
     angular.app.js
     ReportTemplates/RptExpenseResult.xlsx
+
+
+[26/06/2021]
+    - เพิ่มรายการค่าใช้จ่าย ค่าธรรมเนียมศาล
+    - ปรับฟอร์มค่าฝึกอบรมและสัมนา
+    - คชจ. ที่ดินและสิ่งก่อนสร้าง สลับคอลัมล์ และ อัพโหลดได้เฉพาะ PDF
+
+    T_TRANING_AND_SEMINORS
+     => COMPENSATION_GOVEN_PRICE DECIMAL(10,2)
+
+    เมนู ข้อมูลพื้นฐาน => ข้อมูลค่าใช้จ่าย
+     => เพิ่ม ค่าธรรมเนียมศาล
 =================== ประวัติการอัพเดต ==================
 
 

@@ -86,7 +86,8 @@ namespace ExcisePlaning.Controllers
                 {
                     e.SEQ_ID,
                     e.ITEM_TEXT,
-                    e.COMPENSATION_PRICE
+                    e.COMPENSATION_PRICE,
+                    e.COMPENSATION_GOVERN_PRICE
                 }).ToList();
             };
 
@@ -150,6 +151,7 @@ namespace ExcisePlaning.Controllers
 
                 expr.ITEM_TEXT = model.TraningAndSeminorsName;
                 expr.COMPENSATION_PRICE = model.CompensationPrice.Value;
+                expr.COMPENSATION_GOVERN_PRICE = model.CompensationGovernPrice.Value;
                 db.SubmitChanges();
             }
 
@@ -165,6 +167,9 @@ namespace ExcisePlaning.Controllers
 
             [Required(ErrorMessage = "โปรดระบุค่านี้ก่อน"), Range(typeof(decimal), "0.00", "99999999.99", ErrorMessage = "ค่าที่ระบุได้อยู่ระหว่าง {1} - {2}")]
             public decimal? CompensationPrice { get; set; }
+
+            [Required(ErrorMessage = "โปรดระบุค่านี้ก่อน"), Range(typeof(decimal), "0.00", "99999999.99", ErrorMessage = "ค่าที่ระบุได้อยู่ระหว่าง {1} - {2}")]
+            public decimal? CompensationGovernPrice { get; set; }
         }
     }
 }

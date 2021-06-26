@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="ExcisePlaningTest" Class="ExcisePlaningDbDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="WebSettings" ConnectionString="Data Source=61.19.252.49,49252;Initial Catalog=ExcisePlaningTest;User ID=sa;Min Pool Size=2" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="ExcisePlaningConnectionString" Provider="System.Data.SqlClient" />
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="ExcisePlaning" Class="ExcisePlaningDbDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=103.13.31.45;Initial Catalog=ExcisePlaning;User ID=sa;Min Pool Size=2" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="ExcisePlaningConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.T_CONFIGURATION" Member="T_CONFIGURATIONs">
     <Type Name="T_CONFIGURATION">
       <Column Name="CONFIG_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -769,18 +769,6 @@
       <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.T_TRANING_AND_SEMINORS" Member="T_TRANING_AND_SEMINORs">
-    <Type Name="T_TRANING_AND_SEMINOR">
-      <Column Name="SEQ_ID" Type="System.Int16" DbType="SmallInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="ITEM_TEXT" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
-      <Column Name="COMPENSATION_PRICE" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
-      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
-      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.V_GET_DEPARTMENT_REQUEST_EXPENSES_BUDGET_AND_ALLOCATE_INFORMATION" Member="V_GET_DEPARTMENT_REQUEST_EXPENSES_BUDGET_AND_ALLOCATE_INFORMATIONs">
@@ -2533,6 +2521,19 @@
       <Column Name="ALLOCATE_GRP_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
       <Column Name="GRP_USE_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
       <Column Name="GRP_REMAIN_OFF_BUDGET_AMOUNT" Type="System.Decimal" DbType="Decimal(20,2)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_TRANING_AND_SEMINORS" Member="T_TRANING_AND_SEMINORs">
+    <Type Name="T_TRANING_AND_SEMINOR">
+      <Column Name="SEQ_ID" Type="System.Int16" DbType="SmallInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ITEM_TEXT" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="COMPENSATION_PRICE" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+      <Column Name="COMPENSATION_GOVERN_PRICE" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
   <Function Name="dbo.proc_GetUserRoles" Method="proc_GetUserRoles">

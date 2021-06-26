@@ -14,9 +14,10 @@
                     <tr>
                         <th style="width:75px;min-width:75px;max-width:75px;" class="text-center">ลำดับ</th>
                         <th style="width:230px;min-width:230px;max-width:230px" class="text-left">รายการ</th>
+                        <th style="width:230px;min-width:230px;max-width:230px" class="text-left">โครงการ</th>
                         <th style="width:160px;min-width:160px;max-width:160px;" class="text-right">จำนวนเงิน (บาท)</th>
-                        <th style="width:200px;min-width:200px;max-width:200px;" class="text-left">หมายเหตุ</th>
-                        <th style="width:75px;min-width:75px;max-width:75px;" class="text-center">ไฟล์แนบ</th>
+                        @*<th style="width:200px;min-width:200px;max-width:200px;" class="text-left">หมายเหตุ</th>*@
+                        <th style="width:75px;min-width:75px;max-width:75px;" class="text-center word-wrap">ไฟล์แนบ (pdf)</th>
                         <th style="width:60px;min-width:60px;max-width:60px;"></th>
                     </tr>
 
@@ -38,16 +39,21 @@
                                    ng-disabled="$settings.isLoading" placeholder="ไม่เกิน 200 ตัวอักษร" maxlength="200" />
                             <fw-validate-error-output css-class="mt-1 d-block text-left" error-messages="$settings.formErrors[$index].ErrorMessages"></fw-validate-error-output>
                         </td>
+                        <td style="min-width:190px" class="text-left">
+                            <input type="text" class="form-control" ng-model="row.ProjectName"
+                                   ng-disabled="$settings.isLoading" placeholder="ไม่เกิน 1000 ตัวอักษร" maxlength="1000" />
+                        </td>
                         <td style="width:160px;min-width:160px;max-width:160px;" class="text-right">
                             <fw-input-number-mask ng-model="row.TotalPrice" css-class="text-right"
                                                   ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999999.00"></fw-input-number-mask>
                         </td>
-                        <td style="width:200px;min-width:200px;max-width:200px;" class="text-left">
-                            <input type="text" class="form-control" ng-model="row.RemarkText" title="{{row.RemarkText}}" ng-disabled="$settings.isLoading" />
-                        </td>
+                        @*<td style="width:200px;min-width:200px;max-width:200px;" class="text-left">
+            <input type="text" class="form-control" ng-model="row.RemarkText" title="{{row.RemarkText}}" ng-disabled="$settings.isLoading" />
+        </td>*@
                         <td style="width:75px;min-width:75px;max-width:75px;" class="text-center">
                             <fw-file-upload callback="uploadCallback($res, $params)"
                                             params="{index: $index}" icon="true"
+                                            accept-filetypes="pdf"
                                             upload-url="@Url.Action("SubmitUploadDocument", "Resource", new { uploadType = "BudgetRequest" })"></fw-file-upload>
                             <a href="@Url.Action("GetFile", "Resource", new { groupType = "BudgetRequest" })&filename={{row.AttachFilename}}" class="d-block mt-1 f-12 text-danger" ng-if="row.AttachFilename!=null"><span class="animated fadeIn">ไฟล์แนบ</span></a>
                         </td>

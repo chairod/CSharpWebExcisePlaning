@@ -1,4 +1,4 @@
-﻿<md-dialog flex="99" flex-gt-sm="75">
+﻿<md-dialog flex="99" flex-gt-sm="85">
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>แบบฟอร์ม{{$settings.expensesName}}</h2>
@@ -13,7 +13,8 @@
                 <table class="table table-bordered table-striped">
                     <tr>
                         <th style="width:75px;min-width:75px;max-width:75px;" class="text-center align-middle">ลำดับ</th>
-                        <th style="min-width:190px" class="text-left align-middle">รายการ</th>
+                        <th style="min-width:190px" class="text-left">รายการ</th>
+                        <th style="width:230px;min-width:230px;max-width:230px" class="text-left">โครงการ</th>
                         <th style="width:130px;min-width:130px;max-width:130px;" class="text-center">จำนวน (หน่วย)</th>
                         <th style="width:145px;min-width:145px;max-width:145px;" class="text-right">ราคา/หน่วย (บาท)</th>
                         <th style="width:170px;min-width:170px;max-width:170px;" class="text-right">รวม (บาท)</th>
@@ -22,7 +23,7 @@
                     </tr>
 
                     <tr ng-if="$settings.formData.rows.length==0&&!$settings.isLoading">
-                        <th colspan="7" class="text-center text-danger animated fadeIn">--- โปรดกดที่ปุ่ม "เพิ่มรายการ" ---</th>
+                        <th colspan="8" class="text-center text-danger animated fadeIn">--- โปรดกดที่ปุ่ม "เพิ่มรายการ" ---</th>
                     </tr>
 
                     <tr ng-repeat="row in $settings.formData.rows">
@@ -37,6 +38,10 @@
                             <input type="text" class="d-block w-100 p-1 mt-1" ng-model="row.AssetOtherName"
                                    ng-if="row.AssetOtherFlag==true||row.AssetOtherFlag=='true'"
                                    ng-disabled="$settings.isLoading" placeholder="ไม่เกิน 200 ตัวอักษร" maxlength="200" />
+                        </td>
+                        <td style="min-width:190px" class="text-left">
+                            <input type="text" class="form-control" ng-model="row.ProjectName"
+                                   ng-disabled="$settings.isLoading" placeholder="ไม่เกิน 1000 ตัวอักษร" maxlength="1000" />
                         </td>
                         <td style="width:130px;min-width:130px;max-width:130px;" class="text-center">
                             <fw-input-number-mask ng-model="row.Amounts" css-class="text-center"
@@ -58,7 +63,7 @@
                     </tr>
 
                     <tr ng-if="$settings.formData.rows.length > 0" class="bg-primary">
-                        <th colspan="2" class="text-right animated fadeIn">รวมทั้งสิ้น</th>
+                        <th colspan="3" class="text-right animated fadeIn">รวมทั้งสิ้น</th>
                         <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['Amounts']:0}}</th>
                         <th>&nbsp;</th>
                         <th class="text-right animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['TotalPrice']:2}}</th>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 47.625, 62.5" name="ExcisePlaningDb">
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 45, 56.75" name="ExcisePlaningDb">
   <DataContextMoniker Name="/ExcisePlaningDbDataContext" />
   <nestedChildShapes>
     <classShape Id="c36862e0-7063-4e10-a907-e1a3d98096ff" absoluteBounds="0.75, 0.75, 2.125, 2.5401025390625005">
@@ -344,22 +344,16 @@
         <elementListCompartment Id="1010c646-ef62-4846-bac8-f61d44d429d7" absoluteBounds="24.765, 27.21, 1.9700000000000002, 2.941609700520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="26ab0233-bb22-4cfb-94ff-f37742236797" absoluteBounds="27.75, 0.75, 2, 2.3478011067708309">
-      <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_TRANING_AND_SEMINOR" />
-      <nestedChildShapes>
-        <elementListCompartment Id="1dd548d0-02ef-4aa5-99b9-f4c8c6ed069f" absoluteBounds="27.765, 1.2100000000000009, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
-    <classShape Id="24284d39-08e5-40c8-9add-8e659d07918f" absoluteBounds="0.75, 27.75, 2, 8.3091455078125023">
+    <classShape Id="24284d39-08e5-40c8-9add-8e659d07918f" absoluteBounds="27.75, 0.75, 2, 8.3091455078125023">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_DEPARTMENT_REQUEST_EXPENSES_BUDGET_AND_ALLOCATE_INFORMATION" />
       <nestedChildShapes>
-        <elementListCompartment Id="6ae69d7c-06da-49c5-8f04-c2b2b7180a4b" absoluteBounds="0.76500000000000057, 28.21, 1.9700000000000002, 7.7491455078125009" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="6ae69d7c-06da-49c5-8f04-c2b2b7180a4b" absoluteBounds="27.765, 1.2100000000000009, 1.9700000000000002, 7.7491455078125009" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="6b1230c7-780d-4dc4-af3f-fb31a4938132" absoluteBounds="27.75, 4.75, 2, 5.8092268880208309">
+    <classShape Id="6b1230c7-780d-4dc4-af3f-fb31a4938132" absoluteBounds="0.75, 27.75, 2, 5.8092268880208309">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_BUDGET_REQUEST_MASTER" />
       <nestedChildShapes>
-        <elementListCompartment Id="da16ccec-a6f6-45cd-a2b9-0afbde7a050f" absoluteBounds="27.765, 5.2100000000000009, 1.9700000000000002, 5.249226888020833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="da16ccec-a6f6-45cd-a2b9-0afbde7a050f" absoluteBounds="0.76500000000000057, 28.21, 1.9700000000000002, 5.249226888020833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="84900fd1-a69b-4a62-bc2d-18cf017f4f0a" absoluteBounds="9.75, 27.75, 2, 5.0400211588541595">
@@ -368,28 +362,28 @@
         <elementListCompartment Id="339562e4-018b-4b7e-88bc-3e5d4fcc9044" absoluteBounds="9.765, 28.21, 1.9700000000000002, 4.4800211588541661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="fcb7183a-cce4-4093-8a57-1dea490186c2" absoluteBounds="27.75, 11.75, 2, 2.7324039713541595">
+    <classShape Id="fcb7183a-cce4-4093-8a57-1dea490186c2" absoluteBounds="27.75, 10.75, 2, 2.7324039713541595">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_BUDGET_TYPE" />
       <nestedChildShapes>
-        <elementListCompartment Id="913e132f-687a-4627-b35e-41a112bdd850" absoluteBounds="27.765, 12.21, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="913e132f-687a-4627-b35e-41a112bdd850" absoluteBounds="27.765, 11.21, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="f18edadb-828f-481e-a375-fe80d042b617" absoluteBounds="27.75, 15.75, 2, 5.2323225911458309">
+    <classShape Id="f18edadb-828f-481e-a375-fe80d042b617" absoluteBounds="27.75, 14.75, 2, 5.2323225911458309">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_BUDGET_REPORTED_USE_EXPENSES_HISTORY" />
       <nestedChildShapes>
-        <elementListCompartment Id="308ca1e5-1de8-47ec-b6e7-4326e38de712" absoluteBounds="27.765, 16.21, 1.9700000000000002, 4.672322591145833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="308ca1e5-1de8-47ec-b6e7-4326e38de712" absoluteBounds="27.765, 15.21, 1.9700000000000002, 4.672322591145833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="4b35a27f-4b99-4111-8e9c-a08963d6f10c" absoluteBounds="27.75, 21.75, 2, 3.8862125651041595">
+    <classShape Id="4b35a27f-4b99-4111-8e9c-a08963d6f10c" absoluteBounds="27.75, 20.75, 2, 3.8862125651041595">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_CONFIGURATION" />
       <nestedChildShapes>
-        <elementListCompartment Id="dfe3ada4-aca1-43de-9bdb-6a21cb212b94" absoluteBounds="27.765, 22.21, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="dfe3ada4-aca1-43de-9bdb-6a21cb212b94" absoluteBounds="27.765, 21.21, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="87b4580d-9263-466e-8414-c68e9be84fe3" absoluteBounds="27.75, 26.75, 2, 6.9630354817708309">
+    <classShape Id="87b4580d-9263-466e-8414-c68e9be84fe3" absoluteBounds="27.75, 25.75, 2, 6.9630354817708309">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_DEPARTMENT_REPORT_EXPENSES_HISTORY" />
       <nestedChildShapes>
-        <elementListCompartment Id="19137787-7159-47cb-aef4-5f0f26e5f297" absoluteBounds="27.765, 27.21, 1.9700000000000002, 6.403035481770833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="19137787-7159-47cb-aef4-5f0f26e5f297" absoluteBounds="27.765, 26.21, 1.9700000000000002, 6.403035481770833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="9a83c896-36f3-4dbf-b228-56f7cccbc5a7" absoluteBounds="18.75, 28.75, 2, 1.1939925130208309">
@@ -506,34 +500,34 @@
         <elementListCompartment Id="7f5b3fd9-fd62-4635-9111-db93152ddec2" absoluteBounds="33.765, 24.21, 1.9700000000000002, 3.7108154296875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="3725cc35-103b-412d-acb0-7d09839df8c9" absoluteBounds="33.75, 29.75, 2, 4.6554182942708309">
+    <classShape Id="3725cc35-103b-412d-acb0-7d09839df8c9" absoluteBounds="25.75, 33.75, 2, 4.6554182942708309">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_BUDGET_RESERVE_HISTORY_INFORMATION" />
       <nestedChildShapes>
-        <elementListCompartment Id="1e2dd6bd-4aa8-4830-b989-4a29ceb41226" absoluteBounds="33.765, 30.21, 1.9700000000000002, 4.095418294270833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="1e2dd6bd-4aa8-4830-b989-4a29ceb41226" absoluteBounds="25.765, 34.21, 1.9700000000000002, 4.095418294270833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="b86d9bb1-6e6b-4f85-a0d1-56e43d750acb" absoluteBounds="25.75, 34.75, 2, 1.3862939453125023">
+    <classShape Id="b86d9bb1-6e6b-4f85-a0d1-56e43d750acb" absoluteBounds="33.75, 29.75, 2, 1.3862939453125023">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_TAX_INCOME_SOURCE" />
       <nestedChildShapes>
-        <elementListCompartment Id="7332e733-9f07-4401-a3ac-fbf171312546" absoluteBounds="25.765, 35.21, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="7332e733-9f07-4401-a3ac-fbf171312546" absoluteBounds="33.765, 30.21, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="61e38771-4c19-44ab-a211-9453e64423e4" absoluteBounds="28.75, 35.75, 2, 1.1939925130208309">
+    <classShape Id="61e38771-4c19-44ab-a211-9453e64423e4" absoluteBounds="33.75, 32.75, 2, 1.1939925130208309">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_TAX_FORCAST_EXPENSES_TYPE" />
       <nestedChildShapes>
-        <elementListCompartment Id="d137f85e-2b66-4e11-8f6a-fdb02aafcdce" absoluteBounds="28.765, 36.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="d137f85e-2b66-4e11-8f6a-fdb02aafcdce" absoluteBounds="33.765, 33.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="c368536d-c105-429e-ae28-4f5f6ce8b25b" absoluteBounds="31.75, 35.75, 2, 3.6939111328125023">
+    <classShape Id="c368536d-c105-429e-ae28-4f5f6ce8b25b" absoluteBounds="33.75, 34.75, 2, 3.6939111328125023">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_TAX_FORCAST_INCOME" />
       <nestedChildShapes>
-        <elementListCompartment Id="ba606f12-60aa-4375-9e7d-fd2215a1c06a" absoluteBounds="31.765, 36.21, 1.9700000000000002, 3.1339111328125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="ba606f12-60aa-4375-9e7d-fd2215a1c06a" absoluteBounds="33.765, 35.21, 1.9700000000000002, 3.1339111328125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="86741c7c-3282-41eb-b096-10b2e2499412" absoluteBounds="34.75, 35.75, 2, 5.0400211588541595">
+    <classShape Id="86741c7c-3282-41eb-b096-10b2e2499412" absoluteBounds="28.75, 35.75, 2, 5.0400211588541595">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_TAX_FORCAST_INCOME_MONTHLY_INFORMATION" />
       <nestedChildShapes>
-        <elementListCompartment Id="7f7d6572-ad54-49b4-949f-fee4dc4ccc9e" absoluteBounds="34.765, 36.21, 1.9700000000000002, 4.4800211588541661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="7f7d6572-ad54-49b4-949f-fee4dc4ccc9e" absoluteBounds="28.765, 36.21, 1.9700000000000002, 4.4800211588541661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="a2114042-8ef9-4acc-b09d-84b47a3d862e" absoluteBounds="36.75, 0.75, 2, 3.5016097005208309">
@@ -590,130 +584,136 @@
         <elementListCompartment Id="4c455eae-94f8-4866-8718-fd5aedd1f342" absoluteBounds="36.765, 31.21, 1.9700000000000002, 2.941609700520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="04a17c4c-9cb6-407a-89a1-5f648a65e90b" absoluteBounds="24.75, 37.75, 2, 9.4629541015625023">
+    <classShape Id="04a17c4c-9cb6-407a-89a1-5f648a65e90b" absoluteBounds="36.75, 35.75, 2, 9.4629541015625023">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_BUDGET_ALLOCATE_EXPENSE" />
       <nestedChildShapes>
-        <elementListCompartment Id="f80867e6-e9d1-45e6-96e2-e5275a22b92e" absoluteBounds="24.765, 38.21, 1.9700000000000002, 8.9029541015625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="f80867e6-e9d1-45e6-96e2-e5275a22b92e" absoluteBounds="36.765, 36.21, 1.9700000000000002, 8.9029541015625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="f666ff0b-9500-46e1-ae61-5bacd016f58c" absoluteBounds="27.75, 37.75, 2, 6.3861311848958309">
+    <classShape Id="f666ff0b-9500-46e1-ae61-5bacd016f58c" absoluteBounds="39.75, 0.75, 2, 6.3861311848958309">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_BUDGET_ALLOCATE_EXPENSES_HISTORY" />
       <nestedChildShapes>
-        <elementListCompartment Id="93af85c0-2e80-4c43-8584-0ca083f4a023" absoluteBounds="27.765, 38.21, 1.9700000000000002, 5.826131184895833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="93af85c0-2e80-4c43-8584-0ca083f4a023" absoluteBounds="39.765, 1.2100000000000009, 1.9700000000000002, 5.826131184895833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="737e660c-9d4b-44f3-aedb-67280630940d" absoluteBounds="37.75, 35.75, 2, 5.8092268880208309">
+    <classShape Id="737e660c-9d4b-44f3-aedb-67280630940d" absoluteBounds="39.75, 8.75, 2, 5.8092268880208309">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_BUDGET_ALLOCATE_EXPENSES_GROUP_HISTORY" />
       <nestedChildShapes>
-        <elementListCompartment Id="774c3d7f-9381-4742-9623-be1de29a2f56" absoluteBounds="37.765, 36.21, 1.9700000000000002, 5.249226888020833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="774c3d7f-9381-4742-9623-be1de29a2f56" absoluteBounds="39.765, 9.21, 1.9700000000000002, 5.249226888020833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="4a64fd3f-e9fd-42d1-829e-f2a29ec86bb2" absoluteBounds="39.75, 0.75, 2, 6.5784326171875023">
+    <classShape Id="4a64fd3f-e9fd-42d1-829e-f2a29ec86bb2" absoluteBounds="39.75, 15.75, 2, 6.5784326171875023">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_BUDGET_ALLOCATE_EXPENSES_GROUP" />
       <nestedChildShapes>
-        <elementListCompartment Id="bf385da6-9370-452d-85fb-0d377bc53efd" absoluteBounds="39.765, 1.2100000000000009, 1.9700000000000002, 6.0184326171875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="bf385da6-9370-452d-85fb-0d377bc53efd" absoluteBounds="39.765, 16.21, 1.9700000000000002, 6.0184326171875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="69e4d128-f36e-46d3-ac6c-3fb8c1311948" absoluteBounds="39.75, 8.75, 2, 7.3476383463541595">
+    <classShape Id="69e4d128-f36e-46d3-ac6c-3fb8c1311948" absoluteBounds="39.75, 23.75, 2, 7.3476383463541595">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_BUDGET_EXPENSES_INFORMATION" />
       <nestedChildShapes>
-        <elementListCompartment Id="f7c72122-54ad-48b6-ab2e-df7d8ad1444b" absoluteBounds="39.765, 9.21, 1.9700000000000002, 6.7876383463541661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="f7c72122-54ad-48b6-ab2e-df7d8ad1444b" absoluteBounds="39.765, 24.21, 1.9700000000000002, 6.7876383463541661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="0c0bf66c-25a2-4c7d-8c80-3fca21b615e6" absoluteBounds="15.75, 40.75, 2, 10.616762695312502">
+    <classShape Id="0c0bf66c-25a2-4c7d-8c80-3fca21b615e6" absoluteBounds="24.75, 39.75, 2, 10.616762695312502">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION" />
       <nestedChildShapes>
-        <elementListCompartment Id="6da246e9-5874-47be-a69b-923feaabf71d" absoluteBounds="15.765, 41.21, 1.9700000000000002, 10.0567626953125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="6da246e9-5874-47be-a69b-923feaabf71d" absoluteBounds="24.765, 40.21, 1.9700000000000002, 10.0567626953125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="b9b0b8ce-c1c4-4c0d-90f7-5f1302dfe62f" absoluteBounds="30.75, 40.75, 2, 9.4629541015625023">
+    <classShape Id="b9b0b8ce-c1c4-4c0d-90f7-5f1302dfe62f" absoluteBounds="31.75, 39.75, 2, 9.4629541015625023">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_BUDGET_RESERVE_INFORMATION" />
       <nestedChildShapes>
-        <elementListCompartment Id="555857c5-0fc5-4705-9a86-bb65e04eec1c" absoluteBounds="30.765, 41.21, 1.9700000000000002, 8.9029541015625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="555857c5-0fc5-4705-9a86-bb65e04eec1c" absoluteBounds="31.765, 40.21, 1.9700000000000002, 8.9029541015625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="20e00002-37e4-464a-a7ab-018e53974e5f" absoluteBounds="40.75, 35.75, 2, 7.1553369140625023">
+    <classShape Id="20e00002-37e4-464a-a7ab-018e53974e5f" absoluteBounds="39.75, 32.75, 2, 7.1553369140625023">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_BUDGET_RESERVE_WITHDRAWAL_INFORMATION" />
       <nestedChildShapes>
-        <elementListCompartment Id="3b349702-b35d-4cda-af1c-14672f15a292" absoluteBounds="40.765, 36.21, 1.9700000000000002, 6.5953369140625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="3b349702-b35d-4cda-af1c-14672f15a292" absoluteBounds="39.765, 33.21, 1.9700000000000002, 6.5953369140625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="94111554-5d9a-4cd0-aebe-20f41fa05638" absoluteBounds="0.75, 41.75, 2, 3.1170068359375023">
+    <classShape Id="94111554-5d9a-4cd0-aebe-20f41fa05638" absoluteBounds="12.75, 40.75, 2, 3.1170068359375023">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_REPORTED_BUDGET_TARGET_PERCENT" />
       <nestedChildShapes>
-        <elementListCompartment Id="35b972c7-3298-4dd4-a93d-643ecc2c2529" absoluteBounds="0.76500000000000057, 42.21, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="35b972c7-3298-4dd4-a93d-643ecc2c2529" absoluteBounds="12.765, 41.21, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="0ba7ff6f-e384-4702-b5ac-6ab57821953c" absoluteBounds="3.75, 41.75, 2, 11.193666992187502">
+    <classShape Id="0ba7ff6f-e384-4702-b5ac-6ab57821953c" absoluteBounds="15.75, 40.75, 2, 11.193666992187502">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_BUDGET_CASH_FLOW_STATEMENT" />
       <nestedChildShapes>
-        <elementListCompartment Id="b5fe266d-7f43-4d30-9af9-9d9877a88eee" absoluteBounds="3.7650000000000006, 42.21, 1.9700000000000002, 10.6336669921875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="b5fe266d-7f43-4d30-9af9-9d9877a88eee" absoluteBounds="15.765, 41.21, 1.9700000000000002, 10.6336669921875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="af6003ab-09bb-40d1-b87d-42fa48623a06" absoluteBounds="33.75, 41.75, 2, 15.039695638020831">
+    <classShape Id="af6003ab-09bb-40d1-b87d-42fa48623a06" absoluteBounds="39.75, 40.75, 2, 15.039695638020831">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_DEPARTMENT_BUDGET_CASH_FLOW_STATEMENT" />
       <nestedChildShapes>
-        <elementListCompartment Id="64019cd2-a378-4e6e-bc5f-d5ec75879711" absoluteBounds="33.765, 42.21, 1.9700000000000002, 14.479695638020832" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="64019cd2-a378-4e6e-bc5f-d5ec75879711" absoluteBounds="39.765, 41.21, 1.9700000000000002, 14.479695638020832" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="70ffbc19-a001-4b43-a764-ec4bf3ed52f0" absoluteBounds="42.75, 0.75, 2, 1.9631982421875023">
+    <classShape Id="70ffbc19-a001-4b43-a764-ec4bf3ed52f0" absoluteBounds="0.75, 41.75, 2, 1.9631982421875023">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_ASSET" />
       <nestedChildShapes>
-        <elementListCompartment Id="72805bb7-14a6-44da-a3c9-95772f0d6953" absoluteBounds="42.765, 1.2100000000000009, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="72805bb7-14a6-44da-a3c9-95772f0d6953" absoluteBounds="0.76500000000000057, 42.21, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="f4232e0c-8564-47f0-b5d9-21208398bb79" absoluteBounds="42.75, 3.75, 2, 1.3862939453125023">
+    <classShape Id="f4232e0c-8564-47f0-b5d9-21208398bb79" absoluteBounds="3.75, 41.75, 2, 1.3862939453125023">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_ASSET_TYPE" />
       <nestedChildShapes>
-        <elementListCompartment Id="df4ca1fc-6de6-4e54-99d8-1dc6fe857f87" absoluteBounds="42.765, 4.2100000000000009, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="df4ca1fc-6de6-4e54-99d8-1dc6fe857f87" absoluteBounds="3.7650000000000006, 42.21, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="775dc609-e5fa-4e33-89e7-063fc367661e" absoluteBounds="42.75, 10.75, 2, 1.5785953776041666">
+    <classShape Id="775dc609-e5fa-4e33-89e7-063fc367661e" absoluteBounds="27.75, 41.75, 2, 1.5785953776041595">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_TAX_FORCAST_EXPENSES_TYPE_PERCENT_FORMULA_DETAIL" />
       <nestedChildShapes>
-        <elementListCompartment Id="900ea3f4-3f46-4450-82ac-e06b1bd52e50" absoluteBounds="42.765, 11.21, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="900ea3f4-3f46-4450-82ac-e06b1bd52e50" absoluteBounds="27.765, 42.21, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="72d3c630-842a-4aac-a5c3-89c66e54cf33" absoluteBounds="45.375, 8.125, 2, 2.9247054036458331">
+    <classShape Id="72d3c630-842a-4aac-a5c3-89c66e54cf33" absoluteBounds="42.75, 0.75, 2, 2.9247054036458344">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_TAX_FORCAST_EXPENSES_TYPE_PERCENT_FORMULA" />
       <nestedChildShapes>
-        <elementListCompartment Id="a1490ec6-1166-4128-b09e-7e83b37ddb85" absoluteBounds="45.39, 8.585, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="a1490ec6-1166-4128-b09e-7e83b37ddb85" absoluteBounds="42.765, 1.2100000000000009, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="59d1095f-ea26-4a91-98ea-51bf7680fd6d" absoluteBounds="44.75, 14.25, 2, 2.5401025390625">
+    <classShape Id="59d1095f-ea26-4a91-98ea-51bf7680fd6d" absoluteBounds="42.75, 4.75, 2, 2.5401025390624987">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_TAX_FORCAST_EXPENSES_TYPE_FORMULA_INFORMATION" />
       <nestedChildShapes>
-        <elementListCompartment Id="2f02bcb7-2843-4fb6-83b0-ac87b78a5fd5" absoluteBounds="44.765, 14.71, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="2f02bcb7-2843-4fb6-83b0-ac87b78a5fd5" absoluteBounds="42.765, 5.2100000000000009, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="33455b4a-b9fc-4510-97eb-89315067ff0a" absoluteBounds="44.75, 23.25, 2, 17.155011393229167">
+    <classShape Id="33455b4a-b9fc-4510-97eb-89315067ff0a" absoluteBounds="42.75, 8.75, 2, 17.155011393229167">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_DEPARTMENT_EXPENSES_BUDGET_INFORMATION" />
       <nestedChildShapes>
-        <elementListCompartment Id="15c26d4d-4673-4667-8274-b271059b0822" absoluteBounds="44.765, 23.71, 1.9700000000000002, 16.595011393229164" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="15c26d4d-4673-4667-8274-b271059b0822" absoluteBounds="42.765, 9.21, 1.9700000000000002, 16.595011393229164" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="3ff2f812-4787-47c3-a02d-25689c59c1f8" absoluteBounds="6.75, 3, 2, 5.6169254557291657">
+    <classShape Id="3ff2f812-4787-47c3-a02d-25689c59c1f8" absoluteBounds="42.75, 26.75, 2, 5.616925455729163">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_BUDGET_EXPENSES_ADJUSTMENT_HISTORY" />
       <nestedChildShapes>
-        <elementListCompartment Id="30ff99d4-d1bd-4da6-a240-0eef39d2f658" absoluteBounds="6.765, 3.46, 1.9700000000000002, 5.0569254557291661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="30ff99d4-d1bd-4da6-a240-0eef39d2f658" absoluteBounds="42.765, 27.21, 1.9700000000000002, 5.0569254557291661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="834a3451-b1cc-4709-a697-1deba5c2bf0f" absoluteBounds="12, 48.125, 2, 14.0781884765625">
+    <classShape Id="834a3451-b1cc-4709-a697-1deba5c2bf0f" absoluteBounds="42.75, 33.75, 2, 14.078188476562502">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_SUMMARY_OVERALL_BUDGET" />
       <nestedChildShapes>
-        <elementListCompartment Id="d0fd70e5-c79f-4b8a-b5a2-c6d9e88041b0" absoluteBounds="12.015, 48.585, 1.9700000000000002, 13.5181884765625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="d0fd70e5-c79f-4b8a-b5a2-c6d9e88041b0" absoluteBounds="42.765, 34.21, 1.9700000000000002, 13.5181884765625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="c4bba549-1a57-490b-8c96-a74b0160b7ee" absoluteBounds="6, 2.125, 2, 9.0783512369791648">
+    <classShape Id="c4bba549-1a57-490b-8c96-a74b0160b7ee" absoluteBounds="6.75, 43.75, 2, 9.07835123697916">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_SUMMARY_BUDGET_REQUEST" />
       <nestedChildShapes>
-        <elementListCompartment Id="475de39b-953b-4478-9490-0435a543d9ef" absoluteBounds="6.015, 2.585, 1.9700000000000002, 8.5183512369791661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="475de39b-953b-4478-9490-0435a543d9ef" absoluteBounds="6.765, 44.21, 1.9700000000000002, 8.5183512369791661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="299effa5-3159-48de-a9aa-8f884aa850df" absoluteBounds="3.25, 3.875, 2, 11.7705712890625">
+    <classShape Id="299effa5-3159-48de-a9aa-8f884aa850df" absoluteBounds="0.75, 44.75, 2, 11.770571289062502">
       <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_SUMMARY_BUDGET_ALLOCATE" />
       <nestedChildShapes>
-        <elementListCompartment Id="ffb85e80-03e4-46ab-a18d-945c8e2aacab" absoluteBounds="3.265, 4.335, 1.9700000000000002, 11.2105712890625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="ffb85e80-03e4-46ab-a18d-945c8e2aacab" absoluteBounds="0.76500000000000012, 45.21, 1.9700000000000002, 11.2105712890625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="a247ad40-e927-42e9-8372-3c7ded8bb480" absoluteBounds="9.75, 44.75, 2, 2.5401025390625023">
+      <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_TRANING_AND_SEMINOR" />
+      <nestedChildShapes>
+        <elementListCompartment Id="8ff668df-693f-486e-b6e0-9c4afc763f11" absoluteBounds="9.765, 45.21, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
   </nestedChildShapes>

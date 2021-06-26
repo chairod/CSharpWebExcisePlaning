@@ -2,5 +2,5 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/ExcisePlaning/bin
-/ExcisePlaning/obj
+SourceCode/ExcisePlaning/bin
+SourceCode/ExcisePlaning/obj

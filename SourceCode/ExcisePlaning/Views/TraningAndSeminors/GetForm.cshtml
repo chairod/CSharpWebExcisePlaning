@@ -45,7 +45,8 @@
                                 label: 'ชื่อค่าอบรมและสัมนา', className: 'text-left word-wrap', type: 'html', params: 'BTN_EDIT',
                                 field: '<a href="javascript:void(0)" class="text-primary f-w-900">{{row.ITEM_TEXT}}<sup class="ml-1 ti-new-window"></sup></a>', style: 'width:auto;min-width:200px;'
                             },
-                            { label: 'อัตรา (บาท)', className: 'text-center word-wrap', type: 'fieldNumber', field: 'COMPENSATION_PRICE', style: 'min-width:150px;max-width:150px;width:150px;' },
+                            { label: 'ภาครัฐ (บาท)', className: 'text-center word-wrap', type: 'fieldNumber', field: 'COMPENSATION_GOVERN_PRICE', style: 'min-width:150px;max-width:150px;width:150px;' },
+                            { label: 'ภาคเอกชน (บาท)', className: 'text-center word-wrap', type: 'fieldNumber', field: 'COMPENSATION_PRICE', style: 'min-width:150px;max-width:150px;width:150px;' },
                             { label: '', className: 'text-center word-wrap', params: 'BTN_DELETE', type: 'html', field: '<a href="javascript:void(0)" class="text-danger f-14 f-w-900">ยกเลิก</a>', style: 'min-width:80px;max-width:80px;width:80px;' }
                         ]
                     }
@@ -65,7 +66,8 @@
                                 $scope.$settings.formData = {
                                     SeqId: $formData.SEQ_ID || null,
                                     TraningAndSeminorsName: $formData.ITEM_TEXT || '',
-                                    CompensationPrice: $formData.COMPENSATION_PRICE || null
+                                    CompensationPrice: $formData.COMPENSATION_PRICE || null,
+                                    CompensationGovernPrice: $formData.COMPENSATION_GOVERN_PRICE || null
                                 };
                             };
                             // ส่งคำขอบันทึกข้อมูล

@@ -26,7 +26,7 @@ namespace ExcisePlaning.Classes.Mappers
                 FileInfo finfo = new FileInfo(cacheFile);
 
                 // ตรวจสอบเวลาการปฏิสัมพันธ์ กับ ระบบ
-                double maximumIgnoreInactiveMinutes = 30;
+                double maximumIgnoreInactiveMinutes = 60;
                 var interval = (DateTime.Now - finfo.LastWriteTime);
                 if (interval.TotalMinutes.CompareTo(maximumIgnoreInactiveMinutes) == 1)
                 {

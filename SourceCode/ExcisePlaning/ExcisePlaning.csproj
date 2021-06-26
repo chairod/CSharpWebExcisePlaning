@@ -1113,6 +1113,8 @@
     <Content Include="Views\BudgetExpensesAdjustment\GetForm.cshtml" />
     <Content Include="Views\Authorize\InitNewAccount.cshtml" />
     <Content Include="Views\Shared\_LayoutFullContent.cshtml" />
+    <Content Include="Views\BudgetRequest\ExpensesColumnDefined\CourtFeeForm.json" />
+    <Content Include="Views\BudgetRequest\ExpensesForms\CourtFeeForm.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

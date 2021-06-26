@@ -2000,7 +2000,8 @@ namespace ExcisePlaning.Controllers
                     {
                         e.SEQ_ID,
                         e.ITEM_TEXT,
-                        e.COMPENSATION_PRICE
+                        e.COMPENSATION_PRICE,
+                        e.COMPENSATION_GOVERN_PRICE
                     }).ToList(), JsonRequestBehavior.DenyGet);
             }
         }

@@ -2481,7 +2481,7 @@
             $scope.getStructureBy('TraningAndSeminorsFormItems').then(function (structure) {
                 $scope.$settings.expensesStruc = structure;
             });
-            //โหลดข้อมูลรายการค่าฝึกอบรมและสัมนา
+            //โหลดข้อมูลรายการค่าสัมมนาและฝึกอบรม
             $customHttp.formPost("@Url.Action("RetriveAllTraningAndSeminors", "Helper")", {}).then(function (res) {
                 $scope.$settings.traningAndSeminors = res.data || [];
             }, function () { });
@@ -2499,11 +2499,30 @@
                 var newExpenses = $.extend(true, {}, $scope.$settings.expensesStruc);
                 row.Expenses.push(newExpenses);
             };
+            // เมื่อสถานที่ดำเนินการเปลี่ยนแปลง
+            var placeTypeChangedId = null;
+            $scope.placeTypeChanged = function (row) {
+                $timeout.cancel(placeTypeChangedId);
+                placeTypeChangedId = $timeout(function () {
+                    var workingTypeVal = '' + row.PlaceTypeFlag;
+                    angular.forEach(row.Activities, function (activityItem) {
+                        angular.forEach(activityItem.Expenses, function (expensesItem) {
+                            $scope.trainingAndSeminorsChanged(expensesItem, workingTypeVal);
+                        });
+                    });
+                }, 400);
+            };
             // เมื่อค่าฝึกอบรมและสัมนาเปลี่ยนแปลง
+            // workingType 1 = ภาครัฐ, 2 = ภาคเอกชน
             var traningAndSeminorsChangedId = null;
-            $scope.trainingAndSeminorsChanged = function (row) {
-                $timeout.cancel(traningAndSeminorsChangedId);
-                traningAndSeminorsChangedId = $timeout(function () {
+            $scope.trainingAndSeminorsChanged = function (row, workingType) {
+                //$timeout.cancel(traningAndSeminorsChangedId);
+                //traningAndSeminorsChangedId = $timeout(function () {
+                    if (row.TraningAndSeminorsId === 'OTHER') {
+                        $scope.calPrice(row);
+                        return;
+                    }
+
                     var selectedId = row.TraningAndSeminorsId.replace(/[^\d]/g, '');
                     var selectedItem = $scope.$settings.traningAndSeminors.filter(function (item) { return item.SEQ_ID == selectedId; });
                     row.TraningAndSeminorsName = '';
@@ -2512,9 +2531,11 @@
                     if (selectedItem.length > 0) {
                         row.TraningAndSeminorsName = selectedItem[0].ITEM_TEXT;
                         row.CompensationPrice = selectedItem[0].COMPENSATION_PRICE || 0;
+                        if (workingType == '1')
+                            row.CompensationPrice = selectedItem[0].COMPENSATION_GOVERN_PRICE || 0;
                         $scope.calPrice(row);
                     }
-                }, 300);
+                //}, 300);
             };
             // คำนวณยอดรวมต่อรายการ
             var calPriceId = null;
@@ -2643,6 +2664,14 @@
             // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
             $scope.calSummary = function () {
                 return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['TotalPrice'], 2, null, false);
+            };
+        }).controller('PrivateCourtFeeFormController', function ($scope, $filter) {
+            // ค่าธรรมเนียมศาล
+
+
+            // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
+            $scope.calSummary = function () {
+                return $filter('fwSimpleSummary')($scope.$settings.formData.rows, ['FeeAmount'], 0, null, false);
             };
         }).filter('privateFilterExpenses', function () {
             return function (rows, requestExpensesOnly) {
