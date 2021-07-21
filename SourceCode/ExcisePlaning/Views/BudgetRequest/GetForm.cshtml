@@ -986,10 +986,12 @@
 
             // ค้นหาร้อยล่ะของเงินเดือน ที่หักเข้ากองทุนเงินทดแทน
             $scope.$const = {
-                salaryPercentRate: 0 // ร้อยละของ งด. ที่หักเข้า กองทุนเงินทดแทน
+                salaryPercentRate: 0, // ร้อยละของ งด. ที่หักเข้า กองทุนเงินทดแทน
+                salaryPerYearLimitVal: 0 // หักเข้ากองทุนทดแทนต่อปีไม่เกินกี่บาท (ระบุค่า = -1 คือไม่จำกัด)
             };
             $customHttp.formPost('@Url.Action("GetSalaryRateForCompensationFund", "BudgetRequest")', {}).then(function (res) {
                 $scope.$const.salaryPercentRate = +(res.data.ITEM_VALUE || 0);
+                $scope.$const.salaryPerYearLimitVal = +(res.data.ITEM_VALUE2 || -1);
             }, function () { });
             // เมื่อค่าเงินเดือนเปลี่ยนแปลง
             var salaryValueChangedId = null;
@@ -999,6 +1001,10 @@
                     var salaryVal = +(row.Salary || 0);
                     row.MonthlyRateVal = +((salaryVal * $scope.$const.salaryPercentRate / 100.00).toFixed(5));
                     row.YearlyRateVal = +((row.MonthlyRateVal * 12).toFixed(5));
+                    if ($scope.$const.salaryPerYearLimitVal > -1 && row.YearlyRateVal > $scope.$const.salaryPerYearLimitVal) {
+                        row.YearlyRateVal = $scope.$const.salaryPerYearLimitVal;
+                        row.MonthlyRateVal = +(($scope.$const.salaryPerYearLimitVal / 12).toFixed(5));
+                    }
                 }, 700);
             };
             // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
@@ -1286,17 +1292,18 @@
                             // ค่าเบี้ยเลี้ยง
                             var findCompensationRate = compensationRateInfos.filter(function (item) { return item.COMPENSATION_TYPE_CODE == 'COMPENSATION_ALLOWANCE'; });
                             row.AllowanceCompensationRatePrice = findCompensationRate.length > 0 ? findCompensationRate[0].RATE_AMOUNT : 0;
+                            row.AllowanceCompensationRateHalfPrice = Math.ceil(row.AllowanceCompensationRatePrice / 2);
 
                             // ค่าเช่าห้องพัก
                             findCompensationRate = compensationRateInfos.filter(function (item) { return item.COMPENSATION_TYPE_CODE == 'COMPENSATION_RENT_ROOM'; });
                             row.RentRoomCompensationRatePrice = findCompensationRate.length > 0 ? findCompensationRate[0].RATE_AMOUNT : 0;
+                            row.RentRoomCompensationRateHalfPrice = Math.ceil(row.RentRoomCompensationRatePrice / 2);
 
                             // คำนวณค่าใช้จ่ายรวมในแต่ละรายการ
                             $scope.calCompensationPrice(row);
                         }, function () { });
                     }
                 }, 100);
-
             };
             // กรณีมีเพิ่มรายการใหม่ ให้ Default รายละเอียด 1 รายการ
             $scope.$on('addItem.complete', function () {
@@ -1318,10 +1325,12 @@
                 calCompensationPriceId = $timeout(function () {
 
                     // ค่าเบี้ยเลี้ยง
-                    row.AllowanceTotalCompensationPrice = (+row.TimeAmounts) * (+row.AllowancePersonAmounts) * (+row.AllowanceAmountDays) * (+row.AllowanceCompensationRatePrice);
+                    var price = +(row.MoreThanHalfDay === 1 ? row.AllowanceCompensationRatePrice : row.AllowanceCompensationRateHalfPrice);
+                    row.AllowanceTotalCompensationPrice = (+row.TimeAmounts) * (+row.AllowancePersonAmounts) * (+row.AllowanceAmountDays) * price; //(+row.AllowanceCompensationRatePrice);
 
                     // ค่าเช่าที่พัก
-                    row.RentRoomTotalCompensationPrice = (+row.TimeAmounts) * (+row.RentRoomPersonAmounts) * (+row.RentRoomAmountDays) * (+row.RentRoomCompensationRatePrice);
+                    price = +(row.MoreThanHalfDay === 1 ? row.RentRoomCompensationRatePrice : row.RentRoomCompensationRateHalfPrice);
+                    row.RentRoomTotalCompensationPrice = (+row.TimeAmounts) * (+row.RentRoomPersonAmounts) * (+row.RentRoomAmountDays) * price;//(+row.RentRoomCompensationRatePrice);
 
                     // รวม
                     row.NetExpensesPrice = (+row.AllowanceTotalCompensationPrice) + (+row.RentRoomTotalCompensationPrice) + (+row.VehicleAndOilPrice);
@@ -2514,7 +2523,7 @@
             };
             // เมื่อค่าฝึกอบรมและสัมนาเปลี่ยนแปลง
             // workingType 1 = ภาครัฐ, 2 = ภาคเอกชน
-            var traningAndSeminorsChangedId = null;
+            //var traningAndSeminorsChangedId = null;
             $scope.trainingAndSeminorsChanged = function (row, workingType) {
                 //$timeout.cancel(traningAndSeminorsChangedId);
                 //traningAndSeminorsChangedId = $timeout(function () {
@@ -2538,13 +2547,13 @@
                 //}, 300);
             };
             // คำนวณยอดรวมต่อรายการ
-            var calPriceId = null;
+            //var calPriceId = null;
             $scope.calPrice = function (row) {
-                $timeout.cancel(calPriceId);
-                calPriceId = $timeout(function () {
+                //$timeout.cancel(calPriceId);
+                //calPriceId = $timeout(function () {
                     row.TotalPersonAmounts = (+row.TypeAPersonAmounts) + (+row.TypeBPersonAmounts) + (+row.GuestAmounts) + (+row.StaffAmounts) + (+row.LecturerAmounts);
                     row.TotalPrice = (row.TimeAmounts || 1) * (row.TotalPersonAmounts == 0 ? 1 : row.TotalPersonAmounts) * (row.UnitAmounts || 1) * (+row.CompensationPrice);
-                }, 300);
+                //}, 300);
             };
             // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
             $scope.calSummary = function () {

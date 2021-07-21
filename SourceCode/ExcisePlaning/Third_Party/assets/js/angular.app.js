@@ -114,7 +114,9 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
 
 
         this.formGet = function (url, params, token) {
-            return $http.get(url + '?' + $.param(params), {
+            if (params !== null)
+                url = url + '?' + $.param(params);
+            return $http.get(url, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest', // Tell Asp.net to know IsAjaxRequest
                     "Content-Type": "application/x-www-form-urlencoded",
@@ -318,28 +320,40 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
             return $mdToast.show(
                 $mdToast.simple().textContent(text).position('top left').hideDelay(1500));
         };
-    }).service('$fwModalService', function ($mdDialog, $timeout) {
+    }).service('$fwModalService', function ($mdDialog, $timeout, $customHttp, $q) {
         this.getModal = function (_templateUrl, _params, _controller, event) {
-            return $mdDialog.show({
-                parent: angular.element(document.body),
-                clickOutsideToClose: false,
-                targetEvent: event,
-                openForm: (event ? event.target : null),
-                skipHide: true,
-                autoWrap: true,
-                multiple: true,
-                locals: _params,
-                templateUrl: _templateUrl,
-                controller: _controller,
-                onShowing: function (scope, element) {
-                    // กำหนดตำแหน่งการแสดงผล ให้เท่ากับ scroll ปัจจุบันของ browser
-                    setTimeout(function () {
-                        var positionTop = $(window).scrollTop();
-                        $(element).animate({
-                            top: positionTop
-                        }, 200);
-                    }, 200);
-                }
+            return $q(function (resolve, reject) {
+                var el = $('<div class="modal-template-loading"><i class="icon-processing icofont icofont-cloud-download"></i></div>');
+                var body = $('body');
+                el.appendTo(body);
+                $customHttp.formGet(_templateUrl, null).then(function (res) {
+                    el.remove();
+
+                    $mdDialog.show({
+                        parent: angular.element(document.body),
+                        clickOutsideToClose: false,
+                        targetEvent: event,
+                        openForm: (event ? event.target : null),
+                        skipHide: true,
+                        autoWrap: true,
+                        multiple: true,
+                        locals: _params,
+                        //templateUrl: _templateUrl,
+                        template: res.data,
+                        controller: _controller,
+                        onShowing: function (scope, element) {
+                            // กำหนดตำแหน่งการแสดงผล ให้เท่ากับ scroll ปัจจุบันของ browser
+                            $(element).addClass('position-fixed');
+                        }
+                    }).then(function (data) {
+                        resolve(data);
+                    }, function (data) {
+                        reject(data);
+                    });
+                }, function () {
+                    el.remove();
+                    reject();
+                });
             });
         };
     }).service('$fwDialogService', function ($mdDialog) {
@@ -353,13 +367,14 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
                 autoWrap: true,
                 multiple: true,
                 onShowing: function (scope, element) {
-                    // กำหนดตำแหน่งการแสดงผล ให้เท่ากับ scroll ปัจจุบันของ browser
-                    setTimeout(function () {
-                        var positionTop = $(window).scrollTop();
-                        $(element).animate({
-                            top: positionTop
-                        }, 0);
-                    }, 200);
+                    $(element).addClass('position-fixed');
+                    //// กำหนดตำแหน่งการแสดงผล ให้เท่ากับ scroll ปัจจุบันของ browser
+                    //setTimeout(function () {
+                    //    var positionTop = $(window).scrollTop();
+                    //    $(element).animate({
+                    //        top: positionTop
+                    //    }, 0);
+                    //}, 200);
                 },
                 template:
                     '<md-dialog flex="80" flex-gt-sm="35">' +
@@ -396,13 +411,14 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
                 autoWrap: true,
                 multiple: true,
                 onShowing: function (scope, element) {
+                    $(element).addClass('position-fixed');
                     // กำหนดตำแหน่งการแสดงผล ให้เท่ากับ scroll ปัจจุบันของ browser
-                    setTimeout(function () {
-                        var positionTop = $(window).scrollTop();
-                        $(element).animate({
-                            top: positionTop
-                        }, 0);
-                    }, 200);
+                    //setTimeout(function () {
+                    //    var positionTop = $(window).scrollTop();
+                    //    $(element).animate({
+                    //        top: positionTop
+                    //    }, 0);
+                    //}, 200);
                 },
                 template:
                     '<md-dialog flex="80" flex-gt-sm="30">' +
@@ -439,13 +455,14 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
                 autoWrap: true,
                 multiple: true,
                 onShowing: function (scope, element) {
+                    $(element).addClass('position-fixed');
                     // กำหนดตำแหน่งการแสดงผล ให้เท่ากับ scroll ปัจจุบันของ browser
-                    setTimeout(function () {
-                        var positionTop = $(window).scrollTop();
-                        $(element).animate({
-                            top: positionTop
-                        }, 0);
-                    }, 200);
+                    //setTimeout(function () {
+                    //    var positionTop = $(window).scrollTop();
+                    //    $(element).animate({
+                    //        top: positionTop
+                    //    }, 0);
+                    //}, 200);
                 },
                 template:
                     '<md-dialog flex="80" flex-gt-sm="30">' +
@@ -752,7 +769,8 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
                 $element.daterangepicker({
                     timePicker: showTimePicker,
                     timePicker24Hour: showTimePicker,
-                    singleDatePicker: $scope.singleDatePicker == undefined ? false : $scope.singleDatePicker,
+                    showDropdowns: true, // แสดง Year,Month แบบ Dropdown
+                    singleDatePicker: $scope.singleDatePicker === undefined ? false : $scope.singleDatePicker,
                     "locale": {
                         "format": "DD/MM/YYYY",
                         "separator": " - ",

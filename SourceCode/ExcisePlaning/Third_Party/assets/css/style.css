@@ -64,6 +64,49 @@ input,select,textarea,button,.input-group-text {
 svg > g[class^='raphael-group-'] > text{
     display: none !important;
 }
+.menu-fixed-top {
+    margin-left: 250px;
+    margin-right: 70px;
+    transition: 0.5s ease-in-out;
+}
+    .menu-fixed-top .color-white {
+        color: #F8FBFF;
+    }
+.menu-fixed-top-minimized {
+    margin-left: 40px;
+}
+
+.modal-template-loading{
+    position:fixed;
+    top: calc(50% - 90px);
+    left: calc(50% - 90px);
+    font-size: 90px;
+    font-weight: 900;
+    z-index: 100;
+    text-align: center;
+}
+    .modal-template-loading .icon-processing {
+        position: absolute;
+        opacity: 0;
+        animation: template_loading_step1 1.5s infinite;
+    }
+@keyframes template_loading_step1{
+   0%{
+       opacity: 0;
+       top: -800px;
+       font-size:90px;
+   }
+   60%{
+       opacity: 1;
+       top: 20px;
+       font-size: 150px;
+   }
+   100%{
+       top: 20px;
+       opacity: 0;
+       font-size: 300px;
+   }
+}
 /**====== Custom css end ======**/
 /**  =====================
 ==========================  **/
@@ -17328,7 +17371,7 @@ body.dark-layout {
   padding-right: 10px;
   font-size: 12px; }
 .pcoded .pcoded-navbar .pcoded-item .pcoded-hasmenu[subitem-icon="style6"] .pcoded-submenu li > a .pcoded-mtext:before {
-  content: '\e649';
+  content: '\e6ad';
   font-family: 'themify';
   padding-right: 10px;
   font-size: 12px; }

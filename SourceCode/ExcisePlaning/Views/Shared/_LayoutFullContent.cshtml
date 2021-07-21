@@ -6,8 +6,8 @@
     <!-- HTML5 Shim and Respond.js IE9 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <script src="@Url.Content("~/Third_Party/assets/pages/html5shiv.js")"></script>
+      <script src="@Url.Content("~/Third_Party/assets/pages/respond.min.js")"></script>
       <![endif]-->
     <!-- Meta -->
     <meta charset="utf-8">
@@ -18,9 +18,8 @@
     <title></title>
 
     <!-- Google font-->
-    @*<link href="https://fonts.googleapis.com/css?family=Mada:300,400,500,600,700" rel="stylesheet">*@
-    @*<link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Raleway&display=swap" rel="stylesheet">*@
     <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Raleway|Roboto&display=swap" rel="stylesheet">
+
     @Styles.Render("~/content/css")
     @Styles.Render("~/Contents/fonts")
 
@@ -51,19 +50,19 @@
                         <div class="pcoded-wrapper">
                             <div class="mt-0 mb-2" style="background-color:#ffffff;min-height:55px;height:auto;">
                                 @*<a class="mobile-menu position-absolute" style="top:20px;left:30px;color:#5b5b5b" id="mobile-collapse" href="#!">
-                                    <i class="ti-menu"></i>
-                                </a>*@
+                                        <i class="ti-menu"></i>
+                                    </a>*@
                                 <h4 class="text-center position-absolute" style="left:30%;top:20px;color:#5b5b5b">ระบบบริหารจัดการงบประมาณ</h4>
                             </div>
                         </div>
                     </nav>
 
                     @*<nav class="pcoded-navbar">
-                        <div class="sidebar_toggle"><a href="#"><i class="icon-close icons"></i></a></div>
-                        <div class="pcoded-inner-navbar main-menu">
-                            @Html.Partial("~/Views/Shared/_AppMenu.cshtml")
-                        </div>
-                    </nav>*@
+                            <div class="sidebar_toggle"><a href="#"><i class="icon-close icons"></i></a></div>
+                            <div class="pcoded-inner-navbar main-menu">
+                                @Html.Partial("~/Views/Shared/_AppMenu.cshtml")
+                            </div>
+                        </nav>*@
                     <div class="pcoded-content">
                         <div class="pcoded-inner-content">
 
@@ -83,8 +82,8 @@
                             <div class="main-body mt-md-4">
                                 <div class="page-wrapper">
                                     @*<div class="page-header">
-                                        @Html.Partial("~/Views/Shared/_AppBreadcrumb.cshtml")
-                                    </div>*@
+                                            @Html.Partial("~/Views/Shared/_AppBreadcrumb.cshtml")
+                                        </div>*@
                                     <div class="page-body" ng-app="leaveApp">
                                         @RenderBody()
                                     </div>
@@ -111,6 +110,7 @@
 
     @* Angular *@
     @Scripts.Render("~/bundle/angular")
+    <script src="@Url.Content("~/Third_Party/assets/js/angular.app.js")?v01"></script>
 
     @* Other javascript code *@
     @RenderSection("Scripts", required: false)

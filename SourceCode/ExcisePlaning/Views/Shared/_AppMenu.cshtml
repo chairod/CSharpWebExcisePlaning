@@ -22,7 +22,7 @@
                 <a href="@Url.Action(groupItem.UserMenus[0].ActionName, groupItem.UserMenus[0].RouteName)@(string.IsNullOrEmpty(groupItem.UserMenus[0].QueryString) ? "" : "?" + groupItem.UserMenus[0].QueryString)">
                     <span class="pcoded-micon"><i class="@(groupItem.UserMenus[0].MenuIcon) "></i></span>
                     <span class="pcoded-mtext">@(groupItem.UserMenus[0].MenuName)</span>
-                    <span class="pcoded-mcaret"></span>
+                    @*<span class="pcoded-mcaret"></span>*@
                 </a>
             </li>
         }
@@ -35,7 +35,7 @@
                     <a href="@Url.Action("GetForm", "ReportMainPage")">
                         <span class="pcoded-micon"><i class="@groupItem.GroupIcon"></i></span>
                         <span class="pcoded-mtext">@groupItem.GroupName</span>
-                        <span class="pcoded-mcaret"></span>
+                        @*<span class="pcoded-mcaret"></span>*@
                     </a>
                 </li>
             }
@@ -51,7 +51,7 @@
                                 <i class="ion-ios-bell f-16 f-w-900 animated jello text-danger"></i>
                             }
                         </span>
-                        <span class="pcoded-mcaret"></span>
+                        @*<span class="pcoded-mcaret"></span>*@
                     </a>
                     <ul class="pcoded-submenu">
                         @foreach (ExcisePlaning.Classes.Mappers.UserAuthorizeMenuProperty menuItem in groupItem.UserMenus)
@@ -60,7 +60,7 @@
                                 <a href="@Url.Action(menuItem.ActionName, menuItem.RouteName)@(string.IsNullOrEmpty(menuItem.QueryString) ? "" : "?" + menuItem.QueryString)">
                                     <span class="pcoded-micon"><i class="@(menuItem.MenuIcon)"></i></span>
                                     <span class="pcoded-mtext">@(menuItem.MenuName)</span>
-                                    <span class="pcoded-mcaret"></span>
+                                    @*<span class="pcoded-mcaret"></span>*@
                                 </a>
                             </li>
                         }
@@ -111,12 +111,12 @@
         <li class="">&nbsp;</li>
         <li class="">&nbsp;</li>
         <li class="">&nbsp;</li>*@
+    @*<li class="">&nbsp;</li>
     <li class="">&nbsp;</li>
     <li class="">&nbsp;</li>
     <li class="">&nbsp;</li>
     <li class="">&nbsp;</li>
-    <li class="">&nbsp;</li>
-    <li class="">&nbsp;</li>
+    <li class="">&nbsp;</li>*@
     @*<li class="">
             <a href="@Url.Action("Symbol", "SystemInfo")">
                 <span class="pcoded-micon f-12"><i class="ti-flag"></i></span>

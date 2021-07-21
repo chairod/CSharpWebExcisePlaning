@@ -25,8 +25,7 @@ namespace ExcisePlaning.App_Start
                "~/Third_Party/bower_components/angularjs/angular-aria.min.js",
                "~/Third_Party/bower_components/angularjs/angular-cookies.min.js",
                "~/Third_Party/bower_components/angularjs/angular-sanitize.min.js",
-               "~/Third_Party/bower_components/angular-material/angular-material.min.js", 
-               "~/Third_Party/assets/js/angular.app.js");
+               "~/Third_Party/bower_components/angular-material/angular-material.min.js");
             bundle.Orderer = new Classes.NonOrderingBundleOrderer();
             bundles.Add(bundle);
 

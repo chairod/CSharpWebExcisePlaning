@@ -1,11 +1,14 @@
 "use strict";
 $(document).ready(function () {
+    var clientJs = new ClientJS();
+    var trigger = clientJs.isMobile() ? "click" : "hover";
+
     $("#pcoded").pcodedmenu({
         themelayout: 'vertical',
         verticalMenuplacement: 'left', // value should be left/right
         verticalMenulayout: 'wide', // value should be wide/box/widebox
-        MenuTrigger: 'click',
-        SubMenuTrigger: 'click',
+        MenuTrigger: trigger,
+        SubMenuTrigger: trigger,
         activeMenuClass: 'active',
         ThemeBackgroundPattern: 'pattern2',
         HeaderBackground: 'theme1',
@@ -17,7 +20,7 @@ $(document).ready(function () {
         ItemBorder: true,
         ItemBorderStyle: 'none',
         SubItemBorder: true,
-        DropDownIconStyle: 'style1', // Value should be style1,style2,style3
+        DropDownIconStyle: 'style3', // Value should be style1,style2,style3
         FixedNavbarPosition: true,
         FixedHeaderPosition: true,
         collapseVerticalLeftHeader: true,

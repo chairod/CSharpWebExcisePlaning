@@ -72,7 +72,7 @@
                                 <tr class="bg-secondary text-white">
                                     <th style="width:130px;min-width:130px;max-width:130px;" class="text-center">คน</th>
                                     <th style="width:130px;min-width:130px;max-width:130px;" class="text-center">วัน</th>
-                                    <th style="width:130px;min-width:130px;max-width:130px;" class="text-center word-wrap">อัตรา (บาท)</th>
+                                    <th style="width:130px;min-width:130px;max-width:130px;" class="text-center word-wrap">อัตรา/วัน (บาท)</th>
                                     <th style="width:150px;min-width:150px;max-width:150px;" class="text-center">รวม (บาท)</th>
                                 </tr>
                                 <tr>
@@ -82,6 +82,12 @@
                                             <option value="empty">--- ระดับ ---</option>
                                             <option ng-repeat="item in $settings.personnelLevels" value="{{item.LEVEL_ID}}">{{item.LEVEL_NAME}}</option>
                                         </select>
+                                        <div class="mt-1">
+                                            <md-checkbox class="m-0" ng-model="item.MoreThanHalfDay" ng-disabled="$settings.isLoading" ng-true-value="0" ng-false-value="1" ng-click="calCompensationPrice(item)">น้อยกว่า 12 ชม.</md-checkbox>
+                                        </div>
+                                        <div class="mt-1">
+                                            <md-checkbox class="m-0" ng-model="item.MoreThanHalfDay" ng-disabled="$settings.isLoading" ng-true-value="1" ng-false-value="0" ng-click="calCompensationPrice(item)">มากกว่า 12 ชม.</md-checkbox>
+                                        </div>
                                     </td>
                                     <td rowspan="4" style="width:120px;min-width:120px;max-width:120px;" class="text-center">
                                         <fw-input-number-mask ng-model="item.TimeAmounts" css-class="text-center"
@@ -98,9 +104,9 @@
                                     <td style="width:130px;min-width:130px;max-width:130px;" class="text-center">
                                         <fw-input-number-mask ng-model="item.AllowanceAmountDays" css-class="text-center"
                                                               ng-change="calCompensationPrice(item)"
-                                                              ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="ระบุจำนวนวัน"></fw-input-number-mask>
+                                                              ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999.99" placeholder="ระบุจำนวนวัน"></fw-input-number-mask>
                                     </td>
-                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.AllowanceCompensationRatePrice|displayDecimal:2}}</td>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.MoreThanHalfDay===1?item.AllowanceCompensationRatePrice:item.AllowanceCompensationRateHalfPrice|displayDecimal:2}}</td>
                                     <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.AllowanceTotalCompensationPrice|displayDecimal:2}}</td>
                                     <td rowspan="4" style="width:170px;min-width:170px;max-width:170px;" class="text-center">
                                         <fw-input-number-mask ng-model="item.VehicleAndOilPrice" css-class="text-center"
@@ -126,9 +132,9 @@
                                     <td style="width:130px;min-width:130px;max-width:130px;" class="text-center">
                                         <fw-input-number-mask ng-model="item.RentRoomAmountDays" css-class="text-center"
                                                               ng-change="calCompensationPrice(item)"
-                                                              ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="ระบุจำนวนวัน"></fw-input-number-mask>
+                                                              ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999.99" placeholder="ระบุจำนวนวัน"></fw-input-number-mask>
                                     </td>
-                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.RentRoomCompensationRatePrice|displayDecimal:2}}</td>
+                                    <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.MoreThanHalfDay===1?item.RentRoomCompensationRatePrice:item.RentRoomCompensationRateHalfPrice|displayDecimal:2}}</td>
                                     <td style="width:130px;min-width:130px;max-width:130px;" class="text-right bg-light align-middle">{{item.RentRoomTotalCompensationPrice|displayDecimal:2}}</td>
                                 </tr>
                                 <tr ng-repeat-end></tr>

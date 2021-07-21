@@ -6,9 +6,6 @@
     </md-toolbar>
     <md-dialog-content>
         <div class="md-dialog-content">
-            <div class="d-block pb-2 mb-2 f-14 text-primary">
-                หักเข้ากองทุนเงินทดแทนร้อยละ {{$const.salaryPercentRate|number:2}}
-            </div>
             <fw-execute-button text="เพิ่มรายการ" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round"
                                ng-click="addItem($event)" ng-disabled="$settings.isLoading"></fw-execute-button>
             <span class="text-danger ml-2 float-md-right f-w-900">จำนวน {{$settings.formData.rows.length|number:0}} รายการ</span>
@@ -65,6 +62,7 @@
         </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
+        <span class="text-danger">หักเข้ากองทุนเงินทดแทนร้อยละ {{$const.salaryPercentRate|number:2}} แต่ไม่เกิน {{$const.salaryPerYearLimitVal|number:2}} บาทต่อปี</span>
         <div ng-if="$settings.isLoading">
             <span class="text-danger f-w-900 animated fadeIn">กำลังจัดเตรียมแบบฟอร์ม ...</span>
         </div>

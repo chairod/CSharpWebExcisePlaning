@@ -9,7 +9,7 @@
             <div class="form-row">
                 <div class="form-group col-12 col-md-6">
                     <label class="require-field">ค่าคงที่ในระบบ <fw-validate-error-output error-messages="$settings.formError.ConfigId.ErrorMessages" css-class="ml-1"></fw-validate-error-output></label>
-                    <select class="form-control" ng-model="$settings.formData.ConfigId" ng-disabled="$settings.isLoading">
+                    <select class="form-control" ng-model="$settings.formData.ConfigId" ng-disabled="$settings.isLoading" fw-select2>
                         <option>--- ค่าคงที่ในระบบ ---</option>
                         @foreach (ExcisePlaning.Entity.T_CONFIGURATION configuration in ViewBag.Configurations)
                         {

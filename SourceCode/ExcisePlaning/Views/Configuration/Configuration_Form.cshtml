@@ -60,14 +60,14 @@
                             { label: 'No.', className: 'text-center word-wrap', type: 'rowNumber', style: 'min-width:50px;max-width:50px;width:50px;' },
                             {
                                 label: 'ค่าคงที่', className: 'text-left word-wrap', type: 'html',
-                                field: '<span ng-class="{\'text-success\': row.USING_FLAG==1}">{{row.CONFIG_NAME}}</span><sup class="ml-1 f-w-900 text-success ion-checkmark-round" ng-if="row.USING_FLAG==1"></sup><div class="text-danger f-12">{{row.CONFIG_DESCRIPTION}}</div>', style: 'min-width:220px'
+                                field: '<span ng-class="{\'text-success\': row.USING_FLAG==1}">{{row.CONFIG_NAME}}</span><sup class="ml-1 f-w-900 text-success ion-checkmark-round" ng-if="row.USING_FLAG==1"></sup><div class="text-danger f-12">{{row.ITEM_DESCRIPTION}}</div>', style: 'min-width:220px'
                             },
                             { label: 'ค่าที่ 1', className: 'text-left word-wrap', type: 'field', field: 'ITEM_VALUE', style: 'min-width:120px;max-width:120px;width:120px;' },
                             { label: 'ค่าที่ 2', className: 'text-left word-wrap', type: 'field', field: 'ITEM_VALUE2', style: 'min-width:120px;max-width:120px;width:120px;' },
                             { label: 'ค่าที่ 3', className: 'text-left word-wrap', type: 'field', field: 'ITEM_VALUE3', style: 'min-width:120px;max-width:120px;width:120px;' },
                             { label: 'วันที่มีผลบังคับใช้', className: 'text-center word-wrap', type: 'html', field: '<span>{{row.EFFECTIVE_DATE|sqlDate:\'dd/MM/yyyy\'}}</span>', style: 'min-width:130px;max-width:130px;width:130px;' },
                             { label: 'วันที่หมดอายุ', className: 'text-center word-wrap', type: 'html', field: '<span ng-if="row.EXPIRE_DATE!=null">{{row.EXPIRE_DATE|sqlDate:\'dd/MM/yyyy\'}}</span>', style: 'min-width:130px;max-width:130px;width:130px;' },
-                            { label: 'วันที่สร้าง', className: 'text-center word-wrap', type: 'html', field: '<span>{{row.CREATED_DATETIME|sqlDate:\'dd/MM/yyyy HH:mm:ss\'}}</span>', style: 'min-width:165px;max-width:165px;width:165px;' },
+                            { label: 'วันที่สร้าง', className: 'text-center word-wrap', type: 'html', field: '<span>{{row.CREATED_DATETIME|sqlDate:null:null:true}}</span>', style: 'min-width:165px;max-width:165px;width:165px;' },
                             { label: '...', className: 'text-center word-wrap', params: 'BTN_DELETE', type: 'html', field: '<a href="javascript:void(0)" class="text-danger ti-trash f-26 text-decoration-none" ng-if="\'Y\'==row.CAN_DELETE_FLAG"></a>', style: 'min-width:60px;max-width:60px;width:60px;' }
                         ]
                     }

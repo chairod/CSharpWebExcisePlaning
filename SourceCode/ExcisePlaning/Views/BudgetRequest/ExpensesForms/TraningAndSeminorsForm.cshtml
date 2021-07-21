@@ -13,7 +13,7 @@
                 <table class="table table-bordered table-striped">
                     <tr>
                         <th rowspan="2" style="width:auto;min-width:175px" class="text-left align-middle">โครงการ/หลักสูตร/รายการ-กิจกรรม</th>
-                        <th rowspan="2" style="width:90px;min-width:90px;max-width:90px;" class="text-left word-wrap align-middle">จำนวนครั้ง/รุ่น</th>
+                        <th rowspan="2" style="width:90px;min-width:90px;max-width:90px;" class="text-left word-wrap align-middle">จำนวน/รุ่น</th>
                         <th colspan="5" class="text-center word-wrap">จำนวนคน</th>
                         <th colspan="2" class="text-center word-wrap">ระบุจำนวน/หน่วย</th>
                         <th colspan="2" class="text-center word-wrap">อัตราค่าใช้จ่ายที่ตั้ง</th>
@@ -93,44 +93,44 @@
                                 <option ng-repeat="item in $settings.traningAndSeminors" value="{{item.SEQ_ID}}">{{item.ITEM_TEXT}}</option>
                                 <option value="OTHER">อื่นๆ</option>
                             </select>
-                            <input type="text" ng-if="expensesItem.TraningAndSeminorsId=='OTHER'" placeholder="ระบุรายการค่าใช้จ่าย" maxlength="200" class="d-block p-1 border text-warning w-100 m-0 mt-1" ng-model="expensesItem.TraningAndSeminorsName" title="{{expensesItem.TraningAndSeminorsName}}" ng-disabled="$settings.isLoading||expensesItem.TraningAndSeminorsId!='OTHER'" />
+                            <input type="text" ng-if="expensesItem.TraningAndSeminorsId=='OTHER'" placeholder="ระบุรายการค่าใช้จ่าย" maxlength="200" class="d-block p-1 border f-w-900 text-primary w-100 m-0 mt-1" ng-model="expensesItem.TraningAndSeminorsName" title="{{expensesItem.TraningAndSeminorsName}}" ng-disabled="$settings.isLoading||expensesItem.TraningAndSeminorsId!='OTHER'" />
                         </td>
                         <td class="text-center">
                             <fw-input-number-mask ng-model="expensesItem.TimeAmounts" css-class="text-center"
                                                   ng-change="calPrice(expensesItem)"
-                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวนครั้ง"></fw-input-number-mask>
+                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวน"></fw-input-number-mask>
                         </td>
                         <td class="text-center">
                             <fw-input-number-mask ng-model="expensesItem.TypeAPersonAmounts" css-class="text-center"
                                                   ng-change="calPrice(expensesItem)"
-                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวนครั้ง"></fw-input-number-mask>
+                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวน"></fw-input-number-mask>
                         </td>
                         <td class="text-center">
                             <fw-input-number-mask ng-model="expensesItem.TypeBPersonAmounts" css-class="text-center"
                                                   ng-change="calPrice(expensesItem)"
-                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวนครั้ง"></fw-input-number-mask>
+                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวน"></fw-input-number-mask>
                         </td>
                         <td class="text-center">
                             <fw-input-number-mask ng-model="expensesItem.GuestAmounts" css-class="text-center"
                                                   ng-change="calPrice(expensesItem)"
-                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวนครั้ง"></fw-input-number-mask>
+                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวน"></fw-input-number-mask>
                         </td>
                         <td class="text-center">
                             <fw-input-number-mask ng-model="expensesItem.StaffAmounts" css-class="text-center"
                                                   ng-change="calPrice(expensesItem)"
-                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวนครั้ง"></fw-input-number-mask>
+                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวน"></fw-input-number-mask>
                         </td>
                         @*<td class="text-center">
                             <fw-input-number-mask ng-model="expensesItem.LecturerAmounts" css-class="text-center"
                                                   ng-change="calPrice(expensesItem)"
-                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวนครั้ง"></fw-input-number-mask>
+                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวน"></fw-input-number-mask>
                         </td>*@
                         <td class="text-center">{{expensesItem.TotalPersonAmounts|number:0}}</td>
 
                         <td class="text-center">
                             <fw-input-number-mask ng-model="expensesItem.UnitAmounts" css-class="text-center"
                                                   ng-change="calPrice(expensesItem)"
-                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวนครั้ง"></fw-input-number-mask>
+                                                  ng-disabled="$settings.isLoading" min-value="0" max-value="9999999" placeholder="จำนวน"></fw-input-number-mask>
                         </td>
                         <td class="text-left" style="width:100px;min-width:100px;max-width:100px;">
                             <select class="form-control" ng-model="expensesItem.UnitName" ng-disabled="$settings.isLoading" fw-select2>

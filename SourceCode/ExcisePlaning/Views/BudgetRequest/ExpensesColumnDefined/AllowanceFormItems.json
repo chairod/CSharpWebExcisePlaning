@@ -2,15 +2,18 @@
   "LevelId": "empty",
   "LevelName": null,
   "TimeAmounts": 0,
+  "MoreThanHalfDay": 1,
 
   "AllowancePersonAmounts": null,
   "AllowanceAmountDays": null,
   "AllowanceCompensationRatePrice": null,
+  "AllowanceCompensationRateHalfPrice": null,
   "AllowanceTotalCompensationPrice": null,
 
   "RentRoomPersonAmounts": null,
   "RentRoomAmountDays": null,
   "RentRoomCompensationRatePrice": null,
+  "RentRoomCompensationRateHalfPrice": null,
   "RentRoomTotalCompensationPrice": null,
 
   "VehicleAndOilPrice": null,

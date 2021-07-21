@@ -6,8 +6,8 @@
     <!-- HTML5 Shim and Respond.js IE9 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <script src="@Url.Content("~/Third_Party/assets/pages/html5shiv.js")"></script>
+      <script src="@Url.Content("~/Third_Party/assets/pages/respond.min.js")"></script>
       <![endif]-->
     <!-- Meta -->
     <meta charset="utf-8">
@@ -18,12 +18,28 @@
     <title></title>
 
     <!-- Google font-->
-    @*<link href="https://fonts.googleapis.com/css?family=Mada:300,400,500,600,700" rel="stylesheet">*@
-    @*<link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Raleway&display=swap" rel="stylesheet">*@
     <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Raleway|Roboto&display=swap" rel="stylesheet">
-    @Styles.Render("~/content/css")
-    @Styles.Render("~/Contents/fonts")
 
+    @*Base style*@
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/bower_components/bootstrap/bootstrap.min.css")" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/bower_components/jquery-ui/jquery-ui.min.css")" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/css/jquery.mCustomScrollbar.css")?v02" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/css/style.css")?v02" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/bower_components/angular-material/angular-material.min.css")" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/bower_components/animate.css/css/animate.css")" media="none" onload="if(media!='all')media='all'" />
+
+
+    @*Font Style*@
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/icon/themify-icons/themify-icons.css")" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/icon/icofont/icofont.min.css")" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/icon/flag-icons/css/flag-icon.min.css")" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/icon/font-awesome/css/font-awesome.min.css")" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/css/linearicons.css")" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/css/simple-line-icons.css")" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/css/ionicons.css")" media="none" onload="if(media!='all')media='all'" />
+
+    @*@Styles.Render("~/content/css")
+    @Styles.Render("~/Contents/fonts")*@
     @* Other style sheet *@
     @RenderSection("Styles", required: false)
 </head>
@@ -68,14 +84,20 @@
                         <div class="pcoded-inner-content">
 
                             @*แสดงเมนูส่วนด้านบนของเว็บไซด์*@
-                            <div class="fixed-top position-fixed p-3 shadow-sm d-none d-md-block" style="z-index:1;background-color:#96C8FD;">
+                            <div class="fixed-top position-fixed p-3 d-none d-md-block" style="z-index:1;background-color:#4BA1FD;box-shadow:0 .125rem .25rem rgba(0,0,0,0.3)">
                                 @*เนื้อหาของเมนูส่วนบน*@
-                                <div style="margin-left:250px;margin-right:70px;">
-                                    <div class="float-left"><h4 class="f-w-900 f-18 m-0 p-0 pr-1">ระบบบริหารจัดการงบประมาณ</h4></div>
+                                <div class="menu-fixed-top">
+                                    <div class="sidebar_toggle float-left mr-5">
+                                        <a href="javascript:void(0)" class="ti-menu color-white">&nbsp;</a>
+                                    </div>
+                                    <div class="float-left">
+                                        <h4 class="f-w-900 f-18 m-0 p-0 pr-1 color-white">ระบบบริหารจัดการงบประมาณ</h4>
+                                    </div>
+
                                     <div class="float-right default-font-color">
                                         <!--<div class="d-inline-block">-->
-                                            @*js script เขียนอยู่ในไฟล์ third_party/assets/js/demo-12.js*@
-                                            <!--<i class="ti-bell f-w-900 cursor-pointer" id="bell-alert"></i><sup class="f-16 f-w-900" style="color:#FDE496">3</sup>
+                                        @*js script เขียนอยู่ในไฟล์ third_party/assets/js/demo-12.js*@
+                                        <!--<i class="ti-bell f-w-900 cursor-pointer" id="bell-alert"></i><sup class="f-16 f-w-900" style="color:#FDE496">3</sup>
                                             <div id="bell-alert-menu" class="position-absolute shadow-sm p-2 d-none" style="top:50px;background-color:#96C8FD;width:auto;min-width:240px;">
                                                 <ul>
                                                     <li class="mb-2 pb-1">
@@ -96,7 +118,7 @@
                                                 </ul>
                                             </div>
                                         </div>-->
-                                        <div class="d-inline-block ml-3">@ViewBag.LoginName</div>
+                                        <div class="d-inline-block ml-3 color-white">@ViewBag.LoginName</div>
                                     </div>
                                 </div>
                             </div>
@@ -122,18 +144,44 @@
     </div>
 
 
-    @Scripts.Render("~/bundle/jquery")
+    <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/jquery/js/jquery.min.js")"></script>
+    <script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/jquery-ui/jquery-ui.min.js")"></script>
+    <script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/popper.js/js/popper.min.js")"></script>
+    <script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/bootstrap/bootstrap.min.js")"></script>
+    <script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/jquery-slimscroll/js/jquery.slimscroll.js")"></script>
+    <script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/modernizr/js/modernizr.js")"></script>
+    <script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/modernizr/js/css-scrollbars.js")"></script>
+    <script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/classie/js/classie.js")"></script>
+    <script type="text/javascript" async src="@Url.Content("~/Third_Party/assets/js/jquery.mCustomScrollbar.concat.min.js")"></script>
+    <script type="text/javascript" async src="@Url.Content("~/Third_Party/assets/js/jquery.mousewheel.min.js")"></script>
+    <script type="text/javascript" async src="@Url.Content("~/Third_Party/assets/js/pcoded.min.js")?v02"></script>
+
+
+    <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/angularjs/angular.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/angularjs/angular-animate.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/angularjs/angular-aria.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/angularjs/angular-cookies.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/angularjs/angular-sanitize.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/angular-material/angular-material.min.js")"></script>
+
+    <script type="text/javascript" src="@Url.Content("~/Third_Party/assets/js/angular.app.js")?v02"></script>
+    <script type="text/javascript" src="@Url.Content("~/Third_Party/assets/js/client.min.js")"></script>
+    <script type="text/javascript" async src="@Url.Content("~/Third_Party/assets/js/script.js")"></script>
+    <script type="text/javascript" async src="@Url.Content("~/Third_Party/assets/js/demo-12.js")?v03"></script>
+
+
+    @*@Scripts.Render("~/bundle/jquery")*@
     @* Require javascript libraries *@
-    @Scripts.Render("~/bundle/required")
+    @*@Scripts.Render("~/bundle/required")*@
 
     @* Custom js *@
-    @Scripts.Render("~/bundle/custom")
+    @*@Scripts.Render("~/bundle/custom")*@
 
     @* Render required library ของ Angular App ซึ่งจำเป็นต้องโหลดก่อน *@
     @RenderSection("ScriptsAngularAppRequired", required: false)
 
     @* Angular *@
-    @Scripts.Render("~/bundle/angular")
+    @*@Scripts.Render("~/bundle/angular")*@
 
     @* Other javascript code *@
     @RenderSection("Scripts", required: false)

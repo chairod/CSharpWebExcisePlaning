@@ -439,6 +439,7 @@
     <Content Include="Third_Party\assets\images\u-profile.png" />
     <Content Include="Third_Party\assets\images\user.png" />
     <Content Include="Third_Party\assets\js\angular.app.js" />
+    <Content Include="Third_Party\assets\js\client.min.js" />
     <Content Include="Third_Party\assets\js\demo-12.js" />
     <Content Include="Third_Party\assets\js\jquery.mCustomScrollbar.concat.min.js" />
     <Content Include="Third_Party\assets\js\jquery.mousewheel.min.js" />
@@ -449,6 +450,8 @@
     <Content Include="Third_Party\assets\pages\form-masking\inputmask.js" />
     <Content Include="Third_Party\assets\pages\form-masking\jquery.inputmask.js" />
     <Content Include="Third_Party\assets\pages\form-masking\jquery.mask.js" />
+    <Content Include="Third_Party\assets\pages\html5shiv.js" />
+    <Content Include="Third_Party\assets\pages\respond.min.js" />
     <Content Include="Third_Party\bower_components\angular-material\angular-material.min.css" />
     <Content Include="Third_Party\bower_components\angular-material\angular-material.min.js" />
     <Content Include="Third_Party\bower_components\angularjs\angular-animate.min.js" />
@@ -608,7 +611,16 @@
     <Content Include="Contents\ReportTemplates\RptPlansForReceivingAndPlayingExpenses.xlsx" />
     <Content Include="Contents\ReportTemplates\RptRequestBudgetOfYear.xlsx" />
     <Content Include="Contents\ReportTemplates\RptSummaryBudgetUsed.xlsx" />
-    <Content Include="Contents\ReportTemplates\BudgetAllocateTemplate.xlsx" />
+    <Content Include="Contents\ReportTemplates\Allocate_Budget_To_Department_Template.xlsx" />
+    <Content Include="Contents\ReportTemplates\Report001_RptDepartmentBudgetGroupByExpenses_Template.xlsx" />
+    <Content Include="Contents\ReportTemplates\Report002_RptReserveBudget_Template.xlsx" />
+    <Content Include="Contents\ReportTemplates\Report003_RptDepartmentBudgetGroupByBudgetType_Template.xlsx" />
+    <Content Include="Contents\ReportTemplates\Report004_BudgetIncomeGroupByBudgetType_Template.xlsx" />
+    <Content Include="Contents\ReportTemplates\Report005_BudgetCashFlow_Template.xlsx" />
+    <Content Include="Contents\ReportTemplates\Report006_DepartmentBudgetCashFlow_Template.xlsx" />
+    <Content Include="Contents\ReportTemplates\Report007_Department_Report_Payment_Template.xlsx" />
+    <Content Include="Contents\ReportTemplates\RptExpenseResult.xlsx" />
+    <Content Include="Contents\ReportTemplates\RptPlansIncomeOfYear.xlsx" />
     <None Include="Entity\ExcisePlaningDb.dbml.layout">
       <DependentUpon>ExcisePlaningDb.dbml</DependentUpon>
     </None>
