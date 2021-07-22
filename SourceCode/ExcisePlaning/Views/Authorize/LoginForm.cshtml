@@ -21,16 +21,30 @@
     <link rel="icon" href="~/Third_Party/assets/images/favicon.ico" type="image/x-icon">
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css?family=Mada:300,400,500,600,700" rel="stylesheet">
-    @Styles.Render("~/content/css")
+
+    <link rel="preload" href="~/Third_Party/bower_components/bootstrap/bootstrap.min.css" as="style" />
+    <link rel="preload" href="~/Third_Party/assets/css/style.min.css?v02" as="style" />
+    <link rel="preload" href="~/Third_Party/bower_components/jquery/js/jquery.min.js" as="script" />
+    <link rel="preload" href="~/Third_Party/assets/fonts/CSChatThaiUI.ttf" as="font" />
+
+    @*Base style*@
+    <link rel="stylesheet" href="~/Third_Party/bower_components/bootstrap/bootstrap.min.css" media="screen" />
+    <link rel="stylesheet" href="~/Third_Party/bower_components/jquery-ui/jquery-ui.min.css" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="~/Third_Party/assets/css/style.min.css?v02" media="screen" />
+
+
+    @*@Styles.Render("~/content/css")*@
     <style>
         .auth-bg {
             background-color: #ffffff;
         }
+
         .common-img-bg {
             background-color: #dfeffe;
         }
-        .f-color{
-            color: #5b5b5b!important;
+
+        .f-color {
+            color: #5b5b5b !important;
         }
     </style>
 </head>
@@ -148,14 +162,14 @@
     <!-- Warning Section Ends -->
     <!-- Required Jquery -->
     <script type="text/javascript" src="~/Third_Party/bower_components/jquery/js/jquery.min.js"></script>
-    <script type="text/javascript" src="~/Third_Party/bower_components/jquery-ui/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="~/Third_Party/bower_components/popper.js/js/popper.min.js"></script>
-    <script type="text/javascript" src="~/Third_Party/bower_components/bootstrap/bootstrap.min.js"></script>
+    <script type="text/javascript" async src="~/Third_Party/bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" async src="~/Third_Party/bower_components/popper.js/js/popper.min.js"></script>
+    <script type="text/javascript" async src="~/Third_Party/bower_components/bootstrap/bootstrap.min.js"></script>
     <!-- jquery slimscroll js -->
-    <script type="text/javascript" src="~/Third_Party/bower_components/jquery-slimscroll/js/jquery.slimscroll.js"></script>
+    <script type="text/javascript" async src="~/Third_Party/bower_components/jquery-slimscroll/js/jquery.slimscroll.js"></script>
     <!-- modernizr js -->
-    <script type="text/javascript" src="~/Third_Party/bower_components/modernizr/js/modernizr.js"></script>
-    <script type="text/javascript" src="~/Third_Party/bower_components/modernizr/js/css-scrollbars.js"></script>
+    <script type="text/javascript" async src="~/Third_Party/bower_components/modernizr/js/modernizr.js"></script>
+    <script type="text/javascript" async src="~/Third_Party/bower_components/modernizr/js/css-scrollbars.js"></script>
 
     <script type="text/javascript">
         window.setTimeout(function () {

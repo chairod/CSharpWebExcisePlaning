@@ -49,7 +49,7 @@ body {
     font-size: 0.875em;
     overflow-x: hidden;
     /*font-family: "Open Sans", "Montserrat", "Lato", "Raleway", sans-serif;*/
-    font-family: CSChatThai, Roboto, Montserrat, Lato, Raleway;
+    font-family: 'CSChatThai', Roboto, Montserrat, Lato, Raleway;
 }
 input,select,textarea,button,.input-group-text {
     font-family: inherit !important;

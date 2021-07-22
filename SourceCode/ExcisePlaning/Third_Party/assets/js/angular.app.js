@@ -328,7 +328,7 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
                 el.appendTo(body);
                 $customHttp.formGet(_templateUrl, null).then(function (res) {
                     el.remove();
-
+                    
                     $mdDialog.show({
                         parent: angular.element(document.body),
                         clickOutsideToClose: false,
@@ -350,7 +350,8 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
                     }, function (data) {
                         reject(data);
                     });
-                }, function () {
+                }, function (res) {
+                    alert(angular.toJson(res));
                     el.remove();
                     reject();
                 });
