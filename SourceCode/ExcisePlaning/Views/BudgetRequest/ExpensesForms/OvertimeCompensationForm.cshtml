@@ -1,4 +1,4 @@
-﻿<md-dialog flex="99" flex-gt-sm="80">
+﻿<md-dialog flex="99" flex-gt-sm="90">
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>แบบฟอร์ม{{$settings.expensesName}}</h2>
@@ -11,40 +11,57 @@
             <span class="text-danger ml-2 float-md-right f-w-900">จำนวน {{$settings.formData.rows.length|number:0}} รายการ</span>
             <div class="table-responsive">
                 <table class="table table-bordered">
-                    <tr>
-                        <th style="width:75px;min-width:75px;max-width:75px;" class="text-center">ลำดับ</th>
-                        <th style="width:auto;min-width:190px" class="text-left">ชื่อ - นามสกุล</th>
-                        <th style="width:300px;min-width:300px;max-width:300px" class="text-left">ตำแหน่ง</th>
-                        <th style="width:200px;min-width:200px;max-width:200px" class="text-left">ส่วน/ฝ่าย</th>
-                        <th style="width:180px;min-width:180px;max-width:180px;" class="text-right">รวมทั้งสิ้น (บาท)</th>
-                        <th style="width:60px;min-width:60px;max-width:60px;"></th>
-                    </tr>
-
                     <tr ng-if="$settings.formData.rows.length==0&&!$settings.isLoading">
                         <th colspan="12" class="text-center text-danger animated fadeIn">--- โปรดกดที่ปุ่ม "เพิ่มรายการ" ---</th>
                     </tr>
 
-                    <tr ng-repeat-start="row in $settings.formData.rows">
+                    <tr ng-repeat-start="row in $settings.formData.rows" class="d-none"></tr>
+                    <tr class="bg-dark">
+                        <th style="width:75px;min-width:75px;max-width:75px;" class="text-center">ลำดับ</th>
+                        <th style="width:auto;min-width:190px" class="text-left">ชื่อ - นามสกุล</th>
+                        <th style="width:300px;min-width:300px;max-width:300px" class="text-left">ตำแหน่ง</th>
+                        <th style="width:150px;min-width:150px;max-width:150px" class="text-left">ส่วน/ฝ่าย</th>
+                        <th style="width:150px;min-width:150px;max-width:150px" class="text-left">ประเภทบุคลากร</th>
+                        <th style="width:150px;min-width:150px;max-width:150px" class="text-left">ระดับ</th>
+                        <th style="width:132px;min-width:132px;max-width:132px;" class="text-right">รวมทั้งสิ้น (บาท)</th>
+                        <th style="width:60px;min-width:60px;max-width:60px;"></th>
+                    </tr>
+                    <tr>
                         <td style="width:75px;min-width:75px;max-width:75px;" class="bg-primary text-center align-middle f-w-900 f-16">{{$index + 1}}</td>
                         <td style="width:auto;min-width:190px" class="text-left bg-light">
                             <input type="text" class="form-control" maxlength="200" ng-model="row.PersonName" ng-disabled="$settings.isLoading" placeholder="ระบุชื่อ - นามสกุล" />
                         </td>
                         <td style="width:300px;min-width:300px;max-width:300px" class="text-left bg-light">
-                            <select class="form-control" ng-model="row.PositionId" ng-disabled="$settings.isLoading" fw-select2>
+                            <select class="form-control" ng-model="row.PositionId" ng-disabled="$settings.isLoading"
+                                    ng-change="positionChanged(row)" fw-select2>
                                 <option value="empty">--- ตำแหน่งงาน ---</option>
                                 <option ng-repeat="item in $settings.positions" value="{{item.POSITION_ID}}">{{item.POSITION_NAME}}</option>
                             </select>
                         </td>
-                        <td style="width:200px;min-width:200px;max-width:200px;" class="text-left">
-                            <input type="text" class="form-control" maxlength="200" ng-model="row.DivisionName" ng-disabled="$settings.isLoading" placeholder="ระบุส่วน/ฝ่าย" />
+                        <td style="width:150px;min-width:150px;max-width:150px" class="text-left">
+                            <input type="text" class="form-control" maxlength="700" ng-model="row.DivisionName" title="{{row.DivisionName}}" ng-disabled="$settings.isLoading" placeholder="ระบุส่วน/ฝ่าย" />
                         </td>
-                        <td style="width:180px;min-width:180px;max-width:180px;" class="text-right">{{row.NetCompensationPrice|number:2}}</td>
+                        <td style="width:150px;min-width:150px;max-width:150px" class="text-left bg-light">
+                            <select class="form-control" ng-model="row.PersonTypeId" ng-disabled="$settings.isLoading"
+                                    ng-change="personTypeChanged(row)" fw-select2>
+                                <option value="empty">--- ประเภทบุคลากร ---</option>
+                                <option ng-repeat="item in $settings.personnelTypes" value="{{item.PERSON_TYPE_ID}}">{{item.PERSON_TYPE_NAME}}</option>
+                            </select>
+                        </td>
+                        <td style="width:150px;min-width:150px;max-width:150px" class="text-left bg-light">
+                            <select class="form-control" ng-model="row.LevelId" ng-disabled="$settings.isLoading"
+                                    ng-change="personLevelChanged(row)" fw-select2>
+                                <option value="empty">--- ประเภทบุคลากร ---</option>
+                                <option ng-repeat="item in $settings.personnelLevels" value="{{item.LEVEL_ID}}">{{item.LEVEL_NAME}}</option>
+                            </select>
+                        </td>
+                        <td style="width:132px;min-width:132px;max-width:132px;" class="text-right">{{row.NetCompensationPrice|number:2}}</td>
                         <td style="width:60px;min-width:60px;max-width:60px;" class="text-center">
                             <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.rows.splice($index, 1)">ยกเลิก</a>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="6" class="m-0 p-0">
+                        <td colspan="8" class="m-0 p-0">
                             <table class="table m-0">
                                 <tr class="bg-secondary text-white">
                                     <th colspan="4" class="text-center">วันทำการ</th>
@@ -88,15 +105,15 @@
                                     <td style="width:160px;min-width:160px;max-width:160px;" class="text-right">{{row.TotalCompensationHolidayPrice|number:2}}</td>
                                 </tr>
                                 @*<tr class="bg-secondary text-white">
-                                    <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['WorkingAmountDays']:0}}</th>
-                                    <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['WorkingAmountHoursPerDay']:0}}</th>
-                                    <th>&nbsp;</th>
-                                    <th class="text-right animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['TotalCompensationWorkingPrice']:2}}</th>
-                                    <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['HolidayAmountDays']:0}}</th>
-                                    <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['HolidayAmountHoursPerDay']:0}}</th>
-                                    <th>&nbsp;</th>
-                                    <th class="text-right animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['TotalCompensationHolidayPrice']:2}}</th>
-                                </tr>*@
+                                        <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['WorkingAmountDays']:0}}</th>
+                                        <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['WorkingAmountHoursPerDay']:0}}</th>
+                                        <th>&nbsp;</th>
+                                        <th class="text-right animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['TotalCompensationWorkingPrice']:2}}</th>
+                                        <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['HolidayAmountDays']:0}}</th>
+                                        <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['HolidayAmountHoursPerDay']:0}}</th>
+                                        <th>&nbsp;</th>
+                                        <th class="text-right animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['TotalCompensationHolidayPrice']:2}}</th>
+                                    </tr>*@
                             </table>
                         </td>
                     </tr>
@@ -104,7 +121,7 @@
 
 
                     <tr ng-if="$settings.formData.rows.length > 0" class="bg-primary">
-                        <th colspan="4" class="text-right animated fadeIn">รวมทั้งสิ้น</th>
+                        <th colspan="6" class="text-right animated fadeIn">รวมทั้งสิ้น</th>
                         <th class="text-right animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['NetCompensationPrice']:2}}</th>
                         <th>&nbsp;</th>
                     </tr>

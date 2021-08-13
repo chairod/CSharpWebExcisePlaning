@@ -35,14 +35,15 @@
                             <input type="text" class="form-control" maxlength="200" ng-model="row.PersonName" ng-disabled="$settings.isLoading" placeholder="ระบุชื่อ - นามสกุล" />
                         </td>
                         <td style="width:270px;min-width:270px;max-width:270px;" class="text-left bg-light">
-                            <select class="form-control" ng-model="row.PositionId" ng-disabled="$settings.isLoading" fw-select2>
+                            <select class="form-control" ng-model="row.PositionId" ng-disabled="$settings.isLoading"
+                                    ng-change="positionChanged(row)" fw-select2>
                                 <option value="empty">--- ตำแหน่งงาน ---</option>
                                 <option ng-repeat="item in $settings.positions" value="{{item.POSITION_ID}}">{{item.POSITION_NAME}}</option>
                             </select>
                         </td>
                         <td style="width:180px;min-width:180px;max-width:180px;" class="text-left bg-light">
                             <select class="form-control" ng-model="row.LevelId" ng-disabled="$settings.isLoading" fw-select2
-                                    ng-change="getHouseRate(row)">
+                                    ng-change="getHouseRate(row);personLevelChanged(row)">
                                 <option value="empty">--- ระดับ ---</option>
                                 <option ng-repeat="item in $settings.personnelLevels" value="{{item.LEVEL_ID}}">{{item.LEVEL_NAME}}</option>
                             </select>

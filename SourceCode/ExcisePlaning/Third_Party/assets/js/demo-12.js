@@ -1,7 +1,7 @@
 "use strict";
 $(document).ready(function () {
     var clientJs = new ClientJS();
-    var trigger = clientJs.isMobile() ? "click" : "hover";
+    var trigger = 'click';clientJs.isMobile() ? "click" : "hover";
 
     $("#pcoded").pcodedmenu({
         themelayout: 'vertical',

@@ -94,6 +94,7 @@ namespace ExcisePlaning.Classes
                     , DateTime.Now.ToString("[ข้อมูล ณ วันที่ dd MMMM yyyy เวลา HH:mm:ss]", new CultureInfo("th-TH")));
             }
             SelectedExcelRange.Value = text;
+            SelectedExcelRange.Style.WrapText = true;
         }
 
         public void SetCaption(string range, string text, string htmlColorCode = "#F6F6F6", bool isFontBold = true)
@@ -116,9 +117,18 @@ namespace ExcisePlaning.Classes
                 SelectedExcelRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
                 SelectedExcelRange.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml(htmlColorCode));
             }
+
+            SelectedExcelRange.Style.WrapText = true;
+            AutofitRowHeight();
+            //SelectedExcelRange.AutoFitColumns();
         }
 
         public void SetCellTextVal(string range, string value, bool isBorder, string htmlColorCode = "", bool isFontBold = false)
+        {
+            SetCellTextValByFontName(range, value, isBorder, "", htmlColorCode, isFontBold);
+        }
+
+        public void SetCellTextValByFontName(string range, string value, bool isBorder, string fontName = "", string htmlColorCode = "", bool isFontBold = false)
         {
             SelectedExcelRange = GetRange(range);
             SelectedExcelRange.Merge = true;
@@ -132,14 +142,19 @@ namespace ExcisePlaning.Classes
                 SelectedExcelRange.Style.Border.BorderAround(ExcelBorderStyle.Thin);
             SelectedExcelRange.Value = value;
 
-            CurrWorkSheet.SelectedRange.Style.WrapText = true;
             //AutofitRowHeight();
+            if (!string.IsNullOrEmpty(fontName))
+                SelectedExcelRange.Style.Font.Name = fontName;
 
             if (!string.IsNullOrEmpty(htmlColorCode))
             {
                 SelectedExcelRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
                 SelectedExcelRange.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml(htmlColorCode));
             }
+
+            SelectedExcelRange.Style.WrapText = true;
+            AutofitRowHeight();
+            //SelectedExcelRange.AutoFitColumns();
         }
 
         public void SetBorder(string range, string htmlColorCode = "")
@@ -174,6 +189,10 @@ namespace ExcisePlaning.Classes
                 SelectedExcelRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
                 SelectedExcelRange.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml(htmlColorCode));
             }
+
+            SelectedExcelRange.Style.WrapText = true;
+            AutofitRowHeight();
+            //SelectedExcelRange.AutoFitColumns();
         }
 
         public void SetCellFormulaVal(int rowIndex, int columnIndex, string value, bool isBorder, string htmlColorCode = "")
@@ -192,6 +211,10 @@ namespace ExcisePlaning.Classes
                 SelectedExcelRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
                 SelectedExcelRange.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml(htmlColorCode));
             }
+
+            SelectedExcelRange.Style.WrapText = true;
+            AutofitRowHeight();
+            //SelectedExcelRange.AutoFitColumns();
         }
 
         public void SetCellCurrencyVal(string range, decimal? value, bool isBorder, string numberFormat = "_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)", string htmlColorCode = "")
@@ -213,6 +236,10 @@ namespace ExcisePlaning.Classes
                 SelectedExcelRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
                 SelectedExcelRange.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml(htmlColorCode));
             }
+
+            SelectedExcelRange.Style.WrapText = true;
+            AutofitRowHeight();
+            //SelectedExcelRange.AutoFitColumns();
         }
 
         public void SetCellIntVal(string range, int? value, bool isBorder, string htmlColorCode = "")
@@ -233,6 +260,10 @@ namespace ExcisePlaning.Classes
                 SelectedExcelRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
                 SelectedExcelRange.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml(htmlColorCode));
             }
+
+            SelectedExcelRange.Style.WrapText = true;
+            AutofitRowHeight();
+            //SelectedExcelRange.AutoFitColumns();
         }
 
         public double MeasureTextHeight(string text, ExcelFont font, Int32 width)
@@ -240,26 +271,18 @@ namespace ExcisePlaning.Classes
             if (string.IsNullOrEmpty(text))
                 return 0.0;
 
-            //ขนาดความยาวของ คอลัมล์ จะมีผลต่อความสูงของ แถว ดังนั้น 
-            //ให้ ลดความยาวของคอลัมล์ลงไป 10 ในกรณีที่ทำ WrapText = true
-            //if (width > 10)
-            //    width -= 10;
+            var bitmap = new Bitmap(1, 1);
+            var graphics = Graphics.FromImage(bitmap);
 
-            Bitmap bitmap = new Bitmap(1, 1);
-            Graphics g = Graphics.FromImage(bitmap);
+            var pixelWidth = Convert.ToInt32(width * 7);  //7 pixels per excel column width
+            var fontSize = font.Size * 1.01f;
+            var drawingFont = new Font(font.Name, fontSize);
+            var size = graphics.MeasureString(text, drawingFont, pixelWidth, new StringFormat { FormatFlags = StringFormatFlags.MeasureTrailingSpaces });
 
-            Int32 pixelWidth = Convert.ToInt32(width * 7.5); //7.5 pixels per excel column width
-            Font drawingFont = new Font(font.Name, font.Size);
-            SizeF Size = g.MeasureString(text, drawingFont, pixelWidth);
-
-            //72 DPI And 96 points per inch.  Excel height in points with max of 409 per Excel requirements.
-            return Math.Min(Convert.ToDouble(Size.Height) * 72 / 96, 409);
-            //return Math.Min(Convert.ToDouble(Size.Height) * 72 / 76, 409);
+            //72 DPI and 96 points per inch.  Excel height in points with max of 409 per Excel requirements.
+            return Math.Min(Convert.ToDouble(size.Height) * 72 / 96, 409);
         }
 
-
-        private int LastRowIndex { get; set; }
-        private double LastRowHeight { get; set; }
 
         /// <summary>
         /// คำนวนขนาดความสูงของ Excel Row
@@ -269,32 +292,29 @@ namespace ExcisePlaning.Classes
             if (null == SelectedExcelRange || null == SelectedExcelRange.Value)
                 return;
 
-            // คำนวณความสูงของ Row
-            string cellText = CurrWorkSheet.SelectedRange.Value.ToString();
-            int rowIndex = CurrWorkSheet.SelectedRange.Start.Row; // แถวปัจจุบันที่ Cell นั้นอยู่
-            int columnIndex = CurrWorkSheet.SelectedRange.Start.Column; // คอลัมล์ปัจจุบันที่ Cell นั้นอยู่
-            var rowHeight = MeasureTextHeight(cellText, CurrWorkSheet.SelectedRange.Style.Font, Convert.ToInt32(CurrWorkSheet.Column(columnIndex).Width));
-            rowHeight += 5.5;
+            string cellText = null == SelectedExcelRange.Value ? string.Empty : SelectedExcelRange.Value.ToString();
+            if (cellText.Contains("System.Object"))
+                return;
 
-            // ความสูงที่คำนวณได้ น้อยกว่า ความสูงปัจจุบันของแถว ให้ใช้ความสูงปัจจุบัน
-            var currRow = CurrWorkSheet.Row(rowIndex);
-            if (rowHeight < currRow.Height)
-                rowHeight = currRow.Height;
+            int rowIndex = SelectedExcelRange.Start.Row; // แถวปัจจุบันที่ Cell นั้นอยู่
+            if (SelectedExcelRange.End.Row > SelectedExcelRange.Start.Row) // เป็นการ Merge Row ไม่ต้องคำนวณความสูงของแถว
+                return;
 
-
-            if (LastRowIndex != rowIndex)
+            CurrWorkSheet.Cells[SelectedExcelRange.Address].Value.ToString();
+            // คำนวณความกว้างของคอลัมล์
+            int startColumnIndex = SelectedExcelRange.Start.Column,
+                endColumnIndex = SelectedExcelRange.End.Column;
+            double sumColWidth = 0;
+            do
             {
-                LastRowIndex = rowIndex;
-                LastRowHeight = rowHeight;
-                currRow.CustomHeight = true;
-                currRow.Height = rowHeight;
-            }
-            else if (LastRowHeight < rowHeight)
-            {
-                LastRowHeight = rowHeight;
-                currRow.CustomHeight = true;
-                currRow.Height = rowHeight;
-            }
+                sumColWidth += CurrWorkSheet.Column(startColumnIndex++).Width;
+            } while (startColumnIndex <= endColumnIndex);
+
+            // คำนวณความสูงของแถวจาก จำนวนอักษระ และ ความกว้างของคอลัมล์
+            var newRowHeight = MeasureTextHeight(cellText, SelectedExcelRange.Style.Font, Convert.ToInt32(Math.Ceiling(sumColWidth)));
+            newRowHeight = Math.Max(CurrWorkSheet.Row(rowIndex).Height, newRowHeight);
+            CurrWorkSheet.Row(rowIndex).CustomHeight = true;
+            CurrWorkSheet.Row(rowIndex).Height = newRowHeight;
         }
 
     }

@@ -360,7 +360,7 @@ namespace ExcisePlaning.Controllers
             /// <summary>
             /// 1 = Super User, 0 = ผู้ใช้งานทั่วไป
             /// </summary>
-            [Range(0, 1, ErrorMessage = "ค่าต้องอยู่ระหว่าง {1} - {2}")]
+            [Range(0, 3, ErrorMessage = "ค่าต้องอยู่ระหว่าง {1} - {2}")]
             public short AccountType { get; set; }
 
             /// <summary>

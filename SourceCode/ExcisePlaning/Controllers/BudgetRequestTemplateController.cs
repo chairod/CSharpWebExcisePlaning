@@ -56,8 +56,10 @@ namespace ExcisePlaning.Controllers
                     DEP_ID = e.DEP_ID,
                     DEP_NAME = e.DEP_NAME
                 }).ToList();
-                if (!userAuthorizeProfile.AccountType.Value.Equals(1)) // ถ้าไม่ใช่ Super user ดูได้เฉพาะหน่วยงานของตน
-                    depExpr = depExpr.Where(e => e.DEP_ID.Equals(userAuthorizeProfile.DepId)).ToList();
+
+                var depAuthorize = DepartmentAuthorizeFilterProperty.Verfity(userAuthorizeProfile, null);
+                if (!depAuthorize.Equals(1)) // ถ้าไม่ใช่หน่วยงานกลาง
+                    depExpr = depExpr.Where(e => depAuthorize.AssignDepartmentIds.Contains(e.DEP_ID)).ToList();
                 ViewBag.Departments = depExpr;
 
                 // ประเภทงบประมาณ (งบดำเนินงาน งบลงทุน)
@@ -122,14 +124,13 @@ namespace ExcisePlaning.Controllers
 
                 var expr = db.V_GET_BUDGET_TEMPLATE_INFORMATIONs.AsQueryable();
 
-                // กรณีไม่ใช่ Super User ให้มองเห็นได้เฉพาะ หน่วยงานที่ให้สิทธิ์
-                if (!userAuthorizeProfile.AccountType.Value.Equals(1))
-                    forDepId = userAuthorizeProfile.DepId;
-
+                // ตรวจสอบสิทธิ์การเข้าถึงข้อมูลของหน่วยงาน
                 // กรณีระบุเจาะจงหน่วยงานที่ได้รับสิทธิ์ให้เข้าถึง Template
                 // และต้องรวม Shared Template ด้วย
-                if (null != forDepId)
-                    expr = expr.Where(e => (e.SHARED_DEP_TEMPLATE.Equals(1) || (e.SHARED_DEP_TEMPLATE.Equals(2) && db.T_BUDGET_REQUEST_TEMPLATE_DEPARTMENT_AUTHORIZEs.Any(authorize => authorize.TEMPLATE_ID.Equals(e.TEMPLATE_ID) && authorize.DEP_ID.Equals(forDepId)))));
+                var depAuthorize = DepartmentAuthorizeFilterProperty.Verfity(userAuthorizeProfile, forDepId);
+                if(!depAuthorize.Authorize.Equals(1))
+                    expr = expr.Where(e => (e.SHARED_DEP_TEMPLATE.Equals(1) || (e.SHARED_DEP_TEMPLATE.Equals(2) && db.T_BUDGET_REQUEST_TEMPLATE_DEPARTMENT_AUTHORIZEs.Any(authorize => authorize.TEMPLATE_ID.Equals(e.TEMPLATE_ID) && depAuthorize.AssignDepartmentIds.Contains(authorize.DEP_ID)))));
+                    
 
                 // กรณีระบุเจาะจงสิทธิ์การเข้าถึง Template เฉพาะปี งปม.
                 if (null != forYear)

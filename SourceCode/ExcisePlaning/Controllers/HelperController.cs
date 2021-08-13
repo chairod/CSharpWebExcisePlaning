@@ -59,7 +59,7 @@ namespace ExcisePlaning.Controllers
 
             // ตรวจสอบสิทธิ์การเข้าถึงข้อมูลของบุคลากร โดยตรวจสอบจากหน่วยงาน
             UserAuthorizeProperty userAuthorizeProfile = UserAuthorizeProperty.GetUserAuthorizeProfile(HttpContext.User.Identity.Name);
-            if (!userAuthorizeProfile.AccountType.Value.Equals(1))
+            if (!userAuthorizeProfile.AccountType.Equals(1))
             {
                 if (depId == null)
                     return Json(pagging, JsonRequestBehavior.DenyGet);

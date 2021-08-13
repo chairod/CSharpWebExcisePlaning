@@ -1,0 +1,185 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>เข้าสู่ระบบ - ระบบบริหารจัดการงบประมาณ</title>
+    <!-- HTML5 Shim and Respond.js IE9 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="@Url.Content("~/Third_Party/assets/pages/html5shiv.js")"></script>
+      <script src="@Url.Content("~/Third_Party/assets/pages/respond.min.js")"></script>
+      <![endif]-->
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="#">
+    <meta name="author" content="#">
+    <!-- Favicon icon -->
+
+    <link rel="icon" href="~/Third_Party/assets/images/favicon.ico" type="image/x-icon">
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Mada:300,400,500,600,700" rel="stylesheet">
+
+    <link rel="preload" href="~/Third_Party/bower_components/bootstrap/bootstrap.min.css" as="style" />
+    <link rel="preload" href="~/Third_Party/assets/css/style.min.css?v02" as="style" />
+    <link rel="preload" href="~/Third_Party/bower_components/jquery/js/jquery.min.js" as="script" />
+    <link rel="preload" href="~/Third_Party/assets/fonts/CSChatThaiUI.ttf" as="font" />
+
+    @*Base style*@
+    <link rel="stylesheet" href="~/Third_Party/bower_components/bootstrap/bootstrap.min.css" media="screen" />
+    <link rel="stylesheet" href="~/Third_Party/bower_components/jquery-ui/jquery-ui.min.css" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="~/Third_Party/assets/css/style.min.css?v02" media="screen" />
+
+
+    @*@Styles.Render("~/content/css")*@
+    <style>
+        .auth-bg {
+            background-color: #ffffff;
+        }
+
+        .common-img-bg {
+            background-color: #dfeffe;
+        }
+
+        .f-color {
+            color: #5b5b5b !important;
+        }
+    </style>
+</head>
+
+<body class="fix-menu" ng-app="leaveApp" ng-controller="AppController">
+    <section class="login p-fixed d-flex text-center common-img-bg">
+        <!-- Container-fluid starts -->
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <!-- Authentication card start -->
+                    <div class="login-card card-block auth-body m-auto">
+                        <form class="md-float-material" method="post" action="@Url.Action("LoginForm", "Authorize")">
+                            <div class="auth-box auth-bg shadow-sm rounded">
+                                <div class="row m-b-20">
+                                    <div class="col-md-12">
+                                        <div class="text-center">
+                                            <img src="@Url.Action("GetImage", "Resource", new { groupType = "third_party", filename = "excise-planing-logo.png"})" class="img img-fluid" alt="avatar-2.png">
+                                            <h3><span class="f-color">ระบบบริหารจัดการงบประมาณ</span></h3>
+                                            <span>เวอร์ชั่น 1.0.0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="input-group">
+                                    <input type="text" class="form-control f-color" name="userName" id="userName" autocomplete="off" placeholder="ชื่อผู้ใช้งาน" value="@ViewBag.UserName">
+                                    <span class="md-line"></span>
+                                </div>
+                                <div class="input-group mt-3">
+                                    <input type="password" name="userPass" class="form-control f-color" autocomplete="off" placeholder="รหัสผ่าน">
+                                    <span class="md-line"></span>
+                                </div>
+                                @*<div class="row m-t-25 text-left">
+                                        <div class="col-sm-7 col-xs-12">
+                                            <div class="checkbox-fade fade-in-primary">
+                                                <label>
+                                                    <input type="checkbox" name="rememberMe" value="">
+                                                    <span class="cr" style="border-color:#fff;"><i class="cr-icon icofont icofont-ui-check" style="color:#fff;"></i></span>
+                                                    <span class="text-white">Remember me</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-5 col-xs-12 forgot-phone text-right">
+                                            <a href="#" class="text-right f-w-600 text-white"> Forgot Password?</a>
+                                        </div>
+                                    </div>*@
+                                <div class="row m-t-15">
+                                    <div class="col-md-12">
+                                        <button type="submit" onclick="showMessage()"
+                                                style="background-color:#308AFF"
+                                                class="btn f-w-900 btn-md btn-block waves-effect text-center m-b-20 f-22">
+                                            <span style="color:#fff;">เข้าสู่ระบบ</span>
+                                        </button>
+                                        <div class="text-danger f-w-900 f-14 text-left">
+                                            <span class="animated fadeIn text-danger" id="message">@ViewBag.ErrorMessage</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                        <!-- end of form -->
+                    </div>
+                    <!-- Authentication card end -->
+                </div>
+                <!-- end of col-sm-12 -->
+            </div>
+            <!-- end of row -->
+        </div>
+        <!-- end of container-fluid -->
+    </section>
+    <!-- Warning Section Starts -->
+    <!-- Older IE warning message -->
+    <!--[if lt IE 9]>
+    <div class="ie-warning">
+        <h1>Warning!!</h1>
+        <p>You are using an outdated version of Internet Explorer, please upgrade <br/>to any of the following web browsers to access this website.</p>
+        <div class="iew-container">
+            <ul class="iew-download">
+                <li>
+                    <a href="http://www.google.com/chrome/">
+                        <img src="~/Third_Party/assets/images/browser/chrome.png" alt="Chrome">
+                        <div>Chrome</div>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.mozilla.org/en-US/firefox/new/">
+                        <img src="~/Third_Party/assets/images/browser/firefox.png" alt="Firefox">
+                        <div>Firefox</div>
+                    </a>
+                </li>
+                <li>
+                    <a href="http://www.opera.com">
+                        <img src="~/Third_Party/assets/images/browser/opera.png" alt="Opera">
+                        <div>Opera</div>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.apple.com/safari/">
+                        <img src="~/Third_Party/assets/images/browser/safari.png" alt="Safari">
+                        <div>Safari</div>
+                    </a>
+                </li>
+                <li>
+                    <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
+                        <img src="~/Third_Party/assets/images/browser/ie.png" alt="">
+                        <div>IE (9 & above)</div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <p>Sorry for the inconvenience!</p>
+    </div>
+    <![endif]-->
+    <!-- Warning Section Ends -->
+    <!-- Required Jquery -->
+    <script type="text/javascript" src="~/Third_Party/bower_components/jquery/js/jquery.min.js"></script>
+    <script type="text/javascript" async src="~/Third_Party/bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" async src="~/Third_Party/bower_components/popper.js/js/popper.min.js"></script>
+    <script type="text/javascript" async src="~/Third_Party/bower_components/bootstrap/bootstrap.min.js"></script>
+    <!-- jquery slimscroll js -->
+    <script type="text/javascript" async src="~/Third_Party/bower_components/jquery-slimscroll/js/jquery.slimscroll.js"></script>
+    <!-- modernizr js -->
+    <script type="text/javascript" async src="~/Third_Party/bower_components/modernizr/js/modernizr.js"></script>
+    <script type="text/javascript" async src="~/Third_Party/bower_components/modernizr/js/css-scrollbars.js"></script>
+
+    <script type="text/javascript">
+        window.setTimeout(function () {
+            $('#userName').focus();
+        }, 200);
+
+        function showMessage() {
+            $('#message').text('กำลังตรวจสอบสิทธิ์ โปรดรอสักครู่ ...')
+        };
+    </script>
+</body>
+
+</html>

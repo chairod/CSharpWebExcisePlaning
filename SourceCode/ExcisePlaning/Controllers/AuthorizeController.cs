@@ -18,6 +18,8 @@ namespace ExcisePlaning.Controllers
         [HttpGet]
         public ActionResult LoginForm()
         {
+            var appSettings = AppSettingProperty.ParseXml();
+            ViewBag.LoginType = appSettings.LoginType;
             return View();
         }
 
@@ -31,6 +33,9 @@ namespace ExcisePlaning.Controllers
         [HttpPost, Route("userName:string, userPass:string")]
         public ActionResult LoginForm(string userName, string userPass)
         {
+            var appSettings = AppSettingProperty.ParseXml();
+            ViewBag.LoginType = appSettings.LoginType;
+
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(userPass))
             {
                 ViewBag.ErrorMessage = "โปรดระบุ ผู้ใช้งาน และ รหัสผ่าน ให้ครบถ้วนก่อน";
@@ -39,6 +44,7 @@ namespace ExcisePlaning.Controllers
             ViewBag.UserName = userName;
 
 
+            // ขอ Authentication กับ SSO ของกรมสรรพสามิต
             AppSettingProperty appSetting = AppSettingProperty.ParseXml();
             string cardNumber = "", firstName = "", lastName = ""
                 , emailAddr = "", personCode = "";
@@ -64,32 +70,6 @@ namespace ExcisePlaning.Controllers
                     personCode = result.userId; // รหัสผู้ใช้งาน
                 }
             }
-            //using (DirectoryEntry entry = new DirectoryEntry(appSetting.ActiveDirectoryDomain, userName, userPass))
-            //{
-            //    DirectorySearcher searcher = new DirectorySearcher(entry);
-
-            //    //searcher.Filter = "(objectclass=user)";
-            //    searcher.Filter = string.Format("(sAMAccountName={0})", userName);
-            //    searcher.PropertiesToLoad.Add("name"); // ค้นหาชื่อของพนักงานที่กำลังตรวจสอบ
-            //    searcher.PropertiesToLoad.Add("employeeNumber"); // ขอข้อมูลรหัสพนักงานจากเครื่อง AD
-
-            // ถ้า Login จาก ActiveDirectory ไม่ผ่านจะเข้า Catch Exception
-            //try
-            //{
-            //var result = searcher.FindOne();
-            //DirectoryEntry dsresult = result.GetDirectoryEntry();
-            //string personFullName = "";
-            //string personCode = "";
-            //if (null != dsresult.Properties["name"].Value)
-            //    personFullName = dsresult.Properties["name"].Value.ToString().Trim();
-            //if (null != dsresult.Properties["employeeNumber"].Value)
-            //    personCode = dsresult.Properties["employeeNumber"].Value.ToString().Trim();
-
-
-            // เชื่อมต่อไปยัง WebService เพื่อขอข้อมูลโปรไฟล์ของผู้ใช้งาน
-            //StaffDirectoryServices.User staffDirectoryUsrProfile = null;
-            //using (GWServiceSoapClient ws = new GWServiceSoapClient())
-            //    staffDirectoryUsrProfile = ws.GetUserByLoginAD(appSetting.StaffDirectoryPasswordService, userName);
 
 
             using (ExcisePlaningDbDataContext db = new ExcisePlaningDbDataContext())
@@ -98,30 +78,60 @@ namespace ExcisePlaning.Controllers
                 //if (null == configResult || !configResult.Any())
                 //    return AppConstNotDefined("โปรดติดต่อผู้ดูแลระบบให้ตั้งค่า Token สำหรับเชื่อมต่อจากภายนอก");
 
+                int? personId = null;
                 // ค้นหาข้อมูลบุคลากร เพื่อนำมาปรับปรุงข้อมูลที่ได้จาก Staff Directory
                 if ("SSO".Equals(appSetting.LoginType))
                 {
                     var personExpr = db.T_PERSONNELs.Where(e => e.CARD_NUMBER.Equals(cardNumber)).FirstOrDefault();
+                    if (null != personExpr)
+                    {
+                        if (personExpr.ACTIVE == -1)
+                        {
+                            ViewBag.ErrorMessage = "ผู้ใช้งานนี้ถูกยกเลิกการใช้งาน หากต้องการใช้งานระบบต่อโปรดติดต่อผู้รับผิดชอบ";
+                            return View("LoginForm");
+                        }
+                        else if (personExpr.ACTIVE == 0) // ผ่านการเข้าสู่ระบบในครั้งแรก แต่ไม่กรอกข้อมูลที่จำเป็นต่อการใช้ระบบ
+                            return RedirectToAction("InitNewAccount", new { cardNumber = personExpr.CARD_NUMBER });
+                    }
+
                     bool isNewPerson = null == personExpr;
+                    short? defaultRoleId = null;
                     if (isNewPerson)
                     {
-                        personExpr = new T_PERSONNEL()
+                        // หากพึ่งเคยเข้าสู่ระบบเป็นครั้งแรก
+                        // ให้ตรวจสอบเพิ่มจาก รายการผู้ใช้งานที่จัดเตรียมไว้
+                        var personPrepare = db.T_PERSONNEL_SSO_PREPAREs.Where(e => e.CARD_NUMBER.Equals(cardNumber)).FirstOrDefault();
+                        if (null != personPrepare)
                         {
-                            DEP_ID = 1, // ค่าเริ่มต้นเป็น Fusion sole (ระบบจะบังคับให้เปลี่ยน)
-                            PERSON_TYPE_ID = 1, // ค่าเริ่มต้นเป็น ข้าราชการ (ระบบจะบังคับให้เปลี่ยน)
-                            POSITION_ID = 27, // ค่าเริ่มต้นเป็น เจ้าหน้าที่ธุระการ (ระบบจะบังคับให้เปลี่ยน)
-                            LEVEL_ID = 1, // ค่าเริ่มต้นเป็น ปฏิบัติการ (ระบบจะบังคับให้เปลี่ยน)
-                            SEX_TYPE = 'M', // ค่าเริ่มต้นเป็น เพศชาย (ระบบจะบังคับให้เปลี่ยน)
-                            PREFIX_NAME = "นาย", // ค่าเริ่มต้นเป็น นาย (ระบบจะบังคับให้เปลี่ยน)
-                            ACC_TYPE = 0, // 1 = ผู้ใช้งานที่สามารถดูข้อมูลได้ทุกคน, 0 = ผู้ใช้งานทั่วไป
+                            defaultRoleId = personPrepare.DEFAULT_ROLE_ID;
+                            personExpr = new T_PERSONNEL()
+                            {
+                                PERSON_CODE = cardNumber,
+                                AREA_ID = db.T_DEPARTMENTs.Where(e => e.DEP_ID.Equals(personPrepare.DEFAULT_DEP_ID)).Select(e => e.AREA_ID).FirstOrDefault(),
+                                DEP_ID = personPrepare.DEFAULT_DEP_ID, // ค่าเริ่มต้นเป็น Fusion sole (ระบบจะบังคับให้เปลี่ยน)
+                                PERSON_TYPE_ID = personPrepare.DEFAULT_PERSON_TYPE_ID, // ค่าเริ่มต้นเป็น ข้าราชการ (ระบบจะบังคับให้เปลี่ยน)
+                                POSITION_ID = personPrepare.DEFAULT_POSITION_ID, // ค่าเริ่มต้นเป็น เจ้าหน้าที่ธุระการ (ระบบจะบังคับให้เปลี่ยน)
+                                LEVEL_ID = personPrepare.DEFAULT_LEVEL_ID, // ค่าเริ่มต้นเป็น ปฏิบัติการ (ระบบจะบังคับให้เปลี่ยน)
+                                SEX_TYPE = personPrepare.DEFAULT_SEX_TYPE[0], // ค่าเริ่มต้นเป็น เพศชาย (ระบบจะบังคับให้เปลี่ยน)
+                                PREFIX_NAME = "M".Equals(personPrepare.DEFAULT_SEX_TYPE) ? "นาย" : "นางสาว", // ค่าเริ่มต้นเป็น นาย (ระบบจะบังคับให้เปลี่ยน)
+                                ACC_TYPE = personPrepare.DEFAULT_ACC_TYPE, // 1 = ผู้ใช้งานที่สามารถดูข้อมูลได้ทุกคน, 0 = ผู้ใช้งานทั่วไป
 
-                            CARD_NUMBER = cardNumber,
-                            CREATED_DATETIME = DateTime.Now,
-                            USER_ID = 0,
-                            ACTIVE = 0
-                        };
-                        db.T_PERSONNELs.InsertOnSubmit(personExpr);
+                                CARD_NUMBER = cardNumber,
+                                EMAIL_ADDR = personPrepare.DEFAULT_EMAIL_ADDR,
+                                CREATED_DATETIME = DateTime.Now,
+                                USER_ID = 0,
+                                ACTIVE = 0 // Lock การเข้าสู่ระบบไว้ก่อน รอการยืนยันข้อมูล
+                            };
+                            db.T_PERSONNELs.InsertOnSubmit(personExpr);
+                        }
                     }
+
+                    if (null == personExpr)
+                    {
+                        ViewBag.ErrorMessage = string.Format("หากต้องการใช้งานระบบ โปรดใช้เลขบัตรประชาชน {0} พร้อม ชื่อ-นามสกุล, เขตพื้นที่, หน่วยงาน แจ้งไปยังผู้รับผิดชอบ", cardNumber);
+                        return View("LoginForm");
+                    }
+
 
                     // แก้ไขชื่อผู้ใช้งาน ให้ตรงกับ SSO
                     personExpr.FIRST_NAME = firstName;
@@ -130,28 +140,23 @@ namespace ExcisePlaning.Controllers
                     personExpr.PERSON_CODE = personCode;
                     db.SubmitChanges();
 
-                    //ViewBag.ErrorMessage = string.Format("card: {0}, first: {1}, last: {2}, person: {3}, new: {4}"
-                    //    , cardNumber, firstName, lastName, personCode
-                    //    , isNewPerson);
-                    //return View("LoginForm");
-                    if (isNewPerson || (null != personExpr && personExpr.ACTIVE == 0))
+                    // ถ้าเป็นผู้ใช้งานที่เคยเข้าระบบเป็นครั้งแรก
+                    // ให้เพิ่มสิทธิ์กลุ่มผู้ใช้งานตามค่า Default ที่กำหนดในระบบ (Config file)
+                    if (isNewPerson)
                     {
-                        // ถ้าเป็นผู้ใช้งานที่เคยเข้าระบบเป็นครั้งแรก
-                        // ให้เพิ่มสิทธิ์กลุ่มผู้ใช้งานตามค่า Default ที่กำหนดในระบบ (Config file)
-                        if (isNewPerson)
+                        db.T_PERSONNEL_AUTHORIZEs.InsertOnSubmit(new T_PERSONNEL_AUTHORIZE()
                         {
-                            db.T_PERSONNEL_AUTHORIZEs.InsertOnSubmit(new T_PERSONNEL_AUTHORIZE()
-                            {
-                                PERSON_ID = personExpr.PERSON_ID,
-                                ROLE_ID = short.Parse(appSetting.DefaultRoleIdForNewAccountStr),
-                                ACTIVE = 1,
-                                CREATED_DATETIME = DateTime.Now,
-                                USER_ID = 0
-                            });
-                            db.SubmitChanges();
-                        }
-                        return RedirectToAction("InitNewAccount", new { cardNumber = cardNumber });
+                            PERSON_ID = personExpr.PERSON_ID,
+                            ROLE_ID = defaultRoleId.Value,
+                            ACTIVE = 1,
+                            CREATED_DATETIME = DateTime.Now,
+                            USER_ID = 0
+                        });
+                        db.SubmitChanges();
+                        return RedirectToAction("InitNewAccount", new { cardNumber = personExpr.CARD_NUMBER });
                     }
+
+                    personId = personExpr.PERSON_ID;
                 }
                 else
                 {
@@ -169,80 +174,12 @@ namespace ExcisePlaning.Controllers
                         return View("LoginForm");
                     }
 
-                    personCode = personExpr.PERSON_CODE;
+                    personId = personExpr.PERSON_ID;
                 }
-
-
-
-                // ปรับปรุงข้อมูลบุคลากร ให้ตรงกับระบบ Staff Directory
-                // การปรับปรุงข้อมูลส่วนอื่นๆ จะใช้ LeaveAppConsole ในการปรับปรุง
-                //personExpr.PERSON_CODE = staffDirectoryUsrProfile.Empcode;
-                //personExpr.PREFIX_NAME = staffDirectoryUsrProfile.PrefixName;
-                //personExpr.FIRST_NAME = staffDirectoryUsrProfile.FirstName;
-                //personExpr.LAST_NAME = staffDirectoryUsrProfile.LastName;
-                //personExpr.REGISTER_DATE = DateTime.Parse(staffDirectoryUsrProfile.EnterWorkDate);
-                //personExpr.ACTIVE = Convert.ToInt16(staffDirectoryUsrProfile.IsActive.Equals("true") ? 1 : 0);
-                //personExpr.SEX_TYPE = staffDirectoryUsrProfile.Sex.Equals("true") ? 'F' : 'M'; // F = หญิง, M = ชาย
-                //db.SubmitChanges();
 
                 // ส่งคำร้องไปยัง CheckPermission
                 // เพื่อตรวจสอบมอบหมายสิทธิ์ต่างๆ อาทิเช่น เมนู สิทธิ์ตามตำแหน่งงาน เป็นต้น
-                return RedirectToAction("CheckPermission", "Authorize", new
-                {
-                    empCode = personCode, //personExpr.PERSON_CODE,
-                    accessToken = appSetting.AccessToken
-                });
-
-                // นำชื่อผู้ใช้งานที่ได้ แยกชื่อ นามสกุล ออกจากกัน และนำไปค้นหาในฐานข้อมูล
-                //string[] nameParts = personFullName.Split(new char[] { ' ' });
-                //string firstName = nameParts.Length > 0 ? nameParts[0].Trim() : "",
-                //    sureName = nameParts.Length > 1 ? nameParts[1].Trim() : "";
-                //var personEntities = db.T_PERSONNELs.Where(e => e.PERSON_CODE.Equals(personCode))
-                //        .Select(e => new
-                //        {
-                //            PERSON_CODE = e.PERSON_CODE,
-                //            ACTIVE = e.ACTIVE
-                //        }).ToList();
-
-
-                //// ตรวจสอบความถูกต้องของข้อมูลบุคลากร
-                //if (personEntities.Count == 0)
-                //{
-                //    ViewBag.ErrorMessage = "ไม่พบ ชื่อ-นามสกุล ของท่านในระบบลา โปรดแจ้งผู้ดูแลระบบ";
-                //    return View("LoginForm");
-                //}
-                //else
-                //{
-                //    // พบ ชื่อ - นามสกุล เดียวกันมากกว่า 1 คน
-                //    if (personEntities.Count > 1)
-                //    {
-                //        ViewBag.ErrorMessage = string.Format("ชื่อ {0} {1} ในระบบมีมากกว่า 1 คน โปรดแจ้งผู้ดูแลระบบ", firstName, sureName);
-                //        return View("LoginForm");
-                //    }
-                //    else if (!personEntities[0].ACTIVE.Equals(1))
-                //    {
-                //        ViewBag.ErrorMessage = "ท่านถูกยกเลิกการใช้งานจากระบบแล้ว โปรดติดต่อผู้ดูแลระบบ";
-                //        return View("LoginForm");
-                //    }
-
-                //    // ปรับปรุงชื่อบุคลาการ
-                //    // เนื่องจาก บางส่วนได้ข้อมูลจากเครื่องลงเวลา ชื่อจะถูกตัดไป
-                //    var personEntity = db.T_PERSONNELs.Where(e => e.PERSON_CODE.Equals(personCode)).FirstOrDefault();
-                //    if(null != personEntity)
-                //    {
-                //        personEntity.FIRST_NAME = firstName;
-                //        personEntity.LAST_NAME = sureName;
-                //        personEntity.UPDATED_DATETIME = DateTime.Now;
-                //        personEntity.UPDATED_ID = 1; // Admin
-                //        db.SubmitChanges();
-                //    }
-
-                //    return RedirectToAction("CheckPermission", "Authorize", new
-                //    {
-                //        empCode = personEntities[0].PERSON_CODE,
-                //        accessToken = configResult.First().ITEM_VALUE
-                //    });
-                //}
+                return VerifyAuthorize(personId, appSetting.AccessToken);
             }
             //}
             //catch (COMException ex)
@@ -269,14 +206,14 @@ namespace ExcisePlaning.Controllers
         /// ตรวจสอบสิทธิ์การเข้าใช้งาน ระบบด้วย empCode, token <para />
         /// ระบบลูกค้า จะสร้างลิ้งการเข้ามาใช้งานระบบ จากส่วนกลางและให้คลิกลิ้งเข้ามา <para />
         /// </summary>
-        /// <param name="empCode"></param>
+        /// <param name="personId"></param>
         /// <param name="token"></param>
         /// <returns></returns>
         // GET: Authorize
-        [HttpGet, Route("{empCode:string},{accessToken:string}")]
-        public ActionResult CheckPermission(string empCode, string accessToken)
+        [HttpGet]
+        public ActionResult VerifyAuthorize(int? personId, string accessToken)
         {
-            if (string.IsNullOrEmpty(empCode) || string.IsNullOrEmpty(accessToken))
+            if (null == personId || string.IsNullOrEmpty(accessToken))
                 return Unauthorize();
 
             using (ExcisePlaningDbDataContext db = new ExcisePlaningDbDataContext())
@@ -288,7 +225,7 @@ namespace ExcisePlaning.Controllers
                 // ตรวจสอบสิทธิ์การเข้าถึงระบบ
                 var appSettings = AppSettingProperty.ParseXml();
                 string authorizeToken = appSettings.AccessToken;
-                var empEntity = db.T_PERSONNELs.Where(e => e.ACTIVE.Equals(1) && e.PERSON_CODE.Equals(empCode)).FirstOrDefault();
+                var empEntity = db.T_PERSONNELs.Where(e => e.ACTIVE.Equals(1) && e.PERSON_ID.Equals(personId)).FirstOrDefault();
                 if (!authorizeToken.Equals(accessToken) || empEntity == null)
                     return View("CheckPermissionError");
 
@@ -385,7 +322,7 @@ namespace ExcisePlaning.Controllers
                     // หน่วยงานที่อยู่ภายใต้ความรับผิดชอบของ หน่วยงานนี้
                     AssignDepartmentIds = db.T_DEPARTMENT_AUTHORIZEs.Where(x => x.DEP_ID.Equals(empEntity.DEP_ID)).Select(e => e.AUTHORIZE_DEP_ID).ToList(),
                     SexType = empEntity.SEX_TYPE,
-                    AccountType = empEntity.ACC_TYPE,
+                    AccountType = empEntity.ACC_TYPE ?? 0,
                     EmailAddr = empEntity.EMAIL_ADDR,
                     MobileNo = empEntity.MOBILE_NO,
                     RoleNames = db.proc_GetUserRoles(empEntity.PERSON_ID).ToList().Select(e => e.ROLE_CONST).ToList()
@@ -458,7 +395,6 @@ namespace ExcisePlaning.Controllers
         /// </summary>
         /// <param name="cardNumber"></param>
         /// <returns></returns>
-        [HttpGet]
         public ActionResult InitNewAccount(string cardNumber)
         {
             if (string.IsNullOrEmpty(cardNumber))
@@ -470,7 +406,7 @@ namespace ExcisePlaning.Controllers
 
             using (ExcisePlaningDbDataContext db = new ExcisePlaningDbDataContext())
             {
-                var personExpr = db.T_PERSONNELs.Where(e => (e.ACTIVE.Equals(0) || e.ACTIVE.Equals(1)) && e.CARD_NUMBER.Equals(cardNumber)).FirstOrDefault();
+                var personExpr = db.T_PERSONNELs.Where(e => e.ACTIVE.Equals(0) && e.CARD_NUMBER.Equals(cardNumber)).FirstOrDefault();
                 if (null == personExpr)
                 {
                     ViewBag.ErrorMessage = "ระบบไม่สามารถบันทึกข้อมูลพนักงานจาก SSO ได้สำเร็จ";
@@ -514,7 +450,7 @@ namespace ExcisePlaning.Controllers
             Dictionary<string, object> res = new Dictionary<string, object>(4) {
                 { "errors", null },
                 { "errorText", null },
-                { "empCode", null },
+                { "personId", null },
                 { "accessToken", null }
             };
 
@@ -550,7 +486,7 @@ namespace ExcisePlaning.Controllers
 
                 var appSetting = AppSettingProperty.ParseXml();
                 res["accessToken"] = appSetting.AccessToken;
-                res["empCode"] = personExpr.PERSON_CODE;
+                res["personId"] = personExpr.PERSON_ID;
                 db.SubmitChanges();
             }
 

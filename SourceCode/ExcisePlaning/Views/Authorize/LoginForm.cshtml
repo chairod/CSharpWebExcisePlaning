@@ -7,8 +7,8 @@
     <!-- HTML5 Shim and Respond.js IE9 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <script src="@Url.Content("~/Third_Party/assets/pages/html5shiv.js")"></script>
+      <script src="@Url.Content("~/Third_Party/assets/pages/respond.min.js")"></script>
       <![endif]-->
     <!-- Meta -->
     <meta charset="utf-8">
@@ -30,6 +30,7 @@
     @*Base style*@
     <link rel="stylesheet" href="~/Third_Party/bower_components/bootstrap/bootstrap.min.css" media="screen" />
     <link rel="stylesheet" href="~/Third_Party/bower_components/jquery-ui/jquery-ui.min.css" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="~/Third_Party/bower_components/animate.css/css/animate.css" media="none" onload="if(media!='all')media='all'" />
     <link rel="stylesheet" href="~/Third_Party/assets/css/style.min.css?v02" media="screen" />
 
 
@@ -39,8 +40,8 @@
             background-color: #ffffff;
         }
 
-        .common-img-bg {
-            background-color: #dfeffe;
+        body, .common-img-bg {
+            background: linear-gradient(110deg, #4394E5 60%, #8ABCEF 60%);
         }
 
         .f-color {
@@ -50,52 +51,56 @@
 </head>
 
 <body class="fix-menu" ng-app="leaveApp" ng-controller="AppController">
+
     <section class="login p-fixed d-flex text-center common-img-bg">
+        @*ข่าวประกาศ*@
+        <div class="position-fixed h-100 shadow border-0 d-none d-md-block bg-white" style="width:100%;max-width:350px;">
+            <h1 class="f-w-900 f-20 p-3 text-white" style="background-color:#000;">กรมสรรพสามิต</h1>
+            <div class="p-3 text-left">
+                <div class="f-w-900 border-bottom mb-2 pb-2">ระบบบริหารจัดการงบประมาณ</div>
+                <ul>
+                    <li class="mb-2 f-16">ขั้นตอนการใช้งานระบบ</li>
+                    <li class="mb-2">A. ระบบจะเชื่อมต่อผู้ใช้งานกับ SSO ของกรมสรรพสามิต</li>
+                    <li class="mb-2">B. การเข้าใช้งานในครั้งแรกระบบจะนำ ผู้ใช้งาน ไปยังหน้ากรอกข้อมูลส่วนบุคคล เพื่อยืนยันข้อมูลก่อนใช้ระบบ</li>
+                    <li class="mb-2">C. <strong>หากยังทำขั้นตอน B ไม่สมบูรณ์</strong>&nbsp;ระบบจะนำ ผู้ใช้งานไปยังหน้ากรอกข้อมูลส่วนบุคคล</li>
+                </ul>
+            </div>
+
+            <div class="mt-5">
+                <a href="@Url.Action("GetManual", "Resource")" target="_blank" class="f-w-900 f-16 text-primary"><span class="mr-2">>></span>ดาวน์โหลดคู่มือ<span class="ml-2"><<</span></a>
+            </div>
+        </div>
+
+
         <!-- Container-fluid starts -->
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
                     <!-- Authentication card start -->
-                    <div class="login-card card-block auth-body m-auto">
+                    <div class="login-card card-block auth-body m-auto animated swing">
+                        <div class="block text-center mb-md-n5">
+                            <img src="@Url.Action("GetImage", "Resource", new { groupType = "third_party", filename = "excise-planing-logo.png"})" class="img-fluid" style="max-width:90px;" alt="avatar-2.png">
+                        </div>
                         <form class="md-float-material" method="post" action="@Url.Action("LoginForm", "Authorize")">
-                            <div class="auth-box auth-bg shadow-sm rounded">
+                            <div class="auth-box auth-bg shadow rounded">
                                 <div class="row m-b-20">
                                     <div class="col-md-12">
                                         <div class="text-center">
-                                            <img src="@Url.Action("GetImage", "Resource", new { groupType = "third_party", filename = "excise-planing-logo.png"})" class="img img-fluid" alt="avatar-2.png">
-                                            <h3><span class="f-color">ระบบบริหารจัดการงบประมาณ</span></h3>
-                                            <span>เวอร์ชั่น 1.0.0</span>
+                                            @*<img src="@Url.Action("GetImage", "Resource", new { groupType = "third_party", filename = "excise-planing-logo.png"})" class="img-fluid" alt="avatar-2.png">*@
+                                            <h3><span class="text-dark">ระบบบริหารจัดการงบประมาณ</span></h3>
                                         </div>
                                     </div>
                                 </div>
                                 <hr />
-                                <div class="input-group">
-                                    <input type="text" class="form-control f-color" name="userName" id="userName" autocomplete="off" placeholder="ชื่อผู้ใช้งาน" value="@ViewBag.UserName">
-                                    <span class="md-line"></span>
+                                <div class="d-flex flex-column text-left">
+                                    <input type="text" class="form-control f-color p-4 mb-2" name="userName" id="userName" autocomplete="off" placeholder="@(ViewBag.LoginType=="SSO"?"ชื่อผู้ใช้งาน SSO กรมสรรพสามิต":"อีเมล์")" value="@ViewBag.UserName">
+                                    <input type="password" name="userPass" class="form-control f-color p-4" autocomplete="off" placeholder="รหัสผ่าน@(ViewBag.LoginType=="SSO"?" SSO กรมสรรพสามิต":"")">
                                 </div>
-                                <div class="input-group mt-3">
-                                    <input type="password" name="userPass" class="form-control f-color" autocomplete="off" placeholder="รหัสผ่าน">
-                                    <span class="md-line"></span>
-                                </div>
-                                @*<div class="row m-t-25 text-left">
-                                        <div class="col-sm-7 col-xs-12">
-                                            <div class="checkbox-fade fade-in-primary">
-                                                <label>
-                                                    <input type="checkbox" name="rememberMe" value="">
-                                                    <span class="cr" style="border-color:#fff;"><i class="cr-icon icofont icofont-ui-check" style="color:#fff;"></i></span>
-                                                    <span class="text-white">Remember me</span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-5 col-xs-12 forgot-phone text-right">
-                                            <a href="#" class="text-right f-w-600 text-white"> Forgot Password?</a>
-                                        </div>
-                                    </div>*@
                                 <div class="row m-t-15">
                                     <div class="col-md-12">
                                         <button type="submit" onclick="showMessage()"
-                                                style="background-color:#308AFF"
-                                                class="btn f-w-900 btn-md btn-block waves-effect text-center m-b-20 f-22">
+                                                style="background-color:#000"
+                                                class="btn p-3 f-w-900 btn-md btn-block waves-effect text-center m-b-20 f-22">
                                             <span style="color:#fff;">เข้าสู่ระบบ</span>
                                         </button>
                                         <div class="text-danger f-w-900 f-14 text-left">
@@ -103,7 +108,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </form>
                         <!-- end of form -->
@@ -116,6 +120,10 @@
         </div>
         <!-- end of container-fluid -->
     </section>
+
+    <div class="position-fixed fixed-bottom p-3 bg-dark text-center text-white">
+        <span>เวอร์ชั่น 1.0.0</span>
+    </div>
     <!-- Warning Section Starts -->
     <!-- Older IE warning message -->
     <!--[if lt IE 9]>
@@ -174,6 +182,7 @@
     <script type="text/javascript">
         window.setTimeout(function () {
             $('#userName').focus();
+            $('.auth-body').addClass('auth-body-show');
         }, 200);
 
         function showMessage() {

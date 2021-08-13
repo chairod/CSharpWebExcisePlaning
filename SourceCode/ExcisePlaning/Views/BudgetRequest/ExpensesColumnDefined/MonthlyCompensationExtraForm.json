@@ -2,6 +2,8 @@
   "PersonName": null,
   "PersonTypeId": "empty",
   "PersonTypeName": null,
+  "PositionId": "empty",
+  "PositionName": null,
   "LevelId": "empty",
   "LevelName": null,
   "CompensationMonthlyVal": null,

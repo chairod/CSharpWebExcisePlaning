@@ -14,6 +14,7 @@ using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace ExcisePlaning.Classes
 {
@@ -85,7 +86,6 @@ namespace ExcisePlaning.Classes
         {
             if (null == xml)
                 return "";
-
             using (XmlReader reader = xml.CreateReader())
             {
                 var xmlDocument = new XmlDocument();
@@ -119,6 +119,26 @@ namespace ExcisePlaning.Classes
             return xnode.Root;
         }
 
+
+        /// <summary>
+        /// แปลง XElement ให้เป็น object class เพื่อให้ง่ายต่อการเข้าถึงข้อมูลใน XML
+        /// ** จะต้องสร้าง Class ขึ้นมา Match XML ตามโครงสร้างของ XML **
+        /// เช่น จะถูกเรียกเมื่อต้องการอ่านข้อมูล T_BUDGET_REQUEST_DETAIL.EXPENSES_XML_DECRIBE
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="xelement"></param>
+        /// <returns>null หรือ Object T</returns>
+        public static T ConvertXElementTo<T>(System.Xml.Linq.XElement xelement)
+        {
+            if (null == xelement || null == xelement.Element("root"))
+                return default(T);
+
+            //XmlSerializer xserialize = new XmlSerializer(typeof(T));
+            //return (T)xserialize.Deserialize(xelement.Element("root").CreateReader());
+
+            string jsonStr = LinqXmlToJson(xelement);
+            return JsonConvert.DeserializeObject<T>(jsonStr);
+        }
 
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿<md-dialog flex="99" flex-gt-sm="75">
+﻿<md-dialog flex="99" flex-gt-sm="80">
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>แบบฟอร์ม{{$settings.expensesName}}</h2>
@@ -15,6 +15,7 @@
                         <th style="width:75px;min-width:75px;max-width:75px;" class="text-center align-middle">ลำดับ</th>
                         <th style="min-width:190px" class="text-left align-middle">ชื่อ - นามสกุล</th>
                         <th style="width:180px;min-width:180px;max-width:180px;" class="text-left align-middle">ประเภทบุคลากร</th>
+                        <th style="width:180px;min-width:180px;max-width:180px;" class="text-left align-middle">ตำแหน่ง</th>
                         <th style="width:180px;min-width:180px;max-width:180px;" class="text-left align-middle">ระดับ</th>
                         <th style="width:130px;min-width:130px;max-width:130px;" class="text-center bg-light">ต่อเดือน</th>
                         <th style="width:130px;min-width:130px;max-width:130px;" class="text-center">ต่อปี</th>
@@ -22,7 +23,7 @@
                     </tr>
 
                     <tr ng-if="$settings.formData.rows.length==0&&!$settings.isLoading">
-                        <th colspan="7" class="text-center text-danger animated fadeIn">--- โปรดกดที่ปุ่ม "เพิ่มรายการ" ---</th>
+                        <th colspan="8" class="text-center text-danger animated fadeIn">--- โปรดกดที่ปุ่ม "เพิ่มรายการ" ---</th>
                     </tr>
 
                     <tr ng-repeat="row in $settings.formData.rows">
@@ -31,13 +32,22 @@
                             <input type="text" class="form-control" maxlength="200" ng-model="row.PersonName" ng-disabled="$settings.isLoading" placeholder="ระบุชื่อ - นามสกุล" />
                         </td>
                         <td style="width:180px;min-width:180px;max-width:180px;" class="text-left bg-light">
-                            <select class="form-control" ng-model="row.PersonTypeId" ng-disabled="$settings.isLoading" fw-select2>
+                            <select class="form-control" ng-model="row.PersonTypeId" ng-disabled="$settings.isLoading"
+                                    ng-change="personTypeChanged(row)" fw-select2>
                                 <option value="empty">--- ประเภทบุคลากร ---</option>
                                 <option ng-repeat="item in $settings.personnelTypes" value="{{item.PERSON_TYPE_ID}}">{{item.PERSON_TYPE_NAME}}</option>
                             </select>
                         </td>
                         <td style="width:180px;min-width:180px;max-width:180px;" class="text-left bg-light">
-                            <select class="form-control" ng-model="row.LevelId" ng-disabled="$settings.isLoading" fw-select2>
+                            <select class="form-control" ng-model="row.PositionId" ng-disabled="$settings.isLoading"
+                                    ng-change="positionChanged(row)" fw-select2>
+                                <option value="empty">--- ตำแหน่ง ---</option>
+                                <option ng-repeat="item in $settings.positions" value="{{item.POSITION_ID}}">{{item.POSITION_NAME}}</option>
+                            </select>
+                        </td>
+                        <td style="width:180px;min-width:180px;max-width:180px;" class="text-left bg-light">
+                            <select class="form-control" ng-model="row.LevelId" ng-disabled="$settings.isLoading"
+                                    ng-change="personLevelChanged(row)" fw-select2>
                                 <option value="empty">--- ระดับ ---</option>
                                 <option ng-repeat="item in $settings.personnelLevels" value="{{item.LEVEL_ID}}">{{item.LEVEL_NAME}}</option>
                             </select>
@@ -54,7 +64,7 @@
                     </tr>
 
                     <tr ng-if="$settings.formData.rows.length > 0" class="bg-primary">
-                        <th colspan="4" class="text-right animated fadeIn">รวมทั้งสิ้น</th>
+                        <th colspan="5" class="text-right animated fadeIn">รวมทั้งสิ้น</th>
                         <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['CompensationMonthlyVal']:2}}</th>
                         <th class="text-center animated fadeIn">{{$settings.formData.rows|fwSimpleSummary:['CompensationYearlyVal']:2}}</th>
                         <th>&nbsp;</th>

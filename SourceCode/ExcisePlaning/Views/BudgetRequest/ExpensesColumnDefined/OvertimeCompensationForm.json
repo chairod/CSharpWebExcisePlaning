@@ -2,6 +2,10 @@
   "PersonName": null,
   "PositionId": "empty",
   "PositionName": null,
+  "LevelId": "empty",
+  "LevelName": null,
+  "PersonTypeId": "empty",
+  "PersonTypeName": null,
   "DivisionId": "empty",
   "DivisionName": "",
 

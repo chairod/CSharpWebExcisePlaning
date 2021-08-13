@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using ExcisePlaning.Classes.Mappers;
 using ExcisePlaning.Classes;
 using System.Text;
+using System.Net;
 
 namespace ExcisePlaning.Controllers
 {
@@ -21,6 +22,12 @@ namespace ExcisePlaning.Controllers
         [HttpGet, Route("{partialName:string}")]
         public ActionResult GetPartialResource(string partialName)
         {
+            if (!VerifyVulnerability.VerifyPathTraversal(partialName))
+            {
+                VerifyVulnerability.ThrowBadRequest(base.HttpContext);
+                return null;
+            }
+
             return View(string.Format("Partials/_Partials_{0}", partialName));
         }
 
@@ -33,6 +40,9 @@ namespace ExcisePlaning.Controllers
         [HttpGet]
         public void DeleteFile(string groupType, string filename)
         {
+            if (!VerifyVulnerability.VerifyPathTraversal(filename))
+                return;
+
             AppSettingProperty appSetting = AppSettingProperty.ParseXml();
             string filePath = "";
             if ("BudgetRequest".Equals(groupType))
@@ -60,6 +70,13 @@ namespace ExcisePlaning.Controllers
             if (string.IsNullOrEmpty(groupType) || string.IsNullOrEmpty(filename))
                 return null;
 
+            if (!VerifyVulnerability.VerifyPathTraversal(filename))
+            {
+                VerifyVulnerability.ThrowBadRequest(base.HttpContext);
+                return null;
+            }
+
+
             string filePath = "";
             groupType = groupType.ToLower();
             if ("standalone".Equals(groupType))
@@ -76,6 +93,32 @@ namespace ExcisePlaning.Controllers
         }
 
 
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult GetManual()
+        {
+            string file = string.Format("{0}/excise-manual-2021-08-13.pdf", Server.MapPath("~/Contents"));
+
+            // กรณีไม่พบไฟล์
+            if (!System.IO.File.Exists(file))
+            {
+                byte[] buffer = Encoding.UTF8.GetBytes("<center><h1 style=\"color:red\">FILE NOT FOUND</h1></center>");
+                return base.File(buffer, "text/html");
+            }
+
+            // อ่านไฟล์ลง stream และตอบกลับ
+            using (Stream stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                byte[] buffer = new byte[stream.Length];
+                stream.Read(buffer, 0, buffer.Length);
+                stream.Close();
+
+                var fileContentResult = base.File(buffer, "application/octet-stream", "excise-manual-2021-08-13.pdf");
+                return fileContentResult;
+            }
+        }
+
+
         /// <summary>
         /// แสดงข้อมูลไฟล์ที่อัพโหลดไว้ในระบบ <para/>
         /// groupType ประกอบด้วย overtime: ไฟล์แนบคำขอ OT, Leave: ไฟล์แนบคำขอลา, Temporary: ไฟล์รายงานหรืออื่นๆ<para/>
@@ -87,6 +130,12 @@ namespace ExcisePlaning.Controllers
         [HttpGet, Route("groupType:string, filename:string, resultFilename:string, deleteFlag: string")]
         public ActionResult GetFile(string groupType, string filename, string resultFilename, string deleteFlag)
         {
+            if (!VerifyVulnerability.VerifyPathTraversal(filename))
+            {
+                VerifyVulnerability.ThrowBadRequest(base.HttpContext);
+                return null;
+            }
+
             string file = null;
 
             AppSettingProperty appSetting = AppSettingProperty.ParseXml();

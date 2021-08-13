@@ -1,0 +1,260 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="AppController">
+    <div class="card card-block borderless-card shadow-sm m-0 mb-2">
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>เขตพื้นที่</label>
+                <select class="form-control" fw-select2
+                        ng-model="$settings.formSearch.areaId" ng-disabled="$settings.isLoading@(ViewBag.DepAuthorize.Equals(2)?"||true":"")"
+                        ng-change="areaChanged()">
+                    <option value="empty">--- เขตพื้นที่ ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.AreaShortFieldProperty item in ViewBag.Areas)
+                    {
+                        <option value="@item.AREA_ID">@item.AREA_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>หน่วยงาน<span class="ml-1 ti-reload rotate-refresh" ng-if="$settings.isDepartmentLoading"></span></label>
+                <select class="form-control" fw-select2
+                        ng-model="$settings.formSearch.depId"
+                        ng-disabled="$settings.isLoading||$settings.departments.length==0@(!ViewBag.CanSelectDepartment?"||true":"")">
+                    <option value="empty">--- หน่วยงาน ---</option>
+                    <option ng-repeat="item in $settings.departments" value="{{item.DEP_ID}}">{{item.DEP_NAME}}</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ปีงบประมาณ (พ.ศ.)</label>
+                <fw-input-mask model="$settings.formSearch.fiscalYear"
+                               mask="9999" placeholder="ระบุปี พ.ศ." disabled="$settings.isLoading"></fw-input-mask>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>เลขที่คำขอ</label>
+                <fw-input-mask model="$settings.formSearch.requestId"
+                               mask="R9999999999" disabled="$settings.isLoading"></fw-input-mask>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>แผนงาน</label>
+                <select class="form-control" fw-select2
+                        ng-model="$settings.formSearch.planId" ng-disabled="$settings.isLoading"
+                        ng-change="planChanged()">
+                    <option value="empty">--- แผนงาน ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.PlanShortFieldProperty item in ViewBag.Plans)
+                    {
+                        <option value="@item.PLAN_ID">@item.PLAN_NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ผลผลิต</label>
+                <select class="form-control" fw-select2
+                        ng-model="$settings.formSearch.produceId" ng-disabled="$settings.isLoading||$settings.plans.length===0"
+                        ng-change="produceChanged()">
+                    <option value="empty">--- ผลผลิต ---</option>
+                    <option ng-repeat="item in $settings.plans" value="{{item.PRODUCE_ID}}">{{item.PRODUCE_NAME}}</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>กิจกรรม</label>
+                <select class="form-control" fw-select2
+                        ng-model="$settings.formSearch.activityId" ng-disabled="$settings.isLoading||$settings.activities.length==0">
+                    <option value="empty">--- กิจกรรม ---</option>
+                    <option ng-repeat="item in $settings.activities" value="{{item.ACTIVITY_ID}}">{{item.ACTIVITY_NAME}}</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>งบรายจ่าย</label>
+                <select class="form-control" fw-select2
+                        ng-model="$settings.formSearch.budgetTypeId" ng-disabled="$settings.isLoading"
+                        ng-change="budgetTypeChanged()">
+                    <option value="empty">--- งบรายจ่าย ---</option>
+                    @foreach (ExcisePlaning.Classes.Mappers.BudgetTypeShortFieldProperty item in ViewBag.BudgetTypes)
+                    {
+                        <option value="@item.BUDGET_TYPE_ID">@item.BUDGET_TYPE_NAME</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12 col-md-3">
+                <label>หมวดค่าใช้จ่าย<span class="ti-reload rotate-refresh ml-1" ng-if="$settings.isExpensesGroupLoading"></span></label>
+                <select class="form-control" fw-select2
+                        ng-change="expensesGroupChanged()"
+                        ng-model="$settings.formSearch.expensesGroupId" ng-disabled="$settings.isLoading||$settings.expensesGroups.length==0">
+                    <option value="empty">--- หมวดค่าใช้จ่าย ---</option>
+                    <option ng-repeat="item in $settings.expensesGroups" value="{{item.EXPENSES_GROUP_ID}}">{{item.EXPENSES_GROUP_NAME}}</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <label>ค่าใช้จ่าย</label>
+                <select class="form-control" fw-select2 multiple
+                        ng-model="$settings.formSearch.expensesIds" ng-disabled="$settings.isLoading||$settings.expenses.length==0">
+                    <option ng-repeat="item in $settings.expenses" value="{{item.EXPENSES_ID}}">{{item.EXPENSES_NAME}}</option>
+                </select>
+            </div>
+            <div class="form-group col-12 col-md-3">
+                <div class="border-bottom mb-2">
+                    <md-checkbox ng-model="$settings.formSearch.budgetTypeFlag" ng-true-value="1" ng-false-value="2" ng-disabled="$settings.isLoading">เงินงบประมาณ</md-checkbox>
+                    <md-checkbox ng-model="$settings.formSearch.budgetTypeFlag" ng-true-value="2" ng-false-value="1" ng-disabled="$settings.isLoading">เงินนอก งปม.</md-checkbox>
+                </div>
+                <md-checkbox ng-model="$settings.formSearch.requestTypeFlag" ng-true-value="1" ng-disabled="$settings.isLoading">คำขอต้นปี</md-checkbox>
+                <md-checkbox ng-model="$settings.formSearch.requestTypeFlag" ng-true-value="2" ng-disabled="$settings.isLoading">คำขอเพิ่มเติม</md-checkbox>
+            </div>
+            @*<div class="form-group col-12 col-md-3">
+            <label>เลขที่หนังสือ</label>
+            <input type="text" class="form-control" ng-model="$settings.formSearch.docNo"
+                   ng-disabled="$settings.isLoading||'1'===$settings.formSearch.requestTypeFlag"
+                   maxlength="11" placeholder="ระบุให้ครบทุกตัว (เฉพาะคำขอเพิ่มเติม)" />
+        </div>*@
+            <div class="form-group col-12 col-md-3">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <fw-execute-button text="ส่งออก Excel" css-icon-class="icofont icofont-file-excel" on-loading="$settings.isLoading"
+                                   ng-click="export($event)"></fw-execute-button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    @Styles.Render("~/content/select2")
+}
+@section Scripts{
+    @Scripts.Render("~/bundle/select2")
+    @Scripts.Render("~/bundle/inputmask")
+
+<script type="text/javascript">
+        angular.module("leaveApp").controller('AppController', function ($scope, $q, $fwDateService, $customHttp, $timeout, $fwModalHelperService) {
+
+            $scope.$settings = {
+                isLoading: false, isDepartmentLoading: false, isExpensesLoading: false,
+                departments: [], expensesGroups: [], expenses: [], produces: [], activities: [],
+                formSearch: {
+                    fiscalYear: $fwDateService.convertYearToBuddhist('@ViewBag.FiscalYear'),
+                    areaId: '@ViewBag.AreaId',
+                    depId: 'empty',
+                    planId: 'empty', produceId: 'empty', activityId: 'empty',
+                    budgetTypeId: 'empty', expensesGroupId: 'empty', expensesIds: [],
+                    budgetTypeFlag: 1, requestTypeFlag: null, requestId: '', docNo: ''
+                }
+            };
+
+
+            // เมื่อเขตพื้นที่เปลี่ยนแปลง
+            var areaChangedId = null;
+            $scope.areaChanged = function () {
+                return $q(function (resolve) {
+                    $timeout.cancel(areaChangedId);
+                    areaChangedId = $timeout(function () {
+                        var areaId = $scope.$settings.formSearch.areaId.replace('empty', '');
+                        $scope.$settings.departments = [];
+                        $scope.$settings.formSearch.depId = 'empty';
+
+                        if (areaId != '')
+                            $customHttp.formPost('@Url.Action("GetDepartmentAuthorizeBy", "Helper")', { areaId: areaId }).then(function (res) {
+                                $scope.$settings.departments = res.data || [];
+                                resolve({});
+                            }, function () { });
+                        else
+                            resolve({});
+                    }, 200);
+                });
+            };
+            // เมื่องบรายจ่ายเปลี่ยนแปลง
+            var budgetTypeIdChanged = null;
+            $scope.budgetTypeChanged = function () {
+                $timeout.cancel(budgetTypeIdChanged);
+                budgetTypeIdChanged = $timeout(function () {
+                    var budgetTypeId = $scope.$settings.formSearch.budgetTypeId.replace('empty', '');
+                    $scope.$settings.expensesGroups = [];
+                    $scope.$settings.expenses = [];
+                    $scope.$settings.formSearch.expensesGroupId = 'empty';
+                    $scope.$settings.formSearch.expensesIds = [];
+                    if (budgetTypeId != '')
+                        $customHttp.formPost('@Url.Action("RetrieveExpensesGroupByBudgetType", "Helper")', { budgetTypeId: budgetTypeId }).then(function (res) {
+                            $scope.$settings.expensesGroups = res.data || [];
+                        }, function () { });
+                }, 200);
+            };
+            // เมื่อหมวดค่าใช้จ่ายเปลี่ยนแปลง
+            var expensesGroupChangedId = null;
+            $scope.expensesGroupChanged = function () {
+                $timeout.cancel(expensesGroupChangedId);
+                expensesGroupChangedId = $timeout(function () {
+                    $scope.$settings.expenses = [];
+                    $scope.$settings.formSearch.expensesIds = [];
+                    var expensesGroupId = ('' + $scope.$settings.formSearch.expensesGroupId).replace(/[^\d]/g, '');
+                    if (expensesGroupId !== '')
+                        $customHttp.formPost('@Url.Action("RetrieveExpensesByExpensesGroup", "Helper")', { expensesGroupId: expensesGroupId }).then(function (res) {
+                            $scope.$settings.expenses = res.data || [];
+                        }, function () { });
+                }, 300);
+            };
+            // เมื่อแผนงานเปลี่ยนแปลง
+            var planChangedId = null;
+            $scope.planChanged = function () {
+                $timeout.cancel(planChangedId);
+                planChangedId = $timeout(function () {
+                    $scope.$settings.produces = [];
+                    $scope.$settings.activities = [];
+                    $scope.$settings.formSearch.produceId = 'empty';
+                    $scope.$settings.formSearch.activityId = 'empty';
+
+                    var planId = ('' + $scope.$settings.formSearch.planId).replace(/[^\d]/ig, '');
+                    if (planId === '')
+                        return;
+                    $customHttp.formPost('@Url.Action("GetProduceBy", "Helper")', { planId: planId }).then(function (res) {
+                        $scope.$settings.plans = res.data || [];
+                    }, function () { });
+                }, 300);
+            };
+            // เมื่อผลผลิตเปลี่ยนแปลง
+            var produceChangedId = null;
+            $scope.produceChanged = function () {
+                $timeout.cancel(produceChangedId);
+                produceChangedId = $timeout(function () {
+                    $scope.$settings.activities = [];
+                    $scope.$settings.formSearch.activityId = 'empty';
+
+                    var produceId = ('' + $scope.$settings.formSearch.produceId).replace(/[^\d]/ig, '');
+                    if (produceId === '')
+                        return;
+                    $customHttp.formPost('@Url.Action("GetActivityBy", "Helper")', { produceId: produceId }).then(function (res) {
+                        $scope.$settings.activities = res.data || [];
+                    }, function () { });
+                }, 300);
+            };
+            // กดส่งออกรายงาน
+            $scope.export = function (event) {
+                $scope.$settings.isLoading = true;
+
+                var params = $.extend(true, {}, $scope.$settings.formSearch);
+                params.planId = ('' + params.planId).replace(/[^\d]/ig, '');
+                params.produceId = ('' + params.produceId).replace(/[^\d]/ig, '');
+                params.activityId = ('' + params.activityId).replace(/[^\d]/ig, '');
+                params.areaId = ('' + params.areaId).replace(/[^\d]/ig, '');
+                params.depId = ('' + params.depId).replace(/[^\d]/ig, '');
+                params.budgetTypeId = ('' + params.budgetTypeId).replace(/[^\d]/ig, '');
+                params.expensesGroupId = ('' + params.expensesGroupId).replace(/[^\d]/ig, '');
+                params.expensesIds = params.expensesIds.length > 0 ? params.expensesIds.join(',') : '';
+                params.fiscalYear = $fwDateService.convertYearToBritish(params.fiscalYear);
+
+                $fwModalHelperService.doPrintDocument('@Url.Action("SubmitExport", "RptBudgetRequestExpensesDetail")', params).then(function () {
+                    $scope.$settings.isLoading = false;
+                }, function () {
+                    $scope.$settings.isLoading = false;
+                });
+            };
+
+            $scope.areaChanged().then(function(){
+                $scope.$settings.formSearch.depId = '@ViewBag.DepartmentId';
+            });
+        });
+</script>
+}
+

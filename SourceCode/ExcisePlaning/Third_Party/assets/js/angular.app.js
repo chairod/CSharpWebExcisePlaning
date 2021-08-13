@@ -328,7 +328,7 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
                 el.appendTo(body);
                 $customHttp.formGet(_templateUrl, null).then(function (res) {
                     el.remove();
-                    
+
                     $mdDialog.show({
                         parent: angular.element(document.body),
                         clickOutsideToClose: false,
@@ -585,11 +585,11 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
                 scope.maxFileSizeBytes = scope.maxFileSizeMB * 1024 * 1024;
                 scope.acceptFiletypes = (scope.acceptFiletypes || 'pdf,xls,xlsx,doc,docx,png,jpeg,jpg');
                 scope.ignorPatternRegex = eval('/\.(' + scope.acceptFiletypes.replace(/\,/g, '|') + ')$/i');
-                scope.multiple = (undefined == scope.multiple || 'false' == scope.multiple ? '' : 'multiple');
-                scope.style = (undefined == scope.style ? '' : scope.style);
+                //scope.multiple = (undefined === scope.multiple || 'false' === scope.multiple ? '' : 'multiple');
+                scope.style = (undefined === scope.style ? '' : scope.style);
 
                 // Upload component
-                var inputFile = $('<input type="file" ' + scope.multiple + ' />').change(function (e) {
+                var inputFile = $('<input type="file" ' + ('true' === scope.multiple ? 'multiple' : '' ) + ' />').change(function (e) {
                     if (scope.ngDisabled) return;
 
                     var files = [];
@@ -597,8 +597,8 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
                         if (file.size <= scope.maxFileSizeBytes && scope.ignorPatternRegex.test(file.name)) files.push(file);
                     });
                     var count = files.length;
-                    if (count == 0) {
-                        if ('' == scope.multiple)
+                    if (count === 0) {
+                        if ('true' !== scope.multiple)
                             $fwDialogService.dangerDialog(null, 'รูปแบบไฟล์ หรือ ขนาดไฟล์ ไม่ถูกต้อง');
                         inputFile.val('');
                         return;
@@ -2179,7 +2179,7 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
             arrays = arrays || [];
             return arrays.slice(startIndex, endIndex);
         };
-    }).service('$fwModalHelperService', function ($fwModalService, $q, $customHttp, $filter, $rootScope) {
+    }).service('$fwModalHelperService', function ($fwModalService, $q, $customHttp, $filter, $rootScope, $fwDialogService) {
         var self = this;
 
         // แสดงรายการบุคลาการตามหน่วยงาน
@@ -2507,18 +2507,26 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
         };
 
         // แสดงข้อมูลรายการค่าใช้จ่าย
+        // defaultBudgetTypeId          งบรายจ่าย
+        // defaultExpensesGroupId       กลุ่มรายการค่าใช้จ่าย
+        // ถ้ามีการ Default: defaultBudgetTypeId Or defaultExpensesGroupId จะไม่สามารถเลือก DDL ได้
         // required: select2
-        this.getExpensesSelectMultiModal = function (event, selectedExpenses) {
+        this.getExpensesSelectMultiModal = function (event, selectedExpenses, defaultBudgetTypeId, defaultExpensesGroupId) {
             var templateUrl = $rootScope.baseUrl + '/Helper/GetHelperExpensesSearchMultiSelectForm';
             return $q(function (resolve) {
-                $fwModalService.getModal(templateUrl, { $selectedExpenses: selectedExpenses || [] }, function ($scope, $mdDialog, $selectedExpenses, $q, $timeout, $customHttp) {
+                $fwModalService.getModal(templateUrl, {
+                    $selectedExpenses: selectedExpenses || [],
+                    $defaultBudgetTypeId: defaultBudgetTypeId || null,
+                    $defaultExpensesGroupId: defaultExpensesGroupId || null
+                },
+                function ($scope, $mdDialog, $selectedExpenses, $defaultBudgetTypeId, $defaultExpensesGroupId, $q, $timeout, $customHttp) {
                     $scope.$settings = {
-                        isLoading: false,
+                        isLoading: false, canChangeDDL: $defaultBudgetTypeId === null && $defaultExpensesGroupId === null,
                         selectItems: [],
                         expensesGroups: [],
                         formSearch: {
-                            budgetTypeId: 'empty',
-                            expensesGroupId: 'empty',
+                            budgetTypeId: '' + ($defaultBudgetTypeId || 'empty'),
+                            expensesGroupId: '' + ($defaultExpensesGroupId || 'empty'),
                             expensesName: ''
                         },
                         tableConfigs: {
@@ -2532,7 +2540,7 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
                                 { label: 'งบรายจ่าย', className: 'text-left word-wrap', type: 'field', field: 'BUDGET_TYPE_NAME', style: 'width:120px;min-width:120px;max-width:120px;' },
                                 {
                                     label: 'หมวดค่าใช้จ่าย', className: 'text-left word-wrap', type: 'html',
-                                    field: '{{row.EXPENSES_GROUP_NAME}}<span class="ml-1" ng-if="row.EXPENSES_MASTER_NAME!=null">[{{row.EXPENSES_MASTER_NAME}}]</span>', style: 'width:120px;min-width:120px;max-width:120px;'
+                                    field: '{{row.EXPENSES_GROUP_NAME}}<span class="ml-1" ng-if="row.EXPENSES_MASTER_NAME!=null">[{{row.EXPENSES_MASTER_NAME}}]</span>', style: 'width:189px;min-width:189px;max-width:189px;'
                                 },
                                 { label: 'รหัส', className: 'text-center word-wrap', type: 'field', field: 'EXPENSES_ID', style: 'min-width:80px;max-width:80px;width:80px;' },
                                 { label: 'รายการค่าใช้จ่าย', className: 'text-left word-wrap', type: 'field', field: 'EXPENSES_NAME', style: 'width:auto;min-width:200px' }
@@ -2543,18 +2551,23 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
                     // งบรายจ่ายเปลี่ยนแปลง
                     var budgetTypeChangedId = null;
                     $scope.budgetTypeChanged = function () {
-                        $timeout.cancel(budgetTypeChangedId);
-                        budgetTypeChangedId = $timeout(function () {
-                            $scope.$settings.expensesGroups = [];
-                            $scope.$settings.formSearch.expensesGroupId = 'empty';
-                            var budgetTypeId = ('' + $scope.$settings.formSearch.budgetTypeId).replace(/[^\d]/g, '');
-                            if (budgetTypeId.length > 0)
-                                $customHttp.formPost($scope.$root.baseUrl + '/Helper/RetrieveExpensesGroupByBudgetType', { budgetTypeId: budgetTypeId }).then(function (res) {
-                                    $scope.$settings.expensesGroups = res.data || [];
-                                }, function () { });
+                        return $q(function (resolve, reject) {
+                            $timeout.cancel(budgetTypeChangedId);
+                            budgetTypeChangedId = $timeout(function () {
+                                $scope.$settings.expensesGroups = [];
+                                $scope.$settings.formSearch.expensesGroupId = 'empty';
+                                var budgetTypeId = ('' + $scope.$settings.formSearch.budgetTypeId).replace(/[^\d]/g, '');
+                                if (budgetTypeId.length > 0)
+                                    $customHttp.formPost($scope.$root.baseUrl + '/Helper/RetrieveExpensesGroupByBudgetType', { budgetTypeId: budgetTypeId }).then(function (res) {
+                                        $scope.$settings.expensesGroups = res.data || [];
+                                        resolve();
+                                    }, function () { reject(); });
+                                else
+                                    reject();
 
-                            $scope.submitSearch();
-                        }, 300);
+                                $scope.submitSearch();
+                            }, 300);
+                        });
                     };
                     // ส่งข้อมูลไปค้นหา
                     var submitSearchId = null;
@@ -2640,7 +2653,10 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
 
                     // กำหนดค่าพื้นฐาน
                     $scope.$settings.selectItems = $scope.$settings.selectItems.concat($selectedExpenses);
-                    $scope.submitSearch();
+                    $scope.budgetTypeChanged().then(function () {
+                        $scope.$settings.formSearch.expensesGroupId = '' + ($defaultExpensesGroupId || 'empty');
+                    });
+                    //$scope.submitSearch();
                 }, event).then(function (res) {
                     resolve(res);
                 });
@@ -4178,6 +4194,36 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
                     resolve(res);
                 }, function () {
                     resolve(null);
+                });
+            });
+        }
+
+
+        // ส่งคำขอดาวน์โหลดเอกสารจากระบบ
+        // routeUrl: ส่งคำขอพิมพ์ไปที่ไหน
+        // groupType: ประเภทกลุ่มไฟล์ที่ต้องการดาวน์โหลด
+        this.doPrintDocument = function (routeUrl, params) {
+            return $q(function (resolve, reject) {
+                var href = $('<a href="javascript:void(0)" target="_blank">Export</a>');
+                $('body').append(href);
+
+                $customHttp.formPost(routeUrl, params || {}).then(function (res) {
+                    if (undefined !== res.data.errorText && null !== res.data.errorText) {
+                        $fwDialogService.dangerDialog(null, res.data.errorText);
+                    } else {
+                        href.prop('href', $filter('textFormat')('{0}/Resource/GetFile?groupType={1}&filename={2}&resultFilename={3}&deleteFlag=Y'
+                            , $rootScope.baseUrl
+                            , res.data.groupType
+                            , res.data.filename
+                            , res.data.resultFilename || ''));
+                        href[0].click();
+                    }
+
+                    href.remove();
+                    resolve(res);
+                }, function () {
+                    href.remove();
+                    reject();
                 });
             });
         }

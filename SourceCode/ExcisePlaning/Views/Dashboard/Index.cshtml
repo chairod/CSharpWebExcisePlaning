@@ -168,8 +168,8 @@
                         $scope.$settings.formView = res.data.data || {};
                         if (null != res.data.errorText)
                             $fwDialogService.dangerDialog(null, res.data.errorText);
-                        else
-                            renderAllChart();
+
+                        renderAllChart();
                         $scope.$settings.isLoading = false;
                     }, function () {
                         $scope.$settings.isLoading = false;

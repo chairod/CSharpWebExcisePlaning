@@ -28,7 +28,8 @@
                         <td rowspan="{{row.Items.length+1}}" style="width:75px;min-width:75px;max-width:75px;" class="text-center bg-light">{{$index + 1}}</td>
                         <td colspan="4" class="text-left">
                             <div class="input-group">
-                                <select class="form-control" ng-model="row.VehicleTypeId" ng-disabled="$settings.isLoading" fw-select2>
+                                <select class="form-control" ng-model="row.VehicleTypeId" ng-disabled="$settings.isLoading"
+                                        ng-change="vehicleChanged(row)" fw-select2>
                                     <option value="empty">--- ประเภทยานพาหนะ ---</option>
                                     <option ng-repeat="item in $settings.vehicleTypes" value="{{item.VEHICLE_TYPE_ID}}">{{item.VEHICLE_TYPE_NAME}}</option>
                                 </select>

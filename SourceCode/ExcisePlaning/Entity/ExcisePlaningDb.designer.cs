@@ -22,7 +22,7 @@ namespace ExcisePlaning.Entity
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="ExcisePlaning")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="ExcisePlaningTest")]
 	public partial class ExcisePlaningDbDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -270,6 +270,9 @@ namespace ExcisePlaning.Entity
     partial void InsertT_TRANING_AND_SEMINOR(T_TRANING_AND_SEMINOR instance);
     partial void UpdateT_TRANING_AND_SEMINOR(T_TRANING_AND_SEMINOR instance);
     partial void DeleteT_TRANING_AND_SEMINOR(T_TRANING_AND_SEMINOR instance);
+    partial void InsertT_PERSONNEL_SSO_PREPARE(T_PERSONNEL_SSO_PREPARE instance);
+    partial void UpdateT_PERSONNEL_SSO_PREPARE(T_PERSONNEL_SSO_PREPARE instance);
+    partial void DeleteT_PERSONNEL_SSO_PREPARE(T_PERSONNEL_SSO_PREPARE instance);
     #endregion
 		
 		public ExcisePlaningDbDataContext() : 
@@ -1251,6 +1254,22 @@ namespace ExcisePlaning.Entity
 			get
 			{
 				return this.GetTable<T_TRANING_AND_SEMINOR>();
+			}
+		}
+		
+		public System.Data.Linq.Table<V_GET_BUDGET_REQUEST_DETAIL_ONLY_DESCRIBE> V_GET_BUDGET_REQUEST_DETAIL_ONLY_DESCRIBEs
+		{
+			get
+			{
+				return this.GetTable<V_GET_BUDGET_REQUEST_DETAIL_ONLY_DESCRIBE>();
+			}
+		}
+		
+		public System.Data.Linq.Table<T_PERSONNEL_SSO_PREPARE> T_PERSONNEL_SSO_PREPAREs
+		{
+			get
+			{
+				return this.GetTable<T_PERSONNEL_SSO_PREPARE>();
 			}
 		}
 		
@@ -47252,6 +47271,1115 @@ namespace ExcisePlaning.Entity
 					this._UPDATED_ID = value;
 					this.SendPropertyChanged("UPDATED_ID");
 					this.OnUPDATED_IDChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.V_GET_BUDGET_REQUEST_DETAIL_ONLY_DESCRIBE")]
+	public partial class V_GET_BUDGET_REQUEST_DETAIL_ONLY_DESCRIBE
+	{
+		
+		private string _REQ_ID;
+		
+		private int _TEMPLATE_ID;
+		
+		private System.Nullable<int> _PLAN_ID;
+		
+		private System.Nullable<int> _PRODUCE_ID;
+		
+		private System.Nullable<int> _ACTIVITY_ID;
+		
+		private int _BUDGET_TYPE_ID;
+		
+		private int _EXPENSES_GROUP_ID;
+		
+		private int _EXPENSES_ID;
+		
+		private short _SEQ_NO;
+		
+		private int _DEP_ID;
+		
+		private System.Nullable<int> _SUB_DEP_ID;
+		
+		private short _YR;
+		
+		private decimal _TOTAL_REQUEST_BUDGET;
+		
+		private short _ITEM_TYPE;
+		
+		private System.Xml.Linq.XElement _EXPENSES_XML_DESCRIBE;
+		
+		private string _REMARK_TEXT;
+		
+		private short _ALLOCATE_FLAG;
+		
+		private short _ACTIVE;
+		
+		private System.DateTime _CREATED_DATETIME;
+		
+		private int _USER_ID;
+		
+		private System.Nullable<System.DateTime> _ALLOCATE_DATETIME;
+		
+		private System.Nullable<int> _ALLOCATE_ID;
+		
+		private System.Nullable<System.DateTime> _UPDATED_DATETIME;
+		
+		private System.Nullable<int> _UPDATED_ID;
+		
+		private short _REQ_TYPE;
+		
+		private short _BUDGET_TYPE;
+		
+		private string _REFER_REQ_ID;
+		
+		private bool _BUDGET_ALLOCATE_FLAG;
+		
+		private bool _OFF_BUDGET_ALLOCATE_FLAG;
+		
+		private string _AREA_NAME;
+		
+		private string _DEP_NAME;
+		
+		private System.Nullable<short> _DEP_ORDER_SEQ;
+		
+		private string _PLAN_NAME;
+		
+		private System.Nullable<short> _PLAN_ORDER_SEQ;
+		
+		private string _PRODUCE_NAME;
+		
+		private System.Nullable<short> _PRODUCE_ORDER_SEQ;
+		
+		private string _ACTIVITY_NAME;
+		
+		private System.Nullable<short> _ACTIVITY_ORDER_SEQ;
+		
+		private string _BUDGET_TYPE_NAME;
+		
+		private System.Nullable<int> _BUDGET_TYPE_ORDER_SEQ;
+		
+		private System.Nullable<int> _EXPENSES_MASTER_ID;
+		
+		private string _EXPENSES_MASTER_NAME;
+		
+		private string _EXPENSES_GROUP_NAME;
+		
+		private short _EXPENSES_GROUP_ORDER_SEQ;
+		
+		private string _EXPENSES_NAME;
+		
+		private short _EXPENSES_ORDER_SEQ;
+		
+		private string _FORM_TEMPLATE_NAME;
+		
+		public V_GET_BUDGET_REQUEST_DETAIL_ONLY_DESCRIBE()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REQ_ID", DbType="NVarChar(11) NOT NULL", CanBeNull=false)]
+		public string REQ_ID
+		{
+			get
+			{
+				return this._REQ_ID;
+			}
+			set
+			{
+				if ((this._REQ_ID != value))
+				{
+					this._REQ_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TEMPLATE_ID", DbType="Int NOT NULL")]
+		public int TEMPLATE_ID
+		{
+			get
+			{
+				return this._TEMPLATE_ID;
+			}
+			set
+			{
+				if ((this._TEMPLATE_ID != value))
+				{
+					this._TEMPLATE_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ID", DbType="Int")]
+		public System.Nullable<int> PLAN_ID
+		{
+			get
+			{
+				return this._PLAN_ID;
+			}
+			set
+			{
+				if ((this._PLAN_ID != value))
+				{
+					this._PLAN_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ID", DbType="Int")]
+		public System.Nullable<int> PRODUCE_ID
+		{
+			get
+			{
+				return this._PRODUCE_ID;
+			}
+			set
+			{
+				if ((this._PRODUCE_ID != value))
+				{
+					this._PRODUCE_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ID", DbType="Int")]
+		public System.Nullable<int> ACTIVITY_ID
+		{
+			get
+			{
+				return this._ACTIVITY_ID;
+			}
+			set
+			{
+				if ((this._ACTIVITY_ID != value))
+				{
+					this._ACTIVITY_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ID", DbType="Int NOT NULL")]
+		public int BUDGET_TYPE_ID
+		{
+			get
+			{
+				return this._BUDGET_TYPE_ID;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE_ID != value))
+				{
+					this._BUDGET_TYPE_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ID", DbType="Int NOT NULL")]
+		public int EXPENSES_GROUP_ID
+		{
+			get
+			{
+				return this._EXPENSES_GROUP_ID;
+			}
+			set
+			{
+				if ((this._EXPENSES_GROUP_ID != value))
+				{
+					this._EXPENSES_GROUP_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ID", DbType="Int NOT NULL")]
+		public int EXPENSES_ID
+		{
+			get
+			{
+				return this._EXPENSES_ID;
+			}
+			set
+			{
+				if ((this._EXPENSES_ID != value))
+				{
+					this._EXPENSES_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SEQ_NO", DbType="SmallInt NOT NULL")]
+		public short SEQ_NO
+		{
+			get
+			{
+				return this._SEQ_NO;
+			}
+			set
+			{
+				if ((this._SEQ_NO != value))
+				{
+					this._SEQ_NO = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_ID", DbType="Int NOT NULL")]
+		public int DEP_ID
+		{
+			get
+			{
+				return this._DEP_ID;
+			}
+			set
+			{
+				if ((this._DEP_ID != value))
+				{
+					this._DEP_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SUB_DEP_ID", DbType="Int")]
+		public System.Nullable<int> SUB_DEP_ID
+		{
+			get
+			{
+				return this._SUB_DEP_ID;
+			}
+			set
+			{
+				if ((this._SUB_DEP_ID != value))
+				{
+					this._SUB_DEP_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_YR", DbType="SmallInt NOT NULL")]
+		public short YR
+		{
+			get
+			{
+				return this._YR;
+			}
+			set
+			{
+				if ((this._YR != value))
+				{
+					this._YR = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TOTAL_REQUEST_BUDGET", DbType="Decimal(15,2) NOT NULL")]
+		public decimal TOTAL_REQUEST_BUDGET
+		{
+			get
+			{
+				return this._TOTAL_REQUEST_BUDGET;
+			}
+			set
+			{
+				if ((this._TOTAL_REQUEST_BUDGET != value))
+				{
+					this._TOTAL_REQUEST_BUDGET = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ITEM_TYPE", DbType="SmallInt NOT NULL")]
+		public short ITEM_TYPE
+		{
+			get
+			{
+				return this._ITEM_TYPE;
+			}
+			set
+			{
+				if ((this._ITEM_TYPE != value))
+				{
+					this._ITEM_TYPE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_XML_DESCRIBE", DbType="Xml", UpdateCheck=UpdateCheck.Never)]
+		public System.Xml.Linq.XElement EXPENSES_XML_DESCRIBE
+		{
+			get
+			{
+				return this._EXPENSES_XML_DESCRIBE;
+			}
+			set
+			{
+				if ((this._EXPENSES_XML_DESCRIBE != value))
+				{
+					this._EXPENSES_XML_DESCRIBE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REMARK_TEXT", DbType="NVarChar(150)")]
+		public string REMARK_TEXT
+		{
+			get
+			{
+				return this._REMARK_TEXT;
+			}
+			set
+			{
+				if ((this._REMARK_TEXT != value))
+				{
+					this._REMARK_TEXT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_FLAG", DbType="SmallInt NOT NULL")]
+		public short ALLOCATE_FLAG
+		{
+			get
+			{
+				return this._ALLOCATE_FLAG;
+			}
+			set
+			{
+				if ((this._ALLOCATE_FLAG != value))
+				{
+					this._ALLOCATE_FLAG = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVE", DbType="SmallInt NOT NULL")]
+		public short ACTIVE
+		{
+			get
+			{
+				return this._ACTIVE;
+			}
+			set
+			{
+				if ((this._ACTIVE != value))
+				{
+					this._ACTIVE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CREATED_DATETIME", DbType="DateTime NOT NULL")]
+		public System.DateTime CREATED_DATETIME
+		{
+			get
+			{
+				return this._CREATED_DATETIME;
+			}
+			set
+			{
+				if ((this._CREATED_DATETIME != value))
+				{
+					this._CREATED_DATETIME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USER_ID", DbType="Int NOT NULL")]
+		public int USER_ID
+		{
+			get
+			{
+				return this._USER_ID;
+			}
+			set
+			{
+				if ((this._USER_ID != value))
+				{
+					this._USER_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_DATETIME", DbType="DateTime")]
+		public System.Nullable<System.DateTime> ALLOCATE_DATETIME
+		{
+			get
+			{
+				return this._ALLOCATE_DATETIME;
+			}
+			set
+			{
+				if ((this._ALLOCATE_DATETIME != value))
+				{
+					this._ALLOCATE_DATETIME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_ID", DbType="Int")]
+		public System.Nullable<int> ALLOCATE_ID
+		{
+			get
+			{
+				return this._ALLOCATE_ID;
+			}
+			set
+			{
+				if ((this._ALLOCATE_ID != value))
+				{
+					this._ALLOCATE_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UPDATED_DATETIME", DbType="DateTime")]
+		public System.Nullable<System.DateTime> UPDATED_DATETIME
+		{
+			get
+			{
+				return this._UPDATED_DATETIME;
+			}
+			set
+			{
+				if ((this._UPDATED_DATETIME != value))
+				{
+					this._UPDATED_DATETIME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UPDATED_ID", DbType="Int")]
+		public System.Nullable<int> UPDATED_ID
+		{
+			get
+			{
+				return this._UPDATED_ID;
+			}
+			set
+			{
+				if ((this._UPDATED_ID != value))
+				{
+					this._UPDATED_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REQ_TYPE", DbType="SmallInt NOT NULL")]
+		public short REQ_TYPE
+		{
+			get
+			{
+				return this._REQ_TYPE;
+			}
+			set
+			{
+				if ((this._REQ_TYPE != value))
+				{
+					this._REQ_TYPE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE", DbType="SmallInt NOT NULL")]
+		public short BUDGET_TYPE
+		{
+			get
+			{
+				return this._BUDGET_TYPE;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE != value))
+				{
+					this._BUDGET_TYPE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REFER_REQ_ID", DbType="NVarChar(11)")]
+		public string REFER_REQ_ID
+		{
+			get
+			{
+				return this._REFER_REQ_ID;
+			}
+			set
+			{
+				if ((this._REFER_REQ_ID != value))
+				{
+					this._REFER_REQ_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_ALLOCATE_FLAG", DbType="Bit NOT NULL")]
+		public bool BUDGET_ALLOCATE_FLAG
+		{
+			get
+			{
+				return this._BUDGET_ALLOCATE_FLAG;
+			}
+			set
+			{
+				if ((this._BUDGET_ALLOCATE_FLAG != value))
+				{
+					this._BUDGET_ALLOCATE_FLAG = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OFF_BUDGET_ALLOCATE_FLAG", DbType="Bit NOT NULL")]
+		public bool OFF_BUDGET_ALLOCATE_FLAG
+		{
+			get
+			{
+				return this._OFF_BUDGET_ALLOCATE_FLAG;
+			}
+			set
+			{
+				if ((this._OFF_BUDGET_ALLOCATE_FLAG != value))
+				{
+					this._OFF_BUDGET_ALLOCATE_FLAG = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AREA_NAME", DbType="NVarChar(190)")]
+		public string AREA_NAME
+		{
+			get
+			{
+				return this._AREA_NAME;
+			}
+			set
+			{
+				if ((this._AREA_NAME != value))
+				{
+					this._AREA_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_NAME", DbType="NVarChar(190)")]
+		public string DEP_NAME
+		{
+			get
+			{
+				return this._DEP_NAME;
+			}
+			set
+			{
+				if ((this._DEP_NAME != value))
+				{
+					this._DEP_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> DEP_ORDER_SEQ
+		{
+			get
+			{
+				return this._DEP_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._DEP_ORDER_SEQ != value))
+				{
+					this._DEP_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_NAME", DbType="NVarChar(250)")]
+		public string PLAN_NAME
+		{
+			get
+			{
+				return this._PLAN_NAME;
+			}
+			set
+			{
+				if ((this._PLAN_NAME != value))
+				{
+					this._PLAN_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> PLAN_ORDER_SEQ
+		{
+			get
+			{
+				return this._PLAN_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._PLAN_ORDER_SEQ != value))
+				{
+					this._PLAN_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_NAME", DbType="NVarChar(250)")]
+		public string PRODUCE_NAME
+		{
+			get
+			{
+				return this._PRODUCE_NAME;
+			}
+			set
+			{
+				if ((this._PRODUCE_NAME != value))
+				{
+					this._PRODUCE_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> PRODUCE_ORDER_SEQ
+		{
+			get
+			{
+				return this._PRODUCE_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._PRODUCE_ORDER_SEQ != value))
+				{
+					this._PRODUCE_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_NAME", DbType="NVarChar(250)")]
+		public string ACTIVITY_NAME
+		{
+			get
+			{
+				return this._ACTIVITY_NAME;
+			}
+			set
+			{
+				if ((this._ACTIVITY_NAME != value))
+				{
+					this._ACTIVITY_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> ACTIVITY_ORDER_SEQ
+		{
+			get
+			{
+				return this._ACTIVITY_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._ACTIVITY_ORDER_SEQ != value))
+				{
+					this._ACTIVITY_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_NAME", DbType="NVarChar(120)")]
+		public string BUDGET_TYPE_NAME
+		{
+			get
+			{
+				return this._BUDGET_TYPE_NAME;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE_NAME != value))
+				{
+					this._BUDGET_TYPE_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ORDER_SEQ", DbType="Int")]
+		public System.Nullable<int> BUDGET_TYPE_ORDER_SEQ
+		{
+			get
+			{
+				return this._BUDGET_TYPE_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE_ORDER_SEQ != value))
+				{
+					this._BUDGET_TYPE_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_MASTER_ID", DbType="Int")]
+		public System.Nullable<int> EXPENSES_MASTER_ID
+		{
+			get
+			{
+				return this._EXPENSES_MASTER_ID;
+			}
+			set
+			{
+				if ((this._EXPENSES_MASTER_ID != value))
+				{
+					this._EXPENSES_MASTER_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_MASTER_NAME", DbType="NVarChar(120)")]
+		public string EXPENSES_MASTER_NAME
+		{
+			get
+			{
+				return this._EXPENSES_MASTER_NAME;
+			}
+			set
+			{
+				if ((this._EXPENSES_MASTER_NAME != value))
+				{
+					this._EXPENSES_MASTER_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_NAME", DbType="NVarChar(120) NOT NULL", CanBeNull=false)]
+		public string EXPENSES_GROUP_NAME
+		{
+			get
+			{
+				return this._EXPENSES_GROUP_NAME;
+			}
+			set
+			{
+				if ((this._EXPENSES_GROUP_NAME != value))
+				{
+					this._EXPENSES_GROUP_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ORDER_SEQ", DbType="SmallInt NOT NULL")]
+		public short EXPENSES_GROUP_ORDER_SEQ
+		{
+			get
+			{
+				return this._EXPENSES_GROUP_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._EXPENSES_GROUP_ORDER_SEQ != value))
+				{
+					this._EXPENSES_GROUP_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_NAME", DbType="NVarChar(120) NOT NULL", CanBeNull=false)]
+		public string EXPENSES_NAME
+		{
+			get
+			{
+				return this._EXPENSES_NAME;
+			}
+			set
+			{
+				if ((this._EXPENSES_NAME != value))
+				{
+					this._EXPENSES_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ORDER_SEQ", DbType="SmallInt NOT NULL")]
+		public short EXPENSES_ORDER_SEQ
+		{
+			get
+			{
+				return this._EXPENSES_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._EXPENSES_ORDER_SEQ != value))
+				{
+					this._EXPENSES_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FORM_TEMPLATE_NAME", DbType="NVarChar(200)")]
+		public string FORM_TEMPLATE_NAME
+		{
+			get
+			{
+				return this._FORM_TEMPLATE_NAME;
+			}
+			set
+			{
+				if ((this._FORM_TEMPLATE_NAME != value))
+				{
+					this._FORM_TEMPLATE_NAME = value;
+				}
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.T_PERSONNEL_SSO_PREPARE")]
+	public partial class T_PERSONNEL_SSO_PREPARE : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _CARD_NUMBER;
+		
+		private short _DEFAULT_ROLE_ID;
+		
+		private int _DEFAULT_DEP_ID;
+		
+		private short _DEFAULT_PERSON_TYPE_ID;
+		
+		private System.Nullable<short> _DEFAULT_LEVEL_ID;
+		
+		private short _DEFAULT_POSITION_ID;
+		
+		private string _DEFAULT_SEX_TYPE;
+		
+		private short _DEFAULT_ACC_TYPE;
+		
+		private string _DEFAULT_EMAIL_ADDR;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCARD_NUMBERChanging(string value);
+    partial void OnCARD_NUMBERChanged();
+    partial void OnDEFAULT_ROLE_IDChanging(short value);
+    partial void OnDEFAULT_ROLE_IDChanged();
+    partial void OnDEFAULT_DEP_IDChanging(int value);
+    partial void OnDEFAULT_DEP_IDChanged();
+    partial void OnDEFAULT_PERSON_TYPE_IDChanging(short value);
+    partial void OnDEFAULT_PERSON_TYPE_IDChanged();
+    partial void OnDEFAULT_LEVEL_IDChanging(System.Nullable<short> value);
+    partial void OnDEFAULT_LEVEL_IDChanged();
+    partial void OnDEFAULT_POSITION_IDChanging(short value);
+    partial void OnDEFAULT_POSITION_IDChanged();
+    partial void OnDEFAULT_SEX_TYPEChanging(string value);
+    partial void OnDEFAULT_SEX_TYPEChanged();
+    partial void OnDEFAULT_ACC_TYPEChanging(short value);
+    partial void OnDEFAULT_ACC_TYPEChanged();
+    partial void OnDEFAULT_EMAIL_ADDRChanging(string value);
+    partial void OnDEFAULT_EMAIL_ADDRChanged();
+    #endregion
+		
+		public T_PERSONNEL_SSO_PREPARE()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CARD_NUMBER", DbType="NVarChar(50) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string CARD_NUMBER
+		{
+			get
+			{
+				return this._CARD_NUMBER;
+			}
+			set
+			{
+				if ((this._CARD_NUMBER != value))
+				{
+					this.OnCARD_NUMBERChanging(value);
+					this.SendPropertyChanging();
+					this._CARD_NUMBER = value;
+					this.SendPropertyChanged("CARD_NUMBER");
+					this.OnCARD_NUMBERChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEFAULT_ROLE_ID", DbType="SmallInt NOT NULL")]
+		public short DEFAULT_ROLE_ID
+		{
+			get
+			{
+				return this._DEFAULT_ROLE_ID;
+			}
+			set
+			{
+				if ((this._DEFAULT_ROLE_ID != value))
+				{
+					this.OnDEFAULT_ROLE_IDChanging(value);
+					this.SendPropertyChanging();
+					this._DEFAULT_ROLE_ID = value;
+					this.SendPropertyChanged("DEFAULT_ROLE_ID");
+					this.OnDEFAULT_ROLE_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEFAULT_DEP_ID", DbType="Int NOT NULL")]
+		public int DEFAULT_DEP_ID
+		{
+			get
+			{
+				return this._DEFAULT_DEP_ID;
+			}
+			set
+			{
+				if ((this._DEFAULT_DEP_ID != value))
+				{
+					this.OnDEFAULT_DEP_IDChanging(value);
+					this.SendPropertyChanging();
+					this._DEFAULT_DEP_ID = value;
+					this.SendPropertyChanged("DEFAULT_DEP_ID");
+					this.OnDEFAULT_DEP_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEFAULT_PERSON_TYPE_ID", DbType="SmallInt NOT NULL")]
+		public short DEFAULT_PERSON_TYPE_ID
+		{
+			get
+			{
+				return this._DEFAULT_PERSON_TYPE_ID;
+			}
+			set
+			{
+				if ((this._DEFAULT_PERSON_TYPE_ID != value))
+				{
+					this.OnDEFAULT_PERSON_TYPE_IDChanging(value);
+					this.SendPropertyChanging();
+					this._DEFAULT_PERSON_TYPE_ID = value;
+					this.SendPropertyChanged("DEFAULT_PERSON_TYPE_ID");
+					this.OnDEFAULT_PERSON_TYPE_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEFAULT_LEVEL_ID", DbType="SmallInt")]
+		public System.Nullable<short> DEFAULT_LEVEL_ID
+		{
+			get
+			{
+				return this._DEFAULT_LEVEL_ID;
+			}
+			set
+			{
+				if ((this._DEFAULT_LEVEL_ID != value))
+				{
+					this.OnDEFAULT_LEVEL_IDChanging(value);
+					this.SendPropertyChanging();
+					this._DEFAULT_LEVEL_ID = value;
+					this.SendPropertyChanged("DEFAULT_LEVEL_ID");
+					this.OnDEFAULT_LEVEL_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEFAULT_POSITION_ID", DbType="SmallInt NOT NULL")]
+		public short DEFAULT_POSITION_ID
+		{
+			get
+			{
+				return this._DEFAULT_POSITION_ID;
+			}
+			set
+			{
+				if ((this._DEFAULT_POSITION_ID != value))
+				{
+					this.OnDEFAULT_POSITION_IDChanging(value);
+					this.SendPropertyChanging();
+					this._DEFAULT_POSITION_ID = value;
+					this.SendPropertyChanged("DEFAULT_POSITION_ID");
+					this.OnDEFAULT_POSITION_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEFAULT_SEX_TYPE", DbType="NVarChar(1) NOT NULL", CanBeNull=false)]
+		public string DEFAULT_SEX_TYPE
+		{
+			get
+			{
+				return this._DEFAULT_SEX_TYPE;
+			}
+			set
+			{
+				if ((this._DEFAULT_SEX_TYPE != value))
+				{
+					this.OnDEFAULT_SEX_TYPEChanging(value);
+					this.SendPropertyChanging();
+					this._DEFAULT_SEX_TYPE = value;
+					this.SendPropertyChanged("DEFAULT_SEX_TYPE");
+					this.OnDEFAULT_SEX_TYPEChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEFAULT_ACC_TYPE", DbType="SmallInt NOT NULL")]
+		public short DEFAULT_ACC_TYPE
+		{
+			get
+			{
+				return this._DEFAULT_ACC_TYPE;
+			}
+			set
+			{
+				if ((this._DEFAULT_ACC_TYPE != value))
+				{
+					this.OnDEFAULT_ACC_TYPEChanging(value);
+					this.SendPropertyChanging();
+					this._DEFAULT_ACC_TYPE = value;
+					this.SendPropertyChanged("DEFAULT_ACC_TYPE");
+					this.OnDEFAULT_ACC_TYPEChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEFAULT_EMAIL_ADDR", DbType="NVarChar(200)")]
+		public string DEFAULT_EMAIL_ADDR
+		{
+			get
+			{
+				return this._DEFAULT_EMAIL_ADDR;
+			}
+			set
+			{
+				if ((this._DEFAULT_EMAIL_ADDR != value))
+				{
+					this.OnDEFAULT_EMAIL_ADDRChanging(value);
+					this.SendPropertyChanging();
+					this._DEFAULT_EMAIL_ADDR = value;
+					this.SendPropertyChanged("DEFAULT_EMAIL_ADDR");
+					this.OnDEFAULT_EMAIL_ADDRChanged();
 				}
 			}
 		}

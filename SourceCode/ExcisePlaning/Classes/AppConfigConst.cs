@@ -617,6 +617,14 @@ namespace ExcisePlaning.Classes
         /// รายงานการกันเงินงบประมาณ
         /// </summary>
         public static string MENU_CONST_REPORT_BUDGET_RESERVE = "REPORT_BUDGET_RESERVE_MENU";
+
+
+        /// <summary>
+        /// ค่าคงที่นี้มาจากตาราง T_MENU.MENU_CONST จะต้องกำหนดให้ตรงกัน<para/>
+        /// เพื่อใช้ในการ Mapping หาชื่อเมนู<para/>
+        /// รายงานรายละเอียดของรายการค่าใช้จ่าย ที่หน่วยงานระบุ เพื่อส่งคำขอ งบประมาณ
+        /// </summary>
+        public static string MENU_CONST_REPORT_BUDGET_REQUEST_EXPENSES_DETAIL = "REPORT_BUDGET_REQUEST_EXPENSES_DETAIL_MENU";
     }
 
 

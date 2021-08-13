@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="ExcisePlaning" Class="ExcisePlaningDbDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="WebSettings" ConnectionString="Data Source=103.13.31.45;Initial Catalog=ExcisePlaning;User ID=sa;Min Pool Size=2" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="ExcisePlaningConnectionString" Provider="System.Data.SqlClient" />
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="ExcisePlaningTest" Class="ExcisePlaningDbDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=103.13.31.45;Initial Catalog=ExcisePlaningTest;User ID=sa;Min Pool Size=2" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="ExcisePlaningConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.T_CONFIGURATION" Member="T_CONFIGURATIONs">
     <Type Name="T_CONFIGURATION">
       <Column Name="CONFIG_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -2534,6 +2534,70 @@
       <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.V_GET_BUDGET_REQUEST_DETAIL_ONLY_DESCRIBE" Member="V_GET_BUDGET_REQUEST_DETAIL_ONLY_DESCRIBEs">
+    <Type Name="V_GET_BUDGET_REQUEST_DETAIL_ONLY_DESCRIBE">
+      <Column Name="REQ_ID" Type="System.String" DbType="NVarChar(11) NOT NULL" CanBeNull="false" />
+      <Column Name="TEMPLATE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PLAN_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRODUCE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ACTIVITY_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SEQ_NO" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SUB_DEP_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YR" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="TOTAL_REQUEST_BUDGET" Type="System.Decimal" DbType="Decimal(15,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ITEM_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_XML_DESCRIBE" Type="System.Xml.Linq.XElement" DbType="Xml" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="REMARK_TEXT" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="ALLOCATE_FLAG" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ALLOCATE_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ALLOCATE_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UPDATED_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="REQ_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="BUDGET_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="REFER_REQ_ID" Type="System.String" DbType="NVarChar(11)" CanBeNull="true" />
+      <Column Name="BUDGET_ALLOCATE_FLAG" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="OFF_BUDGET_ALLOCATE_FLAG" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="AREA_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="DEP_NAME" Type="System.String" DbType="NVarChar(190)" CanBeNull="true" />
+      <Column Name="DEP_ORDER_SEQ" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="PLAN_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="PLAN_ORDER_SEQ" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="PRODUCE_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="PRODUCE_ORDER_SEQ" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="ACTIVITY_NAME" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="ACTIVITY_ORDER_SEQ" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="BUDGET_TYPE_ORDER_SEQ" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EXPENSES_MASTER_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EXPENSES_MASTER_NAME" Type="System.String" DbType="NVarChar(120)" CanBeNull="true" />
+      <Column Name="EXPENSES_GROUP_NAME" Type="System.String" DbType="NVarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_GROUP_ORDER_SEQ" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_NAME" Type="System.String" DbType="NVarChar(120) NOT NULL" CanBeNull="false" />
+      <Column Name="EXPENSES_ORDER_SEQ" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="FORM_TEMPLATE_NAME" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_PERSONNEL_SSO_PREPARE" Member="T_PERSONNEL_SSO_PREPAREs">
+    <Type Name="T_PERSONNEL_SSO_PREPARE">
+      <Column Name="CARD_NUMBER" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DEFAULT_ROLE_ID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEFAULT_DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DEFAULT_PERSON_TYPE_ID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEFAULT_LEVEL_ID" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="DEFAULT_POSITION_ID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEFAULT_SEX_TYPE" Type="System.String" DbType="NVarChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="DEFAULT_ACC_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEFAULT_EMAIL_ADDR" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
     </Type>
   </Table>
   <Function Name="dbo.proc_GetUserRoles" Method="proc_GetUserRoles">

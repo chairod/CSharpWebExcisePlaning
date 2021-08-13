@@ -30,7 +30,8 @@
                     <tr ng-repeat="row in $settings.formData.rows">
                         <td style="width:75px;min-width:75px;max-width:75px;" class="text-center">{{$index + 1}}</td>
                         <td style="min-width:190px;max-width:200px;" class="text-left bg-light">
-                            <select class="form-control" ng-model="row.VehicleTypeId" ng-disabled="$settings.isLoading" fw-select2>
+                            <select class="form-control" ng-model="row.VehicleTypeId" ng-disabled="$settings.isLoading"
+                                    ng-change="vehicleTypeChanged(row)" fw-select2>
                                 <option value="empty">--- ประเภทยานพาหนะ ---</option>
                                 <option ng-repeat="item in $settings.vehicleTypes" value="{{item.VEHICLE_TYPE_ID}}">{{item.VEHICLE_TYPE_NAME}}</option>
                             </select>

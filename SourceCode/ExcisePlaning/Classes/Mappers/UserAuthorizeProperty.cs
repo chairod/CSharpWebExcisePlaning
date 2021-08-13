@@ -246,9 +246,11 @@ namespace ExcisePlaning.Classes.Mappers
         public char SexType { get; set; }
 
         /// <summary>
-        /// 1 = Super User ดูข้อมูลได้ทุกหน่วยงาน ทุกคน เช่น Admin เป็นต้น, 0 = ผู้ใช้งานทั่วไป
+        /// 1 = Super User ดูข้อมูลได้ทุกหน่วยงาน ทุกคน เช่น Admin เป็นต้น
+        /// 0 = ผู้ใช้งานทั่วไป
+        /// 2 = ผู้ใช้งานทั่วไป และทำหน้าที่เป็นผู้อนุมัติ 
         /// </summary>
-        public short? AccountType { get; set; }
+        public short AccountType { get; set; }
 
         /// <summary>
         /// อีเมล์ของผู้ใช้งาน

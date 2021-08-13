@@ -5,32 +5,36 @@
 
 <div ng-controller="AppController">
     @*ส่วนหัวของหน้าจอ*@
-    <div class="form-row mb-2">
-        <div class="col-12">
-            <div class="d-flex float-md-left">
-                <fw-execute-button text="ค้นหา Template"
-                                   ng-disabled="$settings.isLoading||$settings.formView.signOff||$settings.formView.processStatus!=0@(!ViewBag.CanCreateBudgetRequest?"||true":"")"
-                                   css-icon-class="icofont icofont-ui-search"
-                                   css-class="btn btn-primary btn-sm mb-1 mb-md-0 mr-1" ng-click="browseTemplate($event)"></fw-execute-button>
-            </div>
-            <div class="d-flex float-md-right">
-                <fw-execute-button text="@(ViewBag.RequestId==""?"ส่งคำขอ งปม.":"ปรับปรุงคำขอ")"
-                                   ng-disabled="$settings.isLoading||$settings.currYear>$settings.formData.FiscalYear||$settings.formView.processStatus!=0||$settings.formView.signOff==true@(!ViewBag.CanCreateBudgetRequest && string.IsNullOrEmpty(ViewBag.RequestId)?"||true":"")"
-                                   css-icon-class="icofont icofont-save"
-                                   on-loading="$settings.isSaving"
-                                   css-class="btn btn-primary btn-sm mb-1 mb-md-0 mr-1" ng-click="submitSave($event)"></fw-execute-button>
-                <fw-execute-button text="ยกเลิกคำขอ" ng-disabled="$settings.isLoading||$settings.formData.RequestId==''||$settings.formView.processStatus!=0||$settings.formView.signOff==true"
-                                   css-icon-class="ion-close"
-                                   on-loading="$settings.isReject"
-                                   css-class="btn btn-danger btn-sm mb-1 mb-md-0 mr-1" ng-click="submitReject($event)"></fw-execute-button>
-                <fw-execute-button text="SignOff คำขอ" ng-disabled="$settings.isLoading||$settings.formData.RequestId==''||$settings.formData.RequestType!='1'||$settings.formView.processStatus!=0||$settings.formView.signOff==true"
-                                   css-icon-class="ion-checkmark"
-                                   ng-if="$settings.formData.RequestType=='1'"
-                                   on-loading="$settings.isSignOff"
-                                   css-class="btn btn-primary btn-sm mb-1 mb-md-0 mr-1" ng-click="submitSignOff($event)"></fw-execute-button>
+    <fw-scroll-fix-top>
+        <div class="form-row mb-2">
+            <div class="col-12">
+                <div class="d-flex float-md-left">
+                    <fw-execute-button text="ค้นหา Template"
+                                       ng-disabled="$settings.isLoading||$settings.formView.signOff||$settings.formView.processStatus!=0@(!ViewBag.CanCreateBudgetRequest?"||true":"")"
+                                       css-icon-class="icofont icofont-ui-search"
+                                       css-class="btn btn-primary btn-sm mb-1 mb-md-0 mr-1" ng-click="browseTemplate($event)"></fw-execute-button>
+                </div>
+                <div class="d-flex float-md-right">
+                    <fw-execute-button text="@(ViewBag.RequestId==""?"ส่งคำขอ งปม.":"ปรับปรุงคำขอ")"
+                                       ng-disabled="$settings.isLoading||$settings.currYear>$settings.formData.FiscalYear||$settings.formView.processStatus!=0||$settings.formView.signOff==true@(!ViewBag.CanCreateBudgetRequest && string.IsNullOrEmpty(ViewBag.RequestId)?"||true":"")"
+                                       css-icon-class="icofont icofont-save"
+                                       on-loading="$settings.isSaving"
+                                       css-class="btn btn-primary btn-sm mb-1 mb-md-0 mr-1" ng-click="submitSave($event)"></fw-execute-button>
+                    <fw-execute-button text="ยกเลิกคำขอ" ng-disabled="$settings.isLoading||$settings.formData.RequestId==''||$settings.formView.processStatus!=0||$settings.formView.signOff==true"
+                                       css-icon-class="ion-close"
+                                       on-loading="$settings.isReject"
+                                       css-class="btn btn-danger btn-sm mb-1 mb-md-0 mr-1" ng-click="submitReject($event)"></fw-execute-button>
+
+                    @* SignOff ได้เฉพาะผู้มีสิทธิ์ *@
+                    <fw-execute-button text="SignOff คำขอ" ng-disabled="$settings.isLoading@(ViewBag.CanSignOff ? "" : "||true")||$settings.formData.RequestId==''||$settings.formData.RequestType!='1'||$settings.formView.processStatus!=0||$settings.formView.signOff==true"
+                                       css-icon-class="ion-checkmark"
+                                       ng-if="$settings.formData.RequestType=='1'"
+                                       on-loading="$settings.isSignOff"
+                                       css-class="btn btn-primary btn-sm mb-1 mb-md-0 mr-1" ng-click="submitSignOff($event)"></fw-execute-button>
+                </div>
             </div>
         </div>
-    </div>
+    </fw-scroll-fix-top>
 
     @*ข้อมูลคำขอ*@
     <div class="card card-block borderless-card shadow-sm m-0 mb-2">
@@ -136,7 +140,7 @@
                 <fw-validate-error-output error-messages="$settings.formErrors.Expenses.ErrorMessages" css-class="d-block"></fw-validate-error-output>
             </div>
             <div class="col-12 col-md-8">
-                <md-checkbox ng-model="$settings.expensesRequestOnly" class="m-0 float-md-right mb-1" ng-disabled="$settings.isLoading||$settings.formData.Expenses.length==0">แสดงเฉพาะรายการค่าใช้จ่ายที่ส่งคำขอ</md-checkbox>
+                <md-checkbox ng-model="$settings.expensesRequestOnly" class="m-0 float-md-right mb-1" ng-disabled="$settings.isLoading||$settings.formData.Expenses.length==0">แสดงเฉพาะหมวดที่มีคำขอ</md-checkbox>
             </div>
         </div>
         <div class="table-responsive">
@@ -203,7 +207,7 @@
     @Scripts.Render("~/bundle/select2")
     @Scripts.Render("~/bundle/inputnumber")
     @Scripts.Render("~/bundle/datepickerrange")
-<script type="text/javascript">
+    <script type="text/javascript">
         angular.module("leaveApp").controller('SharedController', function ($scope, $fwModalService) {
             $scope.setExpensesDetail = function (event, row) {
                 $fwModalService.getModal('@Url.Action("GetExpensesDetailForm", "BudgetRequest")?expensesFormName=' + $.trim(row.FORM_TEMPLATE_NAME), { $row: row || {} }, function ($scope, $controller, $q, $filter, $fwUtils, $row, $mdDialog, $customHttp, $timeout, $fwModalHelperService) {
@@ -273,6 +277,46 @@
                             $scope.$broadcast('addItem.complete', []);
                             resolve({ $index: index, $newItem: newItem });
                         });
+                    };
+                    // เมื่อตำแหน่งงานเปลี่ยนแปลง
+                    var positionChangedId = null;
+                    $scope.positionChanged = function (row) {
+                        $timeout.cancel(positionChangedId);
+                        positionChangedId = $timeout(function () {
+                            var positionId = +('' + row.PositionId).replace(/[^\d]/g, '');
+                            var foundItems = $scope.$settings.positions.filter(function (item) { return item.POSITION_ID === positionId; });
+                            row.PositionName = foundItems.length > 0 ? foundItems[0].POSITION_NAME : '';
+                        }, 300);
+                    };
+                    // เมื่อระดับ C เปลี่ยนแปลง
+                    var personLevelChangedId = null;
+                    $scope.personLevelChanged = function (row) {
+                        $timeout.cancel(personLevelChangedId);
+                        personLevelChangedId = $timeout(function () {
+                            var personLevelId = +('' + row.LevelId).replace(/[^\d]/g, '');
+                            var foundItems = $scope.$settings.personnelLevels.filter(function (item) { return item.LEVEL_ID === personLevelId; });
+                            row.LevelName = foundItems.length > 0 ? foundItems[0].LEVEL_NAME : ''
+                        }, 300);
+                    };
+                    // เมื่อประเภทบุคลากรเปลี่ยนแปลง
+                    var personTypeChangedId = null;
+                    $scope.personTypeChanged = function (row) {
+                        $timeout.cancel(personTypeChangedId);
+                        personTypeChangedId = $timeout(function () {
+                            var personTypeId = +('' + row.PersonTypeId).replace(/[^\d]/g, '');
+                            var foundItems = $scope.$settings.personnelTypes.filter(function (item) { return item.PERSON_TYPE_ID === personTypeId; });
+                            row.PersonTypeName = foundItems.length > 0 ? foundItems[0].PERSON_TYPE_NAME : "";
+                        }, 300);
+                    };
+                    // เมื่อหน่วยนับเปลี่ยนแปลง
+                    var unitChangedId = null;
+                    $scope.unitChanged = function (row) {
+                        $timeout.cancel(unitChangedId);
+                        unitChangedId = $timeout(function () {
+                            var unitId = +('' + row.UnitId).replace(/[^\d]/g, '');
+                            var foundItems = $scope.$settings.units.filter(function (item) { return item.UNIT_ID === unitId; });
+                            row.UnitName = foundItems.length > 0 ? foundItems[0].UNIT_TEXT : "";
+                        }, 300);
                     };
                     // เมื่อรหัสพนักงานเปลี่ยนแปลง
                     var personCodeChangedId = null;
@@ -1033,6 +1077,7 @@
                         if (vehicleTypeInfo.length > 0) {
                             row.CompensationRatePrice = vehicleTypeInfo[0].COMPENSATION_PRICE || 0;
                             row.TotalPrice = row.CompensationRatePrice * (+row.AmountDays);
+                            row.VehicleTypeName = vehicleTypeInfo.VEHICLE_TYPE_NAME;
                         }
                         @* $customHttp.formPost('@Url.Action("RetrieveVehicleTypeById", "Helper")', { vehicleId: vehicleId }).then(function (res) {
                             var vehicleInfo = res.data || {};
@@ -1325,11 +1370,11 @@
                 calCompensationPriceId = $timeout(function () {
 
                     // ค่าเบี้ยเลี้ยง
-                    var price = +(row.MoreThanHalfDay === 1 ? row.AllowanceCompensationRatePrice : row.AllowanceCompensationRateHalfPrice);
+                    var price = +(row.MoreThanHalfDay === '1' ? row.AllowanceCompensationRatePrice : row.AllowanceCompensationRateHalfPrice);
                     row.AllowanceTotalCompensationPrice = (+row.TimeAmounts) * (+row.AllowancePersonAmounts) * (+row.AllowanceAmountDays) * price; //(+row.AllowanceCompensationRatePrice);
 
                     // ค่าเช่าที่พัก
-                    price = +(row.MoreThanHalfDay === 1 ? row.RentRoomCompensationRatePrice : row.RentRoomCompensationRateHalfPrice);
+                    price = +(row.MoreThanHalfDay === '1' ? row.RentRoomCompensationRatePrice : row.RentRoomCompensationRateHalfPrice);
                     row.RentRoomTotalCompensationPrice = (+row.TimeAmounts) * (+row.RentRoomPersonAmounts) * (+row.RentRoomAmountDays) * price;//(+row.RentRoomCompensationRatePrice);
 
                     // รวม
@@ -1432,6 +1477,16 @@
                 });
 
                 return $scope.$formView.netExpensesRepairPrice;
+            };
+            // เมื่อยานพาหนะเปลี่ยนแปลง
+            var vehicleChangedId = null;
+            $scope.vehicleChanged = function (row) {
+                $timeout.cancel(vehicleChangedId);
+                vehicleChangedId = $timeout(function () {
+                    var vehicleId = +('' + row.VehicleTypeId).replace(/[^\d]/g, '');
+                    var foundItems = $scope.$settings.vehicleTypes.filter(function (item) { return item.VEHICLE_TYPE_ID === vehicleId; });
+                    row.VehicleTypeName = foundItems.length > 0 ? foundItems[0].VEHICLE_TYPE_NAME : "";
+                }, 300);
             };
 
 
@@ -1816,6 +1871,16 @@
                 calTotalPriceId = $timeout(function () {
                     row.TotalPrice = (+row.VehicleAmounts) * (+row.AmountDays) * (+row.LiterAmountsPerMonth) * (+row.PricePerLiter);
                     row.TotalYearlyPrice = row.TotalPrice * 12;
+                }, 300);
+            };
+            // เมื่อยานพาหนะเปลี่ยนแปลง
+            var vehicleTypeChangedId = null;
+            $scope.vehicleTypeChanged = function (row) {
+                $timeout.cancel(vehicleTypeChangedId);
+                vehicleTypeChangedId = $timeout(function () {
+                    var vehicleTypeId = +('' + row.VehicleTypeId).replace(/[^\d]/g, '');
+                    var foundItems = $scope.$settings.vehicleTypes.filter(function (item) { return item.VEHICLE_TYPE_ID === vehicleTypeId; });
+                    row.VehicleTypeName = foundItems.length > 0 ? foundItems[0].VEHICLE_TYPE_NAME : '';
                 }, 300);
             };
             // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
@@ -2597,78 +2662,86 @@
 
             // กดปุ่มเพื่อ ระบุรายการค่าใช้จ่าย ของแต่ละองค์กร
             $scope.privateSetExpenses = function (event, row) {
-                $fwModalService.getModal('@Url.Action("GetExpensesDetailForm", "BudgetRequest", new { expensesFormName = "ChargePetoleumItemForm" })', { $expensesItems: row.Expenses, $orgName: row.OrgName, $expensesStruc: $scope.$settings.expensesStruc }, function ($scope, $controller, $fwUtils, $orgName, $expensesItems, $expensesStruc, $mdDialog, $fwModalHelperService) {
-                    $scope.$settings = {
-                        isLoading: false,
-                        expensesItems: $.extend(true, [], $expensesItems),
-                        OrgName: $orgName || '-',
-                        reserveExpensesIdsForPetoleum: $fwUtils.parseJson('@Html.Raw(Json.Encode(ViewBag.ExpensesIdsReserveForPetolium))')
-                    };
+                $fwModalService.getModal('@Url.Action("GetExpensesDetailForm", "BudgetRequest", new { expensesFormName = "ChargePetoleumItemForm" })',
+                    {
+                        $expensesItems: row.Expenses,
+                        $orgName: row.OrgName,
+                        $expensesStruc: $scope.$settings.expensesStruc,
+                        $budgetTypeId: $scope.$settings.expensesInfo.BUDGET_TYPE_ID, // เลือกได้เฉพาะ คชจ. ภายใต้งบรายจ่าย นี้
+                        $expensesGroupId: $scope.$settings.expensesInfo.EXPENSES_GROUP_ID // เลือกได้เฉพาะ คชจ. ภายใต้หมวด คชจ. นี้
+                    },
+                    function ($scope, $controller, $fwUtils, $orgName, $expensesItems, $expensesStruc, $budgetTypeId, $expensesGroupId, $mdDialog, $fwModalHelperService) {
+                        $scope.$settings = {
+                            isLoading: false,
+                            expensesItems: $.extend(true, [], $expensesItems),
+                            OrgName: $orgName || '-',
+                            reserveExpensesIdsForPetoleum: $fwUtils.parseJson('@Html.Raw(Json.Encode(ViewBag.ExpensesIdsReserveForPetolium))')
+                        };
 
-                    // สืบทอดคุณสมบัติเพื่อเรียกใช้ ฟังชันก์จาก AppController
-                    $controller('SharedController', { $scope: $scope });
+                        // สืบทอดคุณสมบัติเพื่อเรียกใช้ ฟังชันก์จาก SharedController
+                        $controller('SharedController', { $scope: $scope });
 
-                    // กดปุ่มเพิ่ม คชจ.
-                    $scope.privateBrowseExpenses = function (event) {
-                        $fwModalHelperService.getExpensesSelectMultiModal(event, $scope.$settings.expensesItems).then(function (selectedItems) {
-                            var oldExpenses = $.extend(true, [], $scope.$settings.expensesItems);
-                            $scope.$settings.expensesItems = [];
-                            var expensesIds = oldExpenses.map(function (expenses) { return expenses.EXPENSES_ID; });
-                            angular.forEach(selectedItems, function (selectedItem) {
-                                if ($scope.$settings.reserveExpensesIdsForPetoleum.indexOf(selectedItem.EXPENSES_ID) == -1) {
-                                    var newItem = $.extend(true, {}, $expensesStruc);
-                                    newItem.BUDGET_TYPE_ID = selectedItem.BUDGET_TYPE_ID;
-                                    newItem.BUDGET_TYPE_NAME = selectedItem.BUDGET_TYPE_NAME;
-                                    newItem.EXPENSES_GROUP_ID = selectedItem.EXPENSES_GROUP_ID;
-                                    newItem.EXPENSES_GROUP_NAME = selectedItem.EXPENSES_GROUP_NAME;
-                                    newItem.EXPENSES_MASTER_NAME = selectedItem.EXPENSES_MASTER_NAME;
-                                    newItem.EXPENSES_ID = selectedItem.EXPENSES_ID;
-                                    newItem.EXPENSES_NAME = selectedItem.EXPENSES_NAME;
-                                    newItem.FORM_TEMPLATE_NAME = selectedItem.FORM_TEMPLATE_NAME;
+                        // กดปุ่มเพิ่ม คชจ.
+                        $scope.privateBrowseExpenses = function (event) {
+                            $fwModalHelperService.getExpensesSelectMultiModal(event, $scope.$settings.expensesItems).then(function (selectedItems) {
+                                var oldExpenses = $.extend(true, [], $scope.$settings.expensesItems);
+                                $scope.$settings.expensesItems = [];
+                                var expensesIds = oldExpenses.map(function (expenses) { return expenses.EXPENSES_ID; });
+                                angular.forEach(selectedItems, function (selectedItem) {
+                                    if ($scope.$settings.reserveExpensesIdsForPetoleum.indexOf(selectedItem.EXPENSES_ID) == -1) {
+                                        var newItem = $.extend(true, {}, $expensesStruc);
+                                        newItem.BUDGET_TYPE_ID = selectedItem.BUDGET_TYPE_ID;
+                                        newItem.BUDGET_TYPE_NAME = selectedItem.BUDGET_TYPE_NAME;
+                                        newItem.EXPENSES_GROUP_ID = selectedItem.EXPENSES_GROUP_ID;
+                                        newItem.EXPENSES_GROUP_NAME = selectedItem.EXPENSES_GROUP_NAME;
+                                        newItem.EXPENSES_MASTER_NAME = selectedItem.EXPENSES_MASTER_NAME;
+                                        newItem.EXPENSES_ID = selectedItem.EXPENSES_ID;
+                                        newItem.EXPENSES_NAME = selectedItem.EXPENSES_NAME;
+                                        newItem.FORM_TEMPLATE_NAME = selectedItem.FORM_TEMPLATE_NAME;
 
-                                    newItem.EXPENSES_DESCRIBEs = "";
-                                    var foundIndex = expensesIds.indexOf(selectedItem.EXPENSES_ID);
-                                    if (foundIndex > -1) {
-                                        newItem.EXPENSES_DESCRIBEs = oldExpenses[foundIndex].EXPENSES_DESCRIBEs;
-                                        newItem.TOTAL_REQUEST_BUDGET = oldExpenses[foundIndex].TOTAL_REQUEST_BUDGET;
+                                        newItem.EXPENSES_DESCRIBEs = "";
+                                        var foundIndex = expensesIds.indexOf(selectedItem.EXPENSES_ID);
+                                        if (foundIndex > -1) {
+                                            newItem.EXPENSES_DESCRIBEs = oldExpenses[foundIndex].EXPENSES_DESCRIBEs;
+                                            newItem.TOTAL_REQUEST_BUDGET = oldExpenses[foundIndex].TOTAL_REQUEST_BUDGET;
+                                        }
+
+                                        $scope.$settings.expensesItems.push(newItem);
                                     }
+                                });
+                            }, function () { });
+                        };
+                        // กดปุ่มเพื่อ ระบุรายละเอียดของรายการค่าใช้จ่าย
+                        $scope.privateSetExpensesDetail = function (event, row) {
+                            $customHttp.formPost('@Url.Action("RetrieveExpensesById", "Helper")', { expensesId: row.EXPENSES_ID }).then(function (res) {
+                                row.BUDGET_TYPE_ID = res.data.BUDGET_TYPE_ID;
+                                row.BUDGET_TYPE_NAME = res.data.BUDGET_TYPE_NAME;
+                                row.EXPENSES_GROUP_ID = res.data.EXPENSES_GROUP_ID;
+                                row.EXPENSES_GROUP_NAME = res.data.EXPENSES_GROUP_NAME;
+                                row.EXPENSES_MASTER_NAME = res.data.EXPENSES_MASTER_NAME;
+                                row.EXPENSES_ID = res.data.EXPENSES_ID;
+                                row.EXPENSES_NAME = res.data.EXPENSES_NAME;
+                                row.FORM_TEMPLATE_NAME = res.data.FORM_TEMPLATE_NAME;
 
-                                    $scope.$settings.expensesItems.push(newItem);
-                                }
-                            });
-                        }, function () { });
-                    };
-                    // กดปุ่มเพื่อ ระบุรายละเอียดของรายการค่าใช้จ่าย
-                    $scope.privateSetExpensesDetail = function (event, row) {
-                        $customHttp.formPost('@Url.Action("RetrieveExpensesById", "Helper")', { expensesId: row.EXPENSES_ID }).then(function (res) {
-                            row.BUDGET_TYPE_ID = res.data.BUDGET_TYPE_ID;
-                            row.BUDGET_TYPE_NAME = res.data.BUDGET_TYPE_NAME;
-                            row.EXPENSES_GROUP_ID = res.data.EXPENSES_GROUP_ID;
-                            row.EXPENSES_GROUP_NAME = res.data.EXPENSES_GROUP_NAME;
-                            row.EXPENSES_MASTER_NAME = res.data.EXPENSES_MASTER_NAME;
-                            row.EXPENSES_ID = res.data.EXPENSES_ID;
-                            row.EXPENSES_NAME = res.data.EXPENSES_NAME;
-                            row.FORM_TEMPLATE_NAME = res.data.FORM_TEMPLATE_NAME;
+                                if (null == row.EXPENSES_DESCRIBEs || undefined == row.EXPENSES_DESCRIBEs)
+                                    row.EXPENSES_DESCRIBEs = [];
 
-                            if (null == row.EXPENSES_DESCRIBEs || undefined == row.EXPENSES_DESCRIBEs)
-                                row.EXPENSES_DESCRIBEs = [];
-
-                            // เรียกใช้ function จาก master "AppController"
-                            $scope.setExpensesDetail(event, row);
-                        }, function () { });
-                    };
-                    // กดตกลง
-                    $scope.privateOk = function () {
-                        $mdDialog.hide($scope.$settings.expensesItems);
-                    };
-                    // กดปิดหน้าต่าง
-                    $scope.privateClose = function () {
-                        $mdDialog.cancel();
-                    };
-                }, event).then(function (expensesItems) {
-                    row.TotalPrice = $filter('fwSimpleSummary')(expensesItems, ['TOTAL_REQUEST_BUDGET'], 2, null, false);
-                    row.Expenses = expensesItems || [];
-                }, function () { });
+                                // เรียกใช้ function จาก master "AppController"
+                                $scope.setExpensesDetail(event, row);
+                            }, function () { });
+                        };
+                        // กดตกลง
+                        $scope.privateOk = function () {
+                            $mdDialog.hide($scope.$settings.expensesItems);
+                        };
+                        // กดปิดหน้าต่าง
+                        $scope.privateClose = function () {
+                            $mdDialog.cancel();
+                        };
+                    }, event).then(function (expensesItems) {
+                        row.TotalPrice = $filter('fwSimpleSummary')(expensesItems, ['TOTAL_REQUEST_BUDGET'], 2, null, false);
+                        row.Expenses = expensesItems || [];
+                    }, function () { });
             };
             // คำนวนมูลค่ารวมเงิน งปม. ของรายการ คชจ.
             $scope.calSummary = function () {
@@ -2699,6 +2772,6 @@
                 return $filter('displayDecimal')(totalAmounts, 2);
             };
         });
-</script>
+    </script>
 }
 

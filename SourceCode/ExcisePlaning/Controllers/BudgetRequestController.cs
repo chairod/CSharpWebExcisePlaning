@@ -1,4 +1,5 @@
 ﻿using ExcisePlaning.Classes;
+using ExcisePlaning.Classes.ExpensesInfra;
 using ExcisePlaning.Classes.Mappers;
 using ExcisePlaning.Entity;
 using ExcisePlaning.Models;
@@ -65,6 +66,7 @@ namespace ExcisePlaning.Controllers
             ViewBag.DepartmentId = userAuthorizeProfile.DepId;
             ViewBag.DepartmentName = userAuthorizeProfile.DepName;
             ViewBag.EmpFullName = userAuthorizeProfile.EmpFullname;
+            ViewBag.CanSignOff = userAuthorizeProfile.AccountType.Equals(1) || userAuthorizeProfile.AccountType.Equals(2);
 
             // เป็นหน่วยงานที่ไม่สามารถสร้างคำของบประมาณใหม่ได้
             // แต่สามารถแก้ไข คำขอให้กับหน่วยงานภายใต้ตนเองได้
@@ -520,17 +522,22 @@ namespace ExcisePlaning.Controllers
             if (string.IsNullOrEmpty(reqId))
                 return Json(null, JsonRequestBehavior.DenyGet);
 
+            var userProps = UserAuthorizeProperty.GetUserAuthorizeProfile(HttpContext.User.Identity.Name);
+            if (userProps.AccountType.Equals(0))
+            {
+                res["errorText"] = "คุณไม่ได้รับสิทธิ์ในการ Signoff คำของบประมาณ";
+                return Json(null, JsonRequestBehavior.DenyGet);
+            }
+
             using (ExcisePlaningDbDataContext db = new ExcisePlaningDbDataContext())
             {
                 var expr = db.T_BUDGET_REQUEST_MASTERs.Where(e => e.REQ_ID.Equals(reqId) && e.ACTIVE.Equals(1)).FirstOrDefault();
                 if (null == expr)
                     return Json(null, JsonRequestBehavior.DenyGet);
 
-                var userAuthorizeProfile = UserAuthorizeProperty.GetUserAuthorizeProfile(HttpContext.User.Identity.Name);
-
                 // Signoff คำขอได้เฉพาะหน่วยงานตนเอง หรือหน่วยงานที่รับผิดชอบ ยกเว้นหน่วยงานกลาง
-                if (userAuthorizeProfile.DepAuthorize.Equals(2) && !userAuthorizeProfile.DepId.Equals(expr.DEP_ID)
-                    && userAuthorizeProfile.AssignDepartmentIds.IndexOf(expr.DEP_ID) == -1)
+                if (userProps.DepAuthorize.Equals(2) && !userProps.DepId.Equals(expr.DEP_ID)
+                    && userProps.AssignDepartmentIds.IndexOf(expr.DEP_ID) == -1)
                 {
                     res["errorText"] = "ท่านไม่ได้รับสิทธิ์ให้ SignOff ให้กับหน่วยงานอื่น";
                     return Json(res, JsonRequestBehavior.DenyGet);
@@ -559,7 +566,7 @@ namespace ExcisePlaning.Controllers
 
                 expr.SIGNOFF_FLAG = true;
                 expr.SIGNOFF_DATETIME = DateTime.Now;
-                expr.SIGNOFF_ID = userAuthorizeProfile.EmpId;
+                expr.SIGNOFF_ID = userProps.EmpId;
                 db.SubmitChanges();
             }
 

@@ -40,7 +40,7 @@
 	<!--
   พาร์ทที่เก็บไฟล์ Template ของรายงานแต่ละตัวไว้
   -->
-	<ReportTemplatePath>D:\Environment_Owner\Developments\C#\ASP.NET\Planing-กรมสรรพสามิต\SourceCode\ExcisePlaning\Contents\ReportTemplates</ReportTemplatePath>
+	<ReportTemplatePath>D:\Environment_Owner\Developments\C#\ASP.NET\Planing-กรมสรรพสามิต\CSharpWebExcisePlaning\SourceCode\ExcisePlaning\Contents\ReportTemplates</ReportTemplatePath>
   <ReportDefaultFontName>TH SarabunPSK</ReportDefaultFontName>
   <ReportDefaultFontSize>14</ReportDefaultFontSize>
   

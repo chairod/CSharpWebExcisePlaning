@@ -177,8 +177,8 @@
                     else if (null != res.data.errorText)
                         $fwDialogService.dangerDialog(event, res.data.errorText);
                     else
-                        $fwDialogService.alertDialog(event, 'ปรับปรุงข้อมูลเรียบร้อยแล้ว').then(function () {
-                            $window.location.href = $filter('textFormat')('@Url.Action("CheckPermission", "Authorize")?empCode={0}&accessToken={1}', res.data.empCode, res.data.accessToken);
+                        $fwDialogService.alertDialog(event, 'ปรับปรุงข้อมูลเรียบร้อยแล้ว คลิกที่ปุ่ม "ปิดหน้าต่าง" เพื่อเข้าสู่ระบบ').then(function () {
+                            $window.location.href = $filter('textFormat')('{0}/@Url.Action("VerifyAuthorize", "Authorize")?personId={1}&accessToken={2}', $scope.$root.baseUrl, res.data.personId, res.data.accessToken);
                         });
                     $scope.$settings.isLoading = false;
                     $scope.$settings.isSaving = false;

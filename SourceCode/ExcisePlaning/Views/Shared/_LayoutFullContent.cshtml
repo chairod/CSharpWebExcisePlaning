@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@{ 
+    string fileVersion = "2021_08_12";
+}
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -26,10 +29,10 @@
     <link rel="preload" href="~/Third_Party/assets/fonts/ionicons.ttf?v=2.0.0" as="font" />
 
     <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/bootstrap/bootstrap.min.css")" as="style" />
-    <link rel="preload" href="@Url.Content("~/Third_Party/assets/css/style.min.css")?v02" as="style" />
+    <link rel="preload" href="@Url.Content("~/Third_Party/assets/css/style.min.css")?@fileVersion" as="style" />
 
-    <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/jquery/js/jquery.min.js")" as="script" />
-    <link rel="preload" href="@Url.Content("~/Third_Party/assets/js/pcoded.min.js")?v02" as="script" />
+    <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/jquery/js/jquery.min.js")?@fileVersion" as="script" />
+    <link rel="preload" href="@Url.Content("~/Third_Party/assets/js/pcoded.min.js")?@fileVersion" as="script" />
 
     <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/angularjs/angular.min.js")" as="script" />
     <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/angularjs/angular-animate.min.js")" as="script" />
@@ -37,15 +40,15 @@
     <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/angularjs/angular-cookies.min.js")" as="script" />
     <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/angularjs/angular-sanitize.min.js")" as="script" />
     <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/angular-material/angular-material.min.js")" as="script" />
-    <link rel="preload" href="@Url.Content("~/Third_Party/assets/js/angular.app.js")?v02" as="script" />
+    <link rel="preload" href="@Url.Content("~/Third_Party/assets/js/angular.app.js")?@fileVersion" as="script" />
 
 
     @*Base style*@
     <link rel="stylesheet" href="@Url.Content("~/Third_Party/bower_components/bootstrap/bootstrap.min.css")" media="screen" />
-    <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/css/style.min.css")?v02" media="screen" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/css/style.min.css")?@fileVersion" media="screen" />
 
     <link rel="stylesheet" href="@Url.Content("~/Third_Party/bower_components/jquery-ui/jquery-ui.min.css")" media="none" onload="if(media!='all')media='all'" />
-    <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/css/jquery.mCustomScrollbar.css")?v02" media="none" onload="if(media!='all')media='all'" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/css/jquery.mCustomScrollbar.css")?@fileVersion" media="none" onload="if(media!='all')media='all'" />
     <link rel="stylesheet" href="@Url.Content("~/Third_Party/bower_components/angular-material/angular-material.min.css")" media="none" onload="if(media!='all')media='all'" />
     <link rel="stylesheet" href="@Url.Content("~/Third_Party/bower_components/animate.css/css/animate.css")" media="none" onload="if(media!='all')media='all'" />
 
@@ -138,9 +141,9 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/jquery/js/jquery.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/jquery/js/jquery.min.js")?@fileVersion"></script>
     <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/modernizr/js/modernizr.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Third_Party/assets/js/pcoded.min.js")?v02"></script>
+    <script type="text/javascript" src="@Url.Content("~/Third_Party/assets/js/pcoded.min.js")?@fileVersion"></script>
 
     <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/angularjs/angular.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/angularjs/angular-animate.min.js")"></script>
@@ -148,7 +151,7 @@
     <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/angularjs/angular-cookies.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/angularjs/angular-sanitize.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/angular-material/angular-material.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Third_Party/assets/js/angular.app.js")?v02"></script>
+    <script type="text/javascript" src="@Url.Content("~/Third_Party/assets/js/angular.app.js")?@fileVersion"></script>
 
 
     <script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/bootstrap/bootstrap.min.js")"></script>
@@ -163,7 +166,7 @@
 
     <script type="text/javascript" async src="@Url.Content("~/Third_Party/assets/js/client.min.js")"></script>
     <script type="text/javascript" async src="@Url.Content("~/Third_Party/assets/js/script.js")"></script>
-    <script type="text/javascript" async src="@Url.Content("~/Third_Party/assets/js/demo-12.js")?v03"></script>
+    <script type="text/javascript" async src="@Url.Content("~/Third_Party/assets/js/demo-12.js")?@fileVersion"></script>
 
 
     @*@Scripts.Render("~/bundle/jquery")*@

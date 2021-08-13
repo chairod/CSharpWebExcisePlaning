@@ -172,23 +172,23 @@ namespace ExcisePlaning.Controllers
 
                 // แผนงาน
                 if (null != planId)
-                    expr = expr.Where(e => db.T_BUDGET_REQUEST_DETAILs.Any(reqDetail => reqDetail.REQ_ID.Equals(e.REQ_ID) && reqDetail.PLAN_ID.Equals(planId)));
+                    expr = expr.Where(e => db.T_BUDGET_REQUEST_DETAILs.Any(reqDetail => reqDetail.ACTIVE.Equals(1) && reqDetail.REQ_ID.Equals(e.REQ_ID) && reqDetail.PLAN_ID.Equals(planId)));
 
                 // ผลผลิต
                 if (null != produceId)
-                    expr = expr.Where(e => db.T_BUDGET_REQUEST_DETAILs.Any(reqDetail => reqDetail.REQ_ID.Equals(e.REQ_ID) && reqDetail.PRODUCE_ID.Equals(produceId)));
+                    expr = expr.Where(e => db.T_BUDGET_REQUEST_DETAILs.Any(reqDetail => reqDetail.ACTIVE.Equals(1) && reqDetail.REQ_ID.Equals(e.REQ_ID) && reqDetail.PRODUCE_ID.Equals(produceId)));
 
                 // กิจกรรม
                 if (null != activityId)
-                    expr = expr.Where(e => db.T_BUDGET_REQUEST_DETAILs.Any(reqDetail => reqDetail.REQ_ID.Equals(e.REQ_ID) && reqDetail.ACTIVITY_ID.Equals(activityId)));
+                    expr = expr.Where(e => db.T_BUDGET_REQUEST_DETAILs.Any(reqDetail => reqDetail.ACTIVE.Equals(1) && reqDetail.REQ_ID.Equals(e.REQ_ID) && reqDetail.ACTIVITY_ID.Equals(activityId)));
 
                 // งบรายจ่าย
                 if (null != budgetTypeId)
-                    expr = expr.Where(e => db.T_BUDGET_REQUEST_DETAILs.Any(reqDetail => reqDetail.REQ_ID.Equals(e.REQ_ID) && reqDetail.BUDGET_TYPE_ID.Equals(budgetTypeId)));
+                    expr = expr.Where(e => db.T_BUDGET_REQUEST_DETAILs.Any(reqDetail => reqDetail.ACTIVE.Equals(1) && reqDetail.REQ_ID.Equals(e.REQ_ID) && reqDetail.BUDGET_TYPE_ID.Equals(budgetTypeId)));
 
                 // หมวดค่าใช้จ่าย
                 if (null != expensesGroupId)
-                    expr = expr.Where(e => db.T_BUDGET_REQUEST_DETAILs.Any(reqDetail => reqDetail.REQ_ID.Equals(e.REQ_ID) && reqDetail.EXPENSES_GROUP_ID.Equals(expensesGroupId)));
+                    expr = expr.Where(e => db.T_BUDGET_REQUEST_DETAILs.Any(reqDetail => reqDetail.ACTIVE.Equals(1) && reqDetail.REQ_ID.Equals(e.REQ_ID) && reqDetail.EXPENSES_GROUP_ID.Equals(expensesGroupId)));
 
                 // เงินงบประมาณ, เงินนอก งปม.
                 if (null != budgetTypeFlag)

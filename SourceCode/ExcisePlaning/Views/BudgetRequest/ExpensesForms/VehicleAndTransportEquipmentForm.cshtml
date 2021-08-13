@@ -10,25 +10,25 @@
                                ng-click="addItem($event)" ng-disabled="$settings.isLoading"></fw-execute-button>
             <span class="text-danger ml-2 float-md-right f-w-900">จำนวน {{$settings.formData.rows.length|number:0}} รายการ</span>
             <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                    <tr>
-                        <th rowspan="2" style="width:75px;min-width:75px;max-width:75px;" class="text-center align-middle">ลำดับ</th>
-                        <th rowspan="2" style="width:auto;min-width:250px;" class="text-center align-middle">รายการ</th>
-                        <th colspan="2" class="text-center">คุณลักษณะของครุภัณฑ์ (Spec)</th>
-                        <th rowspan="2" style="width:290px;min-width:290px;max-width:290px;" class="text-left align-middle word-wrap">ปัญหา อุปสรรค เหตุผลจำเป็นที่ต้องจัดหาครุภัณฑ์นี้(ต้องระบุให้ชัดเจนเพื่อใช้ประกอบการชี้แจงสำนักงบประมาณ)</th>
-                        <th rowspan="2" style="width:90px;min-width:90px;max-width:90px;" class="text-center">ไฟล์แนบ</th>
-                        <th rowspan="2" style="width:60px;min-width:60px;max-width:60px;"></th>
-                    </tr>
-                    <tr>
-                        <th style="width:100px;min-width:100px;max-width:100px;" class="text-center word-wrap">ราคามาตรฐาน</th>
-                        <th style="width:100px;min-width:100px;max-width:100px;" class="text-center word-wrap">ไม่กำหนดราคามาตรฐาน</th>
-                    </tr>
-
+                <table class="table table-bordered">
                     <tr ng-if="$settings.formData.rows.length==0&&!$settings.isLoading">
                         <th colspan="13" class="text-center text-danger animated fadeIn">--- โปรดกดที่ปุ่ม "เพิ่มรายการ" ---</th>
                     </tr>
 
-                    <tr ng-repeat-start="row in $settings.formData.rows">
+                    <tr ng-repeat-start="row in $settings.formData.rows" class="d-none"></tr>
+                    <tr class="bg-dark">
+                        <th rowspan="2" style="width:75px;min-width:75px;max-width:75px;" class="text-center align-middle">ลำดับ</th>
+                        <th rowspan="2" style="width:auto;min-width:250px;" class="text-center align-middle">รายการ</th>
+                        <th colspan="2" class="text-center">คุณลักษณะของครุภัณฑ์ (Spec)</th>
+                        <th rowspan="2" style="width:290px;min-width:290px;max-width:290px;" class="text-left align-middle word-wrap">ปัญหา อุปสรรค เหตุผลจำเป็นที่ต้องจัดหาครุภัณฑ์นี้(ต้องระบุให้ชัดเจนเพื่อใช้ประกอบการชี้แจงสำนักงบประมาณ)</th>
+                        <th rowspan="2" style="width:90px;min-width:90px;max-width:90px;" class="text-center word-wrap">ไฟล์แนบ (pdf)</th>
+                        <th rowspan="2" style="width:60px;min-width:60px;max-width:60px;"></th>
+                    </tr>
+                    <tr class="bg-dark">
+                        <th style="width:100px;min-width:100px;max-width:100px;" class="text-center word-wrap">ราคามาตรฐาน</th>
+                        <th style="width:100px;min-width:100px;max-width:100px;" class="text-center word-wrap">ไม่กำหนดราคามาตรฐาน</th>
+                    </tr>
+                    <tr>
                         <td style="width:75px;min-width:75px;max-width:75px;" class="text-center align-middle bg-primary f-w-900 f-16">{{$index + 1}}</td>
                         <td style="width:auto;min-width:250px;" class="text-left bg-light">
                             <select class="form-control" ng-model="row.AssetId"
@@ -55,9 +55,9 @@
                             <fw-file-upload icon="true" callback="uploadCallback($res, $params)"
                                             upload-url="@Url.Action("SubmitUploadDocument", "Resource", new { uploadType = "BudgetRequest" })"
                                             params="{index: $index}"
-                                            ng-disabled="row.PriceType=='1'"
+                                            ng-disabled="row.PriceType=='1'" accept-filetypes="pdf"
                                             multiple="false"></fw-file-upload>
-                            <a href="@Url.Action("GetFile", "Resource", new { groupType = "BudgetRequest" })&filename={{row.AttachFilename}}" class="d-block mt-1 f-12 text-danger" ng-if="row.AttachFilename!=null"><span class="animated fadeIn">ไฟล์แนบ</span></a>
+                            <a href="@Url.Action("GetFile", "Resource", new { groupType = "BudgetRequest" })&filename={{row.AttachFilename}}&resultFilename=ไฟล์แนบ_ครุภัณฑ์ยานพาหนะและขนส่ง" class="d-block mt-1 f-12 text-danger" ng-if="row.AttachFilename!=null"><span class="animated fadeIn">ไฟล์แนบ</span></a>
                         </td>
                         <td style="width:60px;min-width:60px;max-width:60px;" class="text-center align-middle">
                             <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="delete($index, row)">ยกเลิก</a>

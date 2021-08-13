@@ -36,13 +36,15 @@
                             <input type="text" class="form-control" maxlength="200" ng-model="row.PersonName" ng-disabled="$settings.isLoading" placeholder="ระบุชื่อ - นามสกุล" />
                         </td>
                         <td style="width:180px;min-width:180px;max-width:180px;" class="text-left bg-light">
-                            <select class="form-control" ng-model="row.PositionId" ng-disabled="$settings.isLoading" fw-select2>
+                            <select class="form-control" ng-model="row.PositionId" ng-disabled="$settings.isLoading"
+                                    ng-change="positionChanged(row)" fw-select2>
                                 <option value="empty">--- ตำแหน่งงาน ---</option>
                                 <option ng-repeat="item in $settings.positions" value="{{item.POSITION_ID}}">{{item.POSITION_NAME}}</option>
                             </select>
                         </td>
                         <td style="width:180px;min-width:180px;max-width:180px;" class="text-left bg-light">
-                            <select class="form-control" ng-model="row.PersonTypeId" ng-disabled="$settings.isLoading" fw-select2>
+                            <select class="form-control" ng-model="row.PersonTypeId" ng-disabled="$settings.isLoading"
+                                    ng-change="personTypeChanged(row)" fw-select2>
                                 <option value="empty">--- ประเภทบุคลากร ---</option>
                                 <option ng-repeat="item in $settings.personnelTypes" value="{{item.PERSON_TYPE_ID}}">{{item.PERSON_TYPE_NAME}}</option>
                             </select>

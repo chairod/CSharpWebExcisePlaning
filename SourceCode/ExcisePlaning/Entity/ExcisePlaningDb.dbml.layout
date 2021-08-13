@@ -716,5 +716,17 @@
         <elementListCompartment Id="8ff668df-693f-486e-b6e0-9c4afc763f11" absoluteBounds="9.765, 45.21, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
+    <classShape Id="c173416a-f776-4825-8539-884009657c06" absoluteBounds="21.25, 46, 2, 9.8475569661458326">
+      <DataClassMoniker Name="/ExcisePlaningDbDataContext/V_GET_BUDGET_REQUEST_DETAIL_ONLY_DESCRIBE" />
+      <nestedChildShapes>
+        <elementListCompartment Id="7b7e5a51-108e-4f1d-b369-74a8b294f57a" absoluteBounds="21.265, 46.46, 1.9700000000000002, 9.2875569661458321" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="921ba683-c6cd-40f9-9371-8932346a3b4d" absoluteBounds="5, 5, 2, 2.5401025390625">
+      <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_PERSONNEL_SSO_PREPARE" />
+      <nestedChildShapes>
+        <elementListCompartment Id="daccdf90-1a5a-41b7-8e8d-6c5baef4c44a" absoluteBounds="5.015, 5.46, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>

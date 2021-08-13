@@ -15,6 +15,7 @@
                         <th style="width:75px;min-width:75px;max-width:75px;" class="text-center">ลำดับ</th>
                         <th style="min-width:190px" class="text-left">รายการ</th>
                         <th style="width:180px;min-width:180px;max-width:180px;" class="text-right">จำนวนเงิน (บาท)</th>
+                        <th style="width:210px;min-width:210px;max-width:210px;" class="text-left">หมายเหตุ</th>
                         @*<th style="width:60px;min-width:60px;max-width:60px;"></th>*@
                     </tr>
 
@@ -29,6 +30,9 @@
                             <fw-input-number-mask ng-model="row.TotalPrice" css-class="text-right"
                                                   ng-disabled="$settings.isLoading" min-value="0.00" max-value="9999999999.00"></fw-input-number-mask>
                         </td>
+                        <th style="width:210px;min-width:210px;max-width:210px;" class="text-left">
+                            <input type="text" class="form-control" ng-model="row.RemarkText" placeholder="ระบุรายละเอียด (ไม่บังคับ)" />
+                        </th>
                         @*<td style="width:60px;min-width:60px;max-width:60px;" class="text-center align-middle">
                                 <a href="javascript:void(0)" class="text-danger f-w-900" ng-click="$settings.formData.rows.splice($index, 1)">ยกเลิก</a>
                             </td>*@
