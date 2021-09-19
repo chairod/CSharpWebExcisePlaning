@@ -107,6 +107,10 @@ svg > g[class^='raphael-group-'] > text{
        font-size: 300px;
    }
 }
+
+md-dialog{
+    overflow: visible!important;
+}
 /**====== Custom css end ======**/
 /**  =====================
 ==========================  **/

@@ -23,21 +23,29 @@
                     }
                 </select>
             </div>
+            <div class="form-group col-12 col-md-4 mb-1 pt-0 pt-md-3">
+                    <md-checkbox ng-model="$settings.formSearch.budgetType" class="m-0 mb-1 d-block"
+                                 ng-true-value="1" ng-false-value="0" ng-disabled="$settings.isLoading"
+                                 ng-click="submitSearch()">เงินงบประมาณ</md-checkbox>
+                    <md-checkbox ng-model="$settings.formSearch.budgetType" class="m-0 d-block"
+                                 ng-true-value="2" ng-false-value="0" ng-disabled="$settings.isLoading"
+                                 ng-click="submitSearch()">เงินนอกงบประมาณ</md-checkbox>
+            </div>
         </div>
 
         <div class="table-responsive p-0 m-0 mt-1">
             <table class="table table-bordered m-0">
                 <tr>
                     @*<td rowspan="2" style="width:auto;min-width:170px;">
-                        <div class="border-bottom mb-2 pb-2">
-                            <h4 class="f-14 f-w-900 text-left m-0 mb-1">กันไว้เบิก:<span class="ml-2 ti-reload rotate-refresh" ng-if="$settings.isLoading"></span></h4>
-                            <span class="ml-2 text-primary">{{$settings.formView.ReserveBudgetType1Amounts|displayDecimal:2}}&nbsp;บาท</span>
-                        </div>
-                        <div>
-                            <h4 class="f-14 f-w-900 text-left m-0 mb-1">ผูกพัน:</h4>
-                            <span class="ml-2 text-primary">{{$settings.formView.ReserveBudgetType2Amounts|displayDecimal:2}}&nbsp;บาท</span>
-                        </div>
-                    </td>*@
+                            <div class="border-bottom mb-2 pb-2">
+                                <h4 class="f-14 f-w-900 text-left m-0 mb-1">กันไว้เบิก:<span class="ml-2 ti-reload rotate-refresh" ng-if="$settings.isLoading"></span></h4>
+                                <span class="ml-2 text-primary">{{$settings.formView.ReserveBudgetType1Amounts|displayDecimal:2}}&nbsp;บาท</span>
+                            </div>
+                            <div>
+                                <h4 class="f-14 f-w-900 text-left m-0 mb-1">ผูกพัน:</h4>
+                                <span class="ml-2 text-primary">{{$settings.formView.ReserveBudgetType2Amounts|displayDecimal:2}}&nbsp;บาท</span>
+                            </div>
+                        </td>*@
                     <th class="text-center bg-primary" colspan="3">กันเงิน (บาท)</th>
                     <th class="text-right bg-primary" rowspan="2">เบิกจ่าย (บาท)</th>
                     <th class="text-right bg-primary" rowspan="2">คงเหลือสุทธิ (บาท)</th>
@@ -49,24 +57,24 @@
                 </tr>
                 <tr>
                     @*<th class="text-right">
-                        <div class="mb-1 pb-1 border-bottom f-w-900 text-primary">{{$settings.formView.NetReserveBudgetAmounts|displayDecimal:2}}</div>
-                        <span class="d-block">เงินงบประมาณ: {{$settings.formView.ReserveBudgetAmounts|displayDecimal:2}} บาท</span>
-                        <span class="d-block">เงินนอกงบประมาณ: {{$settings.formView.ReserveOffBudgetAmounts|displayDecimal:2}} บาท</span>
-                    </th>*@
+                            <div class="mb-1 pb-1 border-bottom f-w-900 text-primary">{{$settings.formView.NetReserveBudgetAmounts|displayDecimal:2}}</div>
+                            <span class="d-block">เงินงบประมาณ: {{$settings.formView.ReserveBudgetAmounts|displayDecimal:2}} บาท</span>
+                            <span class="d-block">เงินนอกงบประมาณ: {{$settings.formView.ReserveOffBudgetAmounts|displayDecimal:2}} บาท</span>
+                        </th>*@
                     <td class="text-right">{{$settings.formView.ReserveBudgetAmounts|displayDecimal:2}}</td>
                     <td class="text-right">{{$settings.formView.ReserveOffBudgetAmounts|displayDecimal:2}}</td>
                     <th class="text-right">{{$settings.formView.NetReserveBudgetAmounts|displayDecimal:2}}</th>
                     <th class="text-right">
                         <div class="f-w-900 text-warning">{{$settings.formView.WithdrawalAmounts|displayDecimal:2}}</div>
                         @*<div class="mb-1 pb-1 border-bottom f-w-900 text-warning">{{$settings.formView.WithdrawalAmounts|displayDecimal:2}}</div>
-                        <span class="d-block">กันไว้เบิก: {{$settings.formView.WithdrawalType1Amounts|displayDecimal:2}} บาท</span>
-                        <span class="d-block">ผูกพัน: {{$settings.formView.WithdrawalType2Amounts|displayDecimal:2}} บาท</span>*@
+                            <span class="d-block">กันไว้เบิก: {{$settings.formView.WithdrawalType1Amounts|displayDecimal:2}} บาท</span>
+                            <span class="d-block">ผูกพัน: {{$settings.formView.WithdrawalType2Amounts|displayDecimal:2}} บาท</span>*@
                     </th>
                     <th class="text-right">
                         <div class="f-w-900 text-success">{{$settings.formView.BalanceAmounts|displayDecimal:2}}</div>
                         @*<div class="mb-1 pb-1 border-bottom f-w-900 text-success">{{$settings.formView.BalanceAmounts|displayDecimal:2}}</div>
-                        <span class="d-block">กันไว้เบิก: {{$settings.formView.BalanceType1Amounts|displayDecimal:2}} บาท</span>
-                        <span class="d-block">ผูกพัน: {{$settings.formView.BalanceType2Amounts|displayDecimal:2}} บาท</span>*@
+                            <span class="d-block">กันไว้เบิก: {{$settings.formView.BalanceType1Amounts|displayDecimal:2}} บาท</span>
+                            <span class="d-block">ผูกพัน: {{$settings.formView.BalanceType2Amounts|displayDecimal:2}} บาท</span>*@
                     </th>
                 </tr>
             </table>
@@ -142,21 +150,13 @@
         </div>
         <div class="form-row">
             <div class="form-group col-12 col-md-3 mb-1">
-                <div class="pb-1 mb-1 mt-2 border-bottom">
+                <div class="pb-1 mb-1 mt-2">
                     <md-checkbox ng-model="$settings.formSearch.reserveType" class="m-0"
                                  ng-true-value="1" ng-false-value="0" ng-disabled="$settings.isLoading"
                                  ng-click="submitSearch()">ผูกพัน</md-checkbox>
                     <md-checkbox ng-model="$settings.formSearch.reserveType" class="m-0"
                                  ng-true-value="2" ng-false-value="0" ng-disabled="$settings.isLoading"
                                  ng-click="submitSearch()">กันไว้เบิก</md-checkbox>
-                </div>
-                <div>
-                    <md-checkbox ng-model="$settings.formSearch.budgetType" class="m-0"
-                                 ng-true-value="1" ng-false-value="0" ng-disabled="$settings.isLoading"
-                                 ng-click="submitSearch()">เงินงบประมาณ</md-checkbox>
-                    <md-checkbox ng-model="$settings.formSearch.budgetType" class="m-0"
-                                 ng-true-value="2" ng-false-value="0" ng-disabled="$settings.isLoading"
-                                 ng-click="submitSearch()">เงินนอกงบประมาณ</md-checkbox>
                 </div>
             </div>
         </div>
@@ -176,7 +176,7 @@
 @section Scripts{
     @Scripts.Render("~/bundle/select2");
     @Scripts.Render("~/bundle/inputmask")
-<script type="text/javascript">
+    <script type="text/javascript">
         angular.module("leaveApp").controller('AppController', function ($scope, $customHttp, $timeout, $q, $fwDateService) {
             $scope.$settings = {
                 isLoading: false, isDepartmentLoading: false,
@@ -322,5 +322,5 @@
             // ค้นหาข้อมูลเมื่อโหลดหน้าเว็บเสร็จ
             $scope.submitSearch();
         });
-</script>
+    </script>
 }

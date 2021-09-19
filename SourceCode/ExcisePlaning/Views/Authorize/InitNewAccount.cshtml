@@ -25,7 +25,7 @@
                             <option value="F">หญิง</option>
                         </select>
                     </div>
-                    <div class="form-group col-12 mb-1">
+                    @*<div class="form-group col-12 mb-1">
                         <label class="required-field">คำนำหน้า<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.PrefixName.ErrorMessages"></fw-validate-error-output></label>
                         <select class="form-control" ng-model="$settings.formData.PrefixName" ng-disabled="$settings.isLoading" fw-select2>
                             <option value="empty">--- คำนำหน้า ---</option>
@@ -34,7 +34,7 @@
                                 <option value="@item.PREFIX_NAME">@item.PREFIX_NAME</option>
                             }
                         </select>
-                    </div>
+                    </div>*@
                     <div class="form-group col-12 mb-1">
                         <label class="required-field">ชื่อ<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.FirstName.ErrorMessages"></fw-validate-error-output></label>
                         <input type="text" class="form-control" ng-model="$settings.formData.FirstName" ng-disabed="$settings.isLoading" maxlength="100" />
@@ -127,7 +127,7 @@
                 departments: [],
                 formErrors: {},
                 formData: {
-                    SexType: 'empty', PrefixName: 'empty',
+                    SexType: 'empty', PrefixName: 'นาย',
                     FirstName: '@ViewBag.FirstName', LastName: '@ViewBag.LastName',
                     PersonTypeId: 'empty', PositionId: 'empty', LevelId: 'empty',
                     AreaId: 'empty', DepId: 'empty', CardNumber: '@ViewBag.CardNumber',

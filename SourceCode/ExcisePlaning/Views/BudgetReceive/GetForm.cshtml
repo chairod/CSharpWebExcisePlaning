@@ -5,55 +5,57 @@
 
 <div ng-controller="AppController">
     <div class="d-block shadow-sm m-0 mb-2 p-3">
-        <div class="form-row">
-            <div class="col-12 col-md-4">
-                <label>ปี งปม. (พ.ศ.) </label>
-                <fw-input-mask model="$settings.formData.FiscalYear" mask="9999" change="fiscalYearChanged()" placeholder="ระบุปี พ.ศ."></fw-input-mask>
-            </div>
-            <div class="col-12 col-md-4">
-                <fw-validate-error-output error-messages="$settings.formErrors.TemporaryYear.ErrorMessages" css-class="d-block m-0"></fw-validate-error-output>
-                <div class="input-group border-bottom mb-2 pb-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                            <input type="checkbox" ng-model="$settings.formData.TemporaryBudgetFlag"
-                                   ng-true-value="2" ng-false-value="1"
-                                   ng-disabled="$settings.isLoading" />&nbsp;พลางก่อน
+        <fw-scroll-fix-top add-width="30" subtract-left="15">
+            <div class="form-row">
+                <div class="col-12 col-md-4">
+                    <label>ปี งปม. (พ.ศ.) </label>
+                    <fw-input-mask model="$settings.formData.FiscalYear" mask="9999" change="fiscalYearChanged()" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+                </div>
+                <div class="col-12 col-md-4">
+                    <fw-validate-error-output error-messages="$settings.formErrors.TemporaryYear.ErrorMessages" css-class="d-block m-0"></fw-validate-error-output>
+                    <div class="input-group border-bottom mb-2 pb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <input type="checkbox" ng-model="$settings.formData.TemporaryBudgetFlag"
+                                       ng-true-value="2" ng-false-value="1"
+                                       ng-disabled="$settings.isLoading" />&nbsp;พลางก่อน
+                            </div>
                         </div>
+                        <fw-input-mask model="$settings.formData.TemporaryYear" mask="9999"
+                                       style="max-width:150px;width:150px;min-width:150px;"
+                                       disabled="$settings.formData.TemporaryBudgetFlag!=2"
+                                       change="temporaryYearChanged()" placeholder="ระบุปี พ.ศ."></fw-input-mask>
                     </div>
-                    <fw-input-mask model="$settings.formData.TemporaryYear" mask="9999"
-                                   style="max-width:150px;width:150px;min-width:150px;"
-                                   disabled="$settings.formData.TemporaryBudgetFlag!=2"
-                                   change="temporaryYearChanged()" placeholder="ระบุปี พ.ศ."></fw-input-mask>
+                    <md-checkbox ng-model="$settings.formData.ReleaseBudgetFlag" ng-if="$settings.pageType=='all' || $settings.pageType == 'budget'"
+                                 ng-disabled="$settings.isLoading"
+                                 ng-true-value="1" ng-false-value="0">เปิดใช้เงินงบประมาณ</md-checkbox>
+                    <md-checkbox ng-model="$settings.formData.ReleaseOffBudgetFlag" ng-if="$settings.pageType=='all' || $settings.pageType == 'off_budget'"
+                                 ng-disabled="$settings.isLoading"
+                                 ng-true-value="1" ng-false-value="0">เปิดใช้เงินนอกงบประมาณ</md-checkbox>
                 </div>
-                <md-checkbox ng-model="$settings.formData.ReleaseBudgetFlag" ng-if="$settings.pageType=='all' || $settings.pageType == 'budget'"
-                             ng-disabled="$settings.isLoading"
-                             ng-true-value="1" ng-false-value="0">เปิดใช้เงินงบประมาณ</md-checkbox>
-                <md-checkbox ng-model="$settings.formData.ReleaseOffBudgetFlag" ng-if="$settings.pageType=='all' || $settings.pageType == 'off_budget'"
-                             ng-disabled="$settings.isLoading"
-                             ng-true-value="1" ng-false-value="0">เปิดใช้เงินนอกงบประมาณ</md-checkbox>
-            </div>
-            <div class="col-12 col-md-4">
-                <label class="d-none d-md-block">&nbsp;</label>
-                <div class="d-flex float-md-right">
-                    <fw-execute-button text="บันทึกงบประมาณ" css-icon-class="ti-save"
-                                       css-class="btn btn-primary btn-sm mr-1"
-                                       ng-click="submitSave($event)"
-                                       ng-disabled="$settings.isLoading||$settings.formView.expenses.length==0||!$settings.formView.editAble"
-                                       on-loading="$settings.isSaving"></fw-execute-button>
-                    <fw-execute-button text="ยกเลิก" css-icon-class="ion-close-circled"
-                                       css-class="btn btn-danger btn-sm"
-                                       ng-disabled="$settings.isLoading"
-                                       ng-click="submitSearch()"></fw-execute-button>
+                <div class="col-12 col-md-4">
+                    <label class="d-none d-md-block">&nbsp;</label>
+                    <div class="d-flex float-md-right">
+                        <fw-execute-button text="บันทึกงบประมาณ" css-icon-class="ti-save"
+                                           css-class="btn btn-primary btn-sm mr-1"
+                                           ng-click="submitSave($event)"
+                                           ng-disabled="$settings.isLoading||$settings.formView.expenses.length==0||!$settings.formView.editAble"
+                                           on-loading="$settings.isSaving"></fw-execute-button>
+                        <fw-execute-button text="ยกเลิก" css-icon-class="ion-close-circled"
+                                           css-class="btn btn-danger btn-sm"
+                                           ng-disabled="$settings.isLoading"
+                                           ng-click="submitSearch()"></fw-execute-button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </fw-scroll-fix-top>
     </div>
 
 
     <div class="card card-block borderless-card shadow-sm m-0 mb-2">
-        <div class="d-block mb-2 pb-2 border-bottom">
-            <h4 class="float-md-left text-primary f-w-900 f-16">ข้อมูลงบประมาณที่ได้รับจัดสรรจากรัฐบาล</h4>
-            <h4 class="float-md-right f-w-900 f-16">คำขอต้นปี: {{$settings.formView.netBudgetRequestStartYearAmounts|number:2}} บาท <span class="text-danger f-10 d-block">(เฉพาะที่ SignOff แล้ว)</span></h4>
+        <div class="d-flex flex-column flex-md-row mb-2 pb-2 border-bottom">
+            <h4 class="text-primary f-w-900 f-16 flex-grow-1">ข้อมูลงบประมาณที่ได้รับจัดสรรจากรัฐบาล</h4>
+            <h4 class="f-w-900 f-16">คำขอต้นปี: {{$settings.formView.netBudgetRequestStartYearAmounts|number:2}} บาท <span class="text-danger f-10 d-block">(เฉพาะที่ SignOff แล้ว)</span></h4>
         </div>
         <div class="row">
             <div class="col-12 position-relative">
@@ -61,12 +63,12 @@
                 @*สรุปยอดจัดสรรเงินงบประมาณ (เงิน งปม., เงินนอก งปม.)*@
                 <div class="d-block">
                     <div class="d-block mb-1 float-md-left align-middle">
-                        <span class="text-danger f-w-900 f-12">*** ปีงบประมาณใดยังไม่มีข้อมูลรายการจัดสรรจากรัฐบาล ระบบจะรวบรวมรายการค่าใช้จ่ายที่ทำคำขอ งปม. ต้นปีที่ SignOff แล้วของหน่วยงานมาตั้งต้นข้อมูลให้</span>
+                        <span class="text-danger f-w-900">*** ปีงบประมาณใดยังไม่เคยบันทึกรายการ ระบบจะตั้งต้นข้อมูลให้ โดยอ้างอิงรายการจาก Template ที่สร้างไว้ในระบบ *** </span>
                         <fw-validate-error-output error-messages="$settings.formErrors.Expenses.ErrorMessages" css-class="d-block"></fw-validate-error-output>
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered mb-1">
                         <tr class="bg-primary">
                             <th colspan="6" class="text-center">
                                 <span ng-if="$settings.pageType == 'budget'">เงินงบประมาณกรมสรรพสามิต (บาท)</span>
@@ -117,7 +119,7 @@
                 </div>
 
                 @*ตัวกรองข้อมูล*@
-                <div class="position-fixed" style="z-index:100;top:68px;right:0px;" ng-if="$settings.formView.expenses.length > 0">
+                <div class="position-fixed" style="z-index:100;top:100px;right:0px;" ng-if="$settings.formView.expenses.length > 0">
                     <div class="container position-absolute align-middle"
                          style="left:210px;top:30px;width:250px;"
                          ng-class="{'animated fadeIn': $settings.isOpenSearch, 'animated fadeIn': !$settings.isOpenSearch}"
@@ -171,7 +173,7 @@
 
                 @*แสดงรายการค่าใช้จ่าย และ ช่องให้ระบุจำนวนเงินที่ได้รับจัดสรร*@
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered mb-1">
 
                         <tr ng-if="!$settings.isLoading && $settings.formView.expenses.length == 0">
                             <th colspan="9" class="text-center text-danger">--- ไม่พบรายการค่าใช้จ่ายที่จัดสรรจากรัฐบาล ---</th>

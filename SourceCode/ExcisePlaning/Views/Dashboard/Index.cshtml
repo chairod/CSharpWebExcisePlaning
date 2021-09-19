@@ -7,7 +7,7 @@
     <div class="form-row">
         <div class="form-group col-12 col-md-2 mb-1">
             <fw-input-mask class="form-control" model="$settings.formSearch.fiscalYear" mask="9999"
-                           change="fiscalYearChanged()" placeholder="ระบุปี พ.ศ."/>
+                           change="fiscalYearChanged()" placeholder="ระบุปี พ.ศ." />
         </div>
         <div class="form-group col-12 col-md-3 mb-1">
             <select class="form-control" ng-model="$settings.formSearch.quarterNo" ng-disabled="$settings.isLoading" fw-select2
@@ -51,13 +51,13 @@
     </div>
 
     <div class="form-row mb-0">
-        <div class="col-12 col-md-4 p-1 m-0"><div id="chart-overallPercentTarget" class="shadow-sm" style="min-height:220px"></div></div>
-        <div class="col-12 col-md-4 p-1 m-0"><div id="chart-expensesPercentTarget" class="shadow-sm"></div></div>
-        <div class="col-12 col-md-4 p-1 m-0"><div id="chart-investmentPercentTarget" class="shadow-sm"></div></div>
+        <div class="col-12 col-md-4 p-1 m-0"><div id="chart-overallPercentTarget" class="shadow" style="min-height:220px"></div></div>
+        <div class="col-12 col-md-4 p-1 m-0"><div id="chart-expensesPercentTarget" class="shadow"></div></div>
+        <div class="col-12 col-md-4 p-1 m-0"><div id="chart-investmentPercentTarget" class="shadow"></div></div>
     </div>
     <div class="form-row mb-0">
         <div class="col-12 col-md-7 p-1 m-0">
-            <div id="chart-proportionBudget" class="shadow-sm" style="min-height:404px"></div>
+            <div id="chart-proportionBudget" class="shadow" style="min-height:404px"></div>
         </div>
         <div class="col-12 col-md-5 p-1 m-0">
             <fw-tabs>
@@ -168,9 +168,8 @@
                         $scope.$settings.formView = res.data.data || {};
                         if (null != res.data.errorText)
                             $fwDialogService.dangerDialog(null, res.data.errorText);
-
-                        renderAllChart();
                         $scope.$settings.isLoading = false;
+                        renderAllChart();
                     }, function () {
                         $scope.$settings.isLoading = false;
                     });
@@ -187,27 +186,27 @@
                     { minValue: targetConfigs.Overall.TARGET_PERCENT_QTR1, maxValue: targetConfigs.Overall.TARGET_PERCENT_QTR2, code: (qtrIndex >= 2 ? "#ff0000" : "#00ff00") },
                     { minValue: targetConfigs.Overall.TARGET_PERCENT_QTR2, maxValue: targetConfigs.Overall.TARGET_PERCENT_QTR3, code: (qtrIndex >= 3 ? "#ff0000" : "#00ff00") },
                     { minValue: targetConfigs.Overall.TARGET_PERCENT_QTR3, maxValue: targetConfigs.Overall.TARGET_PERCENT_QTR4, code: (qtrIndex >= 4 ? "#ff0000" : "#00ff00") }
-                ], data.ReportOverallPercentTargetVal, "เป้าหมายภาพรวม", data.ReportOverallPercentTargetVal);
+                ], data.ReportOverallPercentTargetVal, "เป้าหมายภาพรวม", data.ReportOverallPercentTargetVal, "#1E4065");
                 renderGauge('#chart-expensesPercentTarget', [
                     { minValue: 0, maxValue: targetConfigs.Expenses.TARGET_PERCENT_QTR1, code: "#ff0000" },
                     { minValue: targetConfigs.Expenses.TARGET_PERCENT_QTR1, maxValue: targetConfigs.Expenses.TARGET_PERCENT_QTR2, code: (qtrIndex >= 2 ? "#ff0000" : "#00ff00") },
                     { minValue: targetConfigs.Expenses.TARGET_PERCENT_QTR2, maxValue: targetConfigs.Expenses.TARGET_PERCENT_QTR3, code: (qtrIndex >= 3 ? "#ff0000" : "#00ff00") },
                     { minValue: targetConfigs.Expenses.TARGET_PERCENT_QTR3, maxValue: targetConfigs.Expenses.TARGET_PERCENT_QTR4, code: (qtrIndex >= 4 ? "#ff0000" : "#00ff00") }
-                ], data.ReportExpensesPercentTargetVal, "เป้าหมายรายจ่ายประจำ", data.ReportOverallPercentTargetVal);
+                ], data.ReportExpensesPercentTargetVal, "เป้าหมายรายจ่ายประจำ", data.ReportOverallPercentTargetVal, "#0F2032");
                 renderGauge('#chart-investmentPercentTarget', [
                     { minValue: 0, maxValue: targetConfigs.Investment.TARGET_PERCENT_QTR1, code: "#ff0000" },
                     { minValue: targetConfigs.Investment.TARGET_PERCENT_QTR1, maxValue: targetConfigs.Investment.TARGET_PERCENT_QTR2, code: (qtrIndex >= 2 ? "#ff0000" : "#00ff00") },
                     { minValue: targetConfigs.Investment.TARGET_PERCENT_QTR2, maxValue: targetConfigs.Investment.TARGET_PERCENT_QTR3, code: (qtrIndex >= 3 ? "#ff0000" : "#00ff00") },
                     { minValue: targetConfigs.Investment.TARGET_PERCENT_QTR3, maxValue: targetConfigs.Investment.TARGET_PERCENT_QTR4, code: (qtrIndex >= 4 ? "#ff0000" : "#00ff00") }
-                ], data.ReportInvestmentPercentTargetVal, "เป้าหมายงบลงทุน", data.ReportOverallPercentTargetVal);
+                ], data.ReportInvestmentPercentTargetVal, "เป้าหมายงบลงทุน", data.ReportOverallPercentTargetVal, "#000000");
 
                 // สัดส่วนการใช้งบประมาณ
                 var colors = { 1: '#8700E7', 2: '#1100E7', 3: '#F100A7', 4: '#D2009E', 5: '#FF5500' };
                 renderPie3d('#chart-proportionBudget', 'สัดส่วนงบประมาณ', data.BudgetProportionPercent.map(function (item) {
-                    return $.extend(item, { color: colors[item.KeyId] || null });
+                    return $.extend(item, { color: colors[item.KeyId] || null, labelFontColor: "#000000" });
                 }));
 
-                
+
                 // กราฟแท่งแยกตามประเภทรายจ่าย (ภาพรวม รายจ่ายประจำ งบลงทุน)
                 var categories = [{ label: "ภาพรวม" }, { label: "รายจ่ายประจำ" }, { label: "รายจ่ายลงทุน" }];
                 var dataset = [
@@ -324,11 +323,12 @@
                     subCaption: "",
                     showTickMarks: "1",
                     captionPadding: "23",
-                    numbersuffix: ""
+                    numbersuffix: "",
+                    bgColor: undefined
                 }
             };
             // Render กราฟ Gauge
-            function renderGauge(containerId, colorRangeConfigs, percentTargetVal, captionText, tooltipText) {
+            function renderGauge(containerId, colorRangeConfigs, percentTargetVal, captionText, tooltipText, htmlBgColor) {
                 // ตย. การสร้างเส้น Trend
                 // https://www.fusioncharts.com/charts/gauges/gauge-with-trend?framework=javascript
                 var trendPoints = [];
@@ -337,9 +337,9 @@
                         startvalue: item.maxValue,
                         displayvalue: item.maxValue,
                         thickness: "2",
-                        color: "#484848",
+                        color: "#ffffff",
                         usemarker: "1",
-                        markerbordercolor: "#484848",
+                        markerbordercolor: "#ffffff", //"#484848",
                         markertooltext: item.maxValue + "%"
                     });
                 });
@@ -355,15 +355,17 @@
                         dial: [
                             {
                                 value: '' + (percentTargetVal || 0),
-                                tooltext: tooltipText || ''
+                                tooltext: tooltipText || '',
+                                color: '#ffffff'
                             }
                         ]
                     }
-                }, globalSettings);
+                }, globalSettings, { chart: { captionFontColor: "#ffffff" }});
                 dataSource.chart.caption = captionText;
                 dataSource.chart.showTickMarks = "0";
                 //dataSource.chart.theme = 'candy';
                 dataSource.chart.numbersuffix = '%';
+                dataSource.chart.bgColor = htmlBgColor;
                 $(containerId).insertFusionCharts({
                     type: "angulargauge",
                     width: "100%",
@@ -387,10 +389,15 @@
                         formatnumber: "1",
                         labelFontSize: "14",
                         caption: captionText,
+                        //captionFontColor: "#ffffff",
+                        //toolTipColor: "#000000",
+                        //baseFontColor: "#ffffff",
+                        //bgColor: "#1E4065"
                         //theme: 'umber'
                     }),
                     data: datas
                 };
+                // https://www.fusioncharts.com/dev/chart-attributes/doughnut2d
                 $(containerId).insertFusionCharts({
                     type: "doughnut2d",
                     width: "100%",
@@ -400,7 +407,7 @@
                 });
             }
             // Render chart column stack
-            function renderChartColumnStack(containerId, captionText, categories, dataset) {
+            function renderChartColumnStack(containerId, captionText, categories, dataset, htmlBgColor) {
                 var dataSource = {
                     chart: $.extend($.extend(true, {}, globalSettings.chart), {
                         plottooltext: "<b>$seriesName</b> $label จำนวน <b>$dataValue</b> บาท",
@@ -409,7 +416,8 @@
                         formatnumber: "1",
                         caption: captionText,
                         showLegend: "0",
-                        yAxisMinValue: "-100000"
+                        yAxisMinValue: "-100000",
+                        bgColor: "#000000"
                     }),
                     categories: [
                         {

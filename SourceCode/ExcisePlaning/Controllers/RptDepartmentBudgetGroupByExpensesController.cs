@@ -146,14 +146,22 @@ namespace ExcisePlaning.Controllers
                 var userAuthorizeProfile = UserAuthorizeProperty.GetUserAuthorizeProfile(HttpContext.User.Identity.Name);
                 var exprDepCashflow = db.V_GET_DEPARTMENT_BUDGET_CASH_FLOW_STATEMENTs.Where(e => e.YR.Equals(fiscalYear) && e.ACTIVE.Equals(1));
 
-                // ตรวจสอบการเข้าถึงข้อมูลของหน่วยงาน
-                // 1. กรณีไม่เลือกหน่วยงาน ให้ใช้ข้อมูล Profile กรองข้อมูลตามสิทธิ์
-                // 2. กรณีเลือกหน่วยงาน ให้ดูสิทธิ์การเข้าถึงข้อมูลของหน่วยงาน ที่เลือก
-                var depFilterAuthorize = DepartmentAuthorizeFilterProperty.Verfity(userAuthorizeProfile, depId);
-                if (depFilterAuthorize.Authorize.Equals(2))
-                    exprDepCashflow = exprDepCashflow.Where(e => depFilterAuthorize.AssignDepartmentIds.Contains(e.DEP_ID));
-                if (null != areaId && null == depId)
-                    exprDepCashflow = exprDepCashflow.Where(e => e.AREA_ID.Equals(areaId));
+                // ส่วนกลาง
+                if (userAuthorizeProfile.DepAuthorize.Equals(1))
+                {
+                    if (null != areaId)
+                        exprDepCashflow = exprDepCashflow.Where(e => e.AREA_ID.Equals(areaId));
+                    if (null != depId)
+                        exprDepCashflow = exprDepCashflow.Where(e => e.DEP_ID.Equals(depId));
+                }
+                else // หน่วยงานทั่วไป
+                {
+                    exprDepCashflow = exprDepCashflow.Where(e => e.AREA_ID.Equals(userAuthorizeProfile.AreaId));
+                    var depAuthorize = DepartmentAuthorizeFilterProperty.Verfity(userAuthorizeProfile, userAuthorizeProfile.DepId);
+                    exprDepCashflow = exprDepCashflow.Where(e => depAuthorize.AssignDepartmentIds.Contains(e.DEP_ID));
+                    if (null != depId)
+                        exprDepCashflow = exprDepCashflow.Where(e => e.DEP_ID.Equals(depId));
+                }
 
                 if (null != planId)
                     exprDepCashflow = exprDepCashflow.Where(e => e.PLAN_ID.Equals(planId));

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="ExcisePlaningTest" Class="ExcisePlaningDbDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=103.13.31.45;Initial Catalog=ExcisePlaningTest;User ID=sa;Min Pool Size=2" SettingsObjectName="ExisePlaningConsole.Properties.Settings" SettingsPropertyName="ExcisePlaningTestConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.T_PERSONNEL_SSO_PREPARE" Member="T_PERSONNEL_SSO_PREPAREs">
+    <Type Name="T_PERSONNEL_SSO_PREPARE">
+      <Column Name="CARD_NUMBER" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DEFAULT_ROLE_ID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEFAULT_DEP_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DEFAULT_PERSON_TYPE_ID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEFAULT_LEVEL_ID" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="DEFAULT_POSITION_ID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEFAULT_SEX_TYPE" Type="System.String" DbType="NVarChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="DEFAULT_ACC_TYPE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEFAULT_EMAIL_ADDR" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.T_DEPARTMENT" Member="T_DEPARTMENTs">
+    <Type Name="T_DEPARTMENT">
+      <Column Name="DEP_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="AREA_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DEP_AUTHORIZE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_NAME" Type="System.String" DbType="NVarChar(190) NOT NULL" CanBeNull="false" />
+      <Column Name="DEP_SHORT_NAME" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="DEP_CODE" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="CAN_REQUEST_BUDGET" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="WORKING_AREA" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="ADDRESS" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="SORT_INDEX" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="ACTIVE" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="CREATED_DATETIME" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="USER_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UPDATED_DATETIME" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

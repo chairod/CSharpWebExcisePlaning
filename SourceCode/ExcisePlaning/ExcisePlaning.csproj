@@ -153,10 +153,10 @@
     <Content Include="Third_Party\assets\css\linearicons.css" />
     <Content Include="Third_Party\assets\css\simple-line-icons.css" />
     <Content Include="Third_Party\assets\css\skeleton-loading.css" />
-    <Content Include="Third_Party\assets\css\style.css" />
     <Content Include="Contents\fonts\ionicons.svg" />
     <Content Include="Contents\fonts\Linearicons-Free.svg" />
     <Content Include="Contents\fonts\Simple-Line-Icons.svg" />
+    <Content Include="Third_Party\assets\css\style.min.css" />
     <Content Include="Third_Party\assets\fonts\ionicons.svg" />
     <Content Include="Third_Party\assets\fonts\Linearicons-Free.svg" />
     <Content Include="Third_Party\assets\fonts\Simple-Line-Icons.svg" />
@@ -621,6 +621,7 @@
     <Content Include="Contents\ReportTemplates\Report007_Department_Report_Payment_Template.xlsx" />
     <Content Include="Contents\ReportTemplates\RptExpenseResult.xlsx" />
     <Content Include="Contents\ReportTemplates\RptPlansIncomeOfYear.xlsx" />
+    <Content Include="Contents\excise-manual-2021-08-13.pdf" />
     <None Include="Entity\ExcisePlaningDb.dbml.layout">
       <DependentUpon>ExcisePlaningDb.dbml</DependentUpon>
     </None>
@@ -640,6 +641,55 @@
     <Compile Include="Classes\AppUtils.cs" />
     <Compile Include="Classes\Breadcrump.cs" />
     <Compile Include="Classes\BudgetUtils.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesAllowance.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForAdvertiseAndRelease.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForElectricalAndRadio.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForHireService.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForKillTermite.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForMaintainAirConditioner.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForMaterialOfficial.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForMaterialOther.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForOilAndLubricate.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForOther.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForPrintStamp.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForRentBuilding.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForRentService.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForReprintStamp.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForScienceAndMedical.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargeForSoftwareMA.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesChargePetoleum.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesCompensationFund.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesCompensationGovernmentEmployee.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesComputerEquipment.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesComputerMaterial.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesCourtFee.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesEducationFund.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesConferenceForeign.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesGovernmentIncome.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesHealthCheckProject.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesHireAdvisor.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesIndustrailSurvey.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesInsteadCarForPositionCompensation.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesLandAndBuilding.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesMonthlyCompensationExtra.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesOfficialEquipment.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesOtherEquipment.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesOvertimeCompensation.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesPersonnelOrCommitteeCompensation.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesRentHouse.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesRepairBuilding.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesRepairEquipment.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesRepairVehicleAndTransport.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesRetiredGovernmentCompensation.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesSalaryAndIncome.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesScienceEquipment.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesSeminaForeign.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesSocialSecurity.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesSubsidy.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesTranferToMinistryOfFinancial.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesTraningAndSeminors.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesVehicleAndTransportEquipment.cs" />
+    <Compile Include="Classes\ExpensesInfra\ExpensesVehicleEquipmentAndTransport.cs" />
     <Compile Include="Classes\ExportHelper.cs" />
     <Compile Include="Classes\ExportUtils.cs" />
     <Compile Include="Classes\Mappers\ActivityShortFieldProperty.cs" />
@@ -668,6 +718,7 @@
     <Compile Include="Classes\Mappers\UserAuthorizeProperty.cs" />
     <Compile Include="Classes\Mappers\VerifyBudgetResult.cs" />
     <Compile Include="Classes\NonOrderingBundleOrderer.cs" />
+    <Compile Include="Classes\VerifyVulnerability.cs" />
     <Compile Include="Connected Services\ServiceReference1\Reference.cs" />
     <Compile Include="Connected Services\ServiceReference1\Reference1.cs">
       <AutoGen>True</AutoGen>
@@ -728,6 +779,8 @@
     <Compile Include="Controllers\RoleConfigureController.cs" />
     <Compile Include="Controllers\RptBudgetCashFlowController.cs" />
     <Compile Include="Controllers\RptBudgetIncomeGroupByBudgetTypeController.cs" />
+    <Compile Include="Controllers\RptBudgetReceiveController.cs" />
+    <Compile Include="Controllers\RptBudgetRequestExpensesDetailController.cs" />
     <Compile Include="Controllers\RptDepartmentBudgetCashFlowController.cs" />
     <Compile Include="Controllers\RptDepartmentBudgetGroupByBudgetTypeController.cs" />
     <Compile Include="Controllers\RptDepartmentBudgetGroupByExpensesController.cs" />
@@ -763,6 +816,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Classes\ExpensesInfra\ExpensesPublicUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -1127,6 +1181,10 @@
     <Content Include="Views\Shared\_LayoutFullContent.cshtml" />
     <Content Include="Views\BudgetRequest\ExpensesColumnDefined\CourtFeeForm.json" />
     <Content Include="Views\BudgetRequest\ExpensesForms\CourtFeeForm.cshtml" />
+    <Content Include="Views\RptBudgetRequestExpensesDetail\GetForm.cshtml" />
+    <Content Include="Views\BudgetRequest\ExpensesForms\TraningAndSeminorsForm - 01082021.cshtml" />
+    <Content Include="Views\Authorize\LoginForm - Copy.cshtml" />
+    <Content Include="Views\RptBudgetReceive\GetForm.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

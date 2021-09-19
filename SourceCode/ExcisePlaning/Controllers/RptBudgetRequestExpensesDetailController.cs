@@ -131,7 +131,6 @@ namespace ExcisePlaning.Controllers
             using (ExcisePlaningDbDataContext db = new ExcisePlaningDbDataContext())
             {
                 var usrProps = UserAuthorizeProperty.GetUserAuthorizeProfile(HttpContext.User.Identity.Name);
-                var depAuthorize = DepartmentAuthorizeFilterProperty.Verfity(usrProps, depId);
                 var reqDetailExpr = db.V_GET_BUDGET_REQUEST_DETAIL_ONLY_DESCRIBEs.Where(e => e.YR.Equals(fiscalYear) && e.ACTIVE.Equals(1)
                     && e.BUDGET_TYPE.Equals(budgetTypeFlag));
 
@@ -140,17 +139,20 @@ namespace ExcisePlaning.Controllers
                 if (!string.IsNullOrEmpty(requestId))
                     reqDetailExpr = reqDetailExpr.Where(e => e.REQ_ID.Equals(requestId));
 
-                if (depAuthorize.Authorize.Equals(1))
+                // หน่วยงานกลาง
+                if (usrProps.DepAuthorize.Equals(1))
                 {
                     if (null != areaId)
                         reqDetailExpr = reqDetailExpr.Where(e => db.T_BUDGET_REQUEST_MASTERs.Any(m => m.REQ_ID.Equals(e.REQ_ID) && m.AREA_ID.Equals(areaId)));
                     if (null != depId)
                         reqDetailExpr = reqDetailExpr.Where(e => e.DEP_ID.Equals(depId));
                 }
-                else
+                else // หน่วยงานทั่วไป
                 {
+                    reqDetailExpr = reqDetailExpr.Where(e => db.T_BUDGET_REQUEST_MASTERs.Any(m => m.REQ_ID.Equals(e.REQ_ID) && m.AREA_ID.Equals(usrProps.AreaId)));
+                    var depAuthorize = DepartmentAuthorizeFilterProperty.Verfity(usrProps, usrProps.DepId);
                     reqDetailExpr = reqDetailExpr.Where(e => depAuthorize.AssignDepartmentIds.Contains(e.DEP_ID));
-                    if (null != depId || usrProps.AssignDepartmentIds.Count == 0)
+                    if (null != depId)
                         reqDetailExpr = reqDetailExpr.Where(e => e.DEP_ID.Equals(depId));
                 }
 

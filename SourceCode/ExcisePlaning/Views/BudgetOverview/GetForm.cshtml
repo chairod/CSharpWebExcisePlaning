@@ -48,7 +48,7 @@
                     <th class="text-right"><a href="javascript:void(0)" class="f-16" ng-click="showModalBudgetGroupByDep('BUDGET_ALLOCATE')">{{$settings.formView.BudgetAllocateToDepartmentAmounts|displayDecimal:2}} <span class="ti-new-window ml-1 text-primary"></span></a></th>
                     <th class="text-right"><a href="javascript:void(0)" class="f-16" ng-click="showModalBudgetGroupByDep('BUDGET_RESERVE')">{{$settings.formView.BudgetReserveAmounts|displayDecimal:2}} <span class="ti-new-window ml-1 text-primary"></span></a></th>
                     <th class="text-right f-16 text-warning">{{$settings.formView.BudgetUseAmounts|displayDecimal:2}}</th>
-                    <th class="text-right f-16 text-success">{{$settings.formView.BudgetActualBalance|displayDecimal:2}}</th>
+                    <th class="text-right f-16 " ng-class="{'text-success': $settings.formView.BudgetActualBalance >= 0, 'text-danger': $settings.formView.BudgetActualBalance < 0}">{{$settings.formView.BudgetActualBalance|displayDecimal:2}}</th>
                 </tr>
             </table>
         </div>

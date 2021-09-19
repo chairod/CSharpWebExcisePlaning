@@ -125,14 +125,14 @@ namespace ExcisePlaning.Controllers
                     return Json(res, JsonRequestBehavior.DenyGet);
                 }
 
-                // เงินนอกงบประมาณคงเหลือสุทธิ ต้องไม่น้องกว่ายอดใช้จ่าย
+                // ยกเลิกการเก็บรายได้เงินนอกงบประมาณ
                 exprBudgetMas.ACTUAL_OFF_BUDGET_AMOUNT -= exprBudgetOffIncome.BUDGET_AMOUNT;
                 exprBudgetMas.REMAIN_OFF_BUDGET_AMOUNT = exprBudgetMas.ACTUAL_OFF_BUDGET_AMOUNT - exprBudgetMas.USE_OFF_BUDGET_AMOUNT;
-                if (exprBudgetMas.REMAIN_OFF_BUDGET_AMOUNT.CompareTo(decimal.Zero) == -1)
-                {
-                    res["errorText"] = "หลังจากยกเลิกรายการรับเงินประจำงวด เงินนอกงบประมาณคงเหลือสุทธิ น้อยกว่ายอดใช้จ่าย";
-                    return Json(res, JsonRequestBehavior.DenyGet);
-                }
+                //if (exprBudgetMas.ACTUAL_OFF_BUDGET_AMOUNT.CompareTo(decimal.Zero) == -1)
+                //{
+                //    res["errorText"] = "หลังจากยกเลิกรายการรับเงินประจำงวด เงินนอกงบประมาณคงเหลือสุทธิ น้อยกว่ายอดใช้จ่าย";
+                //    return Json(res, JsonRequestBehavior.DenyGet);
+                //}
 
                 // ยกเลิกรายการรับเงินนอก
                 var userAuthorizeProfile = UserAuthorizeProperty.GetUserAuthorizeProfile(HttpContext.User.Identity.Name);
@@ -200,10 +200,11 @@ namespace ExcisePlaning.Controllers
                 exprBudgetMas.REMAIN_OFF_BUDGET_AMOUNT = exprBudgetMas.ACTUAL_OFF_BUDGET_AMOUNT - exprBudgetMas.USE_OFF_BUDGET_AMOUNT;
                 exprBudgetMas.LATEST_INCOME_OFF_BUDGET = DateTime.Now;
 
-                // งบประมาณ (รับจากรัฐบาล) ต้องไม่น้อยกว่า เงินประจำงวดสะสม
+                // ไม่สามารถเก็บเงินรายได้ภาษีเงินนอกงบประมาณ
+                // เกินยอดที่รัฐบาลจัดสรรได้
                 if (exprBudgetMas.ALLOCATE_OFF_BUDGET_AMOUNT.CompareTo(exprBudgetMas.ACTUAL_OFF_BUDGET_AMOUNT) == -1)
                 {
-                    res["errorText"] = "เงินงบประมาณ น้อยกว่า เงินประจำนวนสะสม โปรดตรวจสอบ";
+                    res["errorText"] = "ไม่สามารถเก็บเงินรายได้ภาษีเงินนอกงบประมาณ เกินยอดที่รัฐบาลจัดสรรได้ โปรดตรวจสอบ";
                     return Json(res, JsonRequestBehavior.DenyGet);
                 }
 

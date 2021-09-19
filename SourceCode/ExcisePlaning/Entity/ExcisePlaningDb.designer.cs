@@ -22,7 +22,7 @@ namespace ExcisePlaning.Entity
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="ExcisePlaningTest")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="ExcisePlaning")]
 	public partial class ExcisePlaningDbDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -1121,22 +1121,6 @@ namespace ExcisePlaning.Entity
 			}
 		}
 		
-		public System.Data.Linq.Table<V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION> V_GET_SUMMARY_BUDGET_RESERVE_INFORMATIONs
-		{
-			get
-			{
-				return this.GetTable<V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION>();
-			}
-		}
-		
-		public System.Data.Linq.Table<V_GET_BUDGET_RESERVE_INFORMATION> V_GET_BUDGET_RESERVE_INFORMATIONs
-		{
-			get
-			{
-				return this.GetTable<V_GET_BUDGET_RESERVE_INFORMATION>();
-			}
-		}
-		
 		public System.Data.Linq.Table<V_GET_BUDGET_RESERVE_WITHDRAWAL_INFORMATION> V_GET_BUDGET_RESERVE_WITHDRAWAL_INFORMATIONs
 		{
 			get
@@ -1241,14 +1225,6 @@ namespace ExcisePlaning.Entity
 			}
 		}
 		
-		public System.Data.Linq.Table<V_GET_SUMMARY_BUDGET_ALLOCATE> V_GET_SUMMARY_BUDGET_ALLOCATEs
-		{
-			get
-			{
-				return this.GetTable<V_GET_SUMMARY_BUDGET_ALLOCATE>();
-			}
-		}
-		
 		public System.Data.Linq.Table<T_TRANING_AND_SEMINOR> T_TRANING_AND_SEMINORs
 		{
 			get
@@ -1270,6 +1246,30 @@ namespace ExcisePlaning.Entity
 			get
 			{
 				return this.GetTable<T_PERSONNEL_SSO_PREPARE>();
+			}
+		}
+		
+		public System.Data.Linq.Table<V_GET_BUDGET_RESERVE_INFORMATION> V_GET_BUDGET_RESERVE_INFORMATIONs
+		{
+			get
+			{
+				return this.GetTable<V_GET_BUDGET_RESERVE_INFORMATION>();
+			}
+		}
+		
+		public System.Data.Linq.Table<V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION> V_GET_SUMMARY_BUDGET_RESERVE_INFORMATIONs
+		{
+			get
+			{
+				return this.GetTable<V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION>();
+			}
+		}
+		
+		public System.Data.Linq.Table<V_GET_SUMMARY_BUDGET_ALLOCATE> V_GET_SUMMARY_BUDGET_ALLOCATEs
+		{
+			get
+			{
+				return this.GetTable<V_GET_SUMMARY_BUDGET_ALLOCATE>();
 			}
 		}
 		
@@ -35900,1752 +35900,6 @@ namespace ExcisePlaning.Entity
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION")]
-	public partial class V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION
-	{
-		
-		private string _RESERVE_ID;
-		
-		private System.Nullable<int> _DEP_ID;
-		
-		private System.Nullable<int> _SUB_DEP_ID;
-		
-		private short _YR;
-		
-		private System.Nullable<int> _PLAN_ID;
-		
-		private System.Nullable<int> _PRODUCE_ID;
-		
-		private System.Nullable<int> _ACTIVITY_ID;
-		
-		private int _BUDGET_TYPE_ID;
-		
-		private int _EXPENSES_GROUP_ID;
-		
-		private int _EXPENSES_ID;
-		
-		private System.Nullable<int> _PROJECT_ID;
-		
-		private System.Nullable<System.DateTime> _RESERVE_DATE;
-		
-		private decimal _RESERVE_BUDGET_AMOUNT;
-		
-		private decimal _USE_AMOUNT;
-		
-		private decimal _REMAIN_AMOUNT;
-		
-		private decimal _CASHBACK_AMOUNT;
-		
-		private string _REMARK_TEXT;
-		
-		private string _REJECT_REMARK_TEXT;
-		
-		private short _BUDGET_TYPE;
-		
-		private short _RESERVE_TYPE;
-		
-		private short _ACTIVE;
-		
-		private System.DateTime _CREATED_DATETIME;
-		
-		private int _USER_ID;
-		
-		private System.Nullable<System.DateTime> _LATEST_WITHDRAWAL_DATETIME;
-		
-		private System.Nullable<int> _LATEST_WITHDRAWAL_ID;
-		
-		private System.Nullable<System.DateTime> _DELETED_DATETIME;
-		
-		private System.Nullable<int> _DELETED_ID;
-		
-		private string _SUB_DEP_NAME;
-		
-		private string _DEP_NAME;
-		
-		private System.Nullable<short> _DEP_ORDER_SEQ;
-		
-		private string _PLAN_NAME;
-		
-		private System.Nullable<short> _PLAN_ORDER_SEQ;
-		
-		private string _PRODUCE_NAME;
-		
-		private System.Nullable<short> _PRODUCE_ORDER_SEQ;
-		
-		private string _ACTIVITY_NAME;
-		
-		private System.Nullable<short> _ACTIVITY_ORDER_SEQ;
-		
-		private string _BUDGET_TYPE_NAME;
-		
-		private System.Nullable<int> _BUDGET_TYPE_ORDER_SEQ;
-		
-		private string _EXPENSES_GROUP_NAME;
-		
-		private System.Nullable<short> _EXPENSES_GROUP_ORDER_SEQ;
-		
-		private string _EXPENSES_NAME;
-		
-		private System.Nullable<short> _EXPENSES_ORDER_SEQ;
-		
-		private string _PROJECT_NAME;
-		
-		private string _RESERVE_NAME;
-		
-		private System.Nullable<short> _SEQ_NO;
-		
-		private System.Nullable<decimal> _WITHDRAWAL_AMOUNT;
-		
-		private string _WITHDRAWAL_CODE;
-		
-		private string _WITHDRAWAL_REMARK_TEXT;
-		
-		private System.Nullable<System.DateTime> _WITHDRAWAL_DATETIME;
-		
-		private System.Nullable<short> _WITHDRAWAL_ACTIVE;
-		
-		private string _WITHDRAWAL_NAME;
-		
-		public V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_ID", DbType="NVarChar(12) NOT NULL", CanBeNull=false)]
-		public string RESERVE_ID
-		{
-			get
-			{
-				return this._RESERVE_ID;
-			}
-			set
-			{
-				if ((this._RESERVE_ID != value))
-				{
-					this._RESERVE_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_ID", DbType="Int")]
-		public System.Nullable<int> DEP_ID
-		{
-			get
-			{
-				return this._DEP_ID;
-			}
-			set
-			{
-				if ((this._DEP_ID != value))
-				{
-					this._DEP_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SUB_DEP_ID", DbType="Int")]
-		public System.Nullable<int> SUB_DEP_ID
-		{
-			get
-			{
-				return this._SUB_DEP_ID;
-			}
-			set
-			{
-				if ((this._SUB_DEP_ID != value))
-				{
-					this._SUB_DEP_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_YR", DbType="SmallInt NOT NULL")]
-		public short YR
-		{
-			get
-			{
-				return this._YR;
-			}
-			set
-			{
-				if ((this._YR != value))
-				{
-					this._YR = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ID", DbType="Int")]
-		public System.Nullable<int> PLAN_ID
-		{
-			get
-			{
-				return this._PLAN_ID;
-			}
-			set
-			{
-				if ((this._PLAN_ID != value))
-				{
-					this._PLAN_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ID", DbType="Int")]
-		public System.Nullable<int> PRODUCE_ID
-		{
-			get
-			{
-				return this._PRODUCE_ID;
-			}
-			set
-			{
-				if ((this._PRODUCE_ID != value))
-				{
-					this._PRODUCE_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ID", DbType="Int")]
-		public System.Nullable<int> ACTIVITY_ID
-		{
-			get
-			{
-				return this._ACTIVITY_ID;
-			}
-			set
-			{
-				if ((this._ACTIVITY_ID != value))
-				{
-					this._ACTIVITY_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ID", DbType="Int NOT NULL")]
-		public int BUDGET_TYPE_ID
-		{
-			get
-			{
-				return this._BUDGET_TYPE_ID;
-			}
-			set
-			{
-				if ((this._BUDGET_TYPE_ID != value))
-				{
-					this._BUDGET_TYPE_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ID", DbType="Int NOT NULL")]
-		public int EXPENSES_GROUP_ID
-		{
-			get
-			{
-				return this._EXPENSES_GROUP_ID;
-			}
-			set
-			{
-				if ((this._EXPENSES_GROUP_ID != value))
-				{
-					this._EXPENSES_GROUP_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ID", DbType="Int NOT NULL")]
-		public int EXPENSES_ID
-		{
-			get
-			{
-				return this._EXPENSES_ID;
-			}
-			set
-			{
-				if ((this._EXPENSES_ID != value))
-				{
-					this._EXPENSES_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_ID", DbType="Int")]
-		public System.Nullable<int> PROJECT_ID
-		{
-			get
-			{
-				return this._PROJECT_ID;
-			}
-			set
-			{
-				if ((this._PROJECT_ID != value))
-				{
-					this._PROJECT_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_DATE", DbType="Date")]
-		public System.Nullable<System.DateTime> RESERVE_DATE
-		{
-			get
-			{
-				return this._RESERVE_DATE;
-			}
-			set
-			{
-				if ((this._RESERVE_DATE != value))
-				{
-					this._RESERVE_DATE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal RESERVE_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._RESERVE_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._RESERVE_BUDGET_AMOUNT != value))
-				{
-					this._RESERVE_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USE_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal USE_AMOUNT
-		{
-			get
-			{
-				return this._USE_AMOUNT;
-			}
-			set
-			{
-				if ((this._USE_AMOUNT != value))
-				{
-					this._USE_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REMAIN_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal REMAIN_AMOUNT
-		{
-			get
-			{
-				return this._REMAIN_AMOUNT;
-			}
-			set
-			{
-				if ((this._REMAIN_AMOUNT != value))
-				{
-					this._REMAIN_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CASHBACK_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal CASHBACK_AMOUNT
-		{
-			get
-			{
-				return this._CASHBACK_AMOUNT;
-			}
-			set
-			{
-				if ((this._CASHBACK_AMOUNT != value))
-				{
-					this._CASHBACK_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REMARK_TEXT", DbType="NVarChar(150)")]
-		public string REMARK_TEXT
-		{
-			get
-			{
-				return this._REMARK_TEXT;
-			}
-			set
-			{
-				if ((this._REMARK_TEXT != value))
-				{
-					this._REMARK_TEXT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REJECT_REMARK_TEXT", DbType="NVarChar(150)")]
-		public string REJECT_REMARK_TEXT
-		{
-			get
-			{
-				return this._REJECT_REMARK_TEXT;
-			}
-			set
-			{
-				if ((this._REJECT_REMARK_TEXT != value))
-				{
-					this._REJECT_REMARK_TEXT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE", DbType="SmallInt NOT NULL")]
-		public short BUDGET_TYPE
-		{
-			get
-			{
-				return this._BUDGET_TYPE;
-			}
-			set
-			{
-				if ((this._BUDGET_TYPE != value))
-				{
-					this._BUDGET_TYPE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_TYPE", DbType="SmallInt NOT NULL")]
-		public short RESERVE_TYPE
-		{
-			get
-			{
-				return this._RESERVE_TYPE;
-			}
-			set
-			{
-				if ((this._RESERVE_TYPE != value))
-				{
-					this._RESERVE_TYPE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVE", DbType="SmallInt NOT NULL")]
-		public short ACTIVE
-		{
-			get
-			{
-				return this._ACTIVE;
-			}
-			set
-			{
-				if ((this._ACTIVE != value))
-				{
-					this._ACTIVE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CREATED_DATETIME", DbType="DateTime NOT NULL")]
-		public System.DateTime CREATED_DATETIME
-		{
-			get
-			{
-				return this._CREATED_DATETIME;
-			}
-			set
-			{
-				if ((this._CREATED_DATETIME != value))
-				{
-					this._CREATED_DATETIME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USER_ID", DbType="Int NOT NULL")]
-		public int USER_ID
-		{
-			get
-			{
-				return this._USER_ID;
-			}
-			set
-			{
-				if ((this._USER_ID != value))
-				{
-					this._USER_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_WITHDRAWAL_DATETIME", DbType="DateTime")]
-		public System.Nullable<System.DateTime> LATEST_WITHDRAWAL_DATETIME
-		{
-			get
-			{
-				return this._LATEST_WITHDRAWAL_DATETIME;
-			}
-			set
-			{
-				if ((this._LATEST_WITHDRAWAL_DATETIME != value))
-				{
-					this._LATEST_WITHDRAWAL_DATETIME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_WITHDRAWAL_ID", DbType="Int")]
-		public System.Nullable<int> LATEST_WITHDRAWAL_ID
-		{
-			get
-			{
-				return this._LATEST_WITHDRAWAL_ID;
-			}
-			set
-			{
-				if ((this._LATEST_WITHDRAWAL_ID != value))
-				{
-					this._LATEST_WITHDRAWAL_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DELETED_DATETIME", DbType="DateTime")]
-		public System.Nullable<System.DateTime> DELETED_DATETIME
-		{
-			get
-			{
-				return this._DELETED_DATETIME;
-			}
-			set
-			{
-				if ((this._DELETED_DATETIME != value))
-				{
-					this._DELETED_DATETIME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DELETED_ID", DbType="Int")]
-		public System.Nullable<int> DELETED_ID
-		{
-			get
-			{
-				return this._DELETED_ID;
-			}
-			set
-			{
-				if ((this._DELETED_ID != value))
-				{
-					this._DELETED_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SUB_DEP_NAME", DbType="NVarChar(190)")]
-		public string SUB_DEP_NAME
-		{
-			get
-			{
-				return this._SUB_DEP_NAME;
-			}
-			set
-			{
-				if ((this._SUB_DEP_NAME != value))
-				{
-					this._SUB_DEP_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_NAME", DbType="NVarChar(190)")]
-		public string DEP_NAME
-		{
-			get
-			{
-				return this._DEP_NAME;
-			}
-			set
-			{
-				if ((this._DEP_NAME != value))
-				{
-					this._DEP_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_ORDER_SEQ", DbType="SmallInt")]
-		public System.Nullable<short> DEP_ORDER_SEQ
-		{
-			get
-			{
-				return this._DEP_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._DEP_ORDER_SEQ != value))
-				{
-					this._DEP_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_NAME", DbType="NVarChar(250)")]
-		public string PLAN_NAME
-		{
-			get
-			{
-				return this._PLAN_NAME;
-			}
-			set
-			{
-				if ((this._PLAN_NAME != value))
-				{
-					this._PLAN_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ORDER_SEQ", DbType="SmallInt")]
-		public System.Nullable<short> PLAN_ORDER_SEQ
-		{
-			get
-			{
-				return this._PLAN_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._PLAN_ORDER_SEQ != value))
-				{
-					this._PLAN_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_NAME", DbType="NVarChar(250)")]
-		public string PRODUCE_NAME
-		{
-			get
-			{
-				return this._PRODUCE_NAME;
-			}
-			set
-			{
-				if ((this._PRODUCE_NAME != value))
-				{
-					this._PRODUCE_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ORDER_SEQ", DbType="SmallInt")]
-		public System.Nullable<short> PRODUCE_ORDER_SEQ
-		{
-			get
-			{
-				return this._PRODUCE_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._PRODUCE_ORDER_SEQ != value))
-				{
-					this._PRODUCE_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_NAME", DbType="NVarChar(250)")]
-		public string ACTIVITY_NAME
-		{
-			get
-			{
-				return this._ACTIVITY_NAME;
-			}
-			set
-			{
-				if ((this._ACTIVITY_NAME != value))
-				{
-					this._ACTIVITY_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ORDER_SEQ", DbType="SmallInt")]
-		public System.Nullable<short> ACTIVITY_ORDER_SEQ
-		{
-			get
-			{
-				return this._ACTIVITY_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._ACTIVITY_ORDER_SEQ != value))
-				{
-					this._ACTIVITY_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_NAME", DbType="NVarChar(120)")]
-		public string BUDGET_TYPE_NAME
-		{
-			get
-			{
-				return this._BUDGET_TYPE_NAME;
-			}
-			set
-			{
-				if ((this._BUDGET_TYPE_NAME != value))
-				{
-					this._BUDGET_TYPE_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ORDER_SEQ", DbType="Int")]
-		public System.Nullable<int> BUDGET_TYPE_ORDER_SEQ
-		{
-			get
-			{
-				return this._BUDGET_TYPE_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._BUDGET_TYPE_ORDER_SEQ != value))
-				{
-					this._BUDGET_TYPE_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_NAME", DbType="NVarChar(120)")]
-		public string EXPENSES_GROUP_NAME
-		{
-			get
-			{
-				return this._EXPENSES_GROUP_NAME;
-			}
-			set
-			{
-				if ((this._EXPENSES_GROUP_NAME != value))
-				{
-					this._EXPENSES_GROUP_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ORDER_SEQ", DbType="SmallInt")]
-		public System.Nullable<short> EXPENSES_GROUP_ORDER_SEQ
-		{
-			get
-			{
-				return this._EXPENSES_GROUP_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._EXPENSES_GROUP_ORDER_SEQ != value))
-				{
-					this._EXPENSES_GROUP_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_NAME", DbType="NVarChar(120)")]
-		public string EXPENSES_NAME
-		{
-			get
-			{
-				return this._EXPENSES_NAME;
-			}
-			set
-			{
-				if ((this._EXPENSES_NAME != value))
-				{
-					this._EXPENSES_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ORDER_SEQ", DbType="SmallInt")]
-		public System.Nullable<short> EXPENSES_ORDER_SEQ
-		{
-			get
-			{
-				return this._EXPENSES_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._EXPENSES_ORDER_SEQ != value))
-				{
-					this._EXPENSES_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_NAME", DbType="NVarChar(200)")]
-		public string PROJECT_NAME
-		{
-			get
-			{
-				return this._PROJECT_NAME;
-			}
-			set
-			{
-				if ((this._PROJECT_NAME != value))
-				{
-					this._PROJECT_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_NAME", DbType="NVarChar(221)")]
-		public string RESERVE_NAME
-		{
-			get
-			{
-				return this._RESERVE_NAME;
-			}
-			set
-			{
-				if ((this._RESERVE_NAME != value))
-				{
-					this._RESERVE_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SEQ_NO", DbType="SmallInt")]
-		public System.Nullable<short> SEQ_NO
-		{
-			get
-			{
-				return this._SEQ_NO;
-			}
-			set
-			{
-				if ((this._SEQ_NO != value))
-				{
-					this._SEQ_NO = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WITHDRAWAL_AMOUNT", DbType="Decimal(20,2)")]
-		public System.Nullable<decimal> WITHDRAWAL_AMOUNT
-		{
-			get
-			{
-				return this._WITHDRAWAL_AMOUNT;
-			}
-			set
-			{
-				if ((this._WITHDRAWAL_AMOUNT != value))
-				{
-					this._WITHDRAWAL_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WITHDRAWAL_CODE", DbType="NVarChar(50)")]
-		public string WITHDRAWAL_CODE
-		{
-			get
-			{
-				return this._WITHDRAWAL_CODE;
-			}
-			set
-			{
-				if ((this._WITHDRAWAL_CODE != value))
-				{
-					this._WITHDRAWAL_CODE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WITHDRAWAL_REMARK_TEXT", DbType="NVarChar(150)")]
-		public string WITHDRAWAL_REMARK_TEXT
-		{
-			get
-			{
-				return this._WITHDRAWAL_REMARK_TEXT;
-			}
-			set
-			{
-				if ((this._WITHDRAWAL_REMARK_TEXT != value))
-				{
-					this._WITHDRAWAL_REMARK_TEXT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WITHDRAWAL_DATETIME", DbType="DateTime")]
-		public System.Nullable<System.DateTime> WITHDRAWAL_DATETIME
-		{
-			get
-			{
-				return this._WITHDRAWAL_DATETIME;
-			}
-			set
-			{
-				if ((this._WITHDRAWAL_DATETIME != value))
-				{
-					this._WITHDRAWAL_DATETIME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WITHDRAWAL_ACTIVE", DbType="SmallInt")]
-		public System.Nullable<short> WITHDRAWAL_ACTIVE
-		{
-			get
-			{
-				return this._WITHDRAWAL_ACTIVE;
-			}
-			set
-			{
-				if ((this._WITHDRAWAL_ACTIVE != value))
-				{
-					this._WITHDRAWAL_ACTIVE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WITHDRAWAL_NAME", DbType="NVarChar(221)")]
-		public string WITHDRAWAL_NAME
-		{
-			get
-			{
-				return this._WITHDRAWAL_NAME;
-			}
-			set
-			{
-				if ((this._WITHDRAWAL_NAME != value))
-				{
-					this._WITHDRAWAL_NAME = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.V_GET_BUDGET_RESERVE_INFORMATION")]
-	public partial class V_GET_BUDGET_RESERVE_INFORMATION
-	{
-		
-		private string _RESERVE_ID;
-		
-		private System.Nullable<int> _DEP_ID;
-		
-		private System.Nullable<int> _SUB_DEP_ID;
-		
-		private short _YR;
-		
-		private System.Nullable<int> _PLAN_ID;
-		
-		private System.Nullable<int> _PRODUCE_ID;
-		
-		private System.Nullable<int> _ACTIVITY_ID;
-		
-		private int _BUDGET_TYPE_ID;
-		
-		private int _EXPENSES_GROUP_ID;
-		
-		private int _EXPENSES_ID;
-		
-		private System.Nullable<int> _PROJECT_ID;
-		
-		private System.Nullable<System.DateTime> _RESERVE_DATE;
-		
-		private decimal _RESERVE_BUDGET_AMOUNT;
-		
-		private decimal _USE_AMOUNT;
-		
-		private decimal _REMAIN_AMOUNT;
-		
-		private decimal _CASHBACK_AMOUNT;
-		
-		private string _REMARK_TEXT;
-		
-		private string _REJECT_REMARK_TEXT;
-		
-		private short _BUDGET_TYPE;
-		
-		private short _RESERVE_TYPE;
-		
-		private short _ACTIVE;
-		
-		private System.DateTime _CREATED_DATETIME;
-		
-		private int _USER_ID;
-		
-		private System.Nullable<System.DateTime> _LATEST_WITHDRAWAL_DATETIME;
-		
-		private System.Nullable<int> _LATEST_WITHDRAWAL_ID;
-		
-		private System.Nullable<System.DateTime> _DELETED_DATETIME;
-		
-		private System.Nullable<int> _DELETED_ID;
-		
-		private string _SUB_DEP_NAME;
-		
-		private string _DEP_NAME;
-		
-		private System.Nullable<short> _DEP_ORDER_SEQ;
-		
-		private string _PLAN_NAME;
-		
-		private System.Nullable<short> _PLAN_ORDER_SEQ;
-		
-		private string _PRODUCE_NAME;
-		
-		private System.Nullable<short> _PRODUCE_ORDER_SEQ;
-		
-		private string _ACTIVITY_NAME;
-		
-		private System.Nullable<short> _ACTIVITY_ORDER_SEQ;
-		
-		private string _BUDGET_TYPE_NAME;
-		
-		private System.Nullable<int> _BUDGET_TYPE_ORDER_SEQ;
-		
-		private string _EXPENSES_GROUP_NAME;
-		
-		private System.Nullable<short> _EXPENSES_GROUP_ORDER_SEQ;
-		
-		private string _EXPENSES_NAME;
-		
-		private System.Nullable<short> _EXPENSES_ORDER_SEQ;
-		
-		private string _PROJECT_NAME;
-		
-		private string _RESERVE_NAME;
-		
-		private string _LATEST_WITHDRAWAL_NAME;
-		
-		public V_GET_BUDGET_RESERVE_INFORMATION()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_ID", DbType="NVarChar(12) NOT NULL", CanBeNull=false)]
-		public string RESERVE_ID
-		{
-			get
-			{
-				return this._RESERVE_ID;
-			}
-			set
-			{
-				if ((this._RESERVE_ID != value))
-				{
-					this._RESERVE_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_ID", DbType="Int")]
-		public System.Nullable<int> DEP_ID
-		{
-			get
-			{
-				return this._DEP_ID;
-			}
-			set
-			{
-				if ((this._DEP_ID != value))
-				{
-					this._DEP_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SUB_DEP_ID", DbType="Int")]
-		public System.Nullable<int> SUB_DEP_ID
-		{
-			get
-			{
-				return this._SUB_DEP_ID;
-			}
-			set
-			{
-				if ((this._SUB_DEP_ID != value))
-				{
-					this._SUB_DEP_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_YR", DbType="SmallInt NOT NULL")]
-		public short YR
-		{
-			get
-			{
-				return this._YR;
-			}
-			set
-			{
-				if ((this._YR != value))
-				{
-					this._YR = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ID", DbType="Int")]
-		public System.Nullable<int> PLAN_ID
-		{
-			get
-			{
-				return this._PLAN_ID;
-			}
-			set
-			{
-				if ((this._PLAN_ID != value))
-				{
-					this._PLAN_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ID", DbType="Int")]
-		public System.Nullable<int> PRODUCE_ID
-		{
-			get
-			{
-				return this._PRODUCE_ID;
-			}
-			set
-			{
-				if ((this._PRODUCE_ID != value))
-				{
-					this._PRODUCE_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ID", DbType="Int")]
-		public System.Nullable<int> ACTIVITY_ID
-		{
-			get
-			{
-				return this._ACTIVITY_ID;
-			}
-			set
-			{
-				if ((this._ACTIVITY_ID != value))
-				{
-					this._ACTIVITY_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ID", DbType="Int NOT NULL")]
-		public int BUDGET_TYPE_ID
-		{
-			get
-			{
-				return this._BUDGET_TYPE_ID;
-			}
-			set
-			{
-				if ((this._BUDGET_TYPE_ID != value))
-				{
-					this._BUDGET_TYPE_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ID", DbType="Int NOT NULL")]
-		public int EXPENSES_GROUP_ID
-		{
-			get
-			{
-				return this._EXPENSES_GROUP_ID;
-			}
-			set
-			{
-				if ((this._EXPENSES_GROUP_ID != value))
-				{
-					this._EXPENSES_GROUP_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ID", DbType="Int NOT NULL")]
-		public int EXPENSES_ID
-		{
-			get
-			{
-				return this._EXPENSES_ID;
-			}
-			set
-			{
-				if ((this._EXPENSES_ID != value))
-				{
-					this._EXPENSES_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_ID", DbType="Int")]
-		public System.Nullable<int> PROJECT_ID
-		{
-			get
-			{
-				return this._PROJECT_ID;
-			}
-			set
-			{
-				if ((this._PROJECT_ID != value))
-				{
-					this._PROJECT_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_DATE", DbType="Date")]
-		public System.Nullable<System.DateTime> RESERVE_DATE
-		{
-			get
-			{
-				return this._RESERVE_DATE;
-			}
-			set
-			{
-				if ((this._RESERVE_DATE != value))
-				{
-					this._RESERVE_DATE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal RESERVE_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._RESERVE_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._RESERVE_BUDGET_AMOUNT != value))
-				{
-					this._RESERVE_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USE_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal USE_AMOUNT
-		{
-			get
-			{
-				return this._USE_AMOUNT;
-			}
-			set
-			{
-				if ((this._USE_AMOUNT != value))
-				{
-					this._USE_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REMAIN_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal REMAIN_AMOUNT
-		{
-			get
-			{
-				return this._REMAIN_AMOUNT;
-			}
-			set
-			{
-				if ((this._REMAIN_AMOUNT != value))
-				{
-					this._REMAIN_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CASHBACK_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal CASHBACK_AMOUNT
-		{
-			get
-			{
-				return this._CASHBACK_AMOUNT;
-			}
-			set
-			{
-				if ((this._CASHBACK_AMOUNT != value))
-				{
-					this._CASHBACK_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REMARK_TEXT", DbType="NVarChar(150)")]
-		public string REMARK_TEXT
-		{
-			get
-			{
-				return this._REMARK_TEXT;
-			}
-			set
-			{
-				if ((this._REMARK_TEXT != value))
-				{
-					this._REMARK_TEXT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REJECT_REMARK_TEXT", DbType="NVarChar(150)")]
-		public string REJECT_REMARK_TEXT
-		{
-			get
-			{
-				return this._REJECT_REMARK_TEXT;
-			}
-			set
-			{
-				if ((this._REJECT_REMARK_TEXT != value))
-				{
-					this._REJECT_REMARK_TEXT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE", DbType="SmallInt NOT NULL")]
-		public short BUDGET_TYPE
-		{
-			get
-			{
-				return this._BUDGET_TYPE;
-			}
-			set
-			{
-				if ((this._BUDGET_TYPE != value))
-				{
-					this._BUDGET_TYPE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_TYPE", DbType="SmallInt NOT NULL")]
-		public short RESERVE_TYPE
-		{
-			get
-			{
-				return this._RESERVE_TYPE;
-			}
-			set
-			{
-				if ((this._RESERVE_TYPE != value))
-				{
-					this._RESERVE_TYPE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVE", DbType="SmallInt NOT NULL")]
-		public short ACTIVE
-		{
-			get
-			{
-				return this._ACTIVE;
-			}
-			set
-			{
-				if ((this._ACTIVE != value))
-				{
-					this._ACTIVE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CREATED_DATETIME", DbType="DateTime NOT NULL")]
-		public System.DateTime CREATED_DATETIME
-		{
-			get
-			{
-				return this._CREATED_DATETIME;
-			}
-			set
-			{
-				if ((this._CREATED_DATETIME != value))
-				{
-					this._CREATED_DATETIME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USER_ID", DbType="Int NOT NULL")]
-		public int USER_ID
-		{
-			get
-			{
-				return this._USER_ID;
-			}
-			set
-			{
-				if ((this._USER_ID != value))
-				{
-					this._USER_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_WITHDRAWAL_DATETIME", DbType="DateTime")]
-		public System.Nullable<System.DateTime> LATEST_WITHDRAWAL_DATETIME
-		{
-			get
-			{
-				return this._LATEST_WITHDRAWAL_DATETIME;
-			}
-			set
-			{
-				if ((this._LATEST_WITHDRAWAL_DATETIME != value))
-				{
-					this._LATEST_WITHDRAWAL_DATETIME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_WITHDRAWAL_ID", DbType="Int")]
-		public System.Nullable<int> LATEST_WITHDRAWAL_ID
-		{
-			get
-			{
-				return this._LATEST_WITHDRAWAL_ID;
-			}
-			set
-			{
-				if ((this._LATEST_WITHDRAWAL_ID != value))
-				{
-					this._LATEST_WITHDRAWAL_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DELETED_DATETIME", DbType="DateTime")]
-		public System.Nullable<System.DateTime> DELETED_DATETIME
-		{
-			get
-			{
-				return this._DELETED_DATETIME;
-			}
-			set
-			{
-				if ((this._DELETED_DATETIME != value))
-				{
-					this._DELETED_DATETIME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DELETED_ID", DbType="Int")]
-		public System.Nullable<int> DELETED_ID
-		{
-			get
-			{
-				return this._DELETED_ID;
-			}
-			set
-			{
-				if ((this._DELETED_ID != value))
-				{
-					this._DELETED_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SUB_DEP_NAME", DbType="NVarChar(190)")]
-		public string SUB_DEP_NAME
-		{
-			get
-			{
-				return this._SUB_DEP_NAME;
-			}
-			set
-			{
-				if ((this._SUB_DEP_NAME != value))
-				{
-					this._SUB_DEP_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_NAME", DbType="NVarChar(190)")]
-		public string DEP_NAME
-		{
-			get
-			{
-				return this._DEP_NAME;
-			}
-			set
-			{
-				if ((this._DEP_NAME != value))
-				{
-					this._DEP_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_ORDER_SEQ", DbType="SmallInt")]
-		public System.Nullable<short> DEP_ORDER_SEQ
-		{
-			get
-			{
-				return this._DEP_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._DEP_ORDER_SEQ != value))
-				{
-					this._DEP_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_NAME", DbType="NVarChar(250)")]
-		public string PLAN_NAME
-		{
-			get
-			{
-				return this._PLAN_NAME;
-			}
-			set
-			{
-				if ((this._PLAN_NAME != value))
-				{
-					this._PLAN_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ORDER_SEQ", DbType="SmallInt")]
-		public System.Nullable<short> PLAN_ORDER_SEQ
-		{
-			get
-			{
-				return this._PLAN_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._PLAN_ORDER_SEQ != value))
-				{
-					this._PLAN_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_NAME", DbType="NVarChar(250)")]
-		public string PRODUCE_NAME
-		{
-			get
-			{
-				return this._PRODUCE_NAME;
-			}
-			set
-			{
-				if ((this._PRODUCE_NAME != value))
-				{
-					this._PRODUCE_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ORDER_SEQ", DbType="SmallInt")]
-		public System.Nullable<short> PRODUCE_ORDER_SEQ
-		{
-			get
-			{
-				return this._PRODUCE_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._PRODUCE_ORDER_SEQ != value))
-				{
-					this._PRODUCE_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_NAME", DbType="NVarChar(250)")]
-		public string ACTIVITY_NAME
-		{
-			get
-			{
-				return this._ACTIVITY_NAME;
-			}
-			set
-			{
-				if ((this._ACTIVITY_NAME != value))
-				{
-					this._ACTIVITY_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ORDER_SEQ", DbType="SmallInt")]
-		public System.Nullable<short> ACTIVITY_ORDER_SEQ
-		{
-			get
-			{
-				return this._ACTIVITY_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._ACTIVITY_ORDER_SEQ != value))
-				{
-					this._ACTIVITY_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_NAME", DbType="NVarChar(120)")]
-		public string BUDGET_TYPE_NAME
-		{
-			get
-			{
-				return this._BUDGET_TYPE_NAME;
-			}
-			set
-			{
-				if ((this._BUDGET_TYPE_NAME != value))
-				{
-					this._BUDGET_TYPE_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ORDER_SEQ", DbType="Int")]
-		public System.Nullable<int> BUDGET_TYPE_ORDER_SEQ
-		{
-			get
-			{
-				return this._BUDGET_TYPE_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._BUDGET_TYPE_ORDER_SEQ != value))
-				{
-					this._BUDGET_TYPE_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_NAME", DbType="NVarChar(120)")]
-		public string EXPENSES_GROUP_NAME
-		{
-			get
-			{
-				return this._EXPENSES_GROUP_NAME;
-			}
-			set
-			{
-				if ((this._EXPENSES_GROUP_NAME != value))
-				{
-					this._EXPENSES_GROUP_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ORDER_SEQ", DbType="SmallInt")]
-		public System.Nullable<short> EXPENSES_GROUP_ORDER_SEQ
-		{
-			get
-			{
-				return this._EXPENSES_GROUP_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._EXPENSES_GROUP_ORDER_SEQ != value))
-				{
-					this._EXPENSES_GROUP_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_NAME", DbType="NVarChar(120)")]
-		public string EXPENSES_NAME
-		{
-			get
-			{
-				return this._EXPENSES_NAME;
-			}
-			set
-			{
-				if ((this._EXPENSES_NAME != value))
-				{
-					this._EXPENSES_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ORDER_SEQ", DbType="SmallInt")]
-		public System.Nullable<short> EXPENSES_ORDER_SEQ
-		{
-			get
-			{
-				return this._EXPENSES_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._EXPENSES_ORDER_SEQ != value))
-				{
-					this._EXPENSES_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_NAME", DbType="NVarChar(200)")]
-		public string PROJECT_NAME
-		{
-			get
-			{
-				return this._PROJECT_NAME;
-			}
-			set
-			{
-				if ((this._PROJECT_NAME != value))
-				{
-					this._PROJECT_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_NAME", DbType="NVarChar(221)")]
-		public string RESERVE_NAME
-		{
-			get
-			{
-				return this._RESERVE_NAME;
-			}
-			set
-			{
-				if ((this._RESERVE_NAME != value))
-				{
-					this._RESERVE_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_WITHDRAWAL_NAME", DbType="NVarChar(221)")]
-		public string LATEST_WITHDRAWAL_NAME
-		{
-			get
-			{
-				return this._LATEST_WITHDRAWAL_NAME;
-			}
-			set
-			{
-				if ((this._LATEST_WITHDRAWAL_NAME != value))
-				{
-					this._LATEST_WITHDRAWAL_NAME = value;
-				}
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.V_GET_BUDGET_RESERVE_WITHDRAWAL_INFORMATION")]
 	public partial class V_GET_BUDGET_RESERVE_WITHDRAWAL_INFORMATION
 	{
@@ -46007,1041 +44261,6 @@ namespace ExcisePlaning.Entity
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.V_GET_SUMMARY_BUDGET_ALLOCATE")]
-	public partial class V_GET_SUMMARY_BUDGET_ALLOCATE
-	{
-		
-		private int _SEQ_ID;
-		
-		private int _BUDGET_ID;
-		
-		private short _YR;
-		
-		private System.Nullable<int> _PLAN_ID;
-		
-		private System.Nullable<int> _PRODUCE_ID;
-		
-		private System.Nullable<int> _ACTIVITY_ID;
-		
-		private int _BUDGET_TYPE_ID;
-		
-		private int _EXPENSES_GROUP_ID;
-		
-		private int _EXPENSES_ID;
-		
-		private decimal _BUDGET_AMOUNT;
-		
-		private decimal _ACTUAL_BUDGET_AMOUNT;
-		
-		private decimal _OFF_BUDGET_AMOUNT;
-		
-		private decimal _ACTUAL_OFF_BUDGET_AMOUNT;
-		
-		private decimal _USE_BUDGET_AMOUNT;
-		
-		private decimal _USE_OFF_BUDGET_AMOUNT;
-		
-		private decimal _REMAIN_BUDGET_AMOUNT;
-		
-		private decimal _REMAIN_OFF_BUDGET_AMOUNT;
-		
-		private bool _CAN_ADD_PROJECT;
-		
-		private System.Nullable<System.DateTime> _LATEST_RECEIVE_BUDGET;
-		
-		private System.Nullable<System.DateTime> _LATEST_USE_BUDGET;
-		
-		private short _ACTIVE;
-		
-		private System.Nullable<System.DateTime> _DELETED_DATETIME;
-		
-		private System.Nullable<int> _DELETED_ID;
-		
-		private string _PLAN_NAME;
-		
-		private short _PLAN_ORDER_SEQ;
-		
-		private string _PRODUCE_NAME;
-		
-		private short _PRODUCE_ORDER_SEQ;
-		
-		private string _ACTIVITY_NAME;
-		
-		private short _ACTIVITY_ORDER_SEQ;
-		
-		private string _BUDGET_TYPE_NAME;
-		
-		private System.Nullable<int> _BUDGET_TYPE_ORDER_SEQ;
-		
-		private System.Nullable<int> _EXPENSES_MASTER_ID;
-		
-		private string _EXPENSES_MASTER_NAME;
-		
-		private string _EXPENSES_GROUP_NAME;
-		
-		private short _EXPENSES_GROUP_ORDER_SEQ;
-		
-		private System.Nullable<short> _EXPENSES_GROUP_ALLOCATE_GROUP_FLAG;
-		
-		private string _EXPENSES_NAME;
-		
-		private short _EXPENSES_ORDER_SEQ;
-		
-		private System.Nullable<short> _PROJECT_FOR_TYPE;
-		
-		private System.Nullable<int> _PROJECT_ID;
-		
-		private string _PROJECT_NAME;
-		
-		private System.Nullable<int> _AREA_ID;
-		
-		private System.Nullable<int> _DEP_ID;
-		
-		private string _DEP_NAME;
-		
-		private string _ALLOCATE_EXPENSES_GROUP_ID;
-		
-		private System.Nullable<decimal> _ALLOCATE_BUDGET_AMOUNT;
-		
-		private System.Nullable<decimal> _DEP_USE_BUDGET_AMOUNT;
-		
-		private System.Nullable<decimal> _DEP_REMAIN_BUDGET_AMOUNT;
-		
-		private System.Nullable<decimal> _ALLOCATE_OFF_BUDGET_AMOUNT;
-		
-		private System.Nullable<decimal> _DEP_USE_OFF_BUDGET_AMOUNT;
-		
-		private System.Nullable<decimal> _DEP_REMAIN_OFF_BUDGET_AMOUNT;
-		
-		private System.Nullable<decimal> _ALLOCATE_GRP_BUDGET_AMOUNT;
-		
-		private System.Nullable<decimal> _GRP_USE_BUDGET_AMOUNT;
-		
-		private System.Nullable<decimal> _GRP_REMAIN_BUDGET_AMOUNT;
-		
-		private System.Nullable<decimal> _ALLOCATE_GRP_OFF_BUDGET_AMOUNT;
-		
-		private System.Nullable<decimal> _GRP_USE_OFF_BUDGET_AMOUNT;
-		
-		private System.Nullable<decimal> _GRP_REMAIN_OFF_BUDGET_AMOUNT;
-		
-		public V_GET_SUMMARY_BUDGET_ALLOCATE()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SEQ_ID", DbType="Int NOT NULL")]
-		public int SEQ_ID
-		{
-			get
-			{
-				return this._SEQ_ID;
-			}
-			set
-			{
-				if ((this._SEQ_ID != value))
-				{
-					this._SEQ_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_ID", DbType="Int NOT NULL")]
-		public int BUDGET_ID
-		{
-			get
-			{
-				return this._BUDGET_ID;
-			}
-			set
-			{
-				if ((this._BUDGET_ID != value))
-				{
-					this._BUDGET_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_YR", DbType="SmallInt NOT NULL")]
-		public short YR
-		{
-			get
-			{
-				return this._YR;
-			}
-			set
-			{
-				if ((this._YR != value))
-				{
-					this._YR = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ID", DbType="Int")]
-		public System.Nullable<int> PLAN_ID
-		{
-			get
-			{
-				return this._PLAN_ID;
-			}
-			set
-			{
-				if ((this._PLAN_ID != value))
-				{
-					this._PLAN_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ID", DbType="Int")]
-		public System.Nullable<int> PRODUCE_ID
-		{
-			get
-			{
-				return this._PRODUCE_ID;
-			}
-			set
-			{
-				if ((this._PRODUCE_ID != value))
-				{
-					this._PRODUCE_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ID", DbType="Int")]
-		public System.Nullable<int> ACTIVITY_ID
-		{
-			get
-			{
-				return this._ACTIVITY_ID;
-			}
-			set
-			{
-				if ((this._ACTIVITY_ID != value))
-				{
-					this._ACTIVITY_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ID", DbType="Int NOT NULL")]
-		public int BUDGET_TYPE_ID
-		{
-			get
-			{
-				return this._BUDGET_TYPE_ID;
-			}
-			set
-			{
-				if ((this._BUDGET_TYPE_ID != value))
-				{
-					this._BUDGET_TYPE_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ID", DbType="Int NOT NULL")]
-		public int EXPENSES_GROUP_ID
-		{
-			get
-			{
-				return this._EXPENSES_GROUP_ID;
-			}
-			set
-			{
-				if ((this._EXPENSES_GROUP_ID != value))
-				{
-					this._EXPENSES_GROUP_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ID", DbType="Int NOT NULL")]
-		public int EXPENSES_ID
-		{
-			get
-			{
-				return this._EXPENSES_ID;
-			}
-			set
-			{
-				if ((this._EXPENSES_ID != value))
-				{
-					this._EXPENSES_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._BUDGET_AMOUNT != value))
-				{
-					this._BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTUAL_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal ACTUAL_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._ACTUAL_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._ACTUAL_BUDGET_AMOUNT != value))
-				{
-					this._ACTUAL_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal OFF_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._OFF_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._OFF_BUDGET_AMOUNT != value))
-				{
-					this._OFF_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTUAL_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal ACTUAL_OFF_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._ACTUAL_OFF_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._ACTUAL_OFF_BUDGET_AMOUNT != value))
-				{
-					this._ACTUAL_OFF_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USE_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal USE_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._USE_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._USE_BUDGET_AMOUNT != value))
-				{
-					this._USE_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USE_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal USE_OFF_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._USE_OFF_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._USE_OFF_BUDGET_AMOUNT != value))
-				{
-					this._USE_OFF_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REMAIN_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal REMAIN_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._REMAIN_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._REMAIN_BUDGET_AMOUNT != value))
-				{
-					this._REMAIN_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REMAIN_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
-		public decimal REMAIN_OFF_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._REMAIN_OFF_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._REMAIN_OFF_BUDGET_AMOUNT != value))
-				{
-					this._REMAIN_OFF_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CAN_ADD_PROJECT", DbType="Bit NOT NULL")]
-		public bool CAN_ADD_PROJECT
-		{
-			get
-			{
-				return this._CAN_ADD_PROJECT;
-			}
-			set
-			{
-				if ((this._CAN_ADD_PROJECT != value))
-				{
-					this._CAN_ADD_PROJECT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_RECEIVE_BUDGET", DbType="DateTime")]
-		public System.Nullable<System.DateTime> LATEST_RECEIVE_BUDGET
-		{
-			get
-			{
-				return this._LATEST_RECEIVE_BUDGET;
-			}
-			set
-			{
-				if ((this._LATEST_RECEIVE_BUDGET != value))
-				{
-					this._LATEST_RECEIVE_BUDGET = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_USE_BUDGET", DbType="DateTime")]
-		public System.Nullable<System.DateTime> LATEST_USE_BUDGET
-		{
-			get
-			{
-				return this._LATEST_USE_BUDGET;
-			}
-			set
-			{
-				if ((this._LATEST_USE_BUDGET != value))
-				{
-					this._LATEST_USE_BUDGET = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVE", DbType="SmallInt NOT NULL")]
-		public short ACTIVE
-		{
-			get
-			{
-				return this._ACTIVE;
-			}
-			set
-			{
-				if ((this._ACTIVE != value))
-				{
-					this._ACTIVE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DELETED_DATETIME", DbType="DateTime")]
-		public System.Nullable<System.DateTime> DELETED_DATETIME
-		{
-			get
-			{
-				return this._DELETED_DATETIME;
-			}
-			set
-			{
-				if ((this._DELETED_DATETIME != value))
-				{
-					this._DELETED_DATETIME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DELETED_ID", DbType="Int")]
-		public System.Nullable<int> DELETED_ID
-		{
-			get
-			{
-				return this._DELETED_ID;
-			}
-			set
-			{
-				if ((this._DELETED_ID != value))
-				{
-					this._DELETED_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_NAME", DbType="NVarChar(250) NOT NULL", CanBeNull=false)]
-		public string PLAN_NAME
-		{
-			get
-			{
-				return this._PLAN_NAME;
-			}
-			set
-			{
-				if ((this._PLAN_NAME != value))
-				{
-					this._PLAN_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ORDER_SEQ", DbType="SmallInt NOT NULL")]
-		public short PLAN_ORDER_SEQ
-		{
-			get
-			{
-				return this._PLAN_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._PLAN_ORDER_SEQ != value))
-				{
-					this._PLAN_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_NAME", DbType="NVarChar(250) NOT NULL", CanBeNull=false)]
-		public string PRODUCE_NAME
-		{
-			get
-			{
-				return this._PRODUCE_NAME;
-			}
-			set
-			{
-				if ((this._PRODUCE_NAME != value))
-				{
-					this._PRODUCE_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ORDER_SEQ", DbType="SmallInt NOT NULL")]
-		public short PRODUCE_ORDER_SEQ
-		{
-			get
-			{
-				return this._PRODUCE_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._PRODUCE_ORDER_SEQ != value))
-				{
-					this._PRODUCE_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_NAME", DbType="NVarChar(250) NOT NULL", CanBeNull=false)]
-		public string ACTIVITY_NAME
-		{
-			get
-			{
-				return this._ACTIVITY_NAME;
-			}
-			set
-			{
-				if ((this._ACTIVITY_NAME != value))
-				{
-					this._ACTIVITY_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ORDER_SEQ", DbType="SmallInt NOT NULL")]
-		public short ACTIVITY_ORDER_SEQ
-		{
-			get
-			{
-				return this._ACTIVITY_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._ACTIVITY_ORDER_SEQ != value))
-				{
-					this._ACTIVITY_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_NAME", DbType="NVarChar(120) NOT NULL", CanBeNull=false)]
-		public string BUDGET_TYPE_NAME
-		{
-			get
-			{
-				return this._BUDGET_TYPE_NAME;
-			}
-			set
-			{
-				if ((this._BUDGET_TYPE_NAME != value))
-				{
-					this._BUDGET_TYPE_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ORDER_SEQ", DbType="Int")]
-		public System.Nullable<int> BUDGET_TYPE_ORDER_SEQ
-		{
-			get
-			{
-				return this._BUDGET_TYPE_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._BUDGET_TYPE_ORDER_SEQ != value))
-				{
-					this._BUDGET_TYPE_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_MASTER_ID", DbType="Int")]
-		public System.Nullable<int> EXPENSES_MASTER_ID
-		{
-			get
-			{
-				return this._EXPENSES_MASTER_ID;
-			}
-			set
-			{
-				if ((this._EXPENSES_MASTER_ID != value))
-				{
-					this._EXPENSES_MASTER_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_MASTER_NAME", DbType="NVarChar(120) NOT NULL", CanBeNull=false)]
-		public string EXPENSES_MASTER_NAME
-		{
-			get
-			{
-				return this._EXPENSES_MASTER_NAME;
-			}
-			set
-			{
-				if ((this._EXPENSES_MASTER_NAME != value))
-				{
-					this._EXPENSES_MASTER_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_NAME", DbType="NVarChar(120) NOT NULL", CanBeNull=false)]
-		public string EXPENSES_GROUP_NAME
-		{
-			get
-			{
-				return this._EXPENSES_GROUP_NAME;
-			}
-			set
-			{
-				if ((this._EXPENSES_GROUP_NAME != value))
-				{
-					this._EXPENSES_GROUP_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ORDER_SEQ", DbType="SmallInt NOT NULL")]
-		public short EXPENSES_GROUP_ORDER_SEQ
-		{
-			get
-			{
-				return this._EXPENSES_GROUP_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._EXPENSES_GROUP_ORDER_SEQ != value))
-				{
-					this._EXPENSES_GROUP_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ALLOCATE_GROUP_FLAG", DbType="SmallInt")]
-		public System.Nullable<short> EXPENSES_GROUP_ALLOCATE_GROUP_FLAG
-		{
-			get
-			{
-				return this._EXPENSES_GROUP_ALLOCATE_GROUP_FLAG;
-			}
-			set
-			{
-				if ((this._EXPENSES_GROUP_ALLOCATE_GROUP_FLAG != value))
-				{
-					this._EXPENSES_GROUP_ALLOCATE_GROUP_FLAG = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_NAME", DbType="NVarChar(120) NOT NULL", CanBeNull=false)]
-		public string EXPENSES_NAME
-		{
-			get
-			{
-				return this._EXPENSES_NAME;
-			}
-			set
-			{
-				if ((this._EXPENSES_NAME != value))
-				{
-					this._EXPENSES_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ORDER_SEQ", DbType="SmallInt NOT NULL")]
-		public short EXPENSES_ORDER_SEQ
-		{
-			get
-			{
-				return this._EXPENSES_ORDER_SEQ;
-			}
-			set
-			{
-				if ((this._EXPENSES_ORDER_SEQ != value))
-				{
-					this._EXPENSES_ORDER_SEQ = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_FOR_TYPE", DbType="SmallInt")]
-		public System.Nullable<short> PROJECT_FOR_TYPE
-		{
-			get
-			{
-				return this._PROJECT_FOR_TYPE;
-			}
-			set
-			{
-				if ((this._PROJECT_FOR_TYPE != value))
-				{
-					this._PROJECT_FOR_TYPE = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_ID", DbType="Int")]
-		public System.Nullable<int> PROJECT_ID
-		{
-			get
-			{
-				return this._PROJECT_ID;
-			}
-			set
-			{
-				if ((this._PROJECT_ID != value))
-				{
-					this._PROJECT_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_NAME", DbType="NVarChar(200)")]
-		public string PROJECT_NAME
-		{
-			get
-			{
-				return this._PROJECT_NAME;
-			}
-			set
-			{
-				if ((this._PROJECT_NAME != value))
-				{
-					this._PROJECT_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AREA_ID", DbType="Int")]
-		public System.Nullable<int> AREA_ID
-		{
-			get
-			{
-				return this._AREA_ID;
-			}
-			set
-			{
-				if ((this._AREA_ID != value))
-				{
-					this._AREA_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_ID", DbType="Int")]
-		public System.Nullable<int> DEP_ID
-		{
-			get
-			{
-				return this._DEP_ID;
-			}
-			set
-			{
-				if ((this._DEP_ID != value))
-				{
-					this._DEP_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_NAME", DbType="NVarChar(190)")]
-		public string DEP_NAME
-		{
-			get
-			{
-				return this._DEP_NAME;
-			}
-			set
-			{
-				if ((this._DEP_NAME != value))
-				{
-					this._DEP_NAME = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_EXPENSES_GROUP_ID", DbType="NVarChar(11)")]
-		public string ALLOCATE_EXPENSES_GROUP_ID
-		{
-			get
-			{
-				return this._ALLOCATE_EXPENSES_GROUP_ID;
-			}
-			set
-			{
-				if ((this._ALLOCATE_EXPENSES_GROUP_ID != value))
-				{
-					this._ALLOCATE_EXPENSES_GROUP_ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
-		public System.Nullable<decimal> ALLOCATE_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._ALLOCATE_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._ALLOCATE_BUDGET_AMOUNT != value))
-				{
-					this._ALLOCATE_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_USE_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
-		public System.Nullable<decimal> DEP_USE_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._DEP_USE_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._DEP_USE_BUDGET_AMOUNT != value))
-				{
-					this._DEP_USE_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_REMAIN_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
-		public System.Nullable<decimal> DEP_REMAIN_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._DEP_REMAIN_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._DEP_REMAIN_BUDGET_AMOUNT != value))
-				{
-					this._DEP_REMAIN_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
-		public System.Nullable<decimal> ALLOCATE_OFF_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._ALLOCATE_OFF_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._ALLOCATE_OFF_BUDGET_AMOUNT != value))
-				{
-					this._ALLOCATE_OFF_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_USE_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
-		public System.Nullable<decimal> DEP_USE_OFF_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._DEP_USE_OFF_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._DEP_USE_OFF_BUDGET_AMOUNT != value))
-				{
-					this._DEP_USE_OFF_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_REMAIN_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
-		public System.Nullable<decimal> DEP_REMAIN_OFF_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._DEP_REMAIN_OFF_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._DEP_REMAIN_OFF_BUDGET_AMOUNT != value))
-				{
-					this._DEP_REMAIN_OFF_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_GRP_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
-		public System.Nullable<decimal> ALLOCATE_GRP_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._ALLOCATE_GRP_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._ALLOCATE_GRP_BUDGET_AMOUNT != value))
-				{
-					this._ALLOCATE_GRP_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GRP_USE_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
-		public System.Nullable<decimal> GRP_USE_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._GRP_USE_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._GRP_USE_BUDGET_AMOUNT != value))
-				{
-					this._GRP_USE_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GRP_REMAIN_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
-		public System.Nullable<decimal> GRP_REMAIN_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._GRP_REMAIN_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._GRP_REMAIN_BUDGET_AMOUNT != value))
-				{
-					this._GRP_REMAIN_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_GRP_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
-		public System.Nullable<decimal> ALLOCATE_GRP_OFF_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._ALLOCATE_GRP_OFF_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._ALLOCATE_GRP_OFF_BUDGET_AMOUNT != value))
-				{
-					this._ALLOCATE_GRP_OFF_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GRP_USE_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
-		public System.Nullable<decimal> GRP_USE_OFF_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._GRP_USE_OFF_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._GRP_USE_OFF_BUDGET_AMOUNT != value))
-				{
-					this._GRP_USE_OFF_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GRP_REMAIN_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
-		public System.Nullable<decimal> GRP_REMAIN_OFF_BUDGET_AMOUNT
-		{
-			get
-			{
-				return this._GRP_REMAIN_OFF_BUDGET_AMOUNT;
-			}
-			set
-			{
-				if ((this._GRP_REMAIN_OFF_BUDGET_AMOUNT != value))
-				{
-					this._GRP_REMAIN_OFF_BUDGET_AMOUNT = value;
-				}
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.T_TRANING_AND_SEMINORS")]
 	public partial class T_TRANING_AND_SEMINOR : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -48401,6 +45620,2877 @@ namespace ExcisePlaning.Entity
 			if ((this.PropertyChanged != null))
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.V_GET_BUDGET_RESERVE_INFORMATION")]
+	public partial class V_GET_BUDGET_RESERVE_INFORMATION
+	{
+		
+		private string _RESERVE_ID;
+		
+		private System.Nullable<int> _DEP_ID;
+		
+		private System.Nullable<int> _SUB_DEP_ID;
+		
+		private short _YR;
+		
+		private System.Nullable<int> _PLAN_ID;
+		
+		private System.Nullable<int> _PRODUCE_ID;
+		
+		private System.Nullable<int> _ACTIVITY_ID;
+		
+		private int _BUDGET_TYPE_ID;
+		
+		private int _EXPENSES_GROUP_ID;
+		
+		private int _EXPENSES_ID;
+		
+		private System.Nullable<int> _PROJECT_ID;
+		
+		private System.Nullable<System.DateTime> _RESERVE_DATE;
+		
+		private decimal _RESERVE_BUDGET_AMOUNT;
+		
+		private decimal _USE_AMOUNT;
+		
+		private decimal _REMAIN_AMOUNT;
+		
+		private decimal _CASHBACK_AMOUNT;
+		
+		private string _REMARK_TEXT;
+		
+		private string _REJECT_REMARK_TEXT;
+		
+		private short _BUDGET_TYPE;
+		
+		private short _RESERVE_TYPE;
+		
+		private short _ACTIVE;
+		
+		private System.DateTime _CREATED_DATETIME;
+		
+		private int _USER_ID;
+		
+		private System.Nullable<System.DateTime> _LATEST_WITHDRAWAL_DATETIME;
+		
+		private System.Nullable<int> _LATEST_WITHDRAWAL_ID;
+		
+		private System.Nullable<System.DateTime> _DELETED_DATETIME;
+		
+		private System.Nullable<int> _DELETED_ID;
+		
+		private string _SUB_DEP_NAME;
+		
+		private string _DEP_NAME;
+		
+		private System.Nullable<short> _DEP_ORDER_SEQ;
+		
+		private string _PLAN_NAME;
+		
+		private System.Nullable<short> _PLAN_ORDER_SEQ;
+		
+		private string _PRODUCE_NAME;
+		
+		private System.Nullable<short> _PRODUCE_ORDER_SEQ;
+		
+		private string _ACTIVITY_NAME;
+		
+		private System.Nullable<short> _ACTIVITY_ORDER_SEQ;
+		
+		private string _BUDGET_TYPE_NAME;
+		
+		private System.Nullable<int> _BUDGET_TYPE_ORDER_SEQ;
+		
+		private System.Nullable<int> _EXPENSES_MASTER_ID;
+		
+		private string _EXPENSES_MASTER_NAME;
+		
+		private string _EXPENSES_GROUP_NAME;
+		
+		private short _EXPENSES_GROUP_ORDER_SEQ;
+		
+		private string _EXPENSES_NAME;
+		
+		private System.Nullable<short> _EXPENSES_ORDER_SEQ;
+		
+		private string _PROJECT_NAME;
+		
+		private string _RESERVE_NAME;
+		
+		private string _LATEST_WITHDRAWAL_NAME;
+		
+		public V_GET_BUDGET_RESERVE_INFORMATION()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_ID", DbType="NVarChar(12) NOT NULL", CanBeNull=false)]
+		public string RESERVE_ID
+		{
+			get
+			{
+				return this._RESERVE_ID;
+			}
+			set
+			{
+				if ((this._RESERVE_ID != value))
+				{
+					this._RESERVE_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_ID", DbType="Int")]
+		public System.Nullable<int> DEP_ID
+		{
+			get
+			{
+				return this._DEP_ID;
+			}
+			set
+			{
+				if ((this._DEP_ID != value))
+				{
+					this._DEP_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SUB_DEP_ID", DbType="Int")]
+		public System.Nullable<int> SUB_DEP_ID
+		{
+			get
+			{
+				return this._SUB_DEP_ID;
+			}
+			set
+			{
+				if ((this._SUB_DEP_ID != value))
+				{
+					this._SUB_DEP_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_YR", DbType="SmallInt NOT NULL")]
+		public short YR
+		{
+			get
+			{
+				return this._YR;
+			}
+			set
+			{
+				if ((this._YR != value))
+				{
+					this._YR = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ID", DbType="Int")]
+		public System.Nullable<int> PLAN_ID
+		{
+			get
+			{
+				return this._PLAN_ID;
+			}
+			set
+			{
+				if ((this._PLAN_ID != value))
+				{
+					this._PLAN_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ID", DbType="Int")]
+		public System.Nullable<int> PRODUCE_ID
+		{
+			get
+			{
+				return this._PRODUCE_ID;
+			}
+			set
+			{
+				if ((this._PRODUCE_ID != value))
+				{
+					this._PRODUCE_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ID", DbType="Int")]
+		public System.Nullable<int> ACTIVITY_ID
+		{
+			get
+			{
+				return this._ACTIVITY_ID;
+			}
+			set
+			{
+				if ((this._ACTIVITY_ID != value))
+				{
+					this._ACTIVITY_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ID", DbType="Int NOT NULL")]
+		public int BUDGET_TYPE_ID
+		{
+			get
+			{
+				return this._BUDGET_TYPE_ID;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE_ID != value))
+				{
+					this._BUDGET_TYPE_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ID", DbType="Int NOT NULL")]
+		public int EXPENSES_GROUP_ID
+		{
+			get
+			{
+				return this._EXPENSES_GROUP_ID;
+			}
+			set
+			{
+				if ((this._EXPENSES_GROUP_ID != value))
+				{
+					this._EXPENSES_GROUP_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ID", DbType="Int NOT NULL")]
+		public int EXPENSES_ID
+		{
+			get
+			{
+				return this._EXPENSES_ID;
+			}
+			set
+			{
+				if ((this._EXPENSES_ID != value))
+				{
+					this._EXPENSES_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_ID", DbType="Int")]
+		public System.Nullable<int> PROJECT_ID
+		{
+			get
+			{
+				return this._PROJECT_ID;
+			}
+			set
+			{
+				if ((this._PROJECT_ID != value))
+				{
+					this._PROJECT_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_DATE", DbType="Date")]
+		public System.Nullable<System.DateTime> RESERVE_DATE
+		{
+			get
+			{
+				return this._RESERVE_DATE;
+			}
+			set
+			{
+				if ((this._RESERVE_DATE != value))
+				{
+					this._RESERVE_DATE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal RESERVE_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._RESERVE_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._RESERVE_BUDGET_AMOUNT != value))
+				{
+					this._RESERVE_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USE_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal USE_AMOUNT
+		{
+			get
+			{
+				return this._USE_AMOUNT;
+			}
+			set
+			{
+				if ((this._USE_AMOUNT != value))
+				{
+					this._USE_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REMAIN_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal REMAIN_AMOUNT
+		{
+			get
+			{
+				return this._REMAIN_AMOUNT;
+			}
+			set
+			{
+				if ((this._REMAIN_AMOUNT != value))
+				{
+					this._REMAIN_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CASHBACK_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal CASHBACK_AMOUNT
+		{
+			get
+			{
+				return this._CASHBACK_AMOUNT;
+			}
+			set
+			{
+				if ((this._CASHBACK_AMOUNT != value))
+				{
+					this._CASHBACK_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REMARK_TEXT", DbType="NVarChar(150)")]
+		public string REMARK_TEXT
+		{
+			get
+			{
+				return this._REMARK_TEXT;
+			}
+			set
+			{
+				if ((this._REMARK_TEXT != value))
+				{
+					this._REMARK_TEXT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REJECT_REMARK_TEXT", DbType="NVarChar(150)")]
+		public string REJECT_REMARK_TEXT
+		{
+			get
+			{
+				return this._REJECT_REMARK_TEXT;
+			}
+			set
+			{
+				if ((this._REJECT_REMARK_TEXT != value))
+				{
+					this._REJECT_REMARK_TEXT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE", DbType="SmallInt NOT NULL")]
+		public short BUDGET_TYPE
+		{
+			get
+			{
+				return this._BUDGET_TYPE;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE != value))
+				{
+					this._BUDGET_TYPE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_TYPE", DbType="SmallInt NOT NULL")]
+		public short RESERVE_TYPE
+		{
+			get
+			{
+				return this._RESERVE_TYPE;
+			}
+			set
+			{
+				if ((this._RESERVE_TYPE != value))
+				{
+					this._RESERVE_TYPE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVE", DbType="SmallInt NOT NULL")]
+		public short ACTIVE
+		{
+			get
+			{
+				return this._ACTIVE;
+			}
+			set
+			{
+				if ((this._ACTIVE != value))
+				{
+					this._ACTIVE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CREATED_DATETIME", DbType="DateTime NOT NULL")]
+		public System.DateTime CREATED_DATETIME
+		{
+			get
+			{
+				return this._CREATED_DATETIME;
+			}
+			set
+			{
+				if ((this._CREATED_DATETIME != value))
+				{
+					this._CREATED_DATETIME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USER_ID", DbType="Int NOT NULL")]
+		public int USER_ID
+		{
+			get
+			{
+				return this._USER_ID;
+			}
+			set
+			{
+				if ((this._USER_ID != value))
+				{
+					this._USER_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_WITHDRAWAL_DATETIME", DbType="DateTime")]
+		public System.Nullable<System.DateTime> LATEST_WITHDRAWAL_DATETIME
+		{
+			get
+			{
+				return this._LATEST_WITHDRAWAL_DATETIME;
+			}
+			set
+			{
+				if ((this._LATEST_WITHDRAWAL_DATETIME != value))
+				{
+					this._LATEST_WITHDRAWAL_DATETIME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_WITHDRAWAL_ID", DbType="Int")]
+		public System.Nullable<int> LATEST_WITHDRAWAL_ID
+		{
+			get
+			{
+				return this._LATEST_WITHDRAWAL_ID;
+			}
+			set
+			{
+				if ((this._LATEST_WITHDRAWAL_ID != value))
+				{
+					this._LATEST_WITHDRAWAL_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DELETED_DATETIME", DbType="DateTime")]
+		public System.Nullable<System.DateTime> DELETED_DATETIME
+		{
+			get
+			{
+				return this._DELETED_DATETIME;
+			}
+			set
+			{
+				if ((this._DELETED_DATETIME != value))
+				{
+					this._DELETED_DATETIME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DELETED_ID", DbType="Int")]
+		public System.Nullable<int> DELETED_ID
+		{
+			get
+			{
+				return this._DELETED_ID;
+			}
+			set
+			{
+				if ((this._DELETED_ID != value))
+				{
+					this._DELETED_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SUB_DEP_NAME", DbType="NVarChar(190)")]
+		public string SUB_DEP_NAME
+		{
+			get
+			{
+				return this._SUB_DEP_NAME;
+			}
+			set
+			{
+				if ((this._SUB_DEP_NAME != value))
+				{
+					this._SUB_DEP_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_NAME", DbType="NVarChar(190)")]
+		public string DEP_NAME
+		{
+			get
+			{
+				return this._DEP_NAME;
+			}
+			set
+			{
+				if ((this._DEP_NAME != value))
+				{
+					this._DEP_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> DEP_ORDER_SEQ
+		{
+			get
+			{
+				return this._DEP_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._DEP_ORDER_SEQ != value))
+				{
+					this._DEP_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_NAME", DbType="NVarChar(250)")]
+		public string PLAN_NAME
+		{
+			get
+			{
+				return this._PLAN_NAME;
+			}
+			set
+			{
+				if ((this._PLAN_NAME != value))
+				{
+					this._PLAN_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> PLAN_ORDER_SEQ
+		{
+			get
+			{
+				return this._PLAN_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._PLAN_ORDER_SEQ != value))
+				{
+					this._PLAN_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_NAME", DbType="NVarChar(250)")]
+		public string PRODUCE_NAME
+		{
+			get
+			{
+				return this._PRODUCE_NAME;
+			}
+			set
+			{
+				if ((this._PRODUCE_NAME != value))
+				{
+					this._PRODUCE_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> PRODUCE_ORDER_SEQ
+		{
+			get
+			{
+				return this._PRODUCE_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._PRODUCE_ORDER_SEQ != value))
+				{
+					this._PRODUCE_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_NAME", DbType="NVarChar(250)")]
+		public string ACTIVITY_NAME
+		{
+			get
+			{
+				return this._ACTIVITY_NAME;
+			}
+			set
+			{
+				if ((this._ACTIVITY_NAME != value))
+				{
+					this._ACTIVITY_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> ACTIVITY_ORDER_SEQ
+		{
+			get
+			{
+				return this._ACTIVITY_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._ACTIVITY_ORDER_SEQ != value))
+				{
+					this._ACTIVITY_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_NAME", DbType="NVarChar(120)")]
+		public string BUDGET_TYPE_NAME
+		{
+			get
+			{
+				return this._BUDGET_TYPE_NAME;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE_NAME != value))
+				{
+					this._BUDGET_TYPE_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ORDER_SEQ", DbType="Int")]
+		public System.Nullable<int> BUDGET_TYPE_ORDER_SEQ
+		{
+			get
+			{
+				return this._BUDGET_TYPE_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE_ORDER_SEQ != value))
+				{
+					this._BUDGET_TYPE_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_MASTER_ID", DbType="Int")]
+		public System.Nullable<int> EXPENSES_MASTER_ID
+		{
+			get
+			{
+				return this._EXPENSES_MASTER_ID;
+			}
+			set
+			{
+				if ((this._EXPENSES_MASTER_ID != value))
+				{
+					this._EXPENSES_MASTER_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_MASTER_NAME", DbType="NVarChar(120)")]
+		public string EXPENSES_MASTER_NAME
+		{
+			get
+			{
+				return this._EXPENSES_MASTER_NAME;
+			}
+			set
+			{
+				if ((this._EXPENSES_MASTER_NAME != value))
+				{
+					this._EXPENSES_MASTER_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_NAME", DbType="NVarChar(120) NOT NULL", CanBeNull=false)]
+		public string EXPENSES_GROUP_NAME
+		{
+			get
+			{
+				return this._EXPENSES_GROUP_NAME;
+			}
+			set
+			{
+				if ((this._EXPENSES_GROUP_NAME != value))
+				{
+					this._EXPENSES_GROUP_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ORDER_SEQ", DbType="SmallInt NOT NULL")]
+		public short EXPENSES_GROUP_ORDER_SEQ
+		{
+			get
+			{
+				return this._EXPENSES_GROUP_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._EXPENSES_GROUP_ORDER_SEQ != value))
+				{
+					this._EXPENSES_GROUP_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_NAME", DbType="NVarChar(120)")]
+		public string EXPENSES_NAME
+		{
+			get
+			{
+				return this._EXPENSES_NAME;
+			}
+			set
+			{
+				if ((this._EXPENSES_NAME != value))
+				{
+					this._EXPENSES_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> EXPENSES_ORDER_SEQ
+		{
+			get
+			{
+				return this._EXPENSES_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._EXPENSES_ORDER_SEQ != value))
+				{
+					this._EXPENSES_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_NAME", DbType="NVarChar(200)")]
+		public string PROJECT_NAME
+		{
+			get
+			{
+				return this._PROJECT_NAME;
+			}
+			set
+			{
+				if ((this._PROJECT_NAME != value))
+				{
+					this._PROJECT_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_NAME", DbType="NVarChar(221)")]
+		public string RESERVE_NAME
+		{
+			get
+			{
+				return this._RESERVE_NAME;
+			}
+			set
+			{
+				if ((this._RESERVE_NAME != value))
+				{
+					this._RESERVE_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_WITHDRAWAL_NAME", DbType="NVarChar(221)")]
+		public string LATEST_WITHDRAWAL_NAME
+		{
+			get
+			{
+				return this._LATEST_WITHDRAWAL_NAME;
+			}
+			set
+			{
+				if ((this._LATEST_WITHDRAWAL_NAME != value))
+				{
+					this._LATEST_WITHDRAWAL_NAME = value;
+				}
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION")]
+	public partial class V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION
+	{
+		
+		private string _RESERVE_ID;
+		
+		private System.Nullable<int> _DEP_ID;
+		
+		private System.Nullable<int> _SUB_DEP_ID;
+		
+		private short _YR;
+		
+		private System.Nullable<int> _PLAN_ID;
+		
+		private System.Nullable<int> _PRODUCE_ID;
+		
+		private System.Nullable<int> _ACTIVITY_ID;
+		
+		private int _BUDGET_TYPE_ID;
+		
+		private int _EXPENSES_GROUP_ID;
+		
+		private int _EXPENSES_ID;
+		
+		private System.Nullable<int> _PROJECT_ID;
+		
+		private System.Nullable<System.DateTime> _RESERVE_DATE;
+		
+		private decimal _RESERVE_BUDGET_AMOUNT;
+		
+		private decimal _USE_AMOUNT;
+		
+		private decimal _REMAIN_AMOUNT;
+		
+		private decimal _CASHBACK_AMOUNT;
+		
+		private string _REMARK_TEXT;
+		
+		private string _REJECT_REMARK_TEXT;
+		
+		private short _BUDGET_TYPE;
+		
+		private short _RESERVE_TYPE;
+		
+		private short _ACTIVE;
+		
+		private System.DateTime _CREATED_DATETIME;
+		
+		private int _USER_ID;
+		
+		private System.Nullable<System.DateTime> _LATEST_WITHDRAWAL_DATETIME;
+		
+		private System.Nullable<int> _LATEST_WITHDRAWAL_ID;
+		
+		private System.Nullable<System.DateTime> _DELETED_DATETIME;
+		
+		private System.Nullable<int> _DELETED_ID;
+		
+		private System.Nullable<int> _EXPENSES_MASTER_ID;
+		
+		private string _EXPENSES_MASTER_NAME;
+		
+		private string _EXPENSES_GROUP_NAME;
+		
+		private short _EXPENSES_GROUP_ORDER_SEQ;
+		
+		private string _SUB_DEP_NAME;
+		
+		private string _DEP_NAME;
+		
+		private System.Nullable<short> _DEP_ORDER_SEQ;
+		
+		private string _PLAN_NAME;
+		
+		private System.Nullable<short> _PLAN_ORDER_SEQ;
+		
+		private string _PRODUCE_NAME;
+		
+		private System.Nullable<short> _PRODUCE_ORDER_SEQ;
+		
+		private string _ACTIVITY_NAME;
+		
+		private System.Nullable<short> _ACTIVITY_ORDER_SEQ;
+		
+		private string _BUDGET_TYPE_NAME;
+		
+		private System.Nullable<int> _BUDGET_TYPE_ORDER_SEQ;
+		
+		private string _EXPENSES_NAME;
+		
+		private System.Nullable<short> _EXPENSES_ORDER_SEQ;
+		
+		private string _PROJECT_NAME;
+		
+		private string _RESERVE_NAME;
+		
+		private System.Nullable<short> _SEQ_NO;
+		
+		private System.Nullable<decimal> _WITHDRAWAL_AMOUNT;
+		
+		private string _WITHDRAWAL_CODE;
+		
+		private string _WITHDRAWAL_REMARK_TEXT;
+		
+		private System.Nullable<System.DateTime> _WITHDRAWAL_DATETIME;
+		
+		private System.Nullable<short> _WITHDRAWAL_ACTIVE;
+		
+		private string _WITHDRAWAL_NAME;
+		
+		public V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_ID", DbType="NVarChar(12) NOT NULL", CanBeNull=false)]
+		public string RESERVE_ID
+		{
+			get
+			{
+				return this._RESERVE_ID;
+			}
+			set
+			{
+				if ((this._RESERVE_ID != value))
+				{
+					this._RESERVE_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_ID", DbType="Int")]
+		public System.Nullable<int> DEP_ID
+		{
+			get
+			{
+				return this._DEP_ID;
+			}
+			set
+			{
+				if ((this._DEP_ID != value))
+				{
+					this._DEP_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SUB_DEP_ID", DbType="Int")]
+		public System.Nullable<int> SUB_DEP_ID
+		{
+			get
+			{
+				return this._SUB_DEP_ID;
+			}
+			set
+			{
+				if ((this._SUB_DEP_ID != value))
+				{
+					this._SUB_DEP_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_YR", DbType="SmallInt NOT NULL")]
+		public short YR
+		{
+			get
+			{
+				return this._YR;
+			}
+			set
+			{
+				if ((this._YR != value))
+				{
+					this._YR = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ID", DbType="Int")]
+		public System.Nullable<int> PLAN_ID
+		{
+			get
+			{
+				return this._PLAN_ID;
+			}
+			set
+			{
+				if ((this._PLAN_ID != value))
+				{
+					this._PLAN_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ID", DbType="Int")]
+		public System.Nullable<int> PRODUCE_ID
+		{
+			get
+			{
+				return this._PRODUCE_ID;
+			}
+			set
+			{
+				if ((this._PRODUCE_ID != value))
+				{
+					this._PRODUCE_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ID", DbType="Int")]
+		public System.Nullable<int> ACTIVITY_ID
+		{
+			get
+			{
+				return this._ACTIVITY_ID;
+			}
+			set
+			{
+				if ((this._ACTIVITY_ID != value))
+				{
+					this._ACTIVITY_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ID", DbType="Int NOT NULL")]
+		public int BUDGET_TYPE_ID
+		{
+			get
+			{
+				return this._BUDGET_TYPE_ID;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE_ID != value))
+				{
+					this._BUDGET_TYPE_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ID", DbType="Int NOT NULL")]
+		public int EXPENSES_GROUP_ID
+		{
+			get
+			{
+				return this._EXPENSES_GROUP_ID;
+			}
+			set
+			{
+				if ((this._EXPENSES_GROUP_ID != value))
+				{
+					this._EXPENSES_GROUP_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ID", DbType="Int NOT NULL")]
+		public int EXPENSES_ID
+		{
+			get
+			{
+				return this._EXPENSES_ID;
+			}
+			set
+			{
+				if ((this._EXPENSES_ID != value))
+				{
+					this._EXPENSES_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_ID", DbType="Int")]
+		public System.Nullable<int> PROJECT_ID
+		{
+			get
+			{
+				return this._PROJECT_ID;
+			}
+			set
+			{
+				if ((this._PROJECT_ID != value))
+				{
+					this._PROJECT_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_DATE", DbType="Date")]
+		public System.Nullable<System.DateTime> RESERVE_DATE
+		{
+			get
+			{
+				return this._RESERVE_DATE;
+			}
+			set
+			{
+				if ((this._RESERVE_DATE != value))
+				{
+					this._RESERVE_DATE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal RESERVE_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._RESERVE_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._RESERVE_BUDGET_AMOUNT != value))
+				{
+					this._RESERVE_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USE_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal USE_AMOUNT
+		{
+			get
+			{
+				return this._USE_AMOUNT;
+			}
+			set
+			{
+				if ((this._USE_AMOUNT != value))
+				{
+					this._USE_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REMAIN_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal REMAIN_AMOUNT
+		{
+			get
+			{
+				return this._REMAIN_AMOUNT;
+			}
+			set
+			{
+				if ((this._REMAIN_AMOUNT != value))
+				{
+					this._REMAIN_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CASHBACK_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal CASHBACK_AMOUNT
+		{
+			get
+			{
+				return this._CASHBACK_AMOUNT;
+			}
+			set
+			{
+				if ((this._CASHBACK_AMOUNT != value))
+				{
+					this._CASHBACK_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REMARK_TEXT", DbType="NVarChar(150)")]
+		public string REMARK_TEXT
+		{
+			get
+			{
+				return this._REMARK_TEXT;
+			}
+			set
+			{
+				if ((this._REMARK_TEXT != value))
+				{
+					this._REMARK_TEXT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REJECT_REMARK_TEXT", DbType="NVarChar(150)")]
+		public string REJECT_REMARK_TEXT
+		{
+			get
+			{
+				return this._REJECT_REMARK_TEXT;
+			}
+			set
+			{
+				if ((this._REJECT_REMARK_TEXT != value))
+				{
+					this._REJECT_REMARK_TEXT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE", DbType="SmallInt NOT NULL")]
+		public short BUDGET_TYPE
+		{
+			get
+			{
+				return this._BUDGET_TYPE;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE != value))
+				{
+					this._BUDGET_TYPE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_TYPE", DbType="SmallInt NOT NULL")]
+		public short RESERVE_TYPE
+		{
+			get
+			{
+				return this._RESERVE_TYPE;
+			}
+			set
+			{
+				if ((this._RESERVE_TYPE != value))
+				{
+					this._RESERVE_TYPE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVE", DbType="SmallInt NOT NULL")]
+		public short ACTIVE
+		{
+			get
+			{
+				return this._ACTIVE;
+			}
+			set
+			{
+				if ((this._ACTIVE != value))
+				{
+					this._ACTIVE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CREATED_DATETIME", DbType="DateTime NOT NULL")]
+		public System.DateTime CREATED_DATETIME
+		{
+			get
+			{
+				return this._CREATED_DATETIME;
+			}
+			set
+			{
+				if ((this._CREATED_DATETIME != value))
+				{
+					this._CREATED_DATETIME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USER_ID", DbType="Int NOT NULL")]
+		public int USER_ID
+		{
+			get
+			{
+				return this._USER_ID;
+			}
+			set
+			{
+				if ((this._USER_ID != value))
+				{
+					this._USER_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_WITHDRAWAL_DATETIME", DbType="DateTime")]
+		public System.Nullable<System.DateTime> LATEST_WITHDRAWAL_DATETIME
+		{
+			get
+			{
+				return this._LATEST_WITHDRAWAL_DATETIME;
+			}
+			set
+			{
+				if ((this._LATEST_WITHDRAWAL_DATETIME != value))
+				{
+					this._LATEST_WITHDRAWAL_DATETIME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_WITHDRAWAL_ID", DbType="Int")]
+		public System.Nullable<int> LATEST_WITHDRAWAL_ID
+		{
+			get
+			{
+				return this._LATEST_WITHDRAWAL_ID;
+			}
+			set
+			{
+				if ((this._LATEST_WITHDRAWAL_ID != value))
+				{
+					this._LATEST_WITHDRAWAL_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DELETED_DATETIME", DbType="DateTime")]
+		public System.Nullable<System.DateTime> DELETED_DATETIME
+		{
+			get
+			{
+				return this._DELETED_DATETIME;
+			}
+			set
+			{
+				if ((this._DELETED_DATETIME != value))
+				{
+					this._DELETED_DATETIME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DELETED_ID", DbType="Int")]
+		public System.Nullable<int> DELETED_ID
+		{
+			get
+			{
+				return this._DELETED_ID;
+			}
+			set
+			{
+				if ((this._DELETED_ID != value))
+				{
+					this._DELETED_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_MASTER_ID", DbType="Int")]
+		public System.Nullable<int> EXPENSES_MASTER_ID
+		{
+			get
+			{
+				return this._EXPENSES_MASTER_ID;
+			}
+			set
+			{
+				if ((this._EXPENSES_MASTER_ID != value))
+				{
+					this._EXPENSES_MASTER_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_MASTER_NAME", DbType="NVarChar(120)")]
+		public string EXPENSES_MASTER_NAME
+		{
+			get
+			{
+				return this._EXPENSES_MASTER_NAME;
+			}
+			set
+			{
+				if ((this._EXPENSES_MASTER_NAME != value))
+				{
+					this._EXPENSES_MASTER_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_NAME", DbType="NVarChar(120) NOT NULL", CanBeNull=false)]
+		public string EXPENSES_GROUP_NAME
+		{
+			get
+			{
+				return this._EXPENSES_GROUP_NAME;
+			}
+			set
+			{
+				if ((this._EXPENSES_GROUP_NAME != value))
+				{
+					this._EXPENSES_GROUP_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ORDER_SEQ", DbType="SmallInt NOT NULL")]
+		public short EXPENSES_GROUP_ORDER_SEQ
+		{
+			get
+			{
+				return this._EXPENSES_GROUP_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._EXPENSES_GROUP_ORDER_SEQ != value))
+				{
+					this._EXPENSES_GROUP_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SUB_DEP_NAME", DbType="NVarChar(190)")]
+		public string SUB_DEP_NAME
+		{
+			get
+			{
+				return this._SUB_DEP_NAME;
+			}
+			set
+			{
+				if ((this._SUB_DEP_NAME != value))
+				{
+					this._SUB_DEP_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_NAME", DbType="NVarChar(190)")]
+		public string DEP_NAME
+		{
+			get
+			{
+				return this._DEP_NAME;
+			}
+			set
+			{
+				if ((this._DEP_NAME != value))
+				{
+					this._DEP_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> DEP_ORDER_SEQ
+		{
+			get
+			{
+				return this._DEP_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._DEP_ORDER_SEQ != value))
+				{
+					this._DEP_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_NAME", DbType="NVarChar(250)")]
+		public string PLAN_NAME
+		{
+			get
+			{
+				return this._PLAN_NAME;
+			}
+			set
+			{
+				if ((this._PLAN_NAME != value))
+				{
+					this._PLAN_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> PLAN_ORDER_SEQ
+		{
+			get
+			{
+				return this._PLAN_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._PLAN_ORDER_SEQ != value))
+				{
+					this._PLAN_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_NAME", DbType="NVarChar(250)")]
+		public string PRODUCE_NAME
+		{
+			get
+			{
+				return this._PRODUCE_NAME;
+			}
+			set
+			{
+				if ((this._PRODUCE_NAME != value))
+				{
+					this._PRODUCE_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> PRODUCE_ORDER_SEQ
+		{
+			get
+			{
+				return this._PRODUCE_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._PRODUCE_ORDER_SEQ != value))
+				{
+					this._PRODUCE_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_NAME", DbType="NVarChar(250)")]
+		public string ACTIVITY_NAME
+		{
+			get
+			{
+				return this._ACTIVITY_NAME;
+			}
+			set
+			{
+				if ((this._ACTIVITY_NAME != value))
+				{
+					this._ACTIVITY_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> ACTIVITY_ORDER_SEQ
+		{
+			get
+			{
+				return this._ACTIVITY_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._ACTIVITY_ORDER_SEQ != value))
+				{
+					this._ACTIVITY_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_NAME", DbType="NVarChar(120)")]
+		public string BUDGET_TYPE_NAME
+		{
+			get
+			{
+				return this._BUDGET_TYPE_NAME;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE_NAME != value))
+				{
+					this._BUDGET_TYPE_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ORDER_SEQ", DbType="Int")]
+		public System.Nullable<int> BUDGET_TYPE_ORDER_SEQ
+		{
+			get
+			{
+				return this._BUDGET_TYPE_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE_ORDER_SEQ != value))
+				{
+					this._BUDGET_TYPE_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_NAME", DbType="NVarChar(120)")]
+		public string EXPENSES_NAME
+		{
+			get
+			{
+				return this._EXPENSES_NAME;
+			}
+			set
+			{
+				if ((this._EXPENSES_NAME != value))
+				{
+					this._EXPENSES_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ORDER_SEQ", DbType="SmallInt")]
+		public System.Nullable<short> EXPENSES_ORDER_SEQ
+		{
+			get
+			{
+				return this._EXPENSES_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._EXPENSES_ORDER_SEQ != value))
+				{
+					this._EXPENSES_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_NAME", DbType="NVarChar(200)")]
+		public string PROJECT_NAME
+		{
+			get
+			{
+				return this._PROJECT_NAME;
+			}
+			set
+			{
+				if ((this._PROJECT_NAME != value))
+				{
+					this._PROJECT_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RESERVE_NAME", DbType="NVarChar(221)")]
+		public string RESERVE_NAME
+		{
+			get
+			{
+				return this._RESERVE_NAME;
+			}
+			set
+			{
+				if ((this._RESERVE_NAME != value))
+				{
+					this._RESERVE_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SEQ_NO", DbType="SmallInt")]
+		public System.Nullable<short> SEQ_NO
+		{
+			get
+			{
+				return this._SEQ_NO;
+			}
+			set
+			{
+				if ((this._SEQ_NO != value))
+				{
+					this._SEQ_NO = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WITHDRAWAL_AMOUNT", DbType="Decimal(20,2)")]
+		public System.Nullable<decimal> WITHDRAWAL_AMOUNT
+		{
+			get
+			{
+				return this._WITHDRAWAL_AMOUNT;
+			}
+			set
+			{
+				if ((this._WITHDRAWAL_AMOUNT != value))
+				{
+					this._WITHDRAWAL_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WITHDRAWAL_CODE", DbType="NVarChar(50)")]
+		public string WITHDRAWAL_CODE
+		{
+			get
+			{
+				return this._WITHDRAWAL_CODE;
+			}
+			set
+			{
+				if ((this._WITHDRAWAL_CODE != value))
+				{
+					this._WITHDRAWAL_CODE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WITHDRAWAL_REMARK_TEXT", DbType="NVarChar(300)")]
+		public string WITHDRAWAL_REMARK_TEXT
+		{
+			get
+			{
+				return this._WITHDRAWAL_REMARK_TEXT;
+			}
+			set
+			{
+				if ((this._WITHDRAWAL_REMARK_TEXT != value))
+				{
+					this._WITHDRAWAL_REMARK_TEXT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WITHDRAWAL_DATETIME", DbType="DateTime")]
+		public System.Nullable<System.DateTime> WITHDRAWAL_DATETIME
+		{
+			get
+			{
+				return this._WITHDRAWAL_DATETIME;
+			}
+			set
+			{
+				if ((this._WITHDRAWAL_DATETIME != value))
+				{
+					this._WITHDRAWAL_DATETIME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WITHDRAWAL_ACTIVE", DbType="SmallInt")]
+		public System.Nullable<short> WITHDRAWAL_ACTIVE
+		{
+			get
+			{
+				return this._WITHDRAWAL_ACTIVE;
+			}
+			set
+			{
+				if ((this._WITHDRAWAL_ACTIVE != value))
+				{
+					this._WITHDRAWAL_ACTIVE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WITHDRAWAL_NAME", DbType="NVarChar(221)")]
+		public string WITHDRAWAL_NAME
+		{
+			get
+			{
+				return this._WITHDRAWAL_NAME;
+			}
+			set
+			{
+				if ((this._WITHDRAWAL_NAME != value))
+				{
+					this._WITHDRAWAL_NAME = value;
+				}
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.V_GET_SUMMARY_BUDGET_ALLOCATE")]
+	public partial class V_GET_SUMMARY_BUDGET_ALLOCATE
+	{
+		
+		private int _SEQ_ID;
+		
+		private int _BUDGET_ID;
+		
+		private short _YR;
+		
+		private System.Nullable<int> _PLAN_ID;
+		
+		private System.Nullable<int> _PRODUCE_ID;
+		
+		private System.Nullable<int> _ACTIVITY_ID;
+		
+		private int _BUDGET_TYPE_ID;
+		
+		private int _EXPENSES_GROUP_ID;
+		
+		private int _EXPENSES_ID;
+		
+		private decimal _BUDGET_AMOUNT;
+		
+		private decimal _ACTUAL_BUDGET_AMOUNT;
+		
+		private decimal _OFF_BUDGET_AMOUNT;
+		
+		private decimal _ACTUAL_OFF_BUDGET_AMOUNT;
+		
+		private decimal _USE_BUDGET_AMOUNT;
+		
+		private decimal _USE_OFF_BUDGET_AMOUNT;
+		
+		private decimal _REMAIN_BUDGET_AMOUNT;
+		
+		private decimal _REMAIN_OFF_BUDGET_AMOUNT;
+		
+		private bool _CAN_ADD_PROJECT;
+		
+		private System.Nullable<System.DateTime> _LATEST_RECEIVE_BUDGET;
+		
+		private System.Nullable<System.DateTime> _LATEST_USE_BUDGET;
+		
+		private short _ACTIVE;
+		
+		private System.Nullable<System.DateTime> _DELETED_DATETIME;
+		
+		private System.Nullable<int> _DELETED_ID;
+		
+		private string _PLAN_NAME;
+		
+		private short _PLAN_ORDER_SEQ;
+		
+		private string _PRODUCE_NAME;
+		
+		private short _PRODUCE_ORDER_SEQ;
+		
+		private string _ACTIVITY_NAME;
+		
+		private short _ACTIVITY_ORDER_SEQ;
+		
+		private string _BUDGET_TYPE_NAME;
+		
+		private System.Nullable<int> _BUDGET_TYPE_ORDER_SEQ;
+		
+		private System.Nullable<int> _EXPENSES_MASTER_ID;
+		
+		private string _EXPENSES_MASTER_NAME;
+		
+		private string _EXPENSES_GROUP_NAME;
+		
+		private short _EXPENSES_GROUP_ORDER_SEQ;
+		
+		private System.Nullable<short> _EXPENSES_GROUP_ALLOCATE_GROUP_FLAG;
+		
+		private string _EXPENSES_NAME;
+		
+		private short _EXPENSES_ORDER_SEQ;
+		
+		private System.Nullable<short> _PROJECT_FOR_TYPE;
+		
+		private System.Nullable<int> _PROJECT_ID;
+		
+		private string _PROJECT_NAME;
+		
+		private System.Nullable<int> _AREA_ID;
+		
+		private System.Nullable<int> _DEP_ID;
+		
+		private string _DEP_NAME;
+		
+		private string _ALLOCATE_EXPENSES_GROUP_ID;
+		
+		private System.Nullable<int> _ALLOCATE_PROJECT_ID;
+		
+		private System.Nullable<decimal> _ALLOCATE_BUDGET_AMOUNT;
+		
+		private System.Nullable<decimal> _DEP_USE_BUDGET_AMOUNT;
+		
+		private System.Nullable<decimal> _DEP_REMAIN_BUDGET_AMOUNT;
+		
+		private System.Nullable<decimal> _ALLOCATE_OFF_BUDGET_AMOUNT;
+		
+		private System.Nullable<decimal> _DEP_USE_OFF_BUDGET_AMOUNT;
+		
+		private System.Nullable<decimal> _DEP_REMAIN_OFF_BUDGET_AMOUNT;
+		
+		private System.Nullable<decimal> _ALLOCATE_GRP_BUDGET_AMOUNT;
+		
+		private System.Nullable<decimal> _GRP_USE_BUDGET_AMOUNT;
+		
+		private System.Nullable<decimal> _GRP_REMAIN_BUDGET_AMOUNT;
+		
+		private System.Nullable<decimal> _ALLOCATE_GRP_OFF_BUDGET_AMOUNT;
+		
+		private System.Nullable<decimal> _GRP_USE_OFF_BUDGET_AMOUNT;
+		
+		private System.Nullable<decimal> _GRP_REMAIN_OFF_BUDGET_AMOUNT;
+		
+		public V_GET_SUMMARY_BUDGET_ALLOCATE()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SEQ_ID", DbType="Int NOT NULL")]
+		public int SEQ_ID
+		{
+			get
+			{
+				return this._SEQ_ID;
+			}
+			set
+			{
+				if ((this._SEQ_ID != value))
+				{
+					this._SEQ_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_ID", DbType="Int NOT NULL")]
+		public int BUDGET_ID
+		{
+			get
+			{
+				return this._BUDGET_ID;
+			}
+			set
+			{
+				if ((this._BUDGET_ID != value))
+				{
+					this._BUDGET_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_YR", DbType="SmallInt NOT NULL")]
+		public short YR
+		{
+			get
+			{
+				return this._YR;
+			}
+			set
+			{
+				if ((this._YR != value))
+				{
+					this._YR = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ID", DbType="Int")]
+		public System.Nullable<int> PLAN_ID
+		{
+			get
+			{
+				return this._PLAN_ID;
+			}
+			set
+			{
+				if ((this._PLAN_ID != value))
+				{
+					this._PLAN_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ID", DbType="Int")]
+		public System.Nullable<int> PRODUCE_ID
+		{
+			get
+			{
+				return this._PRODUCE_ID;
+			}
+			set
+			{
+				if ((this._PRODUCE_ID != value))
+				{
+					this._PRODUCE_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ID", DbType="Int")]
+		public System.Nullable<int> ACTIVITY_ID
+		{
+			get
+			{
+				return this._ACTIVITY_ID;
+			}
+			set
+			{
+				if ((this._ACTIVITY_ID != value))
+				{
+					this._ACTIVITY_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ID", DbType="Int NOT NULL")]
+		public int BUDGET_TYPE_ID
+		{
+			get
+			{
+				return this._BUDGET_TYPE_ID;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE_ID != value))
+				{
+					this._BUDGET_TYPE_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ID", DbType="Int NOT NULL")]
+		public int EXPENSES_GROUP_ID
+		{
+			get
+			{
+				return this._EXPENSES_GROUP_ID;
+			}
+			set
+			{
+				if ((this._EXPENSES_GROUP_ID != value))
+				{
+					this._EXPENSES_GROUP_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ID", DbType="Int NOT NULL")]
+		public int EXPENSES_ID
+		{
+			get
+			{
+				return this._EXPENSES_ID;
+			}
+			set
+			{
+				if ((this._EXPENSES_ID != value))
+				{
+					this._EXPENSES_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._BUDGET_AMOUNT != value))
+				{
+					this._BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTUAL_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal ACTUAL_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._ACTUAL_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._ACTUAL_BUDGET_AMOUNT != value))
+				{
+					this._ACTUAL_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal OFF_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._OFF_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._OFF_BUDGET_AMOUNT != value))
+				{
+					this._OFF_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTUAL_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal ACTUAL_OFF_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._ACTUAL_OFF_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._ACTUAL_OFF_BUDGET_AMOUNT != value))
+				{
+					this._ACTUAL_OFF_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USE_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal USE_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._USE_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._USE_BUDGET_AMOUNT != value))
+				{
+					this._USE_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_USE_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal USE_OFF_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._USE_OFF_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._USE_OFF_BUDGET_AMOUNT != value))
+				{
+					this._USE_OFF_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REMAIN_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal REMAIN_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._REMAIN_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._REMAIN_BUDGET_AMOUNT != value))
+				{
+					this._REMAIN_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_REMAIN_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2) NOT NULL")]
+		public decimal REMAIN_OFF_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._REMAIN_OFF_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._REMAIN_OFF_BUDGET_AMOUNT != value))
+				{
+					this._REMAIN_OFF_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CAN_ADD_PROJECT", DbType="Bit NOT NULL")]
+		public bool CAN_ADD_PROJECT
+		{
+			get
+			{
+				return this._CAN_ADD_PROJECT;
+			}
+			set
+			{
+				if ((this._CAN_ADD_PROJECT != value))
+				{
+					this._CAN_ADD_PROJECT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_RECEIVE_BUDGET", DbType="DateTime")]
+		public System.Nullable<System.DateTime> LATEST_RECEIVE_BUDGET
+		{
+			get
+			{
+				return this._LATEST_RECEIVE_BUDGET;
+			}
+			set
+			{
+				if ((this._LATEST_RECEIVE_BUDGET != value))
+				{
+					this._LATEST_RECEIVE_BUDGET = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LATEST_USE_BUDGET", DbType="DateTime")]
+		public System.Nullable<System.DateTime> LATEST_USE_BUDGET
+		{
+			get
+			{
+				return this._LATEST_USE_BUDGET;
+			}
+			set
+			{
+				if ((this._LATEST_USE_BUDGET != value))
+				{
+					this._LATEST_USE_BUDGET = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVE", DbType="SmallInt NOT NULL")]
+		public short ACTIVE
+		{
+			get
+			{
+				return this._ACTIVE;
+			}
+			set
+			{
+				if ((this._ACTIVE != value))
+				{
+					this._ACTIVE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DELETED_DATETIME", DbType="DateTime")]
+		public System.Nullable<System.DateTime> DELETED_DATETIME
+		{
+			get
+			{
+				return this._DELETED_DATETIME;
+			}
+			set
+			{
+				if ((this._DELETED_DATETIME != value))
+				{
+					this._DELETED_DATETIME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DELETED_ID", DbType="Int")]
+		public System.Nullable<int> DELETED_ID
+		{
+			get
+			{
+				return this._DELETED_ID;
+			}
+			set
+			{
+				if ((this._DELETED_ID != value))
+				{
+					this._DELETED_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_NAME", DbType="NVarChar(250) NOT NULL", CanBeNull=false)]
+		public string PLAN_NAME
+		{
+			get
+			{
+				return this._PLAN_NAME;
+			}
+			set
+			{
+				if ((this._PLAN_NAME != value))
+				{
+					this._PLAN_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PLAN_ORDER_SEQ", DbType="SmallInt NOT NULL")]
+		public short PLAN_ORDER_SEQ
+		{
+			get
+			{
+				return this._PLAN_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._PLAN_ORDER_SEQ != value))
+				{
+					this._PLAN_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_NAME", DbType="NVarChar(250) NOT NULL", CanBeNull=false)]
+		public string PRODUCE_NAME
+		{
+			get
+			{
+				return this._PRODUCE_NAME;
+			}
+			set
+			{
+				if ((this._PRODUCE_NAME != value))
+				{
+					this._PRODUCE_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRODUCE_ORDER_SEQ", DbType="SmallInt NOT NULL")]
+		public short PRODUCE_ORDER_SEQ
+		{
+			get
+			{
+				return this._PRODUCE_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._PRODUCE_ORDER_SEQ != value))
+				{
+					this._PRODUCE_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_NAME", DbType="NVarChar(250) NOT NULL", CanBeNull=false)]
+		public string ACTIVITY_NAME
+		{
+			get
+			{
+				return this._ACTIVITY_NAME;
+			}
+			set
+			{
+				if ((this._ACTIVITY_NAME != value))
+				{
+					this._ACTIVITY_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ACTIVITY_ORDER_SEQ", DbType="SmallInt NOT NULL")]
+		public short ACTIVITY_ORDER_SEQ
+		{
+			get
+			{
+				return this._ACTIVITY_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._ACTIVITY_ORDER_SEQ != value))
+				{
+					this._ACTIVITY_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_NAME", DbType="NVarChar(120) NOT NULL", CanBeNull=false)]
+		public string BUDGET_TYPE_NAME
+		{
+			get
+			{
+				return this._BUDGET_TYPE_NAME;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE_NAME != value))
+				{
+					this._BUDGET_TYPE_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDGET_TYPE_ORDER_SEQ", DbType="Int")]
+		public System.Nullable<int> BUDGET_TYPE_ORDER_SEQ
+		{
+			get
+			{
+				return this._BUDGET_TYPE_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._BUDGET_TYPE_ORDER_SEQ != value))
+				{
+					this._BUDGET_TYPE_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_MASTER_ID", DbType="Int")]
+		public System.Nullable<int> EXPENSES_MASTER_ID
+		{
+			get
+			{
+				return this._EXPENSES_MASTER_ID;
+			}
+			set
+			{
+				if ((this._EXPENSES_MASTER_ID != value))
+				{
+					this._EXPENSES_MASTER_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_MASTER_NAME", DbType="NVarChar(120) NOT NULL", CanBeNull=false)]
+		public string EXPENSES_MASTER_NAME
+		{
+			get
+			{
+				return this._EXPENSES_MASTER_NAME;
+			}
+			set
+			{
+				if ((this._EXPENSES_MASTER_NAME != value))
+				{
+					this._EXPENSES_MASTER_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_NAME", DbType="NVarChar(120) NOT NULL", CanBeNull=false)]
+		public string EXPENSES_GROUP_NAME
+		{
+			get
+			{
+				return this._EXPENSES_GROUP_NAME;
+			}
+			set
+			{
+				if ((this._EXPENSES_GROUP_NAME != value))
+				{
+					this._EXPENSES_GROUP_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ORDER_SEQ", DbType="SmallInt NOT NULL")]
+		public short EXPENSES_GROUP_ORDER_SEQ
+		{
+			get
+			{
+				return this._EXPENSES_GROUP_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._EXPENSES_GROUP_ORDER_SEQ != value))
+				{
+					this._EXPENSES_GROUP_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_GROUP_ALLOCATE_GROUP_FLAG", DbType="SmallInt")]
+		public System.Nullable<short> EXPENSES_GROUP_ALLOCATE_GROUP_FLAG
+		{
+			get
+			{
+				return this._EXPENSES_GROUP_ALLOCATE_GROUP_FLAG;
+			}
+			set
+			{
+				if ((this._EXPENSES_GROUP_ALLOCATE_GROUP_FLAG != value))
+				{
+					this._EXPENSES_GROUP_ALLOCATE_GROUP_FLAG = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_NAME", DbType="NVarChar(120) NOT NULL", CanBeNull=false)]
+		public string EXPENSES_NAME
+		{
+			get
+			{
+				return this._EXPENSES_NAME;
+			}
+			set
+			{
+				if ((this._EXPENSES_NAME != value))
+				{
+					this._EXPENSES_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EXPENSES_ORDER_SEQ", DbType="SmallInt NOT NULL")]
+		public short EXPENSES_ORDER_SEQ
+		{
+			get
+			{
+				return this._EXPENSES_ORDER_SEQ;
+			}
+			set
+			{
+				if ((this._EXPENSES_ORDER_SEQ != value))
+				{
+					this._EXPENSES_ORDER_SEQ = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_FOR_TYPE", DbType="SmallInt")]
+		public System.Nullable<short> PROJECT_FOR_TYPE
+		{
+			get
+			{
+				return this._PROJECT_FOR_TYPE;
+			}
+			set
+			{
+				if ((this._PROJECT_FOR_TYPE != value))
+				{
+					this._PROJECT_FOR_TYPE = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_ID", DbType="Int")]
+		public System.Nullable<int> PROJECT_ID
+		{
+			get
+			{
+				return this._PROJECT_ID;
+			}
+			set
+			{
+				if ((this._PROJECT_ID != value))
+				{
+					this._PROJECT_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROJECT_NAME", DbType="NVarChar(200)")]
+		public string PROJECT_NAME
+		{
+			get
+			{
+				return this._PROJECT_NAME;
+			}
+			set
+			{
+				if ((this._PROJECT_NAME != value))
+				{
+					this._PROJECT_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AREA_ID", DbType="Int")]
+		public System.Nullable<int> AREA_ID
+		{
+			get
+			{
+				return this._AREA_ID;
+			}
+			set
+			{
+				if ((this._AREA_ID != value))
+				{
+					this._AREA_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_ID", DbType="Int")]
+		public System.Nullable<int> DEP_ID
+		{
+			get
+			{
+				return this._DEP_ID;
+			}
+			set
+			{
+				if ((this._DEP_ID != value))
+				{
+					this._DEP_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_NAME", DbType="NVarChar(190)")]
+		public string DEP_NAME
+		{
+			get
+			{
+				return this._DEP_NAME;
+			}
+			set
+			{
+				if ((this._DEP_NAME != value))
+				{
+					this._DEP_NAME = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_EXPENSES_GROUP_ID", DbType="NVarChar(11)")]
+		public string ALLOCATE_EXPENSES_GROUP_ID
+		{
+			get
+			{
+				return this._ALLOCATE_EXPENSES_GROUP_ID;
+			}
+			set
+			{
+				if ((this._ALLOCATE_EXPENSES_GROUP_ID != value))
+				{
+					this._ALLOCATE_EXPENSES_GROUP_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_PROJECT_ID", DbType="Int")]
+		public System.Nullable<int> ALLOCATE_PROJECT_ID
+		{
+			get
+			{
+				return this._ALLOCATE_PROJECT_ID;
+			}
+			set
+			{
+				if ((this._ALLOCATE_PROJECT_ID != value))
+				{
+					this._ALLOCATE_PROJECT_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
+		public System.Nullable<decimal> ALLOCATE_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._ALLOCATE_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._ALLOCATE_BUDGET_AMOUNT != value))
+				{
+					this._ALLOCATE_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_USE_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
+		public System.Nullable<decimal> DEP_USE_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._DEP_USE_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._DEP_USE_BUDGET_AMOUNT != value))
+				{
+					this._DEP_USE_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_REMAIN_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
+		public System.Nullable<decimal> DEP_REMAIN_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._DEP_REMAIN_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._DEP_REMAIN_BUDGET_AMOUNT != value))
+				{
+					this._DEP_REMAIN_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
+		public System.Nullable<decimal> ALLOCATE_OFF_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._ALLOCATE_OFF_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._ALLOCATE_OFF_BUDGET_AMOUNT != value))
+				{
+					this._ALLOCATE_OFF_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_USE_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
+		public System.Nullable<decimal> DEP_USE_OFF_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._DEP_USE_OFF_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._DEP_USE_OFF_BUDGET_AMOUNT != value))
+				{
+					this._DEP_USE_OFF_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DEP_REMAIN_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
+		public System.Nullable<decimal> DEP_REMAIN_OFF_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._DEP_REMAIN_OFF_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._DEP_REMAIN_OFF_BUDGET_AMOUNT != value))
+				{
+					this._DEP_REMAIN_OFF_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_GRP_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
+		public System.Nullable<decimal> ALLOCATE_GRP_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._ALLOCATE_GRP_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._ALLOCATE_GRP_BUDGET_AMOUNT != value))
+				{
+					this._ALLOCATE_GRP_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GRP_USE_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
+		public System.Nullable<decimal> GRP_USE_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._GRP_USE_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._GRP_USE_BUDGET_AMOUNT != value))
+				{
+					this._GRP_USE_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GRP_REMAIN_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
+		public System.Nullable<decimal> GRP_REMAIN_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._GRP_REMAIN_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._GRP_REMAIN_BUDGET_AMOUNT != value))
+				{
+					this._GRP_REMAIN_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ALLOCATE_GRP_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
+		public System.Nullable<decimal> ALLOCATE_GRP_OFF_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._ALLOCATE_GRP_OFF_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._ALLOCATE_GRP_OFF_BUDGET_AMOUNT != value))
+				{
+					this._ALLOCATE_GRP_OFF_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GRP_USE_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
+		public System.Nullable<decimal> GRP_USE_OFF_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._GRP_USE_OFF_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._GRP_USE_OFF_BUDGET_AMOUNT != value))
+				{
+					this._GRP_USE_OFF_BUDGET_AMOUNT = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GRP_REMAIN_OFF_BUDGET_AMOUNT", DbType="Decimal(20,2)")]
+		public System.Nullable<decimal> GRP_REMAIN_OFF_BUDGET_AMOUNT
+		{
+			get
+			{
+				return this._GRP_REMAIN_OFF_BUDGET_AMOUNT;
+			}
+			set
+			{
+				if ((this._GRP_REMAIN_OFF_BUDGET_AMOUNT != value))
+				{
+					this._GRP_REMAIN_OFF_BUDGET_AMOUNT = value;
+				}
 			}
 		}
 	}

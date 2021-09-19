@@ -31,6 +31,10 @@
                     <option ng-repeat="item in $settings.departments" value="{{item.DEP_ID}}">{{item.DEP_NAME}}</option>
                 </select>
             </div>
+            <div class="form-group col-12 col-md-3">
+                <label class="d-none d-md-block">&nbsp;</label>
+                <md-checkbox ng-model="$settings.formSearch.excludeReserveFlag" ng-true-value="'Y'" ng-false-value="'N'" ng-disabled="$settings.isLoading">เฉพาะที่จัดสรรให้ภูมิภาค</md-checkbox>
+            </div>
         </div>
         <div class="form-row">
             <div class="form-group col-12 col-md-3">
@@ -123,7 +127,8 @@
                     areaId: '@ViewBag.DefaultAreaId', depId: 'empty',
                     planId: 'empty', produceId: 'empty', activityId: 'empty',
                     budgetTypeId: 'empty', expensesGroupId: 'empty', expensesId: 'empty',
-                    budgetType: '@(ViewBag.PageType=="budget"?"1":"2")'
+                    budgetType: '@(ViewBag.PageType=="budget"?"1":"2")',
+                    excludeReserveFlag: 'N'
                 }
             };
 

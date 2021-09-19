@@ -18,6 +18,7 @@ namespace ExcisePlaning
         {
             // ไม่ต้องทำ Minify
             BundleTable.EnableOptimizations = false;
+            MvcHandler.DisableMvcResponseHeader = true;
 
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
@@ -26,5 +27,12 @@ namespace ExcisePlaning
             // ตรวจจับข้อผิดพลาดในระบบ และเขียนลงไฟล์
             GlobalFilters.Filters.Add(new CustomExceptionHandle());
         }
+
+        //protected void Application_PreSendRequestHeaders(object source, EventArgs e)
+        //{
+        //    Response.Headers.Remove("X-AspNetMvc-Version");
+        //    Response.Headers.Remove("X-Powered-By");
+        //    Response.Headers.Remove("Server");
+        //}
     }
 }

@@ -1,7 +1,7 @@
 ﻿<div id="appLogo" class="text-center text-white f-36 mt-4 mb-3">
     @*ซ่อน Logo ของระบบในกรณีที่แสดงผลบนอุปกรณ์ขนาดเล็ก*@
     <div class="d-none d-md-block">
-        <img src="@Url.Action("GetImage", "Resource", new { groupType = "third_party", filename = "leave-logo-main.png"})"
+        <img src="@Url.Action("GetImage", "Resource", new { groupType = "third_party", filename = "excise-planing-logo.webp"})"
              class="img img-fluid" alt="leave-logo-main.png" />
     </div>
 
@@ -76,6 +76,9 @@
             <span class="pcoded-mtext">ออกจากระบบ</span>
             <span class="pcoded-mcaret"></span>
         </a>
+    </li>
+    <li class=" ">
+        <div style="height:40px;">&nbsp;</div> @*เพื่อให้มองเห็นเมนูครบเมื่อเกิด Scrollbar*@
     </li>
 
     @*<li class="@("DASHBOARD_INDEX".Equals(ViewBag.pageKey) ? "active" : "")">

@@ -852,7 +852,7 @@ namespace ExcisePlaning.Controllers
                                 .Select(e => new
                                 {
                                     DATA_TYPE = "WITHDRAWAL",
-                                    CREATED_DATETIME = e.RESERVE_DATE.Value,
+                                    CREATED_DATETIME = e.WITHDRAWAL_DATE.Value, //e.RESERVE_DATE.Value,
                                     REFER_DOC_NO = e.RESERVE_ID,
                                     REMARK_TEXT = string.Format("{0} - {1}", e.RESERVE_ID, e.WITHDRAWAL_REMARK_TEXT), //string.Format("เบิกจ่าย - เลขที่เบิกจ่าย {0} ครั้งที่ {1}", e.WITHDRAWAL_CODE, e.WITHDRAWAL_SEQ_NO.Value),
                                     BUDGET_AMOUNT = e.WITHDRAWAL_AMOUNT.Value,

@@ -4,6 +4,19 @@
 }
 
 <div ng-controller="AppController">
+    <fw-scroll-fix-top add-width="15">
+        <div class="d-block w-100">
+            <div class="d-flex flex-row mb-1">
+                <div class="flex-grow">&nbsp;</div>
+                <div>
+                    <fw-execute-button text="บันทึก" ng-disabled="$settings.isLoading||$settings.formData.Items.length == 0"
+                                       on-loading="$settings.isSaving"
+                                       ng-click="submitSave($event)"
+                                       css-icon-class="ti-save" css-class="btn btn-primary btn-sm ml-1"></fw-execute-button>
+                </div>
+            </div>
+        </div>
+    </fw-scroll-fix-top>
     <div class="card card-block borderless-card shadow-sm m-0 mb-1">
         @*<div class="form-row">
                 <div class="form-group col-9 col-md-2 mb-1">
@@ -18,14 +31,6 @@
                                        css-icon-class="ti-save" css-class="btn btn-primary btn-sm float-md-right ml-1"></fw-execute-button>
                 </div>
             </div>*@
-        <div class="row border-bottom pb-1 mb-1">
-            <div class="col-12">
-                <fw-execute-button text="บันทึก" ng-disabled="$settings.isLoading||$settings.formData.Items.length == 0"
-                                   on-loading="$settings.isSaving"
-                                   ng-click="submitSave($event)"
-                                   css-icon-class="ti-save" css-class="btn btn-primary btn-sm float-md-right ml-1"></fw-execute-button>
-            </div>
-        </div>
 
         <div class="row border-bottom mb-1">
             <div class="col-12 col-md-4 border-right">

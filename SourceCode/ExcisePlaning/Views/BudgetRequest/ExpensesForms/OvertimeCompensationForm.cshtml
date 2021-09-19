@@ -6,16 +6,13 @@
     </md-toolbar>
     <md-dialog-content>
         <div class="md-dialog-content">
-            <fw-execute-button text="เพิ่มรายการ" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round"
-                               ng-click="addItem($event)" ng-disabled="$settings.isLoading"></fw-execute-button>
-            <span class="text-danger ml-2 float-md-right f-w-900">จำนวน {{$settings.formData.rows.length|number:0}} รายการ</span>
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <tr ng-if="$settings.formData.rows.length==0&&!$settings.isLoading">
                         <th colspan="12" class="text-center text-danger animated fadeIn">--- โปรดกดที่ปุ่ม "เพิ่มรายการ" ---</th>
                     </tr>
 
-                    <tr ng-repeat-start="row in $settings.formData.rows" class="d-none"></tr>
+                    <tr ng-repeat-start="row in $settings.formData.rows" ng-if="false"></tr>
                     <tr class="bg-dark">
                         <th style="width:75px;min-width:75px;max-width:75px;" class="text-center">ลำดับ</th>
                         <th style="width:auto;min-width:190px" class="text-left">ชื่อ - นามสกุล</th>
@@ -130,6 +127,9 @@
         </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
+        <fw-execute-button text="เพิ่มรายการ" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round"
+                           ng-click="addItem($event)" ng-disabled="$settings.isLoading"></fw-execute-button>
+        <span class="text-danger ml-2 float-md-right f-w-900">จำนวน {{$settings.formData.rows.length|number:0}} รายการ</span>
         <div ng-if="$settings.isLoading">
             <span class="text-danger f-w-900 animated fadeIn">กำลังจัดเตรียมแบบฟอร์ม ...</span>
         </div>

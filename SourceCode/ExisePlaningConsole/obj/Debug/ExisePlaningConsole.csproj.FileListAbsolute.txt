@@ -1,0 +1,10 @@
+D:\Environment_Owner\Developments\C#\ASP.NET\Planing-กรมสรรพสามิต\CSharpWebExcisePlaning\SourceCode\ExisePlaningConsole\bin\Debug\ExisePlaningConsole.exe.config
+D:\Environment_Owner\Developments\C#\ASP.NET\Planing-กรมสรรพสามิต\CSharpWebExcisePlaning\SourceCode\ExisePlaningConsole\bin\Debug\ExisePlaningConsole.exe
+D:\Environment_Owner\Developments\C#\ASP.NET\Planing-กรมสรรพสามิต\CSharpWebExcisePlaning\SourceCode\ExisePlaningConsole\bin\Debug\ExisePlaningConsole.pdb
+D:\Environment_Owner\Developments\C#\ASP.NET\Planing-กรมสรรพสามิต\CSharpWebExcisePlaning\SourceCode\ExisePlaningConsole\bin\Debug\EPPlus.dll
+D:\Environment_Owner\Developments\C#\ASP.NET\Planing-กรมสรรพสามิต\CSharpWebExcisePlaning\SourceCode\ExisePlaningConsole\bin\Debug\EPPlus.xml
+D:\Environment_Owner\Developments\C#\ASP.NET\Planing-กรมสรรพสามิต\CSharpWebExcisePlaning\SourceCode\ExisePlaningConsole\obj\Debug\ExisePlaningConsole.csprojAssemblyReference.cache
+D:\Environment_Owner\Developments\C#\ASP.NET\Planing-กรมสรรพสามิต\CSharpWebExcisePlaning\SourceCode\ExisePlaningConsole\obj\Debug\ExisePlaningConsole.csproj.CoreCompileInputs.cache
+D:\Environment_Owner\Developments\C#\ASP.NET\Planing-กรมสรรพสามิต\CSharpWebExcisePlaning\SourceCode\ExisePlaningConsole\obj\Debug\ExisePlaningConsole.csproj.CopyComplete
+D:\Environment_Owner\Developments\C#\ASP.NET\Planing-กรมสรรพสามิต\CSharpWebExcisePlaning\SourceCode\ExisePlaningConsole\obj\Debug\ExisePlaningConsole.exe
+D:\Environment_Owner\Developments\C#\ASP.NET\Planing-กรมสรรพสามิต\CSharpWebExcisePlaning\SourceCode\ExisePlaningConsole\obj\Debug\ExisePlaningConsole.pdb

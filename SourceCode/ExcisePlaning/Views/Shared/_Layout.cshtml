@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 @{
-    string fileVersion = "2021_08_12";
+    string fileVersion = "2021_08_31";
 }
 <html>
 <head>
@@ -27,7 +27,7 @@
     <link rel="preload" href="~/Third_Party/assets/icon/themify-icons/fonts/themify.woff?-fvbane" as="font" />
     <link rel="preload" href="~/Third_Party/assets/fonts/ionicons.ttf?v=2.0.0" as="font" />
 
-    <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/bootstrap/bootstrap.min.css")" as="style" />
+    <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/bootstrap/bootstrap.min.css")?@fileVersion" as="style" />
     <link rel="preload" href="@Url.Content("~/Third_Party/assets/css/style.min.css")?@fileVersion" as="style" />
 
     <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/jquery/js/jquery.min.js")?v01" as="script" />
@@ -39,11 +39,12 @@
     <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/angularjs/angular-cookies.min.js")" as="script" />
     <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/angularjs/angular-sanitize.min.js")" as="script" />
     <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/angular-material/angular-material.min.js")" as="script" />
+    <link rel="preload" href="@Url.Content("~/Third_Party/bower_components/popper.js/js/popper.min.js")" as="script" />
     <link rel="preload" href="@Url.Content("~/Third_Party/assets/js/angular.app.js")?@fileVersion" as="script" />
 
 
     @*Base style*@
-    <link rel="stylesheet" href="@Url.Content("~/Third_Party/bower_components/bootstrap/bootstrap.min.css")" media="screen" />
+    <link rel="stylesheet" href="@Url.Content("~/Third_Party/bower_components/bootstrap/bootstrap.min.css")?@fileVersion" media="screen" />
     <link rel="stylesheet" href="@Url.Content("~/Third_Party/assets/css/style.min.css")?@fileVersion" media="screen" />
 
     <link rel="stylesheet" href="@Url.Content("~/Third_Party/bower_components/jquery-ui/jquery-ui.min.css")" media="none" onload="if(media!='all')media='all'" />
@@ -148,13 +149,14 @@
                             <div class="clearfix"></div>
 
                             @*แสดงเนื้อหาของเว็บไซด์*@
-                            <div class="main-body mt-md-4">
+                            <div class="main-body mt-md-4" ng-app="leaveApp">
                                 <div class="page-wrapper">
                                     <div class="page-header">
                                         @Html.Partial("~/Views/Shared/_AppBreadcrumb.cshtml")
                                     </div>
-                                    <div class="page-body" ng-app="leaveApp">
+                                    <div class="page-body">
                                         @RenderBody()
+                                        <fw-goto-top></fw-goto-top>
                                     </div>
                                 </div>
                             </div>
@@ -181,8 +183,8 @@
 
 
     <script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/bootstrap/bootstrap.min.js")"></script>
-    <script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/jquery-ui/jquery-ui.min.js")"></script>
-    <script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/popper.js/js/popper.min.js")"></script>
+    @*<script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/jquery-ui/jquery-ui.min.js")"></script>*@
+    <script type="text/javascript" src="@Url.Content("~/Third_Party/bower_components/popper.js/js/popper.min.js")"></script>
     <script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/jquery-slimscroll/js/jquery.slimscroll.js")"></script>
 
     <script type="text/javascript" async src="@Url.Content("~/Third_Party/bower_components/modernizr/js/css-scrollbars.js")"></script>

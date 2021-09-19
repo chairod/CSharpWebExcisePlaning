@@ -5,60 +5,62 @@
 
 <div ng-controller="AppController">
     <div class="d-block shadow-sm m-0 mb-2 p-3">
-        <div class="form-row">
-            <div class="col-12 col-md-3">
-                <label class="require-field">ปี งปม. (พ.ศ.)<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.FiscalYear.ErrorMessages"></fw-validate-error-output></label>
-                <fw-input-mask model="$settings.formData.FiscalYear" mask="9999" change="fiscalYearChanged()" placeholder="ระบุปี พ.ศ."></fw-input-mask>
-            </div>
-            <div class="col-12 col-md-3">
-                <label class="require-field">งวดที่รัฐบาลจัดสรร<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ReceivePeriod.ErrorMessages"></fw-validate-error-output></label>
-                <fw-input-mask model="$settings.formData.ReceivePeriod" mask="99/9999" placeholder="เดือน/ปี (พ.ศ.)"></fw-input-mask>
-            </div>
-            @if ("off_budget".Equals(ViewBag.PageType))
-            {
+        <fw-scroll-fix-top add-width="50" subtract-left="15">
+            <div class="form-row">
                 <div class="col-12 col-md-3">
-                    <label class="d-none d-md-block">&nbsp;</label>
-                    <md-checkbox ng-model="$settings.formData.OffBudgetSpeadToExpenses" class="m-0" ng-true-value="1" ng-false-value="0" ng-disabled="$settings.isLoading||true">กระจายลงแต่ละรายการ คชจ.</md-checkbox>
-                    <span class="text-danger f-10">กระจายงบประมาณลงแต่ละรายการค่าใช้จ่าย ซึ่งการเลือก ตัวเลือกนี้ รายการค่าใช้จ่ายทุกตัวที่ต้องการ จัดสรรงบประมาณให้หน่วยงานภูมิภาค หรือ กันเงินงบประมาณ จะต้องมียอดเงินงบประมาณถึงจะสามารถทำรายการได้</span>
+                    <label class="require-field">ปี งปม. (พ.ศ.)<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.FiscalYear.ErrorMessages"></fw-validate-error-output></label>
+                    <fw-input-mask model="$settings.formData.FiscalYear" mask="9999" change="fiscalYearChanged()" placeholder="ระบุปี พ.ศ."></fw-input-mask>
                 </div>
                 <div class="col-12 col-md-3">
-                    <label class="d-none d-md-block">&nbsp;</label>
-                    <div class="d-flex float-md-right">
-                        <fw-execute-button text="บันทึก" css-icon-class="ti-save"
-                                           css-class="btn btn-primary btn-sm mr-1"
-                                           ng-click="submitSave($event)"
-                                           ng-disabled="$settings.isLoading||$settings.formView.expenses.length==0||!$settings.formView.editAble"
-                                           on-loading="$settings.isSaving"></fw-execute-button>
-                        <fw-execute-button text="ยกเลิก" css-icon-class="ion-close-circled"
-                                           css-class="btn btn-danger btn-sm"
-                                           ng-disabled="$settings.isLoading"
-                                           ng-click="submitSearch()"></fw-execute-button>
+                    <label class="require-field">งวดที่รัฐบาลจัดสรร<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ReceivePeriod.ErrorMessages"></fw-validate-error-output></label>
+                    <fw-input-mask model="$settings.formData.ReceivePeriod" mask="99/9999" placeholder="เดือน/ปี (พ.ศ.)"></fw-input-mask>
+                </div>
+                @if ("off_budget".Equals(ViewBag.PageType))
+                {
+                    <div class="col-12 col-md-3">
+                        <label class="d-none d-md-block">&nbsp;</label>
+                        <md-checkbox ng-model="$settings.formData.OffBudgetSpeadToExpenses" class="m-0" ng-true-value="1" ng-false-value="0" ng-disabled="$settings.isLoading||true">กระจายลงแต่ละรายการ คชจ.</md-checkbox>
+                        <span class="text-danger f-10">กระจายงบประมาณลงแต่ละรายการค่าใช้จ่าย ซึ่งการเลือก ตัวเลือกนี้ รายการค่าใช้จ่ายทุกตัวที่ต้องการ จัดสรรงบประมาณให้หน่วยงานภูมิภาค หรือ กันเงินงบประมาณ จะต้องมียอดเงินงบประมาณถึงจะสามารถทำรายการได้</span>
                     </div>
-                </div>
-            }
-            else
-            {
-                <div class="col-12 col-md-3">
-                    <label class="required-field">เลขที่เอกสาร<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ReferDocNo.ErrorMessages"></fw-validate-error-output></label>
-                    <fw-input-mask model="$settings.formData.ReferDocNo" disabled="$settings.isLoading" mask="9999999999" placeholder="เฉพาะตัวเลขไม่เกิน 10 หลัก"></fw-input-mask>
-                    <span class="text-danger f-12">เลขที่อ้างอิงในการรับเงินประจำงวดในแต่ละงวด</span>
-                </div>
-                <div class="col-12 col-md-3">
-                    <label class="d-none d-md-block">&nbsp;</label>
-                    <div class="d-flex float-md-right">
-                        <fw-execute-button text="บันทึก" css-icon-class="ti-save"
-                                           css-class="btn btn-primary btn-sm mr-1"
-                                           ng-click="submitSave($event)"
-                                           ng-disabled="$settings.isLoading||$settings.formView.expenses.length==0||!$settings.formView.editAble"
-                                           on-loading="$settings.isSaving"></fw-execute-button>
-                        <fw-execute-button text="ยกเลิก" css-icon-class="ion-close-circled"
-                                           css-class="btn btn-danger btn-sm"
-                                           ng-disabled="$settings.isLoading"
-                                           ng-click="submitSearch()"></fw-execute-button>
+                    <div class="col-12 col-md-3">
+                        <label class="d-none d-md-block">&nbsp;</label>
+                        <div class="d-flex float-md-right">
+                            <fw-execute-button text="บันทึก" css-icon-class="ti-save"
+                                               css-class="btn btn-primary btn-sm mr-1"
+                                               ng-click="submitSave($event)"
+                                               ng-disabled="$settings.isLoading||$settings.formView.expenses.length==0||!$settings.formView.editAble"
+                                               on-loading="$settings.isSaving"></fw-execute-button>
+                            <fw-execute-button text="ยกเลิก" css-icon-class="ion-close-circled"
+                                               css-class="btn btn-danger btn-sm"
+                                               ng-disabled="$settings.isLoading"
+                                               ng-click="submitSearch()"></fw-execute-button>
+                        </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+                else
+                {
+                    <div class="col-12 col-md-3">
+                        <label class="required-field">เลขที่เอกสาร<fw-validate-error-output css-class="ml-1" error-messages="$settings.formErrors.ReferDocNo.ErrorMessages"></fw-validate-error-output></label>
+                        <fw-input-mask model="$settings.formData.ReferDocNo" disabled="$settings.isLoading" mask="9999999999" placeholder="เฉพาะตัวเลขไม่เกิน 10 หลัก"></fw-input-mask>
+                        <span class="text-danger f-12">เลขที่อ้างอิงในการรับเงินประจำงวดในแต่ละงวด</span>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label class="d-none d-md-block">&nbsp;</label>
+                        <div class="d-flex float-md-right">
+                            <fw-execute-button text="บันทึก" css-icon-class="ti-save"
+                                               css-class="btn btn-primary btn-sm mr-1"
+                                               ng-click="submitSave($event)"
+                                               ng-disabled="$settings.isLoading||$settings.formView.expenses.length==0||!$settings.formView.editAble"
+                                               on-loading="$settings.isSaving"></fw-execute-button>
+                            <fw-execute-button text="ยกเลิก" css-icon-class="ion-close-circled"
+                                               css-class="btn btn-danger btn-sm"
+                                               ng-disabled="$settings.isLoading"
+                                               ng-click="submitSearch()"></fw-execute-button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </fw-scroll-fix-top>
     </div>
 
 
@@ -98,7 +100,7 @@
                             </td>
                             <td style="width:130px;min-width:130px;max-width:130px;" class="text-right">
                                 <a href="javascript:void(0)" ng-if="$settings.pageType == 'budget'" ng-click="showModalBudgetGroupByDep('BUDGET_ALLOCATE', 1)">{{$settings.formView.netAllocateBudgetToDepartmentAmounts|displayDecimal:2}}<span class="ti-new-window ml-1 text-primary"></span></a>
-                                <a href="javascript:void(0)" ng-if="$settings.pageType == 'off_budget'" ng-click="showModalBudgetGroupByDep('BUDGET_ALLOCATE', 2)" >{{$settings.formView.netAllocateOffBudgetToDepartmentAmounts|displayDecimal:2}}<span class="ti-new-window ml-1 text-primary"></span></a>
+                                <a href="javascript:void(0)" ng-if="$settings.pageType == 'off_budget'" ng-click="showModalBudgetGroupByDep('BUDGET_ALLOCATE', 2)">{{$settings.formView.netAllocateOffBudgetToDepartmentAmounts|displayDecimal:2}}<span class="ti-new-window ml-1 text-primary"></span></a>
                             </td>
                             <td style="width:130px;min-width:130px;max-width:130px;" class="text-right text-warning">
                                 <a href="javascript:void(0)" class="text-warning" ng-if="$settings.pageType == 'budget'" ng-click="showModalBudgetGroupByDep('BUDGET_RESERVE', 1)">{{$settings.formView.netReserveBudgetAmounts|displayDecimal:2}}<span class="ti-new-window ml-1 text-primary"></span></a>
@@ -117,7 +119,7 @@
                 </div>
 
                 @*ตัวกรองข้อมูล*@
-                <div class="position-fixed" style="z-index:100;top:68px;right:0px;" ng-if="$settings.formView.expenses.length > 0">
+                <div class="position-fixed" style="z-index:100;top:100px;right:0px;" ng-if="$settings.formView.expenses.length > 0">
                     <div class="container position-absolute align-middle"
                          style="left:210px;top:30px;width:250px;"
                          ng-class="{'animated fadeIn': $settings.isOpenSearch, 'animated fadeIn': !$settings.isOpenSearch}"

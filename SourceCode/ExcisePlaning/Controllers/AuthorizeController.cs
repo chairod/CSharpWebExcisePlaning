@@ -307,7 +307,7 @@ namespace ExcisePlaning.Controllers
                     EmpCode = empEntity.PERSON_CODE,
                     DefaultFiscalYear = AppUtils.GetCurrYear(),
                     EmpId = empEntity.PERSON_ID,
-                    EmpFullname = string.Format("{0}{1} {2}", empEntity.PREFIX_NAME, empEntity.FIRST_NAME, empEntity.LAST_NAME),
+                    EmpFullname = string.Format("{0} {1}", empEntity.FIRST_NAME, empEntity.LAST_NAME),
                     PositionId = empEntity.POSITION_ID,
                     PositionName = null == positionEntity ? "" : positionEntity.POSITION_NAME,
                     PersonTypeId = empEntity.PERSON_TYPE_ID,

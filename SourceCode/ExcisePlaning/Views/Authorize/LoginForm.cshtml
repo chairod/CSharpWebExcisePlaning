@@ -1,4 +1,6 @@
-﻿
+﻿@{
+    string fileVersion = "2021_08_14";
+}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,8 +9,8 @@
     <!-- HTML5 Shim and Respond.js IE9 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-      <script src="@Url.Content("~/Third_Party/assets/pages/html5shiv.js")"></script>
-      <script src="@Url.Content("~/Third_Party/assets/pages/respond.min.js")"></script>
+      <script src="~/Third_Party/assets/pages/html5shiv.js"></script>
+      <script src="~/Third_Party/assets/pages/respond.min.js"></script>
       <![endif]-->
     <!-- Meta -->
     <meta charset="utf-8">
@@ -23,7 +25,7 @@
     <link href="https://fonts.googleapis.com/css?family=Mada:300,400,500,600,700" rel="stylesheet">
 
     <link rel="preload" href="~/Third_Party/bower_components/bootstrap/bootstrap.min.css" as="style" />
-    <link rel="preload" href="~/Third_Party/assets/css/style.min.css?v02" as="style" />
+    <link rel="preload" href="~/Third_Party/assets/css/style.min.css?@fileVersion" as="style" />
     <link rel="preload" href="~/Third_Party/bower_components/jquery/js/jquery.min.js" as="script" />
     <link rel="preload" href="~/Third_Party/assets/fonts/CSChatThaiUI.ttf" as="font" />
 
@@ -31,8 +33,8 @@
     <link rel="stylesheet" href="~/Third_Party/bower_components/bootstrap/bootstrap.min.css" media="screen" />
     <link rel="stylesheet" href="~/Third_Party/bower_components/jquery-ui/jquery-ui.min.css" media="none" onload="if(media!='all')media='all'" />
     <link rel="stylesheet" href="~/Third_Party/bower_components/animate.css/css/animate.css" media="none" onload="if(media!='all')media='all'" />
-    <link rel="stylesheet" href="~/Third_Party/assets/css/style.min.css?v02" media="screen" />
-
+    <link rel="stylesheet" href="~/Third_Party/assets/css/style.min.css?@fileVersion" media="screen" />
+    <link href="~/Third_Party/assets/css/ionicons.css" rel="stylesheet" media="none" onload="if(media!='all')media='all'" />
 
     @*@Styles.Render("~/content/css")*@
     <style>
@@ -47,6 +49,64 @@
         .f-color {
             color: #5b5b5b !important;
         }
+
+        #info {
+            width: 100%;
+            max-width: 330px;
+            z-index: 1;
+            transition: 1s;
+            left: 0;
+            @*background-image: url('@Html.Raw(@Url.Action("GetImage", "Resource", new { groupType = "third_party", filename = "pattern.webp"}))');
+            background-repeat: repeat-y;
+            background-size:contain;*@
+        }
+
+            #info span.ion-close-round {
+                transition: 1.2s;
+                opacity: 1;
+                -webkit-opacity: 1;
+                display: block;
+            }
+
+            #info span.ion-chevron-right {
+                display: none;
+                transition: 1.2s;
+                opacity: 0;
+                -webkit-opacity: 0;
+            }
+
+
+        .info-hide {
+            transition: 1s;
+            left: -330px !important;
+        }
+
+            .info-hide span.ion-close-round {
+                transform: rotate(180deg);
+                transition: opacity 1.2s;
+                opacity: 0 !important;
+                -webkit-opacity: 0 !important;
+            }
+
+            .info-hide span.ion-chevron-right {
+                transition: opacity 1.2s 1s;
+                opacity: 1 !important;
+                -webkit-opacity: 1 !important;
+                animation-name: span_scaleIn;
+                animation-duration: 0.5s;
+            }
+
+        @@keyframes span_scaleIn {
+            0% {
+                opacity: 0;
+                transform: scale(3);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
 
@@ -54,20 +114,27 @@
 
     <section class="login p-fixed d-flex text-center common-img-bg">
         @*ข่าวประกาศ*@
-        <div class="position-fixed h-100 shadow border-0 d-none d-md-block bg-white" style="width:100%;max-width:350px;">
+        <div class="position-fixed h-100 shadow border-0 bg-white" id="info">
             <h1 class="f-w-900 f-20 p-3 text-white" style="background-color:#000;">กรมสรรพสามิต</h1>
-            <div class="p-3 text-left">
-                <div class="f-w-900 border-bottom mb-2 pb-2">ระบบบริหารจัดการงบประมาณ</div>
-                <ul>
-                    <li class="mb-2 f-16">ขั้นตอนการใช้งานระบบ</li>
-                    <li class="mb-2">A. ระบบจะเชื่อมต่อผู้ใช้งานกับ SSO ของกรมสรรพสามิต</li>
-                    <li class="mb-2">B. การเข้าใช้งานในครั้งแรกระบบจะนำ ผู้ใช้งาน ไปยังหน้ากรอกข้อมูลส่วนบุคคล เพื่อยืนยันข้อมูลก่อนใช้ระบบ</li>
-                    <li class="mb-2">C. <strong>หากยังทำขั้นตอน B ไม่สมบูรณ์</strong>&nbsp;ระบบจะนำ ผู้ใช้งานไปยังหน้ากรอกข้อมูลส่วนบุคคล</li>
-                </ul>
-            </div>
+            <div class="p-0 m-0  overflow-auto h-100">
+                <div class="position-absolute f-16 p-3 text-white f-w-900" style="background-color:#000;top:0;right:-40px;min-width:35px;">
+                    <span class="cursor-pointer ion-close-round" id="toggle" onClick="toggleInfo()"></span>
+                    <span class="cursor-pointer ion-chevron-right" id="toggle" onClick="toggleInfo()"></span>
+                </div>
+                <div class="p-3 text-left">
+                    <div class="f-w-900 border-bottom mb-2 pb-2">ระบบบริหารจัดการงบประมาณ</div>
+                    <ul>
+                        <li class="mb-2 f-16">ขั้นตอนการใช้งานระบบ</li>
+                        <li class="mb-2">A. ระบบจะเชื่อมต่อผู้ใช้งานกับ SSO ของกรมสรรพสามิต</li>
+                        <li class="mb-2">B. การเข้าใช้งานในครั้งแรกระบบจะนำ ผู้ใช้งาน ไปยังหน้ากรอกข้อมูลส่วนบุคคล เพื่อยืนยันข้อมูลก่อนใช้ระบบ</li>
+                        <li class="mb-2">C. <strong>หากยังทำขั้นตอน B ไม่สมบูรณ์</strong>&nbsp;ระบบจะนำ ผู้ใช้งานไปยังหน้ากรอกข้อมูลส่วนบุคคล</li>
+                    </ul>
+                </div>
 
-            <div class="mt-5">
-                <a href="@Url.Action("GetManual", "Resource")" target="_blank" class="f-w-900 f-16 text-primary"><span class="mr-2">>></span>ดาวน์โหลดคู่มือ<span class="ml-2"><<</span></a>
+                <div class="mt-5">
+                    <a href="@Url.Action("GetManual", "Resource")" target="_blank" class="f-w-900 f-16 text-primary"><span class="mr-2">>></span>ดาวน์โหลดคู่มือ<span class="ml-2"><<</span></a>
+                </div>
+                <div style="height:200px">&nbsp;</div>@*กรณีเกิด Scrollbar มองไม่เห็นปุ่มดาวน์โหลด*@
             </div>
         </div>
 
@@ -79,7 +146,7 @@
                     <!-- Authentication card start -->
                     <div class="login-card card-block auth-body m-auto animated swing">
                         <div class="block text-center mb-md-n5">
-                            <img src="@Url.Action("GetImage", "Resource", new { groupType = "third_party", filename = "excise-planing-logo.png"})" class="img-fluid" style="max-width:90px;" alt="avatar-2.png">
+                            <img src="@Url.Action("GetImage", "Resource", new { groupType = "third_party", filename = "excise-planing-logo.webp"})" class="img-fluid" style="max-width:90px;" alt="avatar-2.png">
                         </div>
                         <form class="md-float-material" method="post" action="@Url.Action("LoginForm", "Authorize")">
                             <div class="auth-box auth-bg shadow rounded">
@@ -170,24 +237,36 @@
     <!-- Warning Section Ends -->
     <!-- Required Jquery -->
     <script type="text/javascript" src="~/Third_Party/bower_components/jquery/js/jquery.min.js"></script>
-    <script type="text/javascript" async src="~/Third_Party/bower_components/jquery-ui/jquery-ui.min.js"></script>
-    <script type="text/javascript" async src="~/Third_Party/bower_components/popper.js/js/popper.min.js"></script>
-    <script type="text/javascript" async src="~/Third_Party/bower_components/bootstrap/bootstrap.min.js"></script>
-    <!-- jquery slimscroll js -->
-    <script type="text/javascript" async src="~/Third_Party/bower_components/jquery-slimscroll/js/jquery.slimscroll.js"></script>
-    <!-- modernizr js -->
-    <script type="text/javascript" async src="~/Third_Party/bower_components/modernizr/js/modernizr.js"></script>
-    <script type="text/javascript" async src="~/Third_Party/bower_components/modernizr/js/css-scrollbars.js"></script>
+    @*<script type="text/javascript" async src="~/Third_Party/bower_components/jquery-ui/jquery-ui.min.js"></script>
+            <script type="text/javascript" async src="~/Third_Party/bower_components/popper.js/js/popper.min.js"></script>
+        <script type="text/javascript" async src="~/Third_Party/bower_components/bootstrap/bootstrap.min.js"></script>
+        <script type="text/javascript" async src="~/Third_Party/bower_components/jquery-slimscroll/js/jquery.slimscroll.js"></script>
+        <script type="text/javascript" async src="~/Third_Party/bower_components/modernizr/js/modernizr.js"></script>
+            <script type="text/javascript" async src="~/Third_Party/bower_components/modernizr/js/css-scrollbars.js"></script>*@
+    <script type="text/javascript" src="~/Third_Party/assets/js/client.min.js"></script>
 
     <script type="text/javascript">
+
         window.setTimeout(function () {
             $('#userName').focus();
-            $('.auth-body').addClass('auth-body-show');
         }, 200);
 
         function showMessage() {
             $('#message').text('กำลังตรวจสอบสิทธิ์ โปรดรอสักครู่ ...')
         };
+
+        function toggleInfo() {
+            $('#info').toggleClass('info-hide');
+            setTimeout(function () {
+                $('#info span.ion-close-round').toggleClass('d-none');
+                $('#info span.ion-chevron-right').toggleClass('d-block');
+            }, 900);
+        }
+
+        var client = new ClientJS();
+        if (client.isMobile()) {
+            toggleInfo();
+        }
     </script>
 </body>
 

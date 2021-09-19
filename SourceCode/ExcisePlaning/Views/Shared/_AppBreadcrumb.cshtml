@@ -8,8 +8,14 @@
                 {
                     <span class="ml-2 d-none d-md-inline-block" style="font-weight:normal;">[@ViewBag.PersonFullname]</span>
                 }
+
+                @*แสดงคำอธิบายหน้าจอ*@
+                @if (!string.IsNullOrEmpty(ViewBag.PageDescription))
+                {
+                    <fw-tooltip title="@ViewBag.PageDescription" font-size="20"></fw-tooltip>
+                }
             </div>
-        <div class="d-inline-block d-md-inline-block f-14 ml-md-2">@ViewBag.PageDescription</div>
+        @*<div class="d-inline-block d-md-inline-block f-14 ml-md-2">@ViewBag.PageDescription</div>*@
 
         @*Breacrump*@
         <div class="d-none d-md-block mt-0 mt-md-1">

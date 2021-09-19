@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="ExcisePlaningDb">
+  <DataContextMoniker Name="/ExcisePlaningDbDataContext" />
+  <nestedChildShapes>
+    <classShape Id="fb1b340c-17f8-4867-86cb-635d400e1c84" absoluteBounds="3.25, 0.875, 2, 2.5401025390625">
+      <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_PERSONNEL_SSO_PREPARE" />
+      <nestedChildShapes>
+        <elementListCompartment Id="c7439fe2-2ad1-47a7-80fc-113ea0dbb99a" absoluteBounds="3.2649999999999997, 1.335, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="77b3e3cf-b210-46c6-966b-0feeefa98f03" absoluteBounds="6.625, 2.625, 2, 3.5016097005208326">
+      <DataClassMoniker Name="/ExcisePlaningDbDataContext/T_DEPARTMENT" />
+      <nestedChildShapes>
+        <elementListCompartment Id="d2c4a7da-9538-418e-a886-04356f638c5f" absoluteBounds="6.64, 3.085, 1.9700000000000002, 2.941609700520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

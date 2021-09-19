@@ -625,6 +625,20 @@ namespace ExcisePlaning.Classes
         /// รายงานรายละเอียดของรายการค่าใช้จ่าย ที่หน่วยงานระบุ เพื่อส่งคำขอ งบประมาณ
         /// </summary>
         public static string MENU_CONST_REPORT_BUDGET_REQUEST_EXPENSES_DETAIL = "REPORT_BUDGET_REQUEST_EXPENSES_DETAIL_MENU";
+
+        /// <summary>
+        /// ค่าคงที่นี้มาจากตาราง T_MENU.MENU_CONST จะต้องกำหนดให้ตรงกัน<para/>
+        /// เพื่อใช้ในการ Mapping หาชื่อเมนู<para/>
+        /// R014-รายงานจัดการเงินงบประมาณ
+        /// </summary>
+        public static string MENU_CONST_REPORT_SUMMARY_RECEIVE_BUDGET_MENU = "REPORT_SUMMARY_RECEIVE_BUDGET_MENU";
+
+        /// <summary>
+        /// ค่าคงที่นี้มาจากตาราง T_MENU.MENU_CONST จะต้องกำหนดให้ตรงกัน<para/>
+        /// เพื่อใช้ในการ Mapping หาชื่อเมนู<para/>
+        /// R015-รายงานจัดการเงินนอกงบประมาณ
+        /// </summary>
+        public static string MENU_CONST_REPORT_SUMMARY_RECEIVE_OFF_BUDGET_MENU = "REPORT_SUMMARY_RECEIVE_OFF_BUDGET_MENU";
     }
 
 

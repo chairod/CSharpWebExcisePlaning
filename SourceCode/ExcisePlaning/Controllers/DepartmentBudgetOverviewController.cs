@@ -140,14 +140,22 @@ namespace ExcisePlaning.Controllers
                 var userAuthorizeProfile = UserAuthorizeProperty.GetUserAuthorizeProfile(HttpContext.User.Identity.Name);
                 var exprBudgetExpenses = db.V_GET_DEPARTMENT_EXPENSES_BUDGET_INFORMATIONs.Where(e => e.YR.Equals(fiscalYear) && e.ACTIVE.Equals(1));
 
-                // ตรวจสอบการเข้าถึงข้อมูลของหน่วยงาน
-                // 1. กรณีไม่เลือกหน่วยงาน ให้ใช้ข้อมูล Profile กรองข้อมูลตามสิทธิ์
-                // 2. กรณีเลือกหน่วยงาน ให้ดูสิทธิ์การเข้าถึงข้อมูลของหน่วยงาน ที่เลือก
-                var depFilterAuthorize = DepartmentAuthorizeFilterProperty.Verfity(userAuthorizeProfile, depId);
-                if (depFilterAuthorize.Authorize.Equals(2))
-                    exprBudgetExpenses = exprBudgetExpenses.Where(e => depFilterAuthorize.AssignDepartmentIds.Contains(e.DEP_ID));
-                if (null != areaId && null == depId)
-                    exprBudgetExpenses = exprBudgetExpenses.Where(e => e.AREA_ID.Equals(areaId));
+                // หน่วยงานกลาง
+                if (userAuthorizeProfile.DepAuthorize.Equals(1))
+                {
+                    if (null != areaId)
+                        exprBudgetExpenses = exprBudgetExpenses.Where(e => e.AREA_ID.Equals(areaId));
+                    if (null != depId)
+                        exprBudgetExpenses = exprBudgetExpenses.Where(e => e.DEP_ID.Equals(depId));
+                }
+                else // หน่วยงานทั่วไป
+                {
+                    exprBudgetExpenses = exprBudgetExpenses.Where(e => e.AREA_ID.Equals(userAuthorizeProfile.AreaId));
+                    var depAuthorize = DepartmentAuthorizeFilterProperty.Verfity(userAuthorizeProfile, userAuthorizeProfile.DepId);
+                    exprBudgetExpenses = exprBudgetExpenses.Where(e => depAuthorize.AssignDepartmentIds.Contains(e.DEP_ID));
+                    if (null != depId)
+                        exprBudgetExpenses = exprBudgetExpenses.Where(e => e.DEP_ID.Equals(depId));
+                }
 
                 if (null != planId)
                     exprBudgetExpenses = exprBudgetExpenses.Where(e => e.PLAN_ID.Equals(planId));

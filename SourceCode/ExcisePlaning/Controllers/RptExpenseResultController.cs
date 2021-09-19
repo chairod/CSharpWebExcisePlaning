@@ -15,7 +15,7 @@ using System.Web.Mvc;
 namespace ExcisePlaning.Controllers
 {
     /// <summary>
-    /// สรุปผลการใช้จ่ายงบประมาณ ที่จัดสรรให้กับหน่วยงานภูมิภาค
+    /// สรุปผลการใช้จ่ายงบประมาณ ของหน่วยงานภูมิภาค และ การเบิกจ่ายรายการกันเงิน
     /// 
     /// R011-รายงานผลการใช้จ่ายเงินนอกงบประมาณประจำปี
     /// R012-รายงานผลการใช้จ่ายเงินงบประมาณประจำปี
@@ -123,8 +123,9 @@ namespace ExcisePlaning.Controllers
         /// <param name="expensesGroupId"></param>
         /// <param name="expensesId"></param>
         /// <param name="budgetType">1 = เงินงบ, 2 = เงินนอกงบ</param>
+        /// <param name="excludeReserveFlag">Y = ค้นหาเฉพาะที่จัดสรรให้ภูมิภาค</param>
         /// <returns></returns>
-        public ActionResult Retrieve(int fiscalYear, int? areaId, int? depId, int? planId, int? produceId, int? activityId, int? budgetTypeId, int? expensesGroupId, int? expensesId, int budgetType)
+        public ActionResult Retrieve(int fiscalYear, int? areaId, int? depId, int? planId, int? produceId, int? activityId, int? budgetTypeId, int? expensesGroupId, int? expensesId, int budgetType, string excludeReserveFlag)
         {
             Dictionary<string, string> res = new Dictionary<string, string>(3) {
                 { "filename", null },
@@ -133,32 +134,71 @@ namespace ExcisePlaning.Controllers
             };
 
             var usrAuthorizeProfile = UserAuthorizeProperty.GetUserAuthorizeProfile(HttpContext.User.Identity.Name);
-            var depFilterAuthorize = DepartmentAuthorizeFilterProperty.Verfity(usrAuthorizeProfile, depId);
-
             using (ExcisePlaningDbDataContext db = new ExcisePlaningDbDataContext())
             {
-                var expr = db.V_GET_SUMMARY_BUDGET_ALLOCATEs.Where(e => e.ACTIVE.Equals(1)
-                    && e.YR.Equals(fiscalYear)
-                    && (e.PROJECT_FOR_TYPE == null || (e.PROJECT_FOR_TYPE != null && e.PROJECT_FOR_TYPE.Value.Equals(budgetType))));
-                if (depFilterAuthorize.Authorize.Equals(2))
-                    expr = expr.Where(e => (e.DEP_ID != null && depFilterAuthorize.AssignDepartmentIds.Contains(e.DEP_ID.Value)) || e.DEP_ID == null);
-                if (null != areaId && depId == null)
-                    expr = expr.Where(e => e.AREA_ID == null || (e.AREA_ID != null && e.AREA_ID.Equals(areaId)));
+                var expr = db.V_GET_SUMMARY_BUDGET_ALLOCATEs.Where(e => e.ACTIVE.Equals(1) && e.YR.Equals(fiscalYear));
+
+                var appSettings = AppSettingProperty.ParseXml();
+                var exprReserve = db.V_GET_BUDGET_RESERVE_INFORMATIONs.Where(e => e.ACTIVE.Equals(1) && e.YR.Equals(fiscalYear));
+                if (null != areaId && appSettings.GetAreaIdsCanReserveBudgetToList().IndexOf(areaId.Value) == -1)
+                    exprReserve = exprReserve.Where(e => 1 == 2);
+
+
+                // ถ้าเป็นส่วนกลาง
+                if (usrAuthorizeProfile.DepAuthorize.Equals(1))
+                {
+                    if (null != areaId)
+                        expr = expr.Where(e => e.AREA_ID == null || (e.AREA_ID != null && e.AREA_ID.Equals(areaId)));
+                    if (null != depId)
+                    {
+                        expr = expr.Where(e => e.DEP_ID == null || (e.DEP_ID != null && e.DEP_ID.Equals(depId)));
+                        exprReserve = exprReserve.Where(e => e.DEP_ID.Equals(depId));
+                    }
+                }
+                else // หน่วยงานทั่วไป
+                {
+                    expr = expr.Where(e => e.AREA_ID == null || (e.AREA_ID != null && e.AREA_ID.Equals(usrAuthorizeProfile.AreaId)));
+                    var depAuthorize = DepartmentAuthorizeFilterProperty.Verfity(usrAuthorizeProfile, usrAuthorizeProfile.DepId);
+                    expr = expr.Where(e => e.DEP_ID == null || (e.DEP_ID != null && depAuthorize.AssignDepartmentIds.Contains(e.DEP_ID.Value)));
+                    if (null != depId)
+                    {
+                        expr = expr.Where(e => e.DEP_ID == null || (e.DEP_ID != null && e.DEP_ID.Equals(depId)));
+                        exprReserve = exprReserve.Where(e => e.DEP_ID.Equals(depId));
+                    }
+                }
 
                 if (null != planId)
+                {
                     expr = expr.Where(e => e.PLAN_ID.Equals(planId));
+                    exprReserve = exprReserve.Where(e => e.PLAN_ID.Equals(planId));
+                }
                 if (null != produceId)
+                {
                     expr = expr.Where(e => e.PRODUCE_ID.Equals(produceId));
+                    exprReserve = exprReserve.Where(e => e.PRODUCE_ID.Equals(produceId));
+                }
                 if (null != activityId)
+                {
                     expr = expr.Where(e => e.ACTIVITY_ID.Equals(activityId));
+                    exprReserve = exprReserve.Where(e => e.ACTIVITY_ID.Equals(activityId));
+                }
                 if (null != budgetTypeId)
+                {
                     expr = expr.Where(e => e.BUDGET_TYPE_ID.Equals(budgetTypeId));
+                    exprReserve = exprReserve.Where(e => e.BUDGET_TYPE_ID.Equals(budgetTypeId));
+                }
                 if (null != expensesGroupId)
+                {
                     expr = expr.Where(e => e.EXPENSES_GROUP_ID.Equals(expensesGroupId));
+                    exprReserve = exprReserve.Where(e => e.EXPENSES_GROUP_ID.Equals(expensesGroupId));
+                }
                 if (null != expensesId)
+                {
                     expr = expr.Where(e => e.EXPENSES_ID.Equals(expensesId));
+                    exprReserve = exprReserve.Where(e => e.EXPENSES_ID.Equals(expensesId));
+                }
 
-                if (!expr.Any())
+                if (!expr.Any() && !exprReserve.Any())
                 {
                     res["errorText"] = "ไม่พบข้อมูล";
                     return Json(res, JsonRequestBehavior.DenyGet);
@@ -191,6 +231,7 @@ namespace ExcisePlaning.Controllers
                     e.EXPENSES_ORDER_SEQ,
                     e.PROJECT_ID,
                     e.PROJECT_NAME,
+                    e.ALLOCATE_PROJECT_ID, // รหัสโครงการที่จัดสรรลงให้กับหน่วยงานภูมิภาค ใช้ในกรณีที่จัดสรรแล้วมีการเพิ่มโครงการในภายหลัง
 
                     e.ALLOCATE_BUDGET_AMOUNT,
                     e.DEP_USE_BUDGET_AMOUNT,
@@ -209,6 +250,59 @@ namespace ExcisePlaning.Controllers
                     e.GRP_USE_OFF_BUDGET_AMOUNT,
                     e.GRP_REMAIN_OFF_BUDGET_AMOUNT
                 }).AsEnumerable();
+
+
+                // เบิกจ่ายรายการกันเงิน
+                if ("N".Equals(excludeReserveFlag))
+                {
+                    short? defaultAllowGroupFlag = 0;
+                    decimal? defaultDecimal = 0;
+                    primaryExpr = primaryExpr.Concat(exprReserve.Select(e => new
+                    {
+                        e.DEP_ID,
+                        e.PLAN_ID,
+                        e.PLAN_NAME,
+                        PLAN_ORDER_SEQ = e.PLAN_ORDER_SEQ.Value,
+                        e.PRODUCE_ID,
+                        e.PRODUCE_NAME,
+                        PRODUCE_ORDER_SEQ = e.PRODUCE_ORDER_SEQ.Value,
+                        e.ACTIVITY_ID,
+                        e.ACTIVITY_NAME,
+                        ACTIVITY_ORDER_SEQ = e.ACTIVITY_ORDER_SEQ.Value,
+                        e.BUDGET_TYPE_ID,
+                        e.BUDGET_TYPE_NAME,
+                        e.BUDGET_TYPE_ORDER_SEQ,
+                        e.EXPENSES_MASTER_ID,
+                        e.EXPENSES_MASTER_NAME,
+                        e.EXPENSES_GROUP_ID,
+                        e.EXPENSES_GROUP_NAME,
+                        e.EXPENSES_GROUP_ORDER_SEQ,
+                        EXPENSES_GROUP_ALLOCATE_GROUP_FLAG = defaultAllowGroupFlag,
+                        e.EXPENSES_ID,
+                        e.EXPENSES_NAME,
+                        EXPENSES_ORDER_SEQ = e.EXPENSES_ORDER_SEQ.Value,
+                        e.PROJECT_ID,
+                        e.PROJECT_NAME,
+                        ALLOCATE_PROJECT_ID = e.PROJECT_ID, // รหัสโครงการที่จัดสรรลงให้กับหน่วยงานภูมิภาค ใช้ในกรณีที่จัดสรรแล้วมีการเพิ่มโครงการในภายหลัง
+
+                        ALLOCATE_BUDGET_AMOUNT = e.BUDGET_TYPE.Equals(1) ? e.RESERVE_BUDGET_AMOUNT : defaultDecimal,
+                        DEP_USE_BUDGET_AMOUNT = e.BUDGET_TYPE.Equals(1) ? e.USE_AMOUNT : defaultDecimal,
+                        DEP_REMAIN_BUDGET_AMOUNT = e.BUDGET_TYPE.Equals(1) ? e.REMAIN_AMOUNT : defaultDecimal,
+
+                        ALLOCATE_OFF_BUDGET_AMOUNT = e.BUDGET_TYPE.Equals(2) ? e.RESERVE_BUDGET_AMOUNT : defaultDecimal,
+                        DEP_USE_OFF_BUDGET_AMOUNT = e.BUDGET_TYPE.Equals(2) ? e.USE_AMOUNT : defaultDecimal,
+                        DEP_REMAIN_OFF_BUDGET_AMOUNT = e.BUDGET_TYPE.Equals(2) ? e.REMAIN_AMOUNT : defaultDecimal,
+
+                        ALLOCATE_EXPENSES_GROUP_ID = e.RESERVE_ID,
+                        ALLOCATE_GRP_BUDGET_AMOUNT = defaultDecimal,
+                        GRP_USE_BUDGET_AMOUNT = defaultDecimal,
+                        GRP_REMAIN_BUDGET_AMOUNT = defaultDecimal,
+
+                        ALLOCATE_GRP_OFF_BUDGET_AMOUNT = defaultDecimal,
+                        GRP_USE_OFF_BUDGET_AMOUNT = defaultDecimal,
+                        GRP_REMAIN_OFF_BUDGET_AMOUNT = defaultDecimal
+                    }).AsEnumerable());
+                }
 
                 // จัดกลุ่ม งบรายจ่าย กลุ่มหมวดแผนงาน หมวดแผนงาน ค่าใช้จ่าย โครงการ
                 // สำหรับเตรียมเขียนค่าลงไฟล์ XLS
@@ -289,7 +383,7 @@ namespace ExcisePlaning.Controllers
                                                             && m.PRODUCE_ID.Equals(x.Key.PRODUCE_ID)
                                                             && m.ACTIVITY_ID.Equals(y.Key.ACTIVITY_ID)
                                                             && m.BUDGET_TYPE_ID.Equals(budgetTypeItem.BUDGET_TYPE_ID))
-                                                    .Select(m => new
+                                                    .GroupBy(m => new
                                                     {
                                                         m.DEP_ID,
                                                         m.PLAN_ID,
@@ -299,7 +393,8 @@ namespace ExcisePlaning.Controllers
                                                         m.EXPENSES_MASTER_ID,
                                                         m.EXPENSES_GROUP_ID,
                                                         m.EXPENSES_ID,
-                                                        m.PROJECT_ID,
+                                                        m.ALLOCATE_PROJECT_ID,
+                                                        m.ALLOCATE_EXPENSES_GROUP_ID,
                                                         ALLOCATE_AMOUNT = budgetType.Equals(1) ? m.ALLOCATE_BUDGET_AMOUNT : m.ALLOCATE_OFF_BUDGET_AMOUNT,
                                                         REPORTED_AMOUNT = budgetType.Equals(1) ? m.DEP_USE_BUDGET_AMOUNT : m.DEP_USE_OFF_BUDGET_AMOUNT,
                                                         REMAIN_AMOUNT = budgetType.Equals(1) ? m.DEP_REMAIN_BUDGET_AMOUNT : m.DEP_REMAIN_OFF_BUDGET_AMOUNT,
@@ -307,7 +402,7 @@ namespace ExcisePlaning.Controllers
                                                         ALLOCATE_GRP_AMOUNT = budgetType.Equals(1) ? m.ALLOCATE_GRP_BUDGET_AMOUNT : m.ALLOCATE_GRP_OFF_BUDGET_AMOUNT,
                                                         GRP_REPORTED_AMOUNT = budgetType.Equals(1) ? m.GRP_USE_BUDGET_AMOUNT : m.GRP_USE_OFF_BUDGET_AMOUNT,
                                                         GRP_REMAIN_AMOUNT = budgetType.Equals(1) ? m.GRP_REMAIN_BUDGET_AMOUNT : m.GRP_REMAIN_OFF_BUDGET_AMOUNT
-                                                    }).ToList();
+                                                    }).Select(m => m.Key).ToList();
                                                 bool isBudgetType = budgetTypeItemExpr.Any();
                                                 decimal allocateAmount = decimal.Zero, reportedAmount = decimal.Zero, remainAmount = decimal.Zero;
                                                 if (isBudgetType)
@@ -322,7 +417,8 @@ namespace ExcisePlaning.Controllers
                                                         m.EXPENSES_GROUP_ID,
                                                         m.ALLOCATE_GRP_AMOUNT,
                                                         m.GRP_REPORTED_AMOUNT,
-                                                        m.GRP_REMAIN_AMOUNT
+                                                        m.GRP_REMAIN_AMOUNT,
+                                                        m.ALLOCATE_EXPENSES_GROUP_ID
                                                     }).Select(m => m.Key).ToList();
                                                     allocateAmount = budgetTypeItemExpr.Sum(m => m.ALLOCATE_AMOUNT == null ? decimal.Zero : m.ALLOCATE_AMOUNT.Value)
                                                         + budgetTypeItemGrpExpr.Sum(m => m.ALLOCATE_GRP_AMOUNT == null ? decimal.Zero : m.ALLOCATE_GRP_AMOUNT.Value);
@@ -353,6 +449,7 @@ namespace ExcisePlaning.Controllers
                                                                 m.BUDGET_TYPE_ID,
                                                                 m.EXPENSES_GROUP_ID,
                                                                 m.ALLOCATE_GRP_AMOUNT,
+                                                                m.ALLOCATE_EXPENSES_GROUP_ID
                                                             }).Select(m => m.Key).Sum(m => m.ALLOCATE_GRP_AMOUNT == null ? decimal.Zero : m.ALLOCATE_GRP_AMOUNT.Value);
                                                             reportedAmount = expensesGroupMasExpr.Sum(m => m.REPORTED_AMOUNT == null ? decimal.Zero : m.REPORTED_AMOUNT.Value);
                                                         }
@@ -381,7 +478,8 @@ namespace ExcisePlaning.Controllers
                                                                 m.ACTIVITY_ID,
                                                                 m.BUDGET_TYPE_ID,
                                                                 m.EXPENSES_GROUP_ID,
-                                                                m.ALLOCATE_GRP_AMOUNT
+                                                                m.ALLOCATE_GRP_AMOUNT,
+                                                                m.ALLOCATE_EXPENSES_GROUP_ID
                                                             }).Select(m => m.Key).Sum(m => m.ALLOCATE_GRP_AMOUNT == null ? decimal.Zero : m.ALLOCATE_GRP_AMOUNT.Value);
                                                             reportedAmount = expensesGroupExpr.Sum(m => m.REPORTED_AMOUNT == null ? decimal.Zero : m.REPORTED_AMOUNT.Value);
                                                             remainAmount = allocateAmount - reportedAmount;
@@ -420,7 +518,7 @@ namespace ExcisePlaning.Controllers
                                                                     newItems.Add(new ItemProperty(projectName, null, null, null, false, string.Empty, false));
                                                                 else
                                                                 {
-                                                                    var projectExpr = expensesExpr.Where(m => m.PROJECT_ID.Equals(projectItem.PROJECT_ID));
+                                                                    var projectExpr = expensesExpr.Where(m => m.ALLOCATE_PROJECT_ID.Equals(projectItem.PROJECT_ID));
                                                                     allocateAmount = decimal.Zero;
                                                                     reportedAmount = decimal.Zero;
                                                                     remainAmount = decimal.Zero;
@@ -446,7 +544,6 @@ namespace ExcisePlaning.Controllers
 
 
                 // เขียนข้อมูลลงไฟล์ Excel
-                var appSettings = AppSettingProperty.ParseXml();
                 string filename = string.Format("{0}_รายงานผลการใช้จ่ายเงินงบประมาณประจำปี.xls", usrAuthorizeProfile.EmpId);
                 if (budgetType.Equals(2))
                     filename = string.Format("{0}_รายงานผลการใช้จ่ายเงินนอกงบประมาณประจำปี.xls", usrAuthorizeProfile.EmpId);

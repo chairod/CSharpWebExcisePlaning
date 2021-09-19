@@ -128,9 +128,6 @@ namespace ExcisePlaning.Controllers
 
             using (ExcisePlaningDbDataContext db = new ExcisePlaningDbDataContext())
             {
-                var userAuthorizeProfile = UserAuthorizeProperty.GetUserAuthorizeProfile(HttpContext.User.Identity.Name);
-                var depFilterAuthorize = DepartmentAuthorizeFilterProperty.Verfity(userAuthorizeProfile, depId);
-
                 // ข้อมลการจัดสรร
                 var exprAllocate = db.V_GET_DEPARTMENT_EXPENSES_BUDGET_INFORMATIONs.Select(e => new
                 {
@@ -165,10 +162,24 @@ namespace ExcisePlaning.Controllers
                     e.EX_GRP_ALLOCATE_BUDGET_AMOUNT,
                     e.EX_GRP_ALLOCATE_OFF_BUDGET_AMOUNT
                 }).Where(e => e.YR.Equals(fiscalYear));
-                if (depFilterAuthorize.Authorize.Equals(2))
-                    exprAllocate = exprAllocate.Where(e => depFilterAuthorize.AssignDepartmentIds.Contains(e.DEP_ID));
-                if (null != areaId)
-                    exprAllocate = exprAllocate.Where(e => e.AREA_ID.Equals(areaId));
+
+                var userAuthorizeProfile = UserAuthorizeProperty.GetUserAuthorizeProfile(HttpContext.User.Identity.Name);
+                // หน่วยงานกลาง
+                if (userAuthorizeProfile.DepAuthorize.Equals(1))
+                {
+                    if (null != areaId)
+                        exprAllocate = exprAllocate.Where(e => e.AREA_ID.Equals(areaId));
+                    if (null != depId)
+                        exprAllocate = exprAllocate.Where(e => e.DEP_ID.Equals(depId));
+                }
+                else // หน่วยงานทั่วไป
+                {
+                    exprAllocate = exprAllocate.Where(e => e.AREA_ID.Equals(userAuthorizeProfile.AreaId));
+                    var depAuthorize = DepartmentAuthorizeFilterProperty.Verfity(userAuthorizeProfile, userAuthorizeProfile.DepId);
+                    exprAllocate = exprAllocate.Where(e => depAuthorize.AssignDepartmentIds.Contains(e.DEP_ID));
+                    if (null != depId)
+                        exprAllocate = exprAllocate.Where(e => e.DEP_ID.Equals(depId));
+                }
 
                 // จัดสรร ตามรายการค่าใช้จ่าย
                 var finalExprAllocate = exprAllocate.GroupBy(e => new { e.YR, e.BUDGET_TYPE_ID, e.BUDGET_TYPE_NAME })
@@ -236,8 +247,12 @@ namespace ExcisePlaning.Controllers
 
                 // ข้อมูลการกันเงิน
                 var exprReserve = db.V_GET_BUDGET_RESERVE_INFORMATIONs.Where(e => e.YR.Equals(fiscalYear));
-                if (depFilterAuthorize.Authorize.Equals(2))
-                    exprReserve = exprReserve.Where(e => depFilterAuthorize.AssignDepartmentIds.Contains(e.DEP_ID.Value));
+                var appSettings = AppSettingProperty.ParseXml();
+                if (null != areaId && appSettings.GetAreaIdsCanReserveBudgetToList().IndexOf(areaId.Value) == -1)
+                    exprReserve = exprReserve.Where(e => 1 == 2);
+                if (depId != null)
+                    exprReserve = exprReserve.Where(e => e.DEP_ID.Equals(depId));
+
                 if (null != budgetType)
                     exprReserve = exprReserve.Where(e => e.BUDGET_TYPE.Equals(budgetType));
                 var finalExprReserve = exprReserve.GroupBy(e => new { e.YR, e.BUDGET_TYPE_ID, e.BUDGET_TYPE_NAME })

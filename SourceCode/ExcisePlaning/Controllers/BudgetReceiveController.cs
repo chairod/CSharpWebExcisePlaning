@@ -14,8 +14,8 @@ using System.Web.Mvc;
 namespace ExcisePlaning.Controllers
 {
     /// <summary>
-    /// รับเงินที่ได้รับจัดสรรงบประมาณจากรัฐบาล
-    /// จะประกอบไปด้วย รายการค่าใช้จ่ายต่างๆ
+    /// รายการค่าใช้จ่ายต่างๆที่จะได้รับจัดสรรจากรัฐบาล ซึ่งเป็นจำนวนเงินมวลรวม
+    /// ที่จะได้รับจัดสรรมา แต่การจัดสรรจริงนั้นจะทยอยจัดสรรมาให้เป็นรายงวด
     /// </summary>
     [CustomAuthorize(Roles = "Admin,Manager1,Manager2,Manager3")]
     public class BudgetReceiveController : Controller
@@ -119,7 +119,7 @@ namespace ExcisePlaning.Controllers
 
             using (ExcisePlaningDbDataContext db = new ExcisePlaningDbDataContext())
             {
-                // รายการค่าใช้จ่าย (ยังไม่มีบันทึกดึงจาก คำขอ, ดึงจาก T_BUDGET_EXPENSES)
+                // รายการค่าใช้จ่าย (ยังไม่มีบันทึกดึงจากข้อมูล Template, ดึงจาก T_BUDGET_EXPENSES)
                 var expr = db.proc_GetExpensesAllocateBudgetFromGovernmentByYear(fiscalYear).ToList();
                 var finalExpr = expr.GroupBy(e => new
                 {
@@ -269,6 +269,8 @@ namespace ExcisePlaning.Controllers
             {
                 var userAuthorizeProfile = UserAuthorizeProperty.GetUserAuthorizeProfile(HttpContext.User.Identity.Name);
                 var exprBudgetMas = db.T_BUDGET_MASTERs.Where(e => e.BUDGET_ID.Equals(model.BudgetId)).FirstOrDefault();
+                if (null == exprBudgetMas)
+                    exprBudgetMas = db.T_BUDGET_MASTERs.Where(e => e.YR.Equals(model.FiscalYear)).FirstOrDefault();
                 if (null == exprBudgetMas)
                 {
                     exprBudgetMas = new T_BUDGET_MASTER

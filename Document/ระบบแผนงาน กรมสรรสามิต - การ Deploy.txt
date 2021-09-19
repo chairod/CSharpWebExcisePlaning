@@ -7,10 +7,10 @@
             พาร์ทสำหรับเขียนข้อผิดพลาดลงไป
         => TemporaryPath
             พาร์ทสำหรับเขียน Temporary File ของระบบ
-		=> AcceptMimeTypeValues
-			MIME Type ที่ระบบรองรับการอัพโหลดไฟล์จากเครื่องไคเอ็นท์
-		=> LimitedFileSizeBytesValue
-			ขนาดไฟล์สูงสุดที่ระบบรองรับในการอัพโหลดไฟล์จากเครื่องไคเอ็นท์
+        => AcceptMimeTypeValues
+            MIME Type ที่ระบบรองรับการอัพโหลดไฟล์จากเครื่องไคเอ็นท์
+        => LimitedFileSizeBytesValue
+            ขนาดไฟล์สูงสุดที่ระบบรองรับในการอัพโหลดไฟล์จากเครื่องไคเอ็นท์
         => DepartmentIdsCanReserveBudgetStr
             รหัสหน่วยงาน ที่สามารถกันเงิน ได้ อ้างอิง dep_id จากตาราง T_DEPARTMENT จะมีผลกับหน้าจอ กันเงิน 
             โปรแกรมจะดึงหน่วยงานภายใน (sub_department) ของรหัสหน่วยงานที่ระบุ
@@ -26,6 +26,12 @@
         => globalization <system.web>
             ในระบบจะใช้ Culture inf เป็น "en-US" กำหนดไว้ในกรณีไม่ต้องการให้อ่าน Culture infomation จากเครื่อง Server ที่ตั้งไว้
         
+    3. Set Default Database to login name
+        Use master
+         GO
+        ALTER LOGIN [ExcisePlaningApp] WITH DEFAULT_DATABASE = ExcisePlaningDb
+        GO
+
 [vegas.js]
  Location: Contents/Standalone/vegas.js
         ** กรณีนำแอพไปรันโดยมี AliasName ให้ระบุ AliasName นำหน้าด้วย เช่น AliasName = "LeaveSystem"
@@ -56,7 +62,27 @@ admin@gmail.com,1234
 
 =================== รออัพเดต =======================
 ExcisePlaning.dll, ExcisePlaningDb.dbml
-Views/*, angular.app.js
+Views/*
+ReportTemplates/*
+angular.app.js
+
+
+** Deploy ไปทั้ง Folder ใน Server fds.co.th
+
+
+V_GET_BUDGET_RESERVE_INFORMATION
+V_GET_SUMMARY_BUDGET_RESERVE_INFORMATION
+V_GET_SUMMARY_BUDGET_ALLOCATE
+
+T_MENU
+ [แก้ไข Description]
+ R04 => สรุปรายการค่าใช้จ่ายภาพรวมของเงินนอกงบประมาณ ที่จัดสรรลงให้กับหน่วยงานภูมิภาค และ กันเงินนอกงบประมาณ
+ R03 => สรุปรายการค่าใช้จ่ายภาพรวมของเงินงบประมาณ ที่จัดสรรลงให้กับหน่วยงานภูมิภาค และ กันเงินงบประมาณ
+
+ [เพิ่มใหม่]
+ R014-รายงานจัดการเงินงบประมาณ
+ R015-รายงานจัดการเงินนอกงบประมาณ
+=================== ประวัติการอัพเดต ==================
 
 
 
@@ -77,11 +103,6 @@ Views/*, angular.app.js
 
     เมนู ข้อมูลพื้นฐาน => ข้อมูลค่าใช้จ่าย
      => เพิ่ม ค่าธรรมเนียมศาล
-=================== ประวัติการอัพเดต ==================
-
-
-
-
 
 
 

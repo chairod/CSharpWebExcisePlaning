@@ -70,7 +70,7 @@
                         <tr ng-repeat="row in $settings.formView.histories">
                             <td style="width:80px;max-width:80px;min-width:80px" class="text-center"><a href="javascript:void(0)" ng-if="row.ACTIVE==1" ng-click="reject($event, row)" class="text-danger f-w-900">ยกเลิก</a></td>
                             <td style="width:80px;max-width:80px;min-width:80px" class="text-center">{{row.SEQ_NO}}</td>
-                            <td style="width:120px;max-width:120px;min-width:120px" class="text-center">{{row.PERIOD_MN+'/'+(row.PERIOD_YR|convertYearToBuddhist)}}</td>
+                            <td style="width:120px;max-width:120px;min-width:120px" class="text-center">{{row.PERIOD_MN|toMonthLabel}}</td>
                             <td style="width:160px;max-width:160px;min-width:160px" class="text-right bg-light" ng-class="{'text-danger f-w-900': row.ACTIVE==-1}">
                                 {{row.BUDGET_AMOUNT|displayDecimal:2}}
                                 <div class="text-danger f-10 f-w-900" ng-if="row.ACTIVE==-1">[ยกเลิกรายการจัดเก็บรายได้]</div>

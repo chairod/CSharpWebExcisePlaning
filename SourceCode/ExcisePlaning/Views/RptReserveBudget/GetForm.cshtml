@@ -28,7 +28,7 @@
                        ng-change="reserveChanged()" />
             </div>
             <div class="form-group col-12 col-md-3">
-                <div class="pb-1 mt-2 border-bottom">
+                <div class="pb-1 mt-2 mb-1 border-bottom">
                     <md-checkbox ng-model="$settings.formSearch.reserveType" class="m-0"
                                  ng-true-value="1" ng-false-value="0" ng-disabled="$settings.isLoading"
                                  ng-click="submitSearch()">ผูกพัน</md-checkbox>
@@ -93,7 +93,7 @@
             </div>
         </div>
         <div class="form-row">
-            <div class="form-group col-12 col-md-3">
+            <div class="form-group col-12 col-md-3 mb-0">
                 <label>หมวดค่าใช้จ่าย</label>
                 <select class="form-control" ng-model="$settings.formSearch.expensesGroupId" ng-disabled="$settings.isLoading||$settings.expensesGroups.length==0" fw-select2
                         ng-change="expensesGroupChanged()">
@@ -101,7 +101,7 @@
                     <option ng-repeat="item in $settings.expensesGroups" value="{{item.EXPENSES_GROUP_ID}}">{{item.EXPENSES_GROUP_NAME}}</option>
                 </select>
             </div>
-            <div class="form-group col-12 col-md-3">
+            <div class="form-group col-12 col-md-3 mb-0">
                 <label>ค่าใช้จ่าย</label>
                 <select class="form-control" ng-model="$settings.formSearch.expensesId" ng-disabled="$settings.isLoading||$settings.expenses.length==0" fw-select2
                         ng-change="submitSearch()">
@@ -109,11 +109,11 @@
                     <option ng-repeat="item in $settings.expenses" value="{{item.EXPENSES_ID}}">{{item.EXPENSES_NAME+' [' + item.EXPENSES_GROUP_NAME + ']'}}</option>
                 </select>
             </div>
-            <div class="form-group col-12 col-md-3">
+            <div class="form-group col-12 col-md-3 mb-0">
                 <label>วันที่กันเงิน</label>
                 <fw-date-range model="$settings.formSearch.dateRange" disabled="$settings.isLoading" change="dateRangeChanged()"></fw-date-range>
             </div>
-            <div class="form-group col-12 col-md-3">
+            <div class="form-group col-12 col-md-3 mb-0">
                 <label class="d-none d-md-block">&nbsp;</label>
                 <fw-execute-button text="ส่งออก Excel" css-class="btn btn-primary btn-sm" css-icon-class="icofont icofont-file-excel"
                                    ng-disabled="$settings.isLoading||!$settings.canExport"

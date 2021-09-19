@@ -10,25 +10,19 @@ pass : budgetsystem
 เครื่องทดสอบ 
 ==========================================================================================
 >>> Database <<<
-    IP  :   103.13.31.17
+    IP  :   103.13.31.45
     user:   sa
-    pass:   abc12345@
-
-    IP  :   61.19.252.49,49252
-    User:   sa
-    pass:   abc12345@
+    pass:   Abc12345@
+    
+    DB: ExcisePlaning, ExcisePlaningTest
 
 >>> REMOTE DESKTOP <<<
-    IP  :   103.13.31.17
+    IP  :   103.13.31.45
     user:   administrator
-    pass:   Rkrw^*LZt&al
+    pass:   D8!kS*ul6%32
 
-    IP  :   61.19.252.49
-    User:   chutipong.s
-    pass:   Tide@2020
-
-    http://61.19.252.49/ExcisePlaning
-    http://61.19.252.49/ExciseTEST
+    https://fsa.co.th/ExcisePlaning
+    https://fsa.co.th/ExcisePlaningTest
 ==========================================================================================
 เครื่องจริง
 ==========================================================================================

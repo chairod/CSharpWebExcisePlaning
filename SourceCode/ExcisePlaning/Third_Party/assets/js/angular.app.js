@@ -1493,6 +1493,73 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
             }
         };
     })
+    .directive('fwScrollFixTop', function ($timeout) {
+        return {
+            restrict: 'E',
+            transclude: true,
+            replace: true,
+            template: '<div id="scroll_fix_top" style="z-index:2" ng-transclude></div>',
+            scope: {
+                addWidth: '=?',
+                subtractLeft: '=?'
+            },
+            link: function (scope, element, attrs) {
+                $(function () {
+                    $timeout(function () {
+                        scope.elWidth = element.width() + 35 + (scope.addWidth || 0);
+                        scope.elTop = element.offset().top + 50;
+                        scope.elLeft = element.offset().left - 25 - (scope.subtractLeft || 0);
+                        console.log(scope.elTop);
+                    }, 500);
+
+                    $(window).scroll(function () {
+                        if ($(this).scrollTop() > scope.elTop) {
+                            element.addClass('position-fixed fixed-top p-2 bg-dark shadow-lg animated bounceIn');
+                            element.css({ 'width': scope.elWidth + 'px', 'left': scope.elLeft + 'px', 'top': '50px' });
+                        } else {
+                            element.removeClass('position-fixed fixed-top p-2 bg-dark shadow-lg animated bounceIn');
+                            //element.addClass('animated fadeIn');
+                            element.css({ 'width': 'auto' });
+                        }
+                    }).resize(function () {
+                        $(window).trigger('scroll');
+                    });
+                });
+            }
+        }
+    })
+    .directive('fwGotoTop', function ($timeout) {
+        return {
+            restrict: 'E',
+            replace: true,
+            template: '<a class="position-fixed cursor-pointer border p-1 text-white f-30 f-w-900 shadown-lg rounded text-center d-none" style="background-color:#000;z-index:2;right:10px;bottom:10px;width:45px;height:45px;"><span class="ion-chevron-up d-block" style="margin-top:-4px;"></span></a>',
+            link: function (scope, element, attr) {
+                var self = this;
+                self.verifyComponent = function () {
+                    var scrollTop = Math.floor($(window).scrollTop());
+                    if (scrollTop <= 100) {
+                        element.addClass('d-none');
+                        element.removeClass('animated fadeIn');
+                        return;
+                    }
+
+                    element.addClass('animated fadeIn');
+                    element.removeClass('d-none');
+                };
+
+                element.click(function () {
+                    $('html, body').animate({ scrollTop: 0 }, 500);
+                });
+
+                $(window).scroll(function () {
+                    self.verifyComponent();
+                });
+                $timeout(function () {
+                    self.verifyComponent();
+                }, 300);
+            }
+        };
+    })
     .filter('textFormat', [function () {
         return function (input) {
             if (arguments.length > 1) {
@@ -1567,6 +1634,29 @@ angular.module('leaveApp', ['ngMaterial', 'ngAnimate', 'ngCookies', 'ngSanitize'
                 return (undefined == decimalDigits || null == decimalDigits ? output : $filter('number')(output, decimalDigits));
 
             return output;
+        };
+    }).directive('fwTooltip', function () {
+        // ใช้ Tooltip ของ bootstrap.min.js
+        return {
+            restrict: 'E',
+            replace: true,
+            template: '<a href="javascript:void(0)" class="ml-1 f-w-900 f-{{fontSize}} text-primary ion-help-circled" title="{{title}}">&nbsp;</a>',
+            scope: { title: '@', fontSize: '@?' },
+            controller: function ($scope, $element, $timeout) {
+                $timeout(function () {
+                    $element.tooltip({ delay: { 'show': 200 }, trigger: 'hover' });       
+                }, 200);
+            }
+        };
+    }).directive('fwTooltipA', function () {
+        // ใช้ Tooltip ของ bootstrap.min.js
+        return {
+            restrict: 'A',
+            controller: function ($scope, $element, $timeout) {
+                $timeout(function () {
+                    $element.tooltip({ delay: { 'show': 200 }, trigger: 'hover' });
+                }, 200);
+            }
         };
     }).directive('fwSimpleDataTable', function () {
         // Tips: 

@@ -6,9 +6,6 @@
     </md-toolbar>
     <md-dialog-content>
         <div class="md-dialog-content">
-            <fw-execute-button text="เพิ่มโครงการ/หลักสูตร" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round"
-                               ng-click="addItem($event)" ng-disabled="$settings.isLoading"></fw-execute-button>
-            <span class="text-danger ml-2 float-md-right f-w-900 f-14">จำนวน {{$settings.formData.rows.length|number:0}} โครงการ/หลักสูตร</span>
             <div class="table-responsive">
                 <table class="table table-bordered">
 
@@ -71,7 +68,7 @@
                     <tr>
                         <td colspan="4" class="m-0 p-0 border-0">
                             <table class="table table-bordered">
-                                <tr class="bg-secondary">
+                                <tr class="bg-secondary text-white">
                                     <th rowspan="2">ค่าใช้จ่าย</th>
                                     <th rowspan="2" style="width:90px;min-width:90px;max-width:90px;" class="text-left word-wrap">ครั้ง/รุ่น</th>
                                     <th colspan="5" class="text-center word-wrap">จำนวนคน</th>
@@ -80,7 +77,7 @@
                                     <th rowspan="2" style="width:117px;min-width:117px;max-width:117px;" class="text-right">รวมเงิน (บาท)</th>
                                     <th rowspan="2" style="width:60px;min-width:60px;max-width:60px;" class="text-center">&nbsp;</th>
                                 </tr>
-                                <tr class="bg-secondary">
+                                <tr class="bg-secondary text-white">
                                     @*จำนวนคน*@
                                     <th style="width:107px;min-width:107px;max-width:107px;" class="text-center">ประเภท ก</th>
                                     <th style="width:107px;min-width:107px;max-width:107px;" class="text-center">ประเภท ข</th>
@@ -196,6 +193,9 @@
         </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
+        <fw-execute-button text="เพิ่มโครงการ/หลักสูตร" css-class="btn btn-primary btn-sm" css-icon-class="ion-plus-round"
+                           ng-click="addItem($event)" ng-disabled="$settings.isLoading"></fw-execute-button>
+        <span class="text-danger ml-2 float-md-right f-w-900 f-14">จำนวน {{$settings.formData.rows.length|number:0}} โครงการ/หลักสูตร</span>
         <div ng-if="$settings.isLoading">
             <span class="text-danger f-w-900 animated fadeIn">กำลังจัดเตรียมแบบฟอร์ม ...</span>
         </div>
